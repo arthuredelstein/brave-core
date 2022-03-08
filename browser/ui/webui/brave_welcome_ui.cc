@@ -48,6 +48,15 @@ void OpenJapanWelcomePage(Profile* profile) {
   }
 }
 
+// Prompt for P3A opt-in.
+const base::Feature kP3AOptIn{"P3AOptIn",
+                              base::FEATURE_DISABLED_BY_DEFAULT};
+
+// Returns whether the P3A opt-in prompt should be shown.
+bool IsP3AOptInEnabled() {
+  return base::FeatureList::IsEnabled(kP3AOptIn);
+}
+
 void RecordP3AHistogram(int screen_number, bool finished) {
   int answer = 0;
   if (finished) {
@@ -56,6 +65,14 @@ void RecordP3AHistogram(int screen_number, bool finished) {
     answer = std::min(screen_number, 2);
   }
   UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.InteractionStatus", answer, 3);
+}
+
+void RecordP3AOptIn(int screen_number, bool opt_in) {
+  // Record nothing if the feature is disabled.
+  if (!IsP3AOptInEnabled()) {
+    return;
+  }
+  UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.P3AOptIn", opt_in, 2);
 }
 
 // The handler for Javascript messages for the chrome://welcome page
@@ -77,10 +94,12 @@ class WelcomeDOMHandler : public WebUIMessageHandler {
   int screen_number_ = 0;
   bool finished_ = false;
   bool skipped_ = false;
+  bool p3a_opt_in_ = false;
 };
 
 WelcomeDOMHandler::~WelcomeDOMHandler() {
   RecordP3AHistogram(screen_number_, finished_);
+  RecordP3AOptIn(screen_number_, p3a_opt_in_);
 }
 
 Browser* WelcomeDOMHandler::GetBrowser() {
@@ -103,18 +122,21 @@ void WelcomeDOMHandler::HandleImportNowRequested(
                                              chrome::kImportDataSubPage);
 }
 
+
 void WelcomeDOMHandler::HandleRecordP3A(base::Value::ConstListView args) {
-  if (!args[0].is_int() || !args[1].is_bool() || !args[2].is_bool())
+  if (!args[0].is_int() || !args[1].is_bool() || !args[2].is_bool() || !args[3].is_bool())
     return;
   screen_number_ = args[0].GetInt();
   finished_ = args[1].GetBool();
   skipped_ = args[2].GetBool();
+  p3a_opt_in_ = args[3].GetBool();
 
   if (screen_number_) {
     // It is 1-based on JS side, we want 0-based.
     screen_number_--;
   }
   RecordP3AHistogram(screen_number_, finished_);
+  RecordP3AOptIn(screen_number_, p3a_opt_in_);
 }
 
 // Converts Chromium country ID to 2 digit country string
@@ -128,15 +150,6 @@ std::string CountryIDToCountryString(int country_id) {
   std::string country_string(chars);
   DCHECK_EQ(country_string.size(), 2U);
   return country_string;
-}
-
-// Prompt for P3A opt-in.
-const base::Feature kP3AOptIn{"P3AOptIn",
-                              base::FEATURE_DISABLED_BY_DEFAULT};
-
-// Returns whether the P3A opt-in prompt should be shown.
-bool IsP3AOptInEnabled() {
-  return base::FeatureList::IsEnabled(kP3AOptIn);
 }
 
 

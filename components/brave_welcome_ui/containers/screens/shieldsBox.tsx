@@ -32,7 +32,7 @@ const hackStyleDiv = {
 export default class ShieldsBox extends React.PureComponent<Props> {
   render () {
     const text = getLocale('p3aDesc').split('$1')
-    const opt_in = loadTimeData.getBoolean('featureFlagP3AOptIn')
+    const opt_in = loadTimeData.getBoolean('showP3AOptIn')
 
     // TODO: Record opt-in choice in component state and return it for reporting.
 

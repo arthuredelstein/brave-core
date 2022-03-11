@@ -48,13 +48,9 @@ void OpenJapanWelcomePage(Profile* profile) {
   }
 }
 
-// Prompt for P3A opt-in.
-const base::Feature kP3AOptIn{"P3AOptIn",
-                              base::FEATURE_DISABLED_BY_DEFAULT};
-
 // Returns whether the P3A opt-in prompt should be shown.
 bool IsP3AOptInEnabled() {
-  return base::FeatureList::IsEnabled(kP3AOptIn);
+  return base::FeatureList::IsEnabled(brave_welcome::features::kP3AOptIn);
 }
 
 void RecordP3AHistogram(int screen_number, bool finished) {
@@ -185,7 +181,7 @@ BraveWelcomeUI::BraveWelcomeUI(content::WebUI* web_ui, const std::string& name)
   source->AddBoolean(
       "showRewardsCard",
       base::FeatureList::IsEnabled(brave_welcome::features::kShowRewardsCard));
-  source->AddBoolean("featureFlagP3AOptIn", IsP3AOptInEnabled());
+  source->AddBoolean("showP3AOptIn", IsP3AOptInEnabled());
 
   profile->GetPrefs()->SetBoolean(prefs::kHasSeenWelcomePage, true);
 }

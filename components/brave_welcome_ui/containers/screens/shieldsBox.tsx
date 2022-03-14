@@ -33,12 +33,14 @@ export default class ShieldsBox extends React.PureComponent<Props> {
   render () {
     const text = getLocale('p3aDesc').split('$1')
     const opt_in = loadTimeData.getBoolean('showP3AOptIn')
+    let enable_p3a = false;
 
     // TODO: Record opt-in choice in component state and return it for reporting.
 
     const { index, currentScreen } = this.props
     const onChange = (key: string, selected: boolean) => {
       console.log(key, selected)
+      enable_p3a = selected;
     }
 
     return (
@@ -55,7 +57,7 @@ export default class ShieldsBox extends React.PureComponent<Props> {
         </Paragraph>
         {opt_in && (
           <Checkbox
-            value={{ 'p3a': !opt_in }}
+            value={{ 'p3a': enable_p3a }}
             onChange={onChange}
             >
             <div

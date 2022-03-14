@@ -10,6 +10,7 @@
 #include <string>
 
 #include "base/feature_list.h"
+#include "base/logging.h"
 #include "base/metrics/histogram_macros.h"
 #include "brave/browser/ui/webui/brave_webui_source.h"
 #include "brave/browser/ui/webui/settings/brave_import_data_handler.h"
@@ -50,7 +51,9 @@ void OpenJapanWelcomePage(Profile* profile) {
 
 // Returns whether the P3A opt-in prompt should be shown.
 bool IsP3AOptInEnabled() {
-  return base::FeatureList::IsEnabled(brave_welcome::features::kP3AOptIn);
+  bool enabled = base::FeatureList::IsEnabled(brave_welcome::features::kP3AOptIn);
+  VLOG(1) << "IsP3AOptInEnabled: " << enabled;
+  return enabled;
 }
 
 void RecordP3AHistogram(int screen_number, bool finished) {
@@ -68,6 +71,7 @@ void RecordP3AOptIn(int screen_number, bool opt_in) {
   if (!IsP3AOptInEnabled()) {
     return;
   }
+  VLOG(1) << "Recording opt-in histogram value " << opt_in;
   UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.P3AOptIn", opt_in, 2);
 }
 
@@ -126,6 +130,12 @@ void WelcomeDOMHandler::HandleRecordP3A(base::Value::ConstListView args) {
   finished_ = args[1].GetBool();
   skipped_ = args[2].GetBool();
   p3a_opt_in_ = args[3].GetBool();
+
+  VLOG(1) << "HandleRecordP3A"
+    << screen_number_ << ","
+    << finished_ << ","
+    << skipped_ << ","
+    << p3a_opt_in_;
 
   if (screen_number_) {
     // It is 1-based on JS side, we want 0-based.

@@ -29,64 +29,62 @@ const hackStyleDiv = {
   WebkitFontSmoothing: 'antialiased',
 }
 
-export default class ShieldsBox extends React.PureComponent<Props> {
-  render () {
-    const text = getLocale('p3aDesc').split('$1')
-    const opt_in = loadTimeData.getBoolean('showP3AOptIn')
-    let enable_p3a = false;
+export function ShieldsBox(props: Props) {
+  const [isP3AEnabled, setIsP3AEnabled] = React.useState<boolean>(false)
+  const text = getLocale('p3aDesc').split('$1')
+  const opt_in = loadTimeData.getBoolean('showP3AOptIn')
 
-    // TODO: Record opt-in choice in component state and return it for reporting.
+  // TODO: Report opt-in choice.
 
-    const { index, currentScreen } = this.props
-    const onChange = (key: string, selected: boolean) => {
-      console.log(key, selected)
-      enable_p3a = selected;
-    }
-
-    return (
-      <Content
-        zIndex={index}
-        active={index === currentScreen}
-        screenPosition={'1' + (index + 1) + '0%'}
-        isPrevious={index <= currentScreen}
-      >
-        <WelcomeShieldsImage />
-        <Title>{getLocale('privacyTitle')}</Title>
-        <Paragraph>
-          { getLocale('shieldsDesc') }
-        </Paragraph>
-        {opt_in && (
-          <Checkbox
-            value={{ 'p3a': enable_p3a }}
-            onChange={onChange}
-            >
-            <div
-              data-key='p3a'
-            ><span style={hackStyleDiv}>
-              { getLocale('p3aCheckbox') }
-            </span></div>
-          </Checkbox>
-        )}
-        <Paragraph>
-          {text[0]}
-          <a
-            href='https://brave.com/p3a'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            {text[1]}
-          </a>
-          {text[2]}
-          <a
-            href='brave://settings/privacy'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            {text[3]}
-          </a>
-          {text[4]}
-        </Paragraph>
-      </Content>
-    )
+  const { index, currentScreen } = props
+  const handleP3AToggleChange = (key: string, selected: boolean) => {
+    console.log(key, selected)
+    setIsP3AEnabled(selected)
   }
+
+  return (
+    <Content
+      zIndex={index}
+      active={index === currentScreen}
+      screenPosition={'1' + (index + 1) + '0%'}
+      isPrevious={index <= currentScreen}
+    >
+      <WelcomeShieldsImage />
+      <Title>{getLocale('privacyTitle')}</Title>
+      <Paragraph>
+        { getLocale('shieldsDesc') }
+      </Paragraph>
+      {opt_in && (
+        <Checkbox
+          value={{ 'p3a': isP3AEnabled }}
+          onChange={ handleP3AToggleChange }
+          >
+          <div
+            data-key='p3a'
+          ><span style={hackStyleDiv}>
+            { getLocale('p3aCheckbox') }
+          </span></div>
+        </Checkbox>
+      )}
+      <Paragraph>
+        {text[0]}
+        <a
+          href='https://brave.com/p3a'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          {text[1]}
+        </a>
+        {text[2]}
+        <a
+          href='brave://settings/privacy'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          {text[3]}
+        </a>
+        {text[4]}
+      </Paragraph>
+    </Content>
+  )
 }

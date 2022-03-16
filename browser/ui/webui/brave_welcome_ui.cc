@@ -63,6 +63,7 @@ void RecordP3AHistogram(int screen_number, bool finished) {
   } else {
     answer = std::min(screen_number, 2);
   }
+  VLOG(1) << "RecordP3AHistogram value " << answer;
   UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.InteractionStatus", answer, 3);
 }
 
@@ -71,7 +72,7 @@ void RecordP3AOptIn(int screen_number, bool opt_in) {
   if (!IsP3AOptInEnabled()) {
     return;
   }
-  VLOG(1) << "Recording opt-in histogram value " << opt_in;
+  VLOG(1) << "RecordP3AOptIn histogram value " << opt_in;
   UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.P3AOptIn", opt_in, 2);
 }
 
@@ -98,6 +99,7 @@ class WelcomeDOMHandler : public WebUIMessageHandler {
 };
 
 WelcomeDOMHandler::~WelcomeDOMHandler() {
+  VLOG(1) << "WelcomeDOMHandler dtor: recording p3a values";
   RecordP3AHistogram(screen_number_, finished_);
   RecordP3AOptIn(screen_number_, p3a_opt_in_);
 }

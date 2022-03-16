@@ -19,6 +19,7 @@
 #include "brave/common/webui_url_constants.h"
 #include "brave/components/brave_welcome/common/features.h"
 #include "brave/components/brave_welcome/resources/grit/brave_welcome_generated_map.h"
+#include "brave/components/p3a/pref_names.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
@@ -90,6 +91,7 @@ class WelcomeDOMHandler : public WebUIMessageHandler {
  private:
   void HandleImportNowRequested(base::Value::ConstListView args);
   void HandleRecordP3A(base::Value::ConstListView args);
+  void HandleSetP3AEnable(base::Value::ConstListView args);
   Browser* GetBrowser();
 
   int screen_number_ = 0;
@@ -116,6 +118,9 @@ void WelcomeDOMHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback(
       "recordP3A", base::BindRepeating(&WelcomeDOMHandler::HandleRecordP3A,
                                        base::Unretained(this)));
+  web_ui()->RegisterMessageCallback(
+      "setP3AEnable", base::BindRepeating(&WelcomeDOMHandler::HandleSetP3AEnable,
+                                       base::Unretained(this)));
 }
 
 void WelcomeDOMHandler::HandleImportNowRequested(
@@ -126,18 +131,17 @@ void WelcomeDOMHandler::HandleImportNowRequested(
 
 
 void WelcomeDOMHandler::HandleRecordP3A(base::Value::ConstListView args) {
-  if (!args[0].is_int() || !args[1].is_bool() || !args[2].is_bool() || !args[3].is_bool())
+  if (!args[0].is_int() || !args[1].is_bool() || !args[2].is_bool())
     return;
   screen_number_ = args[0].GetInt();
   finished_ = args[1].GetBool();
   skipped_ = args[2].GetBool();
-  p3a_opt_in_ = args[3].GetBool();
 
-  VLOG(1) << "HandleRecordP3A"
-    << screen_number_ << ","
-    << finished_ << ","
-    << skipped_ << ","
-    << p3a_opt_in_;
+  VLOG(1) << "HandleRecordP3A "
+    << "screen_number: " << screen_number_ << ", "
+    << "finished: " << finished_ << ", "
+    << "skipped: " << skipped_ << ", "
+    << "p3a_opt_in: " << p3a_opt_in_;
 
   if (screen_number_) {
     // It is 1-based on JS side, we want 0-based.
@@ -145,6 +149,21 @@ void WelcomeDOMHandler::HandleRecordP3A(base::Value::ConstListView args) {
   }
   RecordP3AHistogram(screen_number_, finished_);
   RecordP3AOptIn(screen_number_, p3a_opt_in_);
+}
+
+void WelcomeDOMHandler::HandleSetP3AEnable(base::Value::ConstListView args) {
+  VLOG(1) << "HandleEnableP3A: " << args.size() << " args";
+  for (auto& arg : args) {
+    VLOG(1) << "  " << arg.type() << ": " << arg;
+  }
+  DCHECK(args.size() >= 1);
+  if (!args[0].is_bool()) {
+    DLOG(WARNING) << "Wrong argument type " << args[0].type()
+      << " passed to HandleSetP3AEnable";
+    return;
+  }
+  p3a_opt_in_ = args[0].GetBool();
+  // TODO: change kP3AEnabled pref
 }
 
 // Converts Chromium country ID to 2 digit country string

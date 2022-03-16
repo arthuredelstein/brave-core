@@ -3,6 +3,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
+import { useDispatch } from 'react-redux';
 
 // Feature-specific components
 import { Content, Title, Paragraph } from '../../components'
@@ -11,6 +12,7 @@ import { Checkbox } from 'brave-ui/components'
 // Utils
 import { getLocale } from '../../../common/locale'
 import { loadTimeData } from '../../../common/loadTimeData'
+import { setP3AEnable } from '../../actions/welcome_actions'
 
 // Images
 import { WelcomeShieldsImage } from '../../components/images'
@@ -31,15 +33,15 @@ const hackStyleDiv = {
 
 export function ShieldsBox(props: Props) {
   const [isP3AEnabled, setIsP3AEnabled] = React.useState<boolean>(false)
+  const dispatch = useDispatch()
   const text = getLocale('p3aDesc').split('$1')
   const opt_in = loadTimeData.getBoolean('showP3AOptIn')
-
-  // TODO: Report opt-in choice.
 
   const { index, currentScreen } = props
   const handleP3AToggleChange = (key: string, selected: boolean) => {
     console.log(key, selected)
     setIsP3AEnabled(selected)
+    dispatch(setP3AEnable(selected))
   }
 
   return (

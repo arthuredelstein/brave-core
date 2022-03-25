@@ -80,7 +80,7 @@ void RecordP3AOptIn(int screen_number, bool opt_in) {
 // The handler for Javascript messages for the chrome://welcome page
 class WelcomeDOMHandler : public WebUIMessageHandler {
  public:
-  WelcomeDOMHandler() {}
+  WelcomeDOMHandler() = default;
   WelcomeDOMHandler(const WelcomeDOMHandler&) = delete;
   WelcomeDOMHandler& operator=(const WelcomeDOMHandler&) = delete;
   ~WelcomeDOMHandler() override;
@@ -217,4 +217,4 @@ BraveWelcomeUI::BraveWelcomeUI(content::WebUI* web_ui, const std::string& name)
   profile->GetPrefs()->SetBoolean(prefs::kHasSeenWelcomePage, true);
 }
 
-BraveWelcomeUI::~BraveWelcomeUI() {}
+BraveWelcomeUI::~BraveWelcomeUI() = default;

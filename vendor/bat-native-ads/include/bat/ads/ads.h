@@ -24,8 +24,8 @@ class AdsClient;
 struct AdsHistoryInfo;
 struct AdNotificationInfo;
 
-// |g_environment| indicates that URL requests should use production, staging or
-// development servers but can be overridden via command-line arguments
+// |g_environment| indicates that URL requests should use production or staging
+// servers which can be overridden via command-line arguments
 extern mojom::Environment g_environment;
 
 // Returns the reference to the hardware |manufacturer| and |model|

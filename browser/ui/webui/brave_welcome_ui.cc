@@ -73,8 +73,12 @@ void RecordP3AOptIn(int screen_number, bool opt_in) {
   if (!IsP3AOptInEnabled()) {
     return;
   }
-  VLOG(1) << "RecordP3AOptIn histogram value " << opt_in;
-  UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.P3AOptIn", opt_in, 2);
+  int answer = 0; // Did not see prompt.
+  if (screen_number > 2) {
+    answer = 1 + opt_in; // Saw prompt, didn't or did opt in.
+  }
+  VLOG(1) << "RecordP3AOptIn histogram value " << answer;
+  UMA_HISTOGRAM_EXACT_LINEAR("Brave.Welcome.P3AOptIn", answer, 2);
 }
 
 // The handler for Javascript messages for the chrome://welcome page

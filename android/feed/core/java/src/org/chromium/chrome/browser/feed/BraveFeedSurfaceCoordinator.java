@@ -72,8 +72,8 @@ public class BraveFeedSurfaceCoordinator extends FeedSurfaceCoordinator {
         mRootView.removeAllViews();
 
         mScrollViewForPolicy = new ScrollView(mActivity);
-        mScrollViewForPolicy.setBackgroundColor(
-                ApiCompatibilityUtils.getColor(mActivity.getResources(), R.color.default_bg_color));
+        mScrollViewForPolicy.setBackgroundColor(ApiCompatibilityUtils.getColor(
+                mActivity.getResources(), R.color.default_bg_color_baseline));
         mScrollViewForPolicy.setVerticalScrollBarEnabled(false);
 
         // Make scroll view focusable so that it is the next focusable view when the url bar clears

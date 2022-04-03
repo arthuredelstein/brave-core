@@ -32,4 +32,10 @@ TEST(FilRequestUnitTest, estimateGas) {
       R"({"id":1,"jsonrpc":"2.0","method":"Filecoin.GasEstimateMessageGas","params":[{"From":"from_address","GasFeeCap":"gas_fee_cap","GasLimit":9223372036854775807,"GasPremium":"gas_premium","Method":0,"Nonce":18446744073709551615,"Params":"","To":"to_address","Value":"value","Version":0},{"MaxFee":"max_fee"},[]]})");  // NOLINT
 }
 
+TEST(FilRequestUnitTest, getChainHead) {
+  EXPECT_EQ(fil::getChainHead(),
+            "{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"Filecoin.ChainHead\","
+            "\"params\":[]}");
+}
+
 }  // namespace brave_wallet

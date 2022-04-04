@@ -144,8 +144,7 @@ void WelcomeDOMHandler::HandleRecordP3A(base::Value::ConstListView args) {
   VLOG(1) << "HandleRecordP3A "
     << "screen_number: " << screen_number_ << ", "
     << "finished: " << finished_ << ", "
-    << "skipped: " << skipped_ << ", "
-    << "p3a_opt_in: " << p3a_opt_in_;
+    << "skipped: " << skipped_;
 
   if (screen_number_) {
     // It is 1-based on JS side, we want 0-based.

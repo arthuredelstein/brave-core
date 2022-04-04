@@ -166,6 +166,10 @@ void WelcomeDOMHandler::HandleSetP3AEnable(base::Value::ConstListView args) {
     return;
   }
   p3a_opt_in_ = args[0].GetBool();
+
+  // Record the choice in the profile.
+  Profile* profile = Profile::FromWebUI(web_ui());
+  profile->GetPrefs()->SetBoolean(brave::kP3AEnabled, p3a_opt_in_);
   // TODO: change kP3AEnabled pref
 }
 

@@ -41,7 +41,7 @@ const char kObservingScriptletEntryPoint[] =
 
 const char kScriptletInitScript[] =
     R"((function() {
-          let text = 'let deAmpEnabled = %s;\n' + %s;
+          let text = '(function() {\nlet deAmpEnabled = %s;\n' + %s + '})()';
           let script;
           try {
             script = document.createElement('script');

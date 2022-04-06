@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/brave_wallet/browser/brave_wallet_provider_impl.h"
+#include "brave/components/brave_wallet/browser/ethereum_provider_impl.h"
 
 #include <memory>
 #include <utility>
@@ -90,7 +90,7 @@ const char kMnemonic1[] =
     "divide cruise upon flag harsh carbon filter merit once advice bright "
     "drive";
 
-void ValidateErrorCode(BraveWalletProviderImpl* provider,
+void ValidateErrorCode(EthereumProviderImpl* provider,
                        const std::string& payload,
                        mojom::ProviderError expected) {
   bool callback_is_called = false;
@@ -177,9 +177,9 @@ class TestEventsListener : public brave_wallet::mojom::EventsListener {
   mojo::Receiver<brave_wallet::mojom::EventsListener> observer_receiver_{this};
 };
 
-class BraveWalletProviderImplUnitTest : public testing::Test {
+class EthereumProviderImplUnitTest : public testing::Test {
  public:
-  BraveWalletProviderImplUnitTest()
+  EthereumProviderImplUnitTest()
       : shared_url_loader_factory_(
             base::MakeRefCounted<network::WeakWrapperSharedURLLoaderFactory>(
                 &url_loader_factory_)) {}
@@ -209,7 +209,7 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
         brave_wallet::BraveWalletServiceFactory::GetServiceForContext(
             browser_context());
 
-    provider_ = std::make_unique<BraveWalletProviderImpl>(
+    provider_ = std::make_unique<EthereumProviderImpl>(
         host_content_settings_map(), json_rpc_service(), tx_service(),
         keyring_service(), brave_wallet_service_,
         std::make_unique<brave_wallet::BraveWalletProviderDelegateImpl>(
@@ -346,13 +346,13 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
     return allowed_accounts;
   }
 
-  ~BraveWalletProviderImplUnitTest() override = default;
+  ~EthereumProviderImplUnitTest() override = default;
 
   content::TestWebContents* web_contents() { return web_contents_.get(); }
   TxService* tx_service() { return tx_service_; }
   JsonRpcService* json_rpc_service() { return json_rpc_service_; }
   KeyringService* keyring_service() { return keyring_service_; }
-  BraveWalletProviderImpl* provider() { return provider_.get(); }
+  EthereumProviderImpl* provider() { return provider_.get(); }
   std::string from(size_t from_index = 0) {
     CHECK(!keyring_service_->IsLocked());
     return keyring_service()
@@ -449,7 +449,7 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
               run_loop.Quit();
             }),
         base::Value());
-    // Wait for BraveWalletProviderImpl::ContinueSignMessage
+    // Wait for EthereumProviderImpl::ContinueSignMessage
     browser_task_environment_.RunUntilIdle();
     brave_wallet_service_->NotifySignMessageHardwareRequestProcessed(
         user_approved, provider()->sign_message_id_ - 1, hardware_signature,
@@ -482,7 +482,7 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
               run_loop.Quit();
             }),
         base::Value());
-    // Wait for BraveWalletProviderImpl::ContinueSignMessage
+    // Wait for EthereumProviderImpl::ContinueSignMessage
     browser_task_environment_.RunUntilIdle();
     if (user_approved)
       brave_wallet_service_->NotifySignMessageRequestProcessed(
@@ -545,7 +545,7 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
               run_loop.Quit();
             }),
         base::Value());
-    // Wait for BraveWalletProviderImpl::ContinueSignMessage
+    // Wait for EthereumProviderImpl::ContinueSignMessage
     browser_task_environment_.RunUntilIdle();
     if (user_approved)
       brave_wallet_service_->NotifySignMessageRequestProcessed(
@@ -840,7 +840,7 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
   raw_ptr<TxService> tx_service_;
   raw_ptr<AssetRatioService> asset_ratio_service_;
   std::unique_ptr<content::TestWebContents> web_contents_;
-  std::unique_ptr<BraveWalletProviderImpl> provider_;
+  std::unique_ptr<EthereumProviderImpl> provider_;
   network::TestURLLoaderFactory url_loader_factory_;
   data_decoder::test::InProcessDataDecoder in_process_data_decoder_;
   scoped_refptr<network::SharedURLLoaderFactory> shared_url_loader_factory_;
@@ -848,7 +848,7 @@ class BraveWalletProviderImplUnitTest : public testing::Test {
   TestingProfile profile_;
 };
 
-TEST_F(BraveWalletProviderImplUnitTest, ValidateBrokenPayloads) {
+TEST_F(EthereumProviderImplUnitTest, ValidateBrokenPayloads) {
   ValidateErrorCode(provider(), "", mojom::ProviderError::kInvalidParams);
   ValidateErrorCode(provider(), R"({})", mojom::ProviderError::kInvalidParams);
   ValidateErrorCode(provider(), R"({"params": []})",
@@ -876,8 +876,8 @@ TEST_F(BraveWalletProviderImplUnitTest, ValidateBrokenPayloads) {
                     mojom::ProviderError::kInvalidParams);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, EmptyDelegate) {
-  BraveWalletProviderImpl provider_impl(
+TEST_F(EthereumProviderImplUnitTest, EmptyDelegate) {
+  EthereumProviderImpl provider_impl(
       host_content_settings_map(), json_rpc_service(), tx_service(),
       keyring_service(), brave_wallet_service_, nullptr, prefs());
   ValidateErrorCode(&provider_impl,
@@ -889,7 +889,7 @@ TEST_F(BraveWalletProviderImplUnitTest, EmptyDelegate) {
                     mojom::ProviderError::kInternalError);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, OnAddEthereumChain) {
+TEST_F(EthereumProviderImplUnitTest, OnAddEthereumChain) {
   GURL url("https://brave.com");
   Navigate(url);
   base::RunLoop run_loop;
@@ -941,8 +941,7 @@ TEST_F(BraveWalletProviderImplUnitTest, OnAddEthereumChain) {
       "0x111", mojom::ProviderError::kUserRejectedRequest, "response");
 }
 
-TEST_F(BraveWalletProviderImplUnitTest,
-       OnAddEthereumChainRequestCompletedError) {
+TEST_F(EthereumProviderImplUnitTest, OnAddEthereumChainRequestCompletedError) {
   GURL url("https://brave.com");
   Navigate(url);
   base::RunLoop run_loop;
@@ -973,7 +972,7 @@ TEST_F(BraveWalletProviderImplUnitTest,
   EXPECT_EQ(callback_called, 1u);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddAndApproveTransaction) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApproveTransaction) {
   bool callback_called = false;
   std::string tx_hash;
   CreateWallet();
@@ -1043,7 +1042,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddAndApproveTransaction) {
   EXPECT_EQ(infos[0]->tx_hash, tx_hash);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddAndApproveTransactionError) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApproveTransactionError) {
   // We don't need to check every error type since that is checked by
   // eth_tx_manager_unittest but make sure an error type is handled
   // correctly.
@@ -1089,7 +1088,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddAndApproveTransactionError) {
   EXPECT_TRUE(callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddAndApproveTransactionNoPermission) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApproveTransactionNoPermission) {
   bool callback_called = false;
   CreateWallet();
   std::string normalized_json_request =
@@ -1128,7 +1127,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddAndApproveTransactionNoPermission) {
   EXPECT_TRUE(callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddAndApprove1559Transaction) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApprove1559Transaction) {
   bool callback_called = false;
   std::string tx_hash;
   CreateWallet();
@@ -1193,7 +1192,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddAndApprove1559Transaction) {
   EXPECT_EQ(infos[0]->tx_hash, tx_hash);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddAndApprove1559TransactionNoChainId) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApprove1559TransactionNoChainId) {
   std::string tx_hash;
   CreateWallet();
   AddAccount();
@@ -1261,7 +1260,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddAndApprove1559TransactionNoChainId) {
   EXPECT_EQ(infos[1]->tx_data_union->get_eth_tx_data_1559()->chain_id, "0x4");
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddAndApprove1559TransactionError) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApprove1559TransactionError) {
   // We don't need to check every error type since that is checked by
   // eth_tx_manager_unittest but make sure an error type is handled
   // correctly.
@@ -1307,8 +1306,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddAndApprove1559TransactionError) {
   EXPECT_TRUE(callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest,
-       AddAndApprove1559TransactionNoPermission) {
+TEST_F(EthereumProviderImplUnitTest, AddAndApprove1559TransactionNoPermission) {
   bool callback_called = false;
   CreateWallet();
   std::string normalized_json_request =
@@ -1346,7 +1344,7 @@ TEST_F(BraveWalletProviderImplUnitTest,
   EXPECT_TRUE(callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, RequestEthereumPermissionNotNewSetup) {
+TEST_F(EthereumProviderImplUnitTest, RequestEthereumPermissionNotNewSetup) {
   bool new_setup_callback_called = false;
   SetCallbackForNewSetupNeededForTesting(
       base::BindLambdaForTesting([&]() { new_setup_callback_called = true; }));
@@ -1362,8 +1360,7 @@ TEST_F(BraveWalletProviderImplUnitTest, RequestEthereumPermissionNotNewSetup) {
   EXPECT_FALSE(new_setup_callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest,
-       RequestEthereumPermissionsNoPermission) {
+TEST_F(EthereumProviderImplUnitTest, RequestEthereumPermissionsNoPermission) {
   bool new_setup_callback_called = false;
   SetCallbackForNewSetupNeededForTesting(
       base::BindLambdaForTesting([&]() { new_setup_callback_called = true; }));
@@ -1389,7 +1386,7 @@ TEST_F(BraveWalletProviderImplUnitTest,
   EXPECT_FALSE(new_setup_callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, RequestEthereumPermissionsNoWallet) {
+TEST_F(EthereumProviderImplUnitTest, RequestEthereumPermissionsNoWallet) {
   bool new_setup_callback_called = false;
   SetCallbackForNewSetupNeededForTesting(
       base::BindLambdaForTesting([&]() { new_setup_callback_called = true; }));
@@ -1412,8 +1409,7 @@ TEST_F(BraveWalletProviderImplUnitTest, RequestEthereumPermissionsNoWallet) {
   EXPECT_TRUE(new_setup_callback_called);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest,
-       RequestEthereumPermissionsWithAccounts) {
+TEST_F(EthereumProviderImplUnitTest, RequestEthereumPermissionsWithAccounts) {
   CreateWallet();
   AddAccount();
   AddAccount();
@@ -1444,7 +1440,7 @@ TEST_F(BraveWalletProviderImplUnitTest,
             (std::vector<std::string>{from(0), from(1)}));
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, RequestEthereumPermissionsLocked) {
+TEST_F(EthereumProviderImplUnitTest, RequestEthereumPermissionsLocked) {
   CreateWallet();
   AddAccount();
   GURL url("https://brave.com");
@@ -1489,7 +1485,7 @@ TEST_F(BraveWalletProviderImplUnitTest, RequestEthereumPermissionsLocked) {
   EXPECT_EQ(allowed_accounts, std::vector<std::string>{account0});
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, SignMessage) {
+TEST_F(EthereumProviderImplUnitTest, SignMessage) {
   CreateWallet();
   AddAccount();
   std::string signature;
@@ -1558,7 +1554,7 @@ TEST_F(BraveWalletProviderImplUnitTest, SignMessage) {
                                       base::ASCIIToUTF16(addresses[0])));
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, RecoverAddress) {
+TEST_F(EthereumProviderImplUnitTest, RecoverAddress) {
   CreateWallet();
   AddAccount();
 
@@ -1612,7 +1608,7 @@ TEST_F(BraveWalletProviderImplUnitTest, RecoverAddress) {
             l10n_util::GetStringUTF8(IDS_WALLET_INVALID_PARAMETERS));
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, SignTypedMessage) {
+TEST_F(EthereumProviderImplUnitTest, SignTypedMessage) {
   EXPECT_EQ(json_rpc_service()->GetChainId(mojom::CoinType::ETH), "0x1");
   CreateWallet();
   AddAccount();
@@ -1744,7 +1740,7 @@ TEST_F(BraveWalletProviderImplUnitTest, SignTypedMessage) {
                                       base::ASCIIToUTF16(addresses[0])));
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, SignMessageRequestQueue) {
+TEST_F(EthereumProviderImplUnitTest, SignMessageRequestQueue) {
   CreateWallet();
   AddAccount();
   std::string hardware = "0xA99D71De40D67394eBe68e4D0265cA6C9D421029";
@@ -1834,7 +1830,7 @@ TEST_F(BraveWalletProviderImplUnitTest, SignMessageRequestQueue) {
   EXPECT_EQ(GetPendingSignMessageRequests().size(), 0u);
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, ChainChangedEvent) {
+TEST_F(EthereumProviderImplUnitTest, ChainChangedEvent) {
   EXPECT_FALSE(observer_->ChainChangedFired());
   SetNetwork(mojom::kRinkebyChainId);
   EXPECT_TRUE(observer_->ChainChangedFired());
@@ -1847,7 +1843,7 @@ TEST_F(BraveWalletProviderImplUnitTest, ChainChangedEvent) {
   EXPECT_EQ(mojom::kMainnetChainId, observer_->GetChainId());
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AccountsChangedEvent) {
+TEST_F(EthereumProviderImplUnitTest, AccountsChangedEvent) {
   CreateWallet();
   AddAccount();
   AddAccount();
@@ -1878,7 +1874,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AccountsChangedEvent) {
   EXPECT_FALSE(observer_->AccountsChangedFired());
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, Web3ClientVersion) {
+TEST_F(EthereumProviderImplUnitTest, Web3ClientVersion) {
   std::string expected_version = base::StringPrintf(
       "BraveWallet/v%s", version_info::GetBraveChromiumVersionNumber().c_str());
   std::string version;
@@ -1890,7 +1886,7 @@ TEST_F(BraveWalletProviderImplUnitTest, Web3ClientVersion) {
   EXPECT_TRUE(error_message.empty());
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AccountsChangedEventSelectedAccount) {
+TEST_F(EthereumProviderImplUnitTest, AccountsChangedEventSelectedAccount) {
   CreateWallet();
   AddAccount();
   AddAccount();
@@ -1937,7 +1933,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AccountsChangedEventSelectedAccount) {
   observer_->Reset();
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, GetAllowedAccounts) {
+TEST_F(EthereumProviderImplUnitTest, GetAllowedAccounts) {
   CreateWallet();
   AddAccount();
   AddAccount();
@@ -1999,7 +1995,7 @@ TEST_F(BraveWalletProviderImplUnitTest, GetAllowedAccounts) {
   EXPECT_EQ(GetAllowedAccounts(true), std::vector<std::string>());
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, SignMessageHardware) {
+TEST_F(EthereumProviderImplUnitTest, SignMessageHardware) {
   CreateWallet();
   std::string address = "0xA99D71De40D67394eBe68e4D0265cA6C9D421029";
   AddHardwareAccount(address);
@@ -2036,7 +2032,7 @@ TEST_F(BraveWalletProviderImplUnitTest, SignMessageHardware) {
             l10n_util::GetStringUTF8(IDS_WALLET_USER_REJECTED_REQUEST));
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, SwitchEthereumChain) {
+TEST_F(EthereumProviderImplUnitTest, SwitchEthereumChain) {
   // CreateWallet();
   CreateBraveWalletTabHelper();
   Navigate(GURL("https://bravesoftware.com"));
@@ -2099,7 +2095,7 @@ TEST_F(BraveWalletProviderImplUnitTest, SwitchEthereumChain) {
   EXPECT_EQ(json_rpc_service()->GetChainId(mojom::CoinType::ETH), "0x1");
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddEthereumChainSwitchesForInnactive) {
+TEST_F(EthereumProviderImplUnitTest, AddEthereumChainSwitchesForInnactive) {
   CreateBraveWalletTabHelper();
   Navigate(GURL("https://bravesoftware.com"));
   brave_wallet_tab_helper()->SetSkipDelegateForTesting(true);
@@ -2134,7 +2130,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddEthereumChainSwitchesForInnactive) {
   EXPECT_EQ(json_rpc_service()->GetChainId(mojom::CoinType::ETH), "0x3");
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, AddSuggestToken) {
+TEST_F(EthereumProviderImplUnitTest, AddSuggestToken) {
   CreateBraveWalletTabHelper();
   Navigate(GURL("https://brave.com"));
   brave_wallet_tab_helper()->SetSkipDelegateForTesting(true);
@@ -2161,7 +2157,7 @@ TEST_F(BraveWalletProviderImplUnitTest, AddSuggestToken) {
   EXPECT_FALSE(error_message.empty());
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, GetEncryptionPublicKey) {
+TEST_F(EthereumProviderImplUnitTest, GetEncryptionPublicKey) {
   RestoreWallet(kMnemonic1, "brave", false);
   CreateBraveWalletTabHelper();
   GURL url("https://brave.com");
@@ -2208,7 +2204,7 @@ TEST_F(BraveWalletProviderImplUnitTest, GetEncryptionPublicKey) {
   EXPECT_FALSE(error_message.empty());
 }
 
-TEST_F(BraveWalletProviderImplUnitTest, Decrypt) {
+TEST_F(EthereumProviderImplUnitTest, Decrypt) {
   RestoreWallet(kMnemonic1, "brave", false);
   CreateBraveWalletTabHelper();
   GURL url("https://brave.com");

@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_BRAVE_WALLET_PROVIDER_IMPL_H_
-#define BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_BRAVE_WALLET_PROVIDER_IMPL_H_
+#ifndef BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_ETHEREUM_PROVIDER_IMPL_H_
+#define BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_ETHEREUM_PROVIDER_IMPL_H_
 
 #include <map>
 #include <memory>
@@ -32,8 +32,8 @@ class JsonRpcService;
 class KeyringService;
 class TxService;
 
-class BraveWalletProviderImpl final
-    : public mojom::BraveWalletProvider,
+class EthereumProviderImpl final
+    : public mojom::EthereumProvider,
       public mojom::JsonRpcServiceObserver,
       public mojom::TxServiceObserver,
       public brave_wallet::mojom::KeyringServiceObserver,
@@ -44,16 +44,16 @@ class BraveWalletProviderImpl final
                               mojom::ProviderError error,
                               const std::string& error_message)>;
 
-  BraveWalletProviderImpl(const BraveWalletProviderImpl&) = delete;
-  BraveWalletProviderImpl& operator=(const BraveWalletProviderImpl&) = delete;
-  BraveWalletProviderImpl(HostContentSettingsMap* host_content_settings_map,
-                          JsonRpcService* json_rpc_service,
-                          TxService* tx_service,
-                          KeyringService* keyring_service,
-                          BraveWalletService* brave_wallet_service,
-                          std::unique_ptr<BraveWalletProviderDelegate> delegate,
-                          PrefService* prefs);
-  ~BraveWalletProviderImpl() override;
+  EthereumProviderImpl(const EthereumProviderImpl&) = delete;
+  EthereumProviderImpl& operator=(const EthereumProviderImpl&) = delete;
+  EthereumProviderImpl(HostContentSettingsMap* host_content_settings_map,
+                       JsonRpcService* json_rpc_service,
+                       TxService* tx_service,
+                       KeyringService* keyring_service,
+                       BraveWalletService* brave_wallet_service,
+                       std::unique_ptr<BraveWalletProviderDelegate> delegate,
+                       PrefService* prefs);
+  ~EthereumProviderImpl() override;
 
   void Request(base::Value input,
                const std::string& origin,
@@ -137,20 +137,20 @@ class BraveWalletProviderImpl final
                        base::Value id);
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest, OnAddEthereumChain);
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest,
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest, OnAddEthereumChain);
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest,
                            OnAddEthereumChainRequestCompletedError);
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest,
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest,
                            OnAddEthereumChainRequestCompletedSuccess);
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest,
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest,
                            AddAndApproveTransaction);
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest,
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest,
                            RequestEthereumPermissionsNoPermission);
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest,
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest,
                            RequestEthereumPermissionsNoWallet);
-  FRIEND_TEST_ALL_PREFIXES(BraveWalletProviderImplUnitTest,
+  FRIEND_TEST_ALL_PREFIXES(EthereumProviderImplUnitTest,
                            RequestEthereumPermissionsLocked);
-  friend class BraveWalletProviderImplUnitTest;
+  friend class EthereumProviderImplUnitTest;
 
   // mojom::JsonRpcServiceObserver
   void ChainChangedEvent(const std::string& chain_id,
@@ -333,9 +333,9 @@ class BraveWalletProviderImpl final
   std::vector<std::string> known_allowed_accounts;
   bool first_known_accounts_check = true;
   PrefService* prefs_ = nullptr;
-  base::WeakPtrFactory<BraveWalletProviderImpl> weak_factory_;
+  base::WeakPtrFactory<EthereumProviderImpl> weak_factory_;
 };
 
 }  // namespace brave_wallet
 
-#endif  // BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_BRAVE_WALLET_PROVIDER_IMPL_H_
+#endif  // BRAVE_COMPONENTS_BRAVE_WALLET_BROWSER_ETHEREUM_PROVIDER_IMPL_H_

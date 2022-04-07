@@ -176,7 +176,6 @@ class EthereumProviderImpl final
 
   void OnChainApprovalResult(const std::string& chain_id,
                              const std::string& error);
-  void OnConnectionError();
   void OnAddUnapprovedTransaction(RequestCallback callback,
                                   base::Value id,
                                   const std::string& tx_meta_id,

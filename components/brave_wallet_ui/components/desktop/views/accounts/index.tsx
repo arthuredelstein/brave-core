@@ -74,11 +74,7 @@ export interface Props {
   onUpdateAccountName: (payload: UpdateAccountNamePayloadType) => { success: boolean }
   onRemoveAccount: (address: string, hardware: boolean, coin: BraveWallet.CoinType) => void
   onSelectAccount: (account: WalletAccountType) => void
-  onSelectAsset: (token: BraveWallet.BlockchainToken) => void
   goBack: () => void
-  onRetryTransaction: (transaction: BraveWallet.TransactionInfo) => void
-  onSpeedupTransaction: (transaction: BraveWallet.TransactionInfo) => void
-  onCancelTransaction: (transaction: BraveWallet.TransactionInfo) => void
 }
 
 function Accounts (props: Props) {
@@ -94,16 +90,12 @@ function Accounts (props: Props) {
     networkList,
     goBack,
     onSelectAccount,
-    onSelectAsset,
     onViewPrivateKey,
     onDoneViewingPrivateKey,
     toggleNav,
     onClickAddAccount,
     onUpdateAccountName,
-    onRemoveAccount,
-    onRetryTransaction,
-    onSpeedupTransaction,
-    onCancelTransaction
+    onRemoveAccount
   } = props
 
   const getBalance = useBalance(networkList)
@@ -351,11 +343,6 @@ function Accounts (props: Props) {
                   transactionSpotPrices={transactionSpotPrices}
                   visibleTokens={userVisibleTokensInfo}
                   displayAccountName={false}
-                  onSelectAccount={onSelectAccount}
-                  onSelectAsset={onSelectAsset}
-                  onRetryTransaction={onRetryTransaction}
-                  onSpeedupTransaction={onSpeedupTransaction}
-                  onCancelTransaction={onCancelTransaction}
                 />
               )}
             </>

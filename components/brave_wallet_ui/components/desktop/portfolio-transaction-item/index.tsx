@@ -1,13 +1,15 @@
 import * as React from 'react'
 import * as EthereumBlockies from 'ethereum-blockies'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { getLocale } from '../../../../common/locale'
 import {
   BraveWallet,
   WalletAccountType,
   DefaultCurrencies,
-  WalletState
+  WalletState,
+  PageState,
+  WalletRoutes
 } from '../../../constants/types'
 
 // Utils
@@ -49,6 +51,8 @@ import { StatusBubble } from '../../shared/style'
 import TransactionFeesTooltip from '../transaction-fees-tooltip'
 import TransactionPopup, { TransactionPopupItem } from '../transaction-popup'
 import TransactionTimestampTooltip from '../transaction-timestamp-tooltip'
+import { WalletActions } from '../../../common/actions'
+import { useHistory } from 'react-router'
 
 export interface Props {
   selectedNetwork: BraveWallet.NetworkInfo
@@ -59,35 +63,36 @@ export interface Props {
   transactionSpotPrices: BraveWallet.AssetPrice[]
   displayAccountName: boolean
   defaultCurrencies: DefaultCurrencies
-  onSelectAccount: (account: WalletAccountType) => void
-  onSelectAsset: (asset: BraveWallet.BlockchainToken) => void
-  onRetryTransaction: (transaction: BraveWallet.TransactionInfo) => void
-  onSpeedupTransaction: (transaction: BraveWallet.TransactionInfo) => void
-  onCancelTransaction: (transaction: BraveWallet.TransactionInfo) => void
 }
 
 const PortfolioTransactionItem = (props: Props) => {
   const {
     transaction,
     account,
-    selectedNetwork,
     visibleTokens,
-    transactionSpotPrices,
-    displayAccountName,
-    accounts,
-    defaultCurrencies,
-    onSelectAccount,
-    onSelectAsset,
-    onRetryTransaction,
-    onSpeedupTransaction,
-    onCancelTransaction
+    displayAccountName
   } = props
+
+  // routing
+  const history = useHistory()
+
+  // redux
+  const dispatch = useDispatch()
+  const {
+    defaultNetworks,
+    selectedNetwork,
+    transactionSpotPrices,
+    accounts,
+    defaultCurrencies
+  } = useSelector(({ wallet }: { wallet: WalletState }) => wallet)
+  const {
+    selectedTimeline
+  } = useSelector(({ page }: { page: PageState }) => page)
+
+  // state
   const [showTransactionPopup, setShowTransactionPopup] = React.useState<boolean>(false)
 
-  const {
-    defaultNetworks
-  } = useSelector(({ wallet }: { wallet: WalletState }) => wallet)
-
+  // memos
   const transactionsNetwork = React.useMemo(() => {
     return getNetworkFromTXDataUnion(transaction.txDataUnion, defaultNetworks, selectedNetwork)
   }, [defaultNetworks, transaction, selectedNetwork])
@@ -166,6 +171,30 @@ const PortfolioTransactionItem = (props: Props) => {
     if (asset) {
       onSelectAsset(asset)
     }
+  }
+
+  const onCancelTransaction = (transaction: BraveWallet.TransactionInfo) => {
+    dispatch(WalletActions.cancelTransaction(transaction))
+  }
+
+  const onSpeedupTransaction = (transaction: BraveWallet.TransactionInfo) => {
+    dispatch(WalletActions.speedupTransaction(transaction))
+  }
+
+  const onRetryTransaction = (transaction: BraveWallet.TransactionInfo) => {
+    dispatch(WalletActions.retryTransaction(transaction))
+  }
+
+  const onSelectAsset = React.useCallback((asset: BraveWallet.BlockchainToken) => {
+    if (asset.contractAddress === '') {
+      history.push(`${WalletRoutes.Portfolio}/${asset.symbol}`)
+      return
+    }
+    history.push(`${WalletRoutes.Portfolio}/${asset.contractAddress}`)
+  }, [selectedTimeline])
+
+  const onSelectAccount = (account: WalletAccountType) => {
+    history.push(`${WalletRoutes.Accounts}/${account.address}`)
   }
 
   const transactionIntentLocale = React.useMemo(() => {
@@ -275,6 +304,7 @@ const PortfolioTransactionItem = (props: Props) => {
     }
   }, [transactionDetails])
 
+  // render
   return (
     <StyledWrapper onClick={onHideTransactionPopup}>
       <TransactionDetailRow>

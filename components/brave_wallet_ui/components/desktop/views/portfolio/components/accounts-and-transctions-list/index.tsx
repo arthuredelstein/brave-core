@@ -1,11 +1,12 @@
 import * as React from 'react'
+import { useSelector } from 'react-redux'
 
 // Types
 import {
   BraveWallet,
-  DefaultCurrencies,
   WalletAccountType,
-  AddAccountNavTypes
+  AddAccountNavTypes,
+  WalletState
 } from '../../../../../../constants/types'
 
 // Utils
@@ -34,60 +35,65 @@ import {
   DividerRow,
   CoinGeckoText
 } from '../../style'
+import { getTokensCoinType, getTokensNetwork } from '../../../../../../utils/network-utils'
 
 export interface Props {
-  transactionSpotPrices: BraveWallet.AssetPrice[]
-  defaultCurrencies: DefaultCurrencies
   selectedAsset: BraveWallet.BlockchainToken | undefined
-  accounts: WalletAccountType[]
-  selectedNetwork: BraveWallet.NetworkInfo
   networkList: BraveWallet.NetworkInfo[]
   fullAssetFiatBalance: Amount
   formattedFullAssetBalance: string
   selectedAssetTransactions: BraveWallet.TransactionInfo[]
-  userVisibleTokensInfo: BraveWallet.BlockchainToken[]
   hideBalances: boolean
-  onSelectAccount: (account: WalletAccountType) => void
   onClickAddAccount: (tabId: AddAccountNavTypes) => () => void
-  onSelectAsset: (asset: BraveWallet.BlockchainToken | undefined) => () => void
-  onRetryTransaction: (transaction: BraveWallet.TransactionInfo) => void
-  onSpeedupTransaction: (transaction: BraveWallet.TransactionInfo) => void
-  onCancelTransaction: (transaction: BraveWallet.TransactionInfo) => void
 }
 
 const AccountsAndTransactionsList = (props: Props) => {
   const {
-    selectedNetwork,
-    transactionSpotPrices,
-    defaultCurrencies,
     selectedAsset,
-    accounts,
     fullAssetFiatBalance,
     formattedFullAssetBalance,
     selectedAssetTransactions,
-    userVisibleTokensInfo,
     hideBalances,
     networkList,
-    onSelectAccount,
-    onClickAddAccount,
-    onSelectAsset,
-    onCancelTransaction,
-    onRetryTransaction,
-    onSpeedupTransaction
+    onClickAddAccount
   } = props
+
+  // redux
+  const {
+    transactionSpotPrices,
+    accounts,
+    defaultCurrencies,
+    userVisibleTokensInfo,
+    selectedNetwork
+  } = useSelector(({ wallet }: { wallet: WalletState }) => wallet)
+
+  const selectedAssetsNetwork = React.useMemo(() => {
+    if (!selectedAsset) {
+      return selectedNetwork
+    }
+    return getTokensNetwork(networkList, selectedAsset)
+  }, [selectedNetwork, selectedAsset, networkList])
+
+  const filteredAccountsByCoinType = React.useMemo(() => {
+    if (!selectedAsset) {
+      return []
+    }
+    const coinType = getTokensCoinType(networkList, selectedAsset)
+    return accounts.filter((account) => account.coin === coinType)
+  }, [networkList, accounts, selectedAsset])
 
   const getBalance = useBalance(networkList)
 
-  const findAccount = (address: string): WalletAccountType | undefined => {
-    return accounts.find((account) => address === account.address)
-  }
+  const findAccount = React.useCallback((address: string): WalletAccountType | undefined => {
+    return filteredAccountsByCoinType.find((account) => address === account.address)
+  }, [filteredAccountsByCoinType])
 
   const accountsList = React.useMemo(() => {
     if (selectedAsset?.isErc721) {
-      return accounts.filter((account) => Number(account.nativeBalanceRegistry[selectedNetwork.chainId] ?? 0) !== 0)
+      return filteredAccountsByCoinType.filter((account) => Number(account.nativeBalanceRegistry[selectedAssetsNetwork.chainId] ?? 0) !== 0)
     }
-    return accounts
-  }, [selectedAsset, accounts])
+    return filteredAccountsByCoinType
+  }, [selectedAsset, filteredAccountsByCoinType])
 
   return (
     <>
@@ -117,7 +123,7 @@ const AccountsAndTransactionsList = (props: Props) => {
               name={account.name}
               address={account.address}
               assetBalance={getBalance(account, selectedAsset)}
-              selectedNetwork={selectedNetwork}
+              selectedNetwork={selectedAssetsNetwork}
               hideBalances={hideBalances}
             />
           )}
@@ -136,18 +142,13 @@ const AccountsAndTransactionsList = (props: Props) => {
                 <PortfolioTransactionItem
                   defaultCurrencies={defaultCurrencies}
                   key={transaction.id}
-                  selectedNetwork={selectedNetwork}
-                  accounts={accounts}
+                  selectedNetwork={selectedAssetsNetwork}
+                  accounts={filteredAccountsByCoinType}
                   transaction={transaction}
                   account={findAccount(transaction.fromAddress)}
                   transactionSpotPrices={transactionSpotPrices}
                   visibleTokens={userVisibleTokensInfo}
                   displayAccountName={true}
-                  onSelectAccount={onSelectAccount}
-                  onSelectAsset={onSelectAsset}
-                  onRetryTransaction={onRetryTransaction}
-                  onSpeedupTransaction={onSpeedupTransaction}
-                  onCancelTransaction={onCancelTransaction}
                 />
               )}
             </>

@@ -136,7 +136,16 @@ void AdsTabHelper::DocumentOnLoadCompletedInPrimaryMainFrame() {
     return;
   }
 
-  RunIsolatedJavaScript(web_contents()->GetMainFrame());
+  content::RenderFrameHost* render_frame_host = web_contents()->GetMainFrame();
+  if (search_ad_metadata_handler_.IsAllowedBraveSearchHost(
+          render_frame_host->GetLastCommittedURL())) {
+    search_ad_metadata_handler_.RetrieveSearchAdMetadata(
+        render_frame_host,
+        base::BindOnce(&AdsTabHelper::OnRetrieveSearchAdMetadata,
+                       weak_factory_.GetWeakPtr()));
+  }
+
+  RunIsolatedJavaScript(render_frame_host);
 }
 
 void AdsTabHelper::DidFinishLoad(content::RenderFrameHost* render_frame_host,
@@ -145,13 +154,6 @@ void AdsTabHelper::DidFinishLoad(content::RenderFrameHost* render_frame_host,
 
   if (render_frame_host->GetParent()) {
     return;
-  }
-
-  if (search_ad_metadata_handler_.IsAllowedBraveSearchHost(validated_url)) {
-    search_ad_metadata_handler_.RetrieveSearchAdMetadata(
-        render_frame_host,
-        base::BindOnce(&AdsTabHelper::OnRetrieveSearchAdMetadata,
-                       weak_factory_.GetWeakPtr()));
   }
 
   TabUpdated();

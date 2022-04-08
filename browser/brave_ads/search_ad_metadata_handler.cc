@@ -33,7 +33,7 @@ constexpr char kContextPropertyName[] = "@context";
 
 constexpr char kTypePropertyName[] = "@type";
 
-constexpr char kDataUuid[] = "data-uuid";
+constexpr char kDataPlacementId[] = "data-placement-id";
 
 constexpr char kDataCreativeInstanceId[] = "data-creative-instance-id";
 
@@ -69,10 +69,10 @@ constexpr auto kVettedBraveSearchHosts =
          "search.bravesoftware.com"});
 
 constexpr auto kSearchAdAttributes = base::MakeFixedFlatSet<base::StringPiece>(
-    {kDataUuid, kDataCreativeInstanceId, kDataCreativeSetId, kDataCampaignId,
-     kDataAdvertiserId, kDataLandingPage, kDataHeadlineText, kDataDescription,
-     kDataRewardsValue, kDataConverionTypeValue, kDataConverionUrlPatternValue,
-     kDataConverionAdvertiserPublicKeyValue,
+    {kDataPlacementId, kDataCreativeInstanceId, kDataCreativeSetId,
+     kDataCampaignId, kDataAdvertiserId, kDataLandingPage, kDataHeadlineText,
+     kDataDescription, kDataRewardsValue, kDataConverionTypeValue,
+     kDataConverionUrlPatternValue, kDataConverionAdvertiserPublicKeyValue,
      kDataConverionObservationWindowValue});
 
 bool GetStringValue(const schema_org::mojom::PropertyPtr& ad_property,
@@ -130,8 +130,8 @@ bool SetSearchAdProperty(const schema_org::mojom::PropertyPtr& ad_property,
 
   const std::string& name = ad_property->name;
 
-  if (name == kDataUuid) {
-    return GetStringValue(ad_property, &(*search_ad)->uuid);
+  if (name == kDataPlacementId) {
+    return GetStringValue(ad_property, &(*search_ad)->placement_id);
   } else if (name == kDataCreativeInstanceId) {
     return GetStringValue(ad_property, &(*search_ad)->creative_instance_id);
   } else if (name == kDataCreativeSetId) {
@@ -295,9 +295,6 @@ void SearchAdMetadataHandler::OnRetrieveSearchAdMetadataEntities(
     std::move(callback).Run(SearchResultAdsList());
     return;
   }
-
-  // TODO(https://github.com/brave/brave-browser/issues/20852):
-  // Send search ads list to Ads Service.
 
   SearchResultAdsList search_ads = ParseMetadataEntities(std::move(web_page));
   std::move(callback).Run(std::move(search_ads));

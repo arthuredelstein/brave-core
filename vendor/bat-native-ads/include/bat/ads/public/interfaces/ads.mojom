@@ -64,7 +64,7 @@ enum InlineContentAdEventType {
 
 struct SearchResultAd {
   AdType type = kSearchResultAd;
-  string uuid;
+  string placement_id;
   string creative_instance_id;
   string creative_set_id;
   string campaign_id;

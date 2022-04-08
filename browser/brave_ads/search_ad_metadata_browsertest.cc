@@ -32,7 +32,8 @@ void CheckSampleSearchAdMetadataList(
   for (size_t i = 0; i < ads_list.size(); ++i) {
     const auto& search_ad = ads_list[i];
     const std::string index = base::StrCat({"-", base::NumberToString(i + 1)});
-    EXPECT_EQ(search_ad->uuid, base::StrCat({"data-uuid", index}));
+    EXPECT_EQ(search_ad->placement_id,
+              base::StrCat({"data-placement-id", index}));
     EXPECT_EQ(search_ad->creative_instance_id,
               base::StrCat({"data-creative-instance-id", index}));
     EXPECT_EQ(search_ad->creative_set_id,

@@ -1904,12 +1904,7 @@ IN_PROC_BROWSER_TEST_F(AdBlockServiceTest, CosmeticFilteringHide1pContent) {
 }
 
 // Test cosmetic filtering on elements added dynamically
-<<<<<<< HEAD
-IN_PROC_BROWSER_TEST_F(AdBlockServiceTest, CosmeticFilteringDynamic) {
-  ASSERT_TRUE(InstallDefaultAdBlockExtension());
-=======
 IN_PROC_BROWSER_TEST_F(AdBlockServiceTest, DISABLED_CosmeticFilteringDynamic) {
->>>>>>> parent of bc8e4c25e6 (Merge pull request #12038 from brave/cosmetic-filtering-fixes)
   UpdateAdBlockInstanceWithRules("##.blockme");
 
   GURL tab_url =
@@ -2158,7 +2153,6 @@ IN_PROC_BROWSER_TEST_F(AdBlockServiceTest, CosmeticFilteringIframeScriptlet) {
   ASSERT_EQ(true, EvalJs(contents, "show_ad"));
 }
 
-<<<<<<< HEAD
 // Test cosmetic filtering on an element that already has an `!important`
 // marker on its `display` style.
 IN_PROC_BROWSER_TEST_F(AdBlockServiceTest,
@@ -2187,8 +2181,6 @@ IN_PROC_BROWSER_TEST_F(AdBlockServiceTest,
   EXPECT_EQ(base::Value(true), result_first.value);
 }
 
-=======
->>>>>>> parent of bc8e4c25e6 (Merge pull request #12038 from brave/cosmetic-filtering-fixes)
 class DefaultCookieListFlagEnabledTest : public AdBlockServiceTest {
  public:
   DefaultCookieListFlagEnabledTest() {

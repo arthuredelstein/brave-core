@@ -488,13 +488,23 @@ void CosmeticFiltersJSHandler::OnHiddenClassIdSelectors(base::Value result) {
       result.FindListKey("force_hide_selectors");
   DCHECK(force_hide_selectors);
 
-  if (force_hide_selectors->GetList().size() != 0) {
-    std::string stylesheet = "";
-    for (auto& selector : force_hide_selectors->GetList()) {
-      DCHECK(selector.is_string());
-      stylesheet += selector.GetString() + "{display:none !important}";
+  blink::WebLocalFrame* web_frame = render_frame_->GetWebFrame();
+
+  if (force_hide_selectors &&
+      force_hide_selectors->GetList().size() != 0) {
+    std::string json_selectors;
+    if (!base::JSONWriter::Write(*force_hide_selectors, &json_selectors) ||
+        json_selectors.empty()) {
+      json_selectors = "[]";
     }
-    InjectStylesheet(stylesheet, 0);
+    // Building a script for stylesheet modifications
+    std::string new_selectors_script = base::StringPrintf(
+        kForceHideSelectorsInjectScript, json_selectors.c_str());
+    web_frame->ExecuteScriptInIsolatedWorld(
+        isolated_world_id_,
+        blink::WebScriptSource(
+            blink::WebString::FromUTF8(new_selectors_script)),
+        blink::BackForwardCacheAware::kAllow);
   }
 
   // If its a vetted engine AND we're not in aggressive
@@ -502,7 +512,6 @@ void CosmeticFiltersJSHandler::OnHiddenClassIdSelectors(base::Value result) {
   if (!enabled_1st_party_cf_ && IsVettedSearchEngine(url_))
     return;
 
-  blink::WebLocalFrame* web_frame = render_frame_->GetWebFrame();
   std::string json_selectors;
   if (!base::JSONWriter::Write(*hide_selectors, &json_selectors) ||
       json_selectors.empty()) {

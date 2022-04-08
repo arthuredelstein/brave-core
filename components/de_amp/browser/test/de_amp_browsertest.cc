@@ -58,20 +58,18 @@ const char kTestNonAmpBody[] =
 class DeAmpBrowserTest : public InProcessBrowserTest {
  public:
   DeAmpBrowserTest() {
+    std::vector<base::Feature> disabled_features = {};
+#if BUILDFLAG(IS_MAC)
+    // On Mac, the DeAmpBrowserTest.AmpURLNotStoredInHistory test crashes
+    // due to https://crbug.com/1284500: DCHECK in
+    // blink::ContentToVisibleTimeReporter::TabWasShown when BFCache is
+    // used. To get around the crash, disabling BFCache for these tests
+    // until the upstream bug is fixed.
+    disabled_features.push_back({features::kBackForwardCache});
+#endif  // BUILDFLAG(IS_MAC)
     feature_list_.InitWithFeatures(
         /*enabled_features*/ {de_amp::features::kBraveDeAMP},
-        /*disabled_features*/
-#if BUILDFLAG(IS_MAC)
-        // On Mac, the DeAmpBrowserTest.AmpURLNotStoredInHistory test crashes
-        // due to https://crbug.com/1284500: DCHECK in
-        // blink::ContentToVisibleTimeReporter::TabWasShown when BFCache is
-        // used. To get around the crash, disabling BFCache for these tests
-        // until the upstream bug is fixed.
-        { features::kBackForwardCache }
-#else
-        {}
-#endif  // BUILDFLAG(IS_MAC)
-    );
+        disabled_features);
   }
 
   void SetUpOnMainThread() override {

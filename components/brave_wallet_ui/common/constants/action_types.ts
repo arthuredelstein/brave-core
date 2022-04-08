@@ -88,11 +88,13 @@ export type SitePermissionsPayloadType = {
 }
 
 export type RemoveSitePermissionPayloadType = {
+  coin: BraveWallet.CoinType
   origin: string
   account: string
 }
 
 export type AddSitePermissionPayloadType = {
+  coin: BraveWallet.CoinType
   origin: string
   account: string
 }

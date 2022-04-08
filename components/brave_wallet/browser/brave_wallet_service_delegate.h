@@ -26,9 +26,12 @@ class BraveWalletServiceDelegate {
   using IsExternalWalletInitializedCallback = base::OnceCallback<void(bool)>;
   using GetImportInfoCallback =
       base::OnceCallback<void(bool, ImportInfo, ImportError)>;
-  using AddEthereumPermissionCallback = base::OnceCallback<void(bool)>;
-  using HasEthereumPermissionCallback = base::OnceCallback<void(bool, bool)>;
-  using ResetEthereumPermissionCallback = base::OnceCallback<void(bool)>;
+  using AddPermissionCallback =
+      mojom::BraveWalletService::AddPermissionCallback;
+  using HasPermissionCallback =
+      mojom::BraveWalletService::HasPermissionCallback;
+  using ResetPermissionCallback =
+      mojom::BraveWalletService::ResetPermissionCallback;
   using GetActiveOriginCallback =
       mojom::BraveWalletService::GetActiveOriginCallback;
 
@@ -53,16 +56,18 @@ class BraveWalletServiceDelegate {
   virtual void GetImportInfoFromExternalWallet(mojom::ExternalWalletType type,
                                                const std::string& password,
                                                GetImportInfoCallback callback);
-  virtual void AddEthereumPermission(const std::string& origin,
-                                     const std::string& account,
-                                     AddEthereumPermissionCallback callback);
-  virtual void HasEthereumPermission(const std::string& origin,
-                                     const std::string& account,
-                                     HasEthereumPermissionCallback callback);
-  virtual void ResetEthereumPermission(
-      const std::string& origin,
-      const std::string& account,
-      ResetEthereumPermissionCallback callback);
+  virtual void AddPermission(mojom::CoinType coin,
+                             const std::string& origin,
+                             const std::string& account,
+                             AddPermissionCallback callback);
+  virtual void HasPermission(mojom::CoinType coin,
+                             const std::string& origin,
+                             const std::string& account,
+                             HasPermissionCallback callback);
+  virtual void ResetPermission(mojom::CoinType coin,
+                               const std::string& origin,
+                               const std::string& account,
+                               ResetPermissionCallback callback);
 
   virtual void GetActiveOrigin(GetActiveOriginCallback callback);
 

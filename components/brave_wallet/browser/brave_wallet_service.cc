@@ -537,33 +537,32 @@ void BraveWalletService::OnNetworkListChanged() {
   }
 }
 
-void BraveWalletService::AddEthereumPermission(
-    const std::string& origin_spec,
-    const std::string& account,
-    AddEthereumPermissionCallback callback) {
+void BraveWalletService::AddPermission(mojom::CoinType coin,
+                                       const std::string& origin_spec,
+                                       const std::string& account,
+                                       AddPermissionCallback callback) {
   if (delegate_)
-    delegate_->AddEthereumPermission(origin_spec, account, std::move(callback));
+    delegate_->AddPermission(coin, origin_spec, account, std::move(callback));
   else
     std::move(callback).Run(false);
 }
 
-void BraveWalletService::HasEthereumPermission(
-    const std::string& origin_spec,
-    const std::string& account,
-    HasEthereumPermissionCallback callback) {
+void BraveWalletService::HasPermission(mojom::CoinType coin,
+                                       const std::string& origin_spec,
+                                       const std::string& account,
+                                       HasPermissionCallback callback) {
   if (delegate_)
-    delegate_->HasEthereumPermission(origin_spec, account, std::move(callback));
+    delegate_->HasPermission(coin, origin_spec, account, std::move(callback));
   else
     std::move(callback).Run(false, false);
 }
 
-void BraveWalletService::ResetEthereumPermission(
-    const std::string& origin_spec,
-    const std::string& account,
-    ResetEthereumPermissionCallback callback) {
+void BraveWalletService::ResetPermission(mojom::CoinType coin,
+                                         const std::string& origin_spec,
+                                         const std::string& account,
+                                         ResetPermissionCallback callback) {
   if (delegate_)
-    delegate_->ResetEthereumPermission(origin_spec, account,
-                                       std::move(callback));
+    delegate_->ResetPermission(coin, origin_spec, account, std::move(callback));
   else
     std::move(callback).Run(false);
 }

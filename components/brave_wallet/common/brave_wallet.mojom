@@ -995,14 +995,16 @@ interface BraveWalletService {
   // Sets the default base cryptocurrency
   SetDefaultBaseCryptocurrency(string cryptocurrency);
 
-  // Adds the Ethereum permission for the account
-  AddEthereumPermission(string origin, string account) => (bool success);
+  // Adds the permission of coin typefor the account
+  AddPermission(CoinType coin, string origin, string account) => (bool success);
 
-  // Checks if the Ethereum permission is allowed for the origin on the account
-  HasEthereumPermission(string origin, string account) => (bool success, bool has_permission);
+  // Checks if the permission of coin is allowed for the origin on the account
+  HasPermission(CoinType coin, string origin, string account)
+    => (bool success, bool has_permission);
 
-  // Resets the Ethereum permission for the account
-  ResetEthereumPermission(string origin, string account) => (bool success);
+  // Resets the permission of coin for the account
+  ResetPermission(CoinType coin, string origin, string account)
+    => (bool success);
 
   // Obtains the active origin and eTLD+1 of it
   GetActiveOrigin() => (string origin, string e_tld_plus_one);

@@ -23,8 +23,8 @@ import {
 } from './style'
 
 export interface Props {
-  onDisconnect: (origin: string, address: string, connectedAccounts: WalletAccountType[]) => void
-  onConnect: (origin: string, address: WalletAccountType) => void
+  onDisconnect: (origin: string, account: WalletAccountType, connectedAccounts: WalletAccountType[]) => void
+  onConnect: (origin: string, account: WalletAccountType) => void
   onSwitchAccount: (account: WalletAccountType) => void
   onAddAccount: () => void
   selectedAccount: WalletAccountType
@@ -45,9 +45,9 @@ const SitePermissions = (props: Props) => {
     onAddAccount
   } = props
 
-  const onDisconnectFromOrigin = (address: string) => {
-    const newConnectedAccounts = connectedAccounts.filter((accounts) => accounts.address.toLowerCase() !== address.toLowerCase())
-    onDisconnect(originInfo.origin, address, newConnectedAccounts)
+  const onDisconnectFromOrigin = (account: WalletAccountType) => {
+    const newConnectedAccounts = connectedAccounts.filter((accounts) => accounts.address.toLowerCase() !== account.address.toLowerCase())
+    onDisconnect(originInfo.origin, account, newConnectedAccounts)
   }
 
   const onConnectToOrigin = (account: WalletAccountType) => {

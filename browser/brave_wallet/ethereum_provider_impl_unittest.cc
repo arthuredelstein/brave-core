@@ -386,8 +386,9 @@ class EthereumProviderImplUnitTest : public testing::Test {
   }
   void AddEthereumPermission(const GURL& url, const std::string& address) {
     base::RunLoop run_loop;
-    brave_wallet_service_->AddEthereumPermission(
-        url.spec(), address, base::BindLambdaForTesting([&](bool success) {
+    brave_wallet_service_->AddPermission(
+        mojom::CoinType::ETH, url.spec(), address,
+        base::BindLambdaForTesting([&](bool success) {
           EXPECT_TRUE(success);
           run_loop.Quit();
         }));

@@ -15,6 +15,7 @@
 #include "chrome/browser/ui/tabs/tab_strip_model.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/web_contents.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "url/gurl.h"
 
 namespace brave_wallet {
@@ -24,6 +25,18 @@ namespace {
 content::WebContents* GetActiveWebContents() {
   Browser* browser = chrome::FindLastActive();
   return browser ? browser->tab_strip_model()->GetActiveWebContents() : nullptr;
+}
+
+absl::optional<ContentSettingsType> CoinTypeToContentSettingsType(
+    mojom::CoinType coin_type) {
+  switch (coin_type) {
+    case mojom::CoinType::ETH:
+      return ContentSettingsType::BRAVE_ETHEREUM;
+    case mojom::CoinType::SOL:
+      return ContentSettingsType::BRAVE_SOLANA;
+    default:
+      return absl::nullopt;
+  }
 }
 
 }  // namespace
@@ -113,32 +126,50 @@ void BraveWalletServiceDelegateImpl::ContinueGetImportInfoFromExternalWallet(
   }
 }
 
-void BraveWalletServiceDelegateImpl::AddEthereumPermission(
+void BraveWalletServiceDelegateImpl::AddPermission(
+    mojom::CoinType coin,
     const std::string& origin_spec,
     const std::string& account,
-    AddEthereumPermissionCallback callback) {
+    AddPermissionCallback callback) {
+  auto type = CoinTypeToContentSettingsType(coin);
+  if (!type) {
+    std::move(callback).Run(false);
+    return;
+  }
   bool success = permissions::BraveWalletPermissionContext::AddPermission(
-      ContentSettingsType::BRAVE_ETHEREUM, context_, origin_spec, account);
+      *type, context_, origin_spec, account);
   std::move(callback).Run(success);
 }
 
-void BraveWalletServiceDelegateImpl::HasEthereumPermission(
+void BraveWalletServiceDelegateImpl::HasPermission(
+    mojom::CoinType coin,
     const std::string& origin_spec,
     const std::string& account,
-    HasEthereumPermissionCallback callback) {
+    HasPermissionCallback callback) {
   bool has_permission = false;
+  auto type = CoinTypeToContentSettingsType(coin);
+  if (!type) {
+    std::move(callback).Run(false, has_permission);
+    return;
+  }
   bool success = permissions::BraveWalletPermissionContext::HasPermission(
-      ContentSettingsType::BRAVE_ETHEREUM, context_, origin_spec, account,
-      &has_permission);
+      *type, context_, origin_spec, account, &has_permission);
   std::move(callback).Run(success, has_permission);
 }
 
-void BraveWalletServiceDelegateImpl::ResetEthereumPermission(
+void BraveWalletServiceDelegateImpl::ResetPermission(
+    mojom::CoinType coin,
     const std::string& origin_spec,
     const std::string& account,
-    ResetEthereumPermissionCallback callback) {
+    ResetPermissionCallback callback) {
+  auto type = CoinTypeToContentSettingsType(coin);
+  if (!type) {
+    std::move(callback).Run(false);
+    return;
+  }
   bool success = permissions::BraveWalletPermissionContext::ResetPermission(
-      ContentSettingsType::BRAVE_ETHEREUM, context_, origin_spec, account);
+      *type, context_, origin_spec, account);
+  LOG(ERROR) << success;
   std::move(callback).Run(success);
 }
 

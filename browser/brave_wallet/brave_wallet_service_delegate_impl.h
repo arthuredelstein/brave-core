@@ -48,16 +48,18 @@ class BraveWalletServiceDelegateImpl : public BraveWalletServiceDelegate,
                                        const std::string& password,
                                        GetImportInfoCallback callback) override;
 
-  void AddEthereumPermission(const std::string& origin,
-                             const std::string& account,
-                             AddEthereumPermissionCallback callback) override;
-  void HasEthereumPermission(const std::string& origin,
-                             const std::string& account,
-                             HasEthereumPermissionCallback callback) override;
-  void ResetEthereumPermission(
-      const std::string& origin,
-      const std::string& account,
-      ResetEthereumPermissionCallback callback) override;
+  void AddPermission(mojom::CoinType coin,
+                     const std::string& origin,
+                     const std::string& account,
+                     AddPermissionCallback callback) override;
+  void HasPermission(mojom::CoinType coin,
+                     const std::string& origin,
+                     const std::string& account,
+                     HasPermissionCallback callback) override;
+  void ResetPermission(mojom::CoinType coin,
+                       const std::string& origin,
+                       const std::string& account,
+                       ResetPermissionCallback callback) override;
 
   void GetActiveOrigin(GetActiveOriginCallback callback) override;
 

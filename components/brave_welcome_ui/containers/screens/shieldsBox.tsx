@@ -39,7 +39,6 @@ export function ShieldsBox(props: Props) {
 
   const { index, currentScreen } = props
   const handleP3AToggleChange = (key: string, selected: boolean) => {
-    console.log(key, selected)
     setIsP3AEnabled(selected)
     dispatch(setP3AEnable(selected))
   }

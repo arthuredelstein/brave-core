@@ -10,7 +10,6 @@
 #include <utility>
 
 #include "base/command_line.h"
-#include "base/feature_list.h"
 #include "base/i18n/timezone.h"
 #include "base/json/json_writer.h"
 #include "base/metrics/histogram_macros.h"
@@ -26,7 +25,6 @@
 #include "brave/components/brave_prochlo/prochlo_message.pb.h"
 #include "brave/components/brave_referrals/common/pref_names.h"
 #include "brave/components/brave_stats/browser/brave_stats_updater_util.h"
-#include "brave/components/brave_welcome/common/features.h"
 #include "brave/components/p3a/brave_p2a_protocols.h"
 #include "brave/components/p3a/brave_p3a_log_store.h"
 #include "brave/components/p3a/brave_p3a_new_uploader.h"
@@ -232,11 +230,7 @@ void BraveP3AService::RegisterPrefs(PrefRegistrySimple* registry,
   BraveP3ALogStore::RegisterPrefs(registry);
   registry->RegisterTimePref(kLastRotationTimeStampPref, {});
 
-  // Enable by default, unless set to opt-in.
-  bool opt_in = base::FeatureList::IsEnabled(brave_welcome::features::kP3AOptIn);
-  VLOG(1) << "P3A Opt-in study " << (opt_in ? "enabled" : "disabled");
-  VLOG(1) << "registering pref " << kP3AEnabled << ": " << !opt_in;
-  registry->RegisterBooleanPref(kP3AEnabled, !opt_in);
+  registry->RegisterBooleanPref(kP3AEnabled, true);
 
   // New users are shown the P3A notice via the welcome page.
   registry->RegisterBooleanPref(kP3ANoticeAcknowledged, first_run);

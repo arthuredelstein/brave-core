@@ -24,6 +24,9 @@ const base::Feature kAllowedToFallbackToCustomAdNotifications{
 const base::Feature kRequestAdsEnabledApi{"RequestAdsEnabledApi",
                                           base::FEATURE_DISABLED_BY_DEFAULT};
 
+const base::Feature kSearchResultAdConfirmation{
+    "SearchResultAdConfirmation", base::FEATURE_DISABLED_BY_DEFAULT};
+
 namespace {
 
 // Set to true to support multiple displays or false to only support the primary

@@ -41,12 +41,12 @@ constexpr char kDataLandingPage[] = "data-landing-page";
 constexpr char kDataHeadlineText[] = "data-headline-text";
 constexpr char kDataDescription[] = "data-description";
 constexpr char kDataRewardsValue[] = "data-rewards-value";
-constexpr char kDataConverionTypeValue[] = "data-conversion-type-value";
-constexpr char kDataConverionUrlPatternValue[] =
+constexpr char kDataConversionTypeValue[] = "data-conversion-type-value";
+constexpr char kDataConversionUrlPatternValue[] =
     "data-conversion-url-pattern-value";
-constexpr char kDataConverionAdvertiserPublicKeyValue[] =
+constexpr char kDataConversionAdvertiserPublicKeyValue[] =
     "data-conversion-advertiser-public-key-value";
-constexpr char kDataConverionObservationWindowValue[] =
+constexpr char kDataConversionObservationWindowValue[] =
     "data-conversion-observation-window-value";
 
 constexpr auto kVettedBraveSearchHosts =
@@ -60,9 +60,9 @@ constexpr auto kSearchResultAdAttributes =
         {kDataPlacementId, kDataCreativeInstanceId, kDataCreativeSetId,
          kDataCampaignId, kDataAdvertiserId, kDataLandingPage,
          kDataHeadlineText, kDataDescription, kDataRewardsValue,
-         kDataConverionTypeValue, kDataConverionUrlPatternValue,
-         kDataConverionAdvertiserPublicKeyValue,
-         kDataConverionObservationWindowValue});
+         kDataConversionTypeValue, kDataConversionUrlPatternValue,
+         kDataConversionAdvertiserPublicKeyValue,
+         kDataConversionObservationWindowValue});
 
 bool GetStringValue(const schema_org::mojom::PropertyPtr& ad_property,
                     std::string* out_value) {
@@ -136,15 +136,15 @@ bool SetSearchAdProperty(const schema_org::mojom::PropertyPtr& ad_property,
     return GetStringValue(ad_property, &search_result_ad->description);
   } else if (name == kDataRewardsValue) {
     return GetDoubleValue(ad_property, &search_result_ad->value);
-  } else if (name == kDataConverionTypeValue) {
+  } else if (name == kDataConversionTypeValue) {
     return GetStringValue(ad_property, &search_result_ad->conversion->type);
-  } else if (name == kDataConverionUrlPatternValue) {
+  } else if (name == kDataConversionUrlPatternValue) {
     return GetStringValue(ad_property,
                           &search_result_ad->conversion->url_pattern);
-  } else if (name == kDataConverionAdvertiserPublicKeyValue) {
+  } else if (name == kDataConversionAdvertiserPublicKeyValue) {
     return GetStringValue(ad_property,
                           &search_result_ad->conversion->advertiser_public_key);
-  } else if (name == kDataConverionObservationWindowValue) {
+  } else if (name == kDataConversionObservationWindowValue) {
     return GetInt64Value(ad_property,
                          &search_result_ad->conversion->observation_window);
   }

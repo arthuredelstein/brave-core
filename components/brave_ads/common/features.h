@@ -42,6 +42,8 @@ bool IsAllowedToFallbackToCustomAdNotificationsEnabled();
 extern const base::Feature kRequestAdsEnabledApi;
 bool IsRequestAdsEnabledApiEnabled();
 
+extern const base::Feature kSearchResultAdConfirmation;
+
 }  // namespace features
 }  // namespace brave_ads
 

@@ -6,10 +6,8 @@
 #include "base/path_service.h"
 #include "base/strings/strcat.h"
 #include "base/strings/string_number_conversions.h"
-#include "brave/browser/brave_ads/ads_service_factory.h"
 #include "brave/browser/brave_ads/search_result_ad/search_result_ad_handler.h"
 #include "brave/common/brave_paths.h"
-#include "brave/components/brave_ads/browser/ads_service.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/test/base/in_process_browser_test.h"
@@ -82,10 +80,6 @@ class SearchResultAdTest : public InProcessBrowserTest {
     base::PathService::Get(brave::DIR_TEST_DATA, &test_data_dir);
     https_server_->ServeFilesFromDirectory(test_data_dir);
     ASSERT_TRUE(https_server_->Start());
-
-    brave_ads::AdsService* ads_service =
-        brave_ads::AdsServiceFactory::GetForProfile(browser()->profile());
-    ads_service->SetEnabled(true);
   }
 
   void SetUpCommandLine(base::CommandLine* command_line) override {

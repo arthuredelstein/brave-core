@@ -8,7 +8,9 @@
 #include <memory>
 #include <utility>
 
+#include "base/feature_list.h"
 #include "brave/browser/brave_ads/ads_service_factory.h"
+#include "brave/components/brave_ads/common/features.h"
 #include "chrome/browser/profiles/profile.h"
 #include "components/dom_distiller/content/browser/distiller_javascript_utils.h"
 #include "components/dom_distiller/content/browser/distiller_page_web_contents.h"
@@ -137,15 +139,19 @@ void AdsTabHelper::DocumentOnLoadCompletedInPrimaryMainFrame() {
   }
 
   content::RenderFrameHost* render_frame_host = web_contents()->GetMainFrame();
-  if (search_result_ad_handler_.IsAllowedBraveSearchHost(
-          render_frame_host->GetLastCommittedURL())) {
+  RunIsolatedJavaScript(render_frame_host);
+
+  const bool retrieve_search_result_ad =
+      ads_service_ && ads_service_->IsEnabled() &&
+      base::FeatureList::IsEnabled(features::kSearchResultAdConfirmation) &&
+      search_result_ad_handler_.IsAllowedBraveSearchHost(
+          render_frame_host->GetLastCommittedURL());
+  if (retrieve_search_result_ad) {
     search_result_ad_handler_.RetrieveSearchResultAd(
         render_frame_host,
         base::BindOnce(&AdsTabHelper::OnRetrieveSearchResultAd,
                        weak_factory_.GetWeakPtr()));
   }
-
-  RunIsolatedJavaScript(render_frame_host);
 }
 
 void AdsTabHelper::DidFinishLoad(content::RenderFrameHost* render_frame_host,

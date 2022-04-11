@@ -221,7 +221,7 @@ void FilTxManager::OnSendFilecoinTransaction(
 
   if (success)
     UpdatePendingTransactions();
-
+  DLOG(INFO) << "error_message:" << error_message;
   std::move(callback).Run(
       error_message.empty(),
       mojom::ProviderErrorUnion::NewFilecoinProviderError(error),

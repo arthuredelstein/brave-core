@@ -116,7 +116,7 @@ base::Value FilTransaction::ToValue() const {
   dict.SetStringKey("sequence",
                     nonce_ ? base::NumberToString(nonce_.value()) : "");
   dict.SetStringKey("gas_premium", gas_premium_);
-  dict.SetStringKey("gas_fee_cap", gas_fee_cap_);
+  dict.SetStringKey("GasFeeCap", gas_fee_cap_);
   dict.SetStringKey("maxfee", max_fee_);
   dict.SetStringKey("gas_limit", base::NumberToString(gas_limit_));
   dict.SetStringKey("to", to_.EncodeAsString());
@@ -140,12 +140,12 @@ absl::optional<FilTransaction> FilTransaction::FromValue(
     tx.nonce_ = nonce;
   }
 
-  const std::string* gas_premium = value.FindStringKey("gaspremium");
+  const std::string* gas_premium = value.FindStringKey("gas_premium");
   if (!gas_premium)
     return absl::nullopt;
   tx.gas_premium_ = *gas_premium;
 
-  const std::string* gas_fee_cap = value.FindStringKey("gasfeecap");
+  const std::string* gas_fee_cap = value.FindStringKey("GasFeeCap");
   if (!gas_fee_cap)
     return absl::nullopt;
   tx.gas_fee_cap_ = *gas_fee_cap;
@@ -155,7 +155,7 @@ absl::optional<FilTransaction> FilTransaction::FromValue(
     return absl::nullopt;
   tx.max_fee_ = *max_fee;
 
-  const std::string* gas_limit = value.FindStringKey("gaslimit");
+  const std::string* gas_limit = value.FindStringKey("gas_limit");
   if (!gas_limit || !base::StringToInt64(*gas_limit, &tx.gas_limit_))
     return absl::nullopt;
 
@@ -197,6 +197,7 @@ std::string FilTransaction::GetMessageToSign() const {
 absl::optional<std::string> FilTransaction::GetSignedTransaction(
     const std::string& private_key_base64) const {
   auto message = GetMessageToSign();
+
   std::string data(
       bls::fil_transaction_sign(message, private_key_base64)
           .c_str());
@@ -207,12 +208,13 @@ absl::optional<std::string> FilTransaction::GetSignedTransaction(
   base::Value signature(base::Value::Type::DICTIONARY);
   signature.SetStringKey("data", data);
   auto protocol = static_cast<uint64_t>(from().protocol());
-  signature.SetStringKey("type", std::to_string(protocol));
+  signature.SetIntKey("type", protocol);
   dict.SetKey("signature", std::move(signature));
   std::string json;
   if (!base::JSONWriter::Write(dict, &json))
     return absl::nullopt;
   base::ReplaceFirstSubstringAfterOffset(&json, 0, "\"{message}\"", message);
+  DLOG(INFO) << "message json:" << message;
   return json;
 }
 

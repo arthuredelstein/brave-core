@@ -137,11 +137,11 @@ void AdsTabHelper::DocumentOnLoadCompletedInPrimaryMainFrame() {
   }
 
   content::RenderFrameHost* render_frame_host = web_contents()->GetMainFrame();
-  if (search_ad_metadata_handler_.IsAllowedBraveSearchHost(
+  if (search_result_ad_handler_.IsAllowedBraveSearchHost(
           render_frame_host->GetLastCommittedURL())) {
-    search_ad_metadata_handler_.RetrieveSearchAdMetadata(
+    search_result_ad_handler_.RetrieveSearchResultAd(
         render_frame_host,
-        base::BindOnce(&AdsTabHelper::OnRetrieveSearchAdMetadata,
+        base::BindOnce(&AdsTabHelper::OnRetrieveSearchResultAd,
                        weak_factory_.GetWeakPtr()));
   }
 
@@ -159,9 +159,9 @@ void AdsTabHelper::DidFinishLoad(content::RenderFrameHost* render_frame_host,
   TabUpdated();
 }
 
-void AdsTabHelper::OnRetrieveSearchAdMetadata(SearchResultAdsList search_ads) {
+void AdsTabHelper::OnRetrieveSearchResultAd(SearchResultAdsList search_ads) {
   // TODO(https://github.com/brave/brave-browser/issues/20852):
-  // Send search ads list to Ads Service.
+  // Send search result ads list to Ads Service.
 }
 
 void AdsTabHelper::MediaStartedPlaying(const MediaPlayerInfo& video_type,

@@ -3,10 +3,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "brave/browser/brave_ads/search_ad_metadata_handler.h"
+#include "brave/browser/brave_ads/search_result_ad/search_result_ad_handler.h"
 
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "base/containers/contains.h"
 #include "base/containers/fixed_flat_set.h"
@@ -28,37 +29,23 @@ namespace brave_ads {
 namespace {
 
 constexpr char kSearchAdLinkDataType[] = "Product";
-
 constexpr char kContextPropertyName[] = "@context";
-
 constexpr char kTypePropertyName[] = "@type";
 
 constexpr char kDataPlacementId[] = "data-placement-id";
-
 constexpr char kDataCreativeInstanceId[] = "data-creative-instance-id";
-
 constexpr char kDataCreativeSetId[] = "data-creative-set-id";
-
 constexpr char kDataCampaignId[] = "data-campaign-id";
-
 constexpr char kDataAdvertiserId[] = "data-advertiser-id";
-
 constexpr char kDataLandingPage[] = "data-landing-page";
-
 constexpr char kDataHeadlineText[] = "data-headline-text";
-
 constexpr char kDataDescription[] = "data-description";
-
 constexpr char kDataRewardsValue[] = "data-rewards-value";
-
 constexpr char kDataConverionTypeValue[] = "data-conversion-type-value";
-
 constexpr char kDataConverionUrlPatternValue[] =
     "data-conversion-url-pattern-value";
-
 constexpr char kDataConverionAdvertiserPublicKeyValue[] =
     "data-conversion-advertiser-public-key-value";
-
 constexpr char kDataConverionObservationWindowValue[] =
     "data-conversion-observation-window-value";
 
@@ -68,12 +55,14 @@ constexpr auto kVettedBraveSearchHosts =
          "search-dev-local.brave.com", "search.brave.software",
          "search.bravesoftware.com"});
 
-constexpr auto kSearchAdAttributes = base::MakeFixedFlatSet<base::StringPiece>(
-    {kDataPlacementId, kDataCreativeInstanceId, kDataCreativeSetId,
-     kDataCampaignId, kDataAdvertiserId, kDataLandingPage, kDataHeadlineText,
-     kDataDescription, kDataRewardsValue, kDataConverionTypeValue,
-     kDataConverionUrlPatternValue, kDataConverionAdvertiserPublicKeyValue,
-     kDataConverionObservationWindowValue});
+constexpr auto kSearchResultAdAttributes =
+    base::MakeFixedFlatSet<base::StringPiece>(
+        {kDataPlacementId, kDataCreativeInstanceId, kDataCreativeSetId,
+         kDataCampaignId, kDataAdvertiserId, kDataLandingPage,
+         kDataHeadlineText, kDataDescription, kDataRewardsValue,
+         kDataConverionTypeValue, kDataConverionUrlPatternValue,
+         kDataConverionAdvertiserPublicKeyValue,
+         kDataConverionObservationWindowValue});
 
 bool GetStringValue(const schema_org::mojom::PropertyPtr& ad_property,
                     std::string* out_value) {
@@ -123,41 +112,41 @@ bool GetDoubleValue(const schema_org::mojom::PropertyPtr& ad_property,
 }
 
 bool SetSearchAdProperty(const schema_org::mojom::PropertyPtr& ad_property,
-                         SearchResultAdPtr* search_ad) {
+                         SearchResultAd* search_result_ad) {
   DCHECK(ad_property);
-  DCHECK(search_ad);
-  DCHECK((*search_ad)->conversion);
+  DCHECK(search_result_ad);
+  DCHECK(search_result_ad->conversion);
 
   const std::string& name = ad_property->name;
-
   if (name == kDataPlacementId) {
-    return GetStringValue(ad_property, &(*search_ad)->placement_id);
+    return GetStringValue(ad_property, &search_result_ad->placement_id);
   } else if (name == kDataCreativeInstanceId) {
-    return GetStringValue(ad_property, &(*search_ad)->creative_instance_id);
+    return GetStringValue(ad_property, &search_result_ad->creative_instance_id);
   } else if (name == kDataCreativeSetId) {
-    return GetStringValue(ad_property, &(*search_ad)->creative_set_id);
+    return GetStringValue(ad_property, &search_result_ad->creative_set_id);
   } else if (name == kDataCampaignId) {
-    return GetStringValue(ad_property, &(*search_ad)->campaign_id);
+    return GetStringValue(ad_property, &search_result_ad->campaign_id);
   } else if (name == kDataAdvertiserId) {
-    return GetStringValue(ad_property, &(*search_ad)->advertiser_id);
+    return GetStringValue(ad_property, &search_result_ad->advertiser_id);
   } else if (name == kDataLandingPage) {
-    return GetStringValue(ad_property, &(*search_ad)->target_url);
+    return GetStringValue(ad_property, &search_result_ad->target_url);
   } else if (name == kDataHeadlineText) {
-    return GetStringValue(ad_property, &(*search_ad)->headline_text);
+    return GetStringValue(ad_property, &search_result_ad->headline_text);
   } else if (name == kDataDescription) {
-    return GetStringValue(ad_property, &(*search_ad)->description);
+    return GetStringValue(ad_property, &search_result_ad->description);
   } else if (name == kDataRewardsValue) {
-    return GetDoubleValue(ad_property, &(*search_ad)->value);
+    return GetDoubleValue(ad_property, &search_result_ad->value);
   } else if (name == kDataConverionTypeValue) {
-    return GetStringValue(ad_property, &(*search_ad)->conversion->type);
+    return GetStringValue(ad_property, &search_result_ad->conversion->type);
   } else if (name == kDataConverionUrlPatternValue) {
-    return GetStringValue(ad_property, &(*search_ad)->conversion->url_pattern);
+    return GetStringValue(ad_property,
+                          &search_result_ad->conversion->url_pattern);
   } else if (name == kDataConverionAdvertiserPublicKeyValue) {
     return GetStringValue(ad_property,
-                          &(*search_ad)->conversion->advertiser_public_key);
+                          &search_result_ad->conversion->advertiser_public_key);
   } else if (name == kDataConverionObservationWindowValue) {
     return GetInt64Value(ad_property,
-                         &(*search_ad)->conversion->observation_window);
+                         &search_result_ad->conversion->observation_window);
   }
 
   NOTREACHED();
@@ -167,7 +156,7 @@ bool SetSearchAdProperty(const schema_org::mojom::PropertyPtr& ad_property,
 
 absl::optional<SearchResultAdsList> ParseEntityProperties(
     const schema_org::mojom::EntityPtr& entity) {
-  SearchResultAdsList search_ads_list;
+  SearchResultAdsList search_result_ads_list;
 
   for (const auto& property : entity->properties) {
     if (property->name == kContextPropertyName ||
@@ -191,24 +180,24 @@ absl::optional<SearchResultAdsList> ParseEntityProperties(
         continue;
       }
 
-      SearchResultAdPtr search_ad = SearchResultAd::New();
-      search_ad->conversion = Conversion::New();
+      SearchResultAdPtr search_result_ad = SearchResultAd::New();
+      search_result_ad->conversion = Conversion::New();
 
       base::flat_set<base::StringPiece> found_attributes;
       for (const auto& ad_property : ad_entity->properties) {
         // Wrong attribute name
-        const auto* it =
-            std::find(kSearchAdAttributes.begin(), kSearchAdAttributes.end(),
-                      base::StringPiece(ad_property->name));
+        const auto* it = std::find(kSearchResultAdAttributes.begin(),
+                                   kSearchResultAdAttributes.end(),
+                                   base::StringPiece(ad_property->name));
 
-        if (it == kSearchAdAttributes.end()) {
+        if (it == kSearchResultAdAttributes.end()) {
           LOG(ERROR) << "Wrong search ad attribute specified: "
                      << ad_property->name;
           return SearchResultAdsList();
         }
         found_attributes.insert(*it);
 
-        if (!SetSearchAdProperty(ad_property, &search_ad)) {
+        if (!SetSearchAdProperty(ad_property, search_result_ad.get())) {
           LOG(ERROR) << "Cannot read search ad attribute value: "
                      << ad_property->name;
           return SearchResultAdsList();
@@ -216,11 +205,11 @@ absl::optional<SearchResultAdsList> ParseEntityProperties(
       }
 
       // Not all of attributes were specified.
-      if (found_attributes.size() != kSearchAdAttributes.size()) {
+      if (found_attributes.size() != kSearchResultAdAttributes.size()) {
         std::vector<base::StringPiece> absent_attributes;
-        std::set_difference(kSearchAdAttributes.begin(),
-                            kSearchAdAttributes.end(), found_attributes.begin(),
-                            found_attributes.end(),
+        std::set_difference(kSearchResultAdAttributes.begin(),
+                            kSearchResultAdAttributes.end(),
+                            found_attributes.begin(), found_attributes.end(),
                             std::back_inserter(absent_attributes));
 
         LOG(ERROR) << "Some of search ad attributes were not specified: "
@@ -229,14 +218,14 @@ absl::optional<SearchResultAdsList> ParseEntityProperties(
         return SearchResultAdsList();
       }
 
-      search_ads_list.push_back(std::move(search_ad));
+      search_result_ads_list.push_back(std::move(search_result_ad));
     }
 
     // Creatives has been parsed.
     break;
   }
 
-  return search_ads_list;
+  return search_result_ads_list;
 }
 
 SearchResultAdsList ParseMetadataEntities(blink::mojom::WebPagePtr web_page) {
@@ -245,11 +234,11 @@ SearchResultAdsList ParseMetadataEntities(blink::mojom::WebPagePtr web_page) {
       continue;
     }
 
-    absl::optional<SearchResultAdsList> search_ads_list =
+    absl::optional<SearchResultAdsList> search_result_ads_list =
         ParseEntityProperties(entity);
 
-    if (search_ads_list) {
-      return std::move(*search_ads_list);
+    if (search_result_ads_list) {
+      return std::move(*search_result_ads_list);
     }
   }
 
@@ -258,11 +247,11 @@ SearchResultAdsList ParseMetadataEntities(blink::mojom::WebPagePtr web_page) {
 
 }  // namespace
 
-SearchAdMetadataHandler::SearchAdMetadataHandler() = default;
+SearchResultAdHandler::SearchResultAdHandler() = default;
 
-SearchAdMetadataHandler::~SearchAdMetadataHandler() = default;
+SearchResultAdHandler::~SearchResultAdHandler() = default;
 
-bool SearchAdMetadataHandler::IsAllowedBraveSearchHost(const GURL& url) const {
+bool SearchResultAdHandler::IsAllowedBraveSearchHost(const GURL& url) const {
   if (!url.is_valid() || !url.SchemeIs(url::kHttpsScheme)) {
     return false;
   }
@@ -270,9 +259,9 @@ bool SearchAdMetadataHandler::IsAllowedBraveSearchHost(const GURL& url) const {
   return base::Contains(kVettedBraveSearchHosts, host);
 }
 
-void SearchAdMetadataHandler::RetrieveSearchAdMetadata(
+void SearchResultAdHandler::RetrieveSearchResultAd(
     content::RenderFrameHost* render_frame_host,
-    RetrieveSearchAdMetadataCallback callback) {
+    RetrieveSearchResultAdCallback callback) {
   DCHECK(render_frame_host);
   DCHECK(IsAllowedBraveSearchHost(render_frame_host->GetLastCommittedURL()));
   DCHECK(!document_metadata_.is_bound());
@@ -281,13 +270,13 @@ void SearchAdMetadataHandler::RetrieveSearchAdMetadata(
       document_metadata_.BindNewPipeAndPassReceiver());
   DCHECK(document_metadata_.is_bound());
 
-  document_metadata_->GetEntities(base::BindOnce(
-      &SearchAdMetadataHandler::OnRetrieveSearchAdMetadataEntities,
-      weak_factory_.GetWeakPtr(), std::move(callback)));
+  document_metadata_->GetEntities(
+      base::BindOnce(&SearchResultAdHandler::OnRetrieveSearchResultAdEntities,
+                     weak_factory_.GetWeakPtr(), std::move(callback)));
 }
 
-void SearchAdMetadataHandler::OnRetrieveSearchAdMetadataEntities(
-    RetrieveSearchAdMetadataCallback callback,
+void SearchResultAdHandler::OnRetrieveSearchResultAdEntities(
+    RetrieveSearchResultAdCallback callback,
     blink::mojom::WebPagePtr web_page) {
   document_metadata_.reset();
 
@@ -296,8 +285,9 @@ void SearchAdMetadataHandler::OnRetrieveSearchAdMetadataEntities(
     return;
   }
 
-  SearchResultAdsList search_ads = ParseMetadataEntities(std::move(web_page));
-  std::move(callback).Run(std::move(search_ads));
+  SearchResultAdsList search_result_ads =
+      ParseMetadataEntities(std::move(web_page));
+  std::move(callback).Run(std::move(search_result_ads));
 }
 
 }  // namespace brave_ads

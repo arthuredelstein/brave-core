@@ -7,7 +7,7 @@
 #include "base/strings/strcat.h"
 #include "base/strings/string_number_conversions.h"
 #include "brave/browser/brave_ads/ads_service_factory.h"
-#include "brave/browser/brave_ads/search_ad_metadata_handler.h"
+#include "brave/browser/brave_ads/search_result_ad/search_result_ad_handler.h"
 #include "brave/common/brave_paths.h"
 #include "brave/components/brave_ads/browser/ads_service.h"
 #include "chrome/browser/profiles/profile.h"
@@ -19,7 +19,7 @@
 #include "content/public/test/content_mock_cert_verifier.h"
 #include "net/dns/mock_host_resolver.h"
 
-// npm run test -- brave_browser_tests --filter=SearchAdMetadataTest*
+// npm run test -- brave_browser_tests --filter=SearchResultAdTest*
 
 namespace {
 
@@ -30,43 +30,44 @@ void CheckSampleSearchAdMetadataList(
   EXPECT_EQ(ads_list.size(), 2u);
 
   for (size_t i = 0; i < ads_list.size(); ++i) {
-    const auto& search_ad = ads_list[i];
+    const auto& search_result_ad = ads_list[i];
     const std::string index = base::StrCat({"-", base::NumberToString(i + 1)});
-    EXPECT_EQ(search_ad->placement_id,
+    EXPECT_EQ(search_result_ad->placement_id,
               base::StrCat({"data-placement-id", index}));
-    EXPECT_EQ(search_ad->creative_instance_id,
+    EXPECT_EQ(search_result_ad->creative_instance_id,
               base::StrCat({"data-creative-instance-id", index}));
-    EXPECT_EQ(search_ad->creative_set_id,
+    EXPECT_EQ(search_result_ad->creative_set_id,
               base::StrCat({"data-creative-set-id", index}));
-    EXPECT_EQ(search_ad->campaign_id,
+    EXPECT_EQ(search_result_ad->campaign_id,
               base::StrCat({"data-campaign-id", index}));
-    EXPECT_EQ(search_ad->advertiser_id,
+    EXPECT_EQ(search_result_ad->advertiser_id,
               base::StrCat({"data-advertiser-id", index}));
-    EXPECT_EQ(search_ad->target_url,
+    EXPECT_EQ(search_result_ad->target_url,
               base::StrCat({"data-landing-page", index}));
-    EXPECT_EQ(search_ad->headline_text,
+    EXPECT_EQ(search_result_ad->headline_text,
               base::StrCat({"data-headline-text", index}));
-    EXPECT_EQ(search_ad->description,
+    EXPECT_EQ(search_result_ad->description,
               base::StrCat({"data-description", index}));
-    EXPECT_EQ(search_ad->value, 0.5 + i + 1);
+    EXPECT_EQ(search_result_ad->value, 0.5 + i + 1);
 
-    EXPECT_EQ(search_ad->conversion->type,
+    EXPECT_EQ(search_result_ad->conversion->type,
               base::StrCat({"data-conversion-type-value", index}));
-    EXPECT_EQ(search_ad->conversion->url_pattern,
+    EXPECT_EQ(search_result_ad->conversion->url_pattern,
               base::StrCat({"data-conversion-url-pattern-value", index}));
     EXPECT_EQ(
-        search_ad->conversion->advertiser_public_key,
+        search_result_ad->conversion->advertiser_public_key,
         base::StrCat({"data-conversion-advertiser-public-key-value", index}));
-    EXPECT_EQ(static_cast<size_t>(search_ad->conversion->observation_window),
-              i + 1);
+    EXPECT_EQ(
+        static_cast<size_t>(search_result_ad->conversion->observation_window),
+        i + 1);
   }
 }
 
 }  // namespace
 
-class SearchAdMetadataTest : public InProcessBrowserTest {
+class SearchResultAdTest : public InProcessBrowserTest {
  public:
-  SearchAdMetadataTest() {}
+  SearchResultAdTest() {}
 
   void SetUpOnMainThread() override {
     InProcessBrowserTest::SetUpOnMainThread();
@@ -120,17 +121,17 @@ class SearchAdMetadataTest : public InProcessBrowserTest {
   std::unique_ptr<net::EmbeddedTestServer> https_server_;
 };
 
-IN_PROC_BROWSER_TEST_F(SearchAdMetadataTest, SampleSearchAdMetadata) {
+IN_PROC_BROWSER_TEST_F(SearchResultAdTest, SampleSearchAdMetadata) {
   content::WebContents* web_contents =
-      LoadTestDataUrl("/brave_ads/search_ad_sample_metadata.html");
+      LoadTestDataUrl("/brave_ads/search_result_ad_sample.html");
 
-  brave_ads::SearchAdMetadataHandler search_ad_metadata_handler;
-  EXPECT_TRUE(search_ad_metadata_handler.IsAllowedBraveSearchHost(
+  brave_ads::SearchResultAdHandler search_result_ad_metadata_handler;
+  EXPECT_TRUE(search_result_ad_metadata_handler.IsAllowedBraveSearchHost(
       web_contents->GetVisibleURL()));
 
   content::RenderFrameHost* render_frame_host = web_contents->GetMainFrame();
   base::RunLoop run_loop;
-  search_ad_metadata_handler.RetrieveSearchAdMetadata(
+  search_result_ad_metadata_handler.RetrieveSearchResultAd(
       render_frame_host,
       base::BindOnce(
           [](base::RunLoop* run_loop, brave_ads::SearchResultAdsList ads_list) {
@@ -141,16 +142,16 @@ IN_PROC_BROWSER_TEST_F(SearchAdMetadataTest, SampleSearchAdMetadata) {
   run_loop.Run();
 }
 
-IN_PROC_BROWSER_TEST_F(SearchAdMetadataTest, NoSearchAdMetadata) {
+IN_PROC_BROWSER_TEST_F(SearchResultAdTest, NoSearchAdMetadata) {
   content::WebContents* web_contents = LoadTestDataUrl("/simple.html");
 
-  brave_ads::SearchAdMetadataHandler search_ad_metadata_handler;
-  EXPECT_TRUE(search_ad_metadata_handler.IsAllowedBraveSearchHost(
+  brave_ads::SearchResultAdHandler search_result_ad_metadata_handler;
+  EXPECT_TRUE(search_result_ad_metadata_handler.IsAllowedBraveSearchHost(
       web_contents->GetVisibleURL()));
 
   content::RenderFrameHost* render_frame_host = web_contents->GetMainFrame();
   base::RunLoop run_loop;
-  search_ad_metadata_handler.RetrieveSearchAdMetadata(
+  search_result_ad_metadata_handler.RetrieveSearchResultAd(
       render_frame_host,
       base::BindOnce(
           [](base::RunLoop* run_loop, brave_ads::SearchResultAdsList ads_list) {
@@ -161,17 +162,17 @@ IN_PROC_BROWSER_TEST_F(SearchAdMetadataTest, NoSearchAdMetadata) {
   run_loop.Run();
 }
 
-IN_PROC_BROWSER_TEST_F(SearchAdMetadataTest, BrokenSearchAdMetadata) {
+IN_PROC_BROWSER_TEST_F(SearchResultAdTest, BrokenSearchAdMetadata) {
   content::WebContents* web_contents =
-      LoadTestDataUrl("/brave_ads/search_ad_broken_metadata.html");
+      LoadTestDataUrl("/brave_ads/search_result_ad_broken.html");
 
-  brave_ads::SearchAdMetadataHandler search_ad_metadata_handler;
-  EXPECT_TRUE(search_ad_metadata_handler.IsAllowedBraveSearchHost(
+  brave_ads::SearchResultAdHandler search_result_ad_metadata_handler;
+  EXPECT_TRUE(search_result_ad_metadata_handler.IsAllowedBraveSearchHost(
       web_contents->GetVisibleURL()));
 
   content::RenderFrameHost* render_frame_host = web_contents->GetMainFrame();
   base::RunLoop run_loop;
-  search_ad_metadata_handler.RetrieveSearchAdMetadata(
+  search_result_ad_metadata_handler.RetrieveSearchResultAd(
       render_frame_host,
       base::BindOnce(
           [](base::RunLoop* run_loop, brave_ads::SearchResultAdsList ads_list) {

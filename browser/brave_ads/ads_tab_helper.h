@@ -13,7 +13,7 @@
 
 #include "base/memory/raw_ptr.h"
 #include "base/memory/weak_ptr.h"
-#include "brave/browser/brave_ads/search_ad_metadata_handler.h"
+#include "brave/browser/brave_ads/search_result_ad/search_result_ad_handler.h"
 #include "build/build_config.h"
 #include "components/sessions/core/session_id.h"
 #include "content/public/browser/media_player_id.h"
@@ -70,7 +70,7 @@ class AdsTabHelper : public content::WebContentsObserver,
 
   void OnJavaScriptTextResult(base::Value value);
 
-  void OnRetrieveSearchAdMetadata(SearchResultAdsList search_ads);
+  void OnRetrieveSearchResultAd(SearchResultAdsList search_ads);
 
   // content::WebContentsObserver overrides
   void DidFinishNavigation(
@@ -100,7 +100,7 @@ class AdsTabHelper : public content::WebContentsObserver,
   std::vector<GURL> redirect_chain_;
   bool should_process_ = false;
 
-  SearchAdMetadataHandler search_ad_metadata_handler_;
+  SearchResultAdHandler search_result_ad_handler_;
 
   base::WeakPtrFactory<AdsTabHelper> weak_factory_;
   WEB_CONTENTS_USER_DATA_KEY_DECL();

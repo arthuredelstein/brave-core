@@ -136,14 +136,12 @@ TEST(FilTransactionUnitTest, GetMessageToSign) {
       "t1h5tg3bhp5r56uzgjae2373znti6ygq4agkx4hzq", "6"));
   std::string message_to_sign = transaction->GetMessageToSign();
   EXPECT_EQ(message_to_sign,
-            "{\"from\":\"t1h5tg3bhp5r56uzgjae2373znti6ygq4agkx4hzq\","
-            "\"gasfeecap\":\"3\",\"gaslimit\":1,\"gaspremium\":\"2\","
-            "\"method\":0,\"nonce\":1,\"params\":\"\",\"to\":"
-            "\"t1h4n7rphclbmwyjcp6jrdiwlfcuwbroxy3jvg33q\",\"value\":\"6\"}");
+  R"({"from":"t1h5tg3bhp5r56uzgjae2373znti6ygq4agkx4hzq","gas_fee_cap":"3","gas_limit":1,"gas_premium":"2","method_num":0,"params":"","sequence":1,"to":"t1h4n7rphclbmwyjcp6jrdiwlfcuwbroxy3jvg33q","value":"6","version":0})"); // NOLINT
 
-  std::string signature = transaction->GetSignedTransaction(
+  auto signature = transaction->GetSignedTransaction(
       "8VcW07ADswS4BV2cxi5rnIadVsyTDDhY1NfDH19T8Uo=");
-  auto signature_value = base::JSONReader::Read(signature);
+  ASSERT_TRUE(signature.has_value());
+  auto signature_value = base::JSONReader::Read(*signature);
   EXPECT_TRUE(signature_value);
   auto* message = signature_value->FindKey("message");
   auto* signature_data = signature_value->FindStringPath("signature.data");
@@ -151,17 +149,17 @@ TEST(FilTransactionUnitTest, GetMessageToSign) {
   EXPECT_TRUE(signature_data);
   auto message_as_value = base::JSONReader::Read(message_to_sign);
   EXPECT_TRUE(message_as_value);
-  EXPECT_EQ(*message, *message_as_value);
   EXPECT_EQ(*signature_data,
             "SozNIZGNAvALCWtc38OUhO9wdFl82qESGhjnVVhI6CYNN0gP5qa+hZtyFh+"
             "j9K0wIVVU10ZJPgaV0yM6a+xwKgA=");
-  // EXPECT_EQ(result.signature, "");
+  EXPECT_EQ(*message, *message_as_value);
 }
 
 TEST(FilTransactionUnitTest, ToFilTxData) {
   auto tx_data =
       mojom::FilTxData::New("1", "2", "3", "1", "5",
-                            "t1h4n7rphclbmwyjcp6jrdiwlfcuwbroxy3jvg33q", "6");
+                            "t1h4n7rphclbmwyjcp6jrdiwlfcuwbroxy3jvg33q",
+                            "t1h5tg3bhp5r56uzgjae2373znti6ygq4agkx4hzq", "6");
   auto transaction = FilTransaction::FromTxData(tx_data);
   EXPECT_EQ(transaction->ToFilTxData(), tx_data);
 }

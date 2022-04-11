@@ -9,8 +9,10 @@
 #include <string>
 #include <utility>
 
+#include "absl/types/optional.h"
 #include "base/json/json_writer.h"
 #include "base/strings/string_number_conversions.h"
+#include "base/strings/string_util.h"
 #include "base/values.h"
 #include "brave/components/bls/rs/src/lib.rs.h"
 #include "brave/components/brave_wallet/common/fil_address.h"
@@ -111,12 +113,12 @@ absl::optional<FilTransaction> FilTransaction::FromTxData(
 
 base::Value FilTransaction::ToValue() const {
   base::Value dict(base::Value::Type::DICTIONARY);
-  dict.SetStringKey("nonce",
+  dict.SetStringKey("sequence",
                     nonce_ ? base::NumberToString(nonce_.value()) : "");
-  dict.SetStringKey("gaspremium", gas_premium_);
-  dict.SetStringKey("gasfeecap", gas_fee_cap_);
+  dict.SetStringKey("gas_premium", gas_premium_);
+  dict.SetStringKey("gas_fee_cap", gas_fee_cap_);
   dict.SetStringKey("maxfee", max_fee_);
-  dict.SetStringKey("gaslimit", base::NumberToString(gas_limit_));
+  dict.SetStringKey("gas_limit", base::NumberToString(gas_limit_));
   dict.SetStringKey("to", to_.EncodeAsString());
   dict.SetStringKey("from", from_.EncodeAsString());
   dict.SetStringKey("value", value_);
@@ -127,7 +129,7 @@ base::Value FilTransaction::ToValue() const {
 absl::optional<FilTransaction> FilTransaction::FromValue(
     const base::Value& value) {
   FilTransaction tx;
-  const std::string* nonce_value = value.FindStringKey("nonce");
+  const std::string* nonce_value = value.FindStringKey("sequence");
   if (!nonce_value)
     return absl::nullopt;
 
@@ -171,33 +173,47 @@ absl::optional<FilTransaction> FilTransaction::FromValue(
   if (!tx_value)
     return absl::nullopt;
   tx.value_ = *tx_value;
-
   return tx;
 }
 
 std::string FilTransaction::GetMessageToSign() const {
   auto value = ToValue();
   value.RemoveKey("maxfee");
-  value.SetIntKey("method", 0);
+  value.SetIntKey("method_num", 0);
+  value.SetIntKey("version", 0);
   value.SetStringKey("params", "");
-
   std::string json;
   base::JSONWriter::Write(value, &json);
   std::string converted_json =
-      json::convert_string_value_to_int64("/gaslimit", json.c_str()).c_str();
+      json::convert_string_value_to_int64("/gas_limit", json.c_str()).c_str();
   if (converted_json.empty())
     return std::string();
   converted_json =
-      json::convert_string_value_to_uint64("/nonce", converted_json.c_str())
+      json::convert_string_value_to_uint64("/sequence", converted_json.c_str())
           .c_str();
   return converted_json;
 }
 
-std::string FilTransaction::GetSignedTransaction(
+absl::optional<std::string> FilTransaction::GetSignedTransaction(
     const std::string& private_key_base64) const {
-  return std::string(
-      bls::fil_transaction_sign(GetMessageToSign(), private_key_base64)
+  auto message = GetMessageToSign();
+  std::string data(
+      bls::fil_transaction_sign(message, private_key_base64)
           .c_str());
+  if (data.empty())
+    return absl::nullopt;
+  base::Value dict(base::Value::Type::DICTIONARY);
+  dict.SetStringKey("message", "{message}");
+  base::Value signature(base::Value::Type::DICTIONARY);
+  signature.SetStringKey("data", data);
+  auto protocol = static_cast<uint64_t>(from().protocol());
+  signature.SetStringKey("type", std::to_string(protocol));
+  dict.SetKey("signature", std::move(signature));
+  std::string json;
+  if (!base::JSONWriter::Write(dict, &json))
+    return absl::nullopt;
+  base::ReplaceFirstSubstringAfterOffset(&json, 0, "\"{message}\"", message);
+  return json;
 }
 
 mojom::FilTxDataPtr FilTransaction::ToFilTxData() const {

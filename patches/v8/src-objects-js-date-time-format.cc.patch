@@ -1,0 +1,30 @@
+diff --git a/src/objects/js-date-time-format.cc b/src/objects/js-date-time-format.cc
+index fab3890bb582ddd9319077f8a258fa638970fc9d..211944e5a4656aaf8d94e40bab3d498871baefa0 100644
+--- a/src/objects/js-date-time-format.cc
++++ b/src/objects/js-date-time-format.cc
+@@ -590,8 +590,8 @@ MaybeHandle<JSObject> JSDateTimeFormat::ResolvedOptions(
+ 
+   icu::SimpleDateFormat* icu_simple_date_format =
+       date_time_format->icu_simple_date_format().raw();
+-  Handle<Object> timezone =
+-      JSDateTimeFormat::TimeZone(isolate, date_time_format);
++  //Handle<Object> timezone =
++  //    JSDateTimeFormat::TimeZone(isolate, date_time_format);
+ 
+   // Ugly hack. ICU doesn't expose numbering system in any way, so we have
+   // to assume that for given locale NumberingSystem constructor produces the
+@@ -643,10 +643,10 @@ MaybeHandle<JSObject> JSDateTimeFormat::ResolvedOptions(
+     DCHECK(maybe_create_numbering_system.FromJust());
+     USE(maybe_create_numbering_system);
+   }
+-  Maybe<bool> maybe_create_time_zone = JSReceiver::CreateDataProperty(
+-      isolate, options, factory->timeZone_string(), timezone, Just(kDontThrow));
+-  DCHECK(maybe_create_time_zone.FromJust());
+-  USE(maybe_create_time_zone);
++  // Maybe<bool> maybe_create_time_zone = JSReceiver::CreateDataProperty(
++  //     isolate, options, factory->timeZone_string(), timezone, Just(kDontThrow));
++  // DCHECK(maybe_create_time_zone.FromJust());
++  // USE(maybe_create_time_zone);
+ 
+   // 5.b.i. Let hc be dtf.[[HourCycle]].
+   HourCycle hc = date_time_format->hour_cycle();

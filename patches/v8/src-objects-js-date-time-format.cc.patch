@@ -1,0 +1,55 @@
+diff --git a/src/objects/js-date-time-format.cc b/src/objects/js-date-time-format.cc
+index fab3890bb582ddd9319077f8a258fa638970fc9d..156c0b51c1c10836c167aab622cd8a86721fa94c 100644
+--- a/src/objects/js-date-time-format.cc
++++ b/src/objects/js-date-time-format.cc
+@@ -35,6 +35,32 @@ namespace internal {
+ 
+ namespace {
+ 
++icu::UnicodeString EquivalentTimezone(const icu::UnicodeString& time_zone) {
++  std::map<icu::UnicodeString, icu::UnicodeString> timezoneEquivalents = {
++    {icu::UnicodeString("America/Ensenada"), icu::UnicodeString("Etc/GMT-8")},
++    {icu::UnicodeString("America/Los_Angeles"), icu::UnicodeString("Etc/GMT-8")},
++    {icu::UnicodeString("America/Santa_Isabel"), icu::UnicodeString("Etc/GMT-8")},
++    {icu::UnicodeString("America/Tijuana"), icu::UnicodeString("Etc/GMT-8")},
++    {icu::UnicodeString("America/Vancouver"), icu::UnicodeString("Etc/GMT-8")},
++    {icu::UnicodeString("America/Chihuahua"), icu::UnicodeString("Etc/GMT-7")},
++    {icu::UnicodeString("America/Denver"), icu::UnicodeString("Etc/GMT-7")},
++    {icu::UnicodeString("America/Edmonton"), icu::UnicodeString("Etc/GMT-7")},
++    {icu::UnicodeString("America/Belize"), icu::UnicodeString("Etc/GMT-6")},
++    {icu::UnicodeString("America/Chicago"), icu::UnicodeString("Etc/GMT-6")},
++    {icu::UnicodeString("America/Costa_Rica"), icu::UnicodeString("Etc/GMT-6")},
++    {icu::UnicodeString("America/El_Salvador"), icu::UnicodeString("Etc/GMT-6")},
++    {icu::UnicodeString("America/Indiana/Knox"), icu::UnicodeString("Etc/GMT-6")},
++    {icu::UnicodeString("America/Knox_IN"), icu::UnicodeString("Etc/GMT-6")},
++    {icu::UnicodeString("America/Montreal"), icu::UnicodeString("Etc/GMT-5")},
++    {icu::UnicodeString("America/New_York"), icu::UnicodeString("Etc/GMT-5")}
++  };
++  if (timezoneEquivalents.find(time_zone) != timezoneEquivalents.end()) {
++    return timezoneEquivalents[time_zone];
++  } else {
++    return time_zone;
++  }
++}
++
+ std::string ToHourCycleString(JSDateTimeFormat::HourCycle hc) {
+   switch (hc) {
+     case JSDateTimeFormat::HourCycle::kH11:
+@@ -492,13 +518,17 @@ int FractionalSecondDigitsFromPattern(const std::string& pattern) {
+   return result;
+ }
+ 
++
+ }  // namespace
+ 
++
++
+ Handle<Object> JSDateTimeFormat::TimeZoneId(Isolate* isolate,
+                                             const icu::TimeZone& tz) {
+   Factory* factory = isolate->factory();
+   icu::UnicodeString time_zone;
+   tz.getID(time_zone);
++  time_zone = EquivalentTimezone(time_zone);
+   UErrorCode status = U_ZERO_ERROR;
+   icu::UnicodeString canonical_time_zone;
+   icu::TimeZone::getCanonicalID(time_zone, canonical_time_zone, status);

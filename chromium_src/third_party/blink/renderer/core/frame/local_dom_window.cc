@@ -7,11 +7,15 @@
 
 #define outerHeight outerHeightOriginal
 #define outerWidth outerWidthOriginal
+#define screenX screenXOriginal
+#define screenY screenYOriginal
 
 #include "src/third_party/blink/renderer/core/frame/local_dom_window.cc"
 
 #undef outerHeight
 #undef outerWidth
+#undef screenX
+#undef screenY
 
 namespace blink {
 
@@ -47,6 +51,16 @@ int LocalDOMWindow::outerHeight() const {
 int LocalDOMWindow::outerWidth() const {
   // Prevent fingerprinter use of outerWidth by returning innerWidth instead:
   return innerWidth();
+}
+
+int LocalDOMWindow::screenX() const {
+  // Prevent fingerprinter use of screenX, screenLeft by returning 0:
+  return 0;
+}
+
+int LocalDOMWindow::screenY() const {
+  // Prevent fingerprinter use of screenY, screenTop by returning 0:
+  return 0;
 }
 
 }  // namespace blink

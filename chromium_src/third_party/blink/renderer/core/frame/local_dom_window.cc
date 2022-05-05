@@ -5,7 +5,13 @@
 
 #include "third_party/blink/renderer/core/frame/local_dom_window.h"
 
+#define outerHeight outerHeightOriginal
+#define outerWidth outerWidthOriginal
+
 #include "src/third_party/blink/renderer/core/frame/local_dom_window.cc"
+
+#undef outerHeight
+#undef outerWidth
 
 namespace blink {
 
@@ -31,6 +37,16 @@ LocalDOMWindow::GetEphemeralStorageOriginOrSecurityOrigin() const {
   return ephemeral_storage_key_
              ? ephemeral_storage_key_->GetSecurityOrigin().get()
              : GetSecurityOrigin();
+}
+
+int LocalDOMWindow::outerHeight() const {
+  // Prevent fingerprinter use of outerHeight by returning innerHeight instead:
+  return innerHeight();
+}
+
+int LocalDOMWindow::outerWidth() const {
+  // Prevent fingerprinter use of outerWidth by returning innerWidth instead:
+  return innerWidth();
 }
 
 }  // namespace blink

@@ -35,6 +35,8 @@ GetBraveFarblingLevelFor(ExecutionContext* context,
 CORE_EXPORT bool AllowFingerprinting(ExecutionContext* context);
 CORE_EXPORT bool AllowFontFamily(ExecutionContext* context,
                                  const AtomicString& family_name);
+CORE_EXPORT int FarbledInteger(ExecutionContext* context, const std::string& key,
+                               int minValue, int maxValue, int defaultValue);
 
 class CORE_EXPORT BraveSessionCache final
     : public GarbageCollected<BraveSessionCache>,
@@ -55,6 +57,8 @@ class CORE_EXPORT BraveSessionCache final
                      size_t size);
   WTF::String GenerateRandomString(std::string seed, wtf_size_t length);
   WTF::String FarbledUserAgent(WTF::String real_user_agent);
+  int FarbledInteger(const std::string& key,
+                     int minValue, int maxValue, int defaultValue);
   bool AllowFontFamily(blink::WebContentSettingsClient* settings,
                        const AtomicString& family_name);
   FarblingPRNG MakePseudoRandomGenerator();
@@ -63,6 +67,7 @@ class CORE_EXPORT BraveSessionCache final
   bool farbling_enabled_;
   uint64_t session_key_;
   uint8_t domain_key_[32];
+  std::map<std::string, int> farbledIntegers_;
 
   void PerturbPixelsInternal(const unsigned char* data, size_t size);
 };

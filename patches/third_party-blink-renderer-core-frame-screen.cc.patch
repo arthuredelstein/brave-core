@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/frame/screen.cc b/third_party/blink/renderer/core/frame/screen.cc
+index c9468d25bec1e534d60085a4b2d6d41ddd781484..a3975f95e544c5af62a047966c4483cd9452e635 100644
+--- a/third_party/blink/renderer/core/frame/screen.cc
++++ b/third_party/blink/renderer/core/frame/screen.cc
+@@ -191,6 +191,7 @@ const display::ScreenInfo& Screen::GetScreenInfo() const {
+   const auto& screen_infos = frame->GetChromeClient().GetScreenInfos(*frame);
+   for (const auto& screen : screen_infos.screen_infos) {
+     if (screen.display_id == display_id_)
++      BRAVE_GET_SCREEN_INFO
+       return screen;
+   }
+   DEFINE_STATIC_LOCAL(display::ScreenInfo, kEmptyScreenInfo, ());

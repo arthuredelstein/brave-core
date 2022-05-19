@@ -1,0 +1,22 @@
+diff --git a/third_party/blink/renderer/core/frame/screen.cc b/third_party/blink/renderer/core/frame/screen.cc
+index c9468d25bec1e534d60085a4b2d6d41ddd781484..5520c35e6690b0f634df048655e2550eb8eee733 100644
+--- a/third_party/blink/renderer/core/frame/screen.cc
++++ b/third_party/blink/renderer/core/frame/screen.cc
+@@ -76,7 +76,7 @@ bool Screen::AreWebExposedScreenPropertiesEqual(
+   return true;
+ }
+ 
+-int Screen::height() const {
++int Screen::height_ChromiumImpl() const {
+   if (!DomWindow())
+     return 0;
+   LocalFrame* frame = DomWindow()->GetFrame();
+@@ -88,7 +88,7 @@ int Screen::height() const {
+   return screen_info.rect.height();
+ }
+ 
+-int Screen::width() const {
++int Screen::width_ChromiumImpl() const {
+   if (!DomWindow())
+     return 0;
+   LocalFrame* frame = DomWindow()->GetFrame();

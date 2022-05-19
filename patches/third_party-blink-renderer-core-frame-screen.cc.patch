@@ -1,0 +1,22 @@
+diff --git a/third_party/blink/renderer/core/frame/screen.cc b/third_party/blink/renderer/core/frame/screen.cc
+index c9468d25bec1e534d60085a4b2d6d41ddd781484..c60579b3703469cb1ff856e7b3ae38512def6668 100644
+--- a/third_party/blink/renderer/core/frame/screen.cc
++++ b/third_party/blink/renderer/core/frame/screen.cc
+@@ -76,7 +76,7 @@ bool Screen::AreWebExposedScreenPropertiesEqual(
+   return true;
+ }
+ 
+-int Screen::height() const {
++int Screen::heightOriginal() const {
+   if (!DomWindow())
+     return 0;
+   LocalFrame* frame = DomWindow()->GetFrame();
+@@ -88,7 +88,7 @@ int Screen::height() const {
+   return screen_info.rect.height();
+ }
+ 
+-int Screen::width() const {
++int Screen::widthOriginal() const {
+   if (!DomWindow())
+     return 0;
+   LocalFrame* frame = DomWindow()->GetFrame();

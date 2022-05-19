@@ -124,6 +124,19 @@ bool AllowFontFamily(ExecutionContext* context,
   return true;
 }
 
+int FarbledInteger(ExecutionContext* context, const std::string& key,
+                   int minValue, int maxValue, int defaultValue) {
+  if (!context) {
+    return defaultValue;
+  }
+  BraveFarblingLevel farblingLevel = GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF);
+  if (farblingLevel == BraveFarblingLevel::OFF) {
+    return defaultValue;
+  }
+  BraveSessionCache cache = BraveSessionCache::From(*context);
+  return cache.FarbledInteger(key, minValue, maxValue, defaultValue);
+}
+
 BraveSessionCache::BraveSessionCache(ExecutionContext& context)
     : Supplement<ExecutionContext>(context) {
   farbling_enabled_ = false;
@@ -294,6 +307,24 @@ WTF::String BraveSessionCache::FarbledUserAgent(WTF::String real_user_agent) {
   for (int i = 0; i < extra; i++)
     result.Append(" ");
   return result.ToString();
+}
+
+int BraveSessionCache::FarbledInteger(
+  const std::string& key, int minValue, int maxValue, int defaultValue
+  ) {
+  if (!farbling_enabled_) {
+    return defaultValue;
+  }
+  if (farbledIntegers_.find(key) != farbledIntegers_.end()) {
+    return farbledIntegers_[key];
+  }
+  crypto::HMAC h(crypto::HMAC::SHA256);
+  CHECK(h.Init(reinterpret_cast<const unsigned char*>(&domain_key_), sizeof domain_key_));
+  uint64_t farbled_integer_key[4];
+  CHECK(h.Sign(key, (uint8_t*) farbled_integer_key, sizeof farbled_integer_key));
+  int farbledInteger = (farbled_integer_key[0] % (1 + maxValue - minValue)) + minValue;
+  farbledIntegers_[key] = farbledInteger;
+  return farbledInteger;
 }
 
 bool BraveSessionCache::AllowFontFamily(

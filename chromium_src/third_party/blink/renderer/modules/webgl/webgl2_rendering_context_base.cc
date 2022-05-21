@@ -3,9 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "brave/third_party/blink/renderer/core/brave_session_cache.h"
 #include "third_party/blink/renderer/modules/webgl/webgl2_rendering_context_base.h"
 #include "third_party/blink/renderer/bindings/modules/v8/webgl_any.h"
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
 
 #include <algorithm>
 

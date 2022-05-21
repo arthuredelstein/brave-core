@@ -4,7 +4,7 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "third_party/blink/renderer/bindings/core/v8/binding_security.h"
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
+#include "brave/third_party/blink/renderer/core/brave_session_cache.h"
 
 #define BindingSecurity             \
   brave::BraveSessionCache::Init(); \

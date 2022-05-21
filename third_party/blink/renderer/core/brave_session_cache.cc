@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
+#include "brave/third_party/blink/renderer/core/brave_session_cache.h"
 
 #include "base/command_line.h"
 #include "base/sequence_checker.h"
@@ -45,7 +45,7 @@ float ConstantMultiplier(double fudge_factor, float value, size_t index) {
 
 float PseudoRandomSequence(uint64_t seed, float value, size_t index) {
   static uint64_t v;
-  const double maxUInt64AsDouble = UINT64_MAX;
+  const double maxUInt64AsDouble = (double) UINT64_MAX;
   if (index == 0) {
     // start of loop, reset to initial seed which was passed in and is based on
     // the domain key
@@ -57,7 +57,7 @@ float PseudoRandomSequence(uint64_t seed, float value, size_t index) {
   return (v / maxUInt64AsDouble) / 10;
 }
 
-}  // namespace
+} // namespace
 
 namespace brave {
 
@@ -100,6 +100,11 @@ BraveFarblingLevel GetBraveFarblingLevelFor(ExecutionContext* context,
   return value;
 }
 
+bool IsFarbling (ExecutionContext* context) {
+  return GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF) != 
+    BraveFarblingLevel::OFF;
+}
+
 bool AllowFingerprinting(ExecutionContext* context) {
   blink::WebContentSettingsClient* settings =
       GetContentSettingsClientFor(context);
@@ -124,8 +129,8 @@ bool AllowFontFamily(ExecutionContext* context,
   return true;
 }
 
-int FarbledInteger(ExecutionContext* context, const std::string& key,
-                   int minValue, int maxValue, int defaultValue) {
+int FarbledInteger(ExecutionContext* context, FarbleKey key,
+                   int spoofValue, int minValue, int maxValue, int defaultValue) {
   if (!context) {
     return defaultValue;
   }
@@ -133,12 +138,15 @@ int FarbledInteger(ExecutionContext* context, const std::string& key,
   if (farblingLevel == BraveFarblingLevel::OFF) {
     return defaultValue;
   }
-  BraveSessionCache cache = BraveSessionCache::From(*context);
-  return cache.FarbledInteger(key, minValue, maxValue, defaultValue);
+  BraveSessionCache& cache = BraveSessionCache::From(*context);
+  printf("FarbledInteger(): cache=%p\n", &cache);
+  return cache.FarbledInteger(key, spoofValue, minValue, maxValue, defaultValue);
 }
 
 BraveSessionCache::BraveSessionCache(ExecutionContext& context)
     : Supplement<ExecutionContext>(context) {
+  printf("BraveSessionCache::BraveSessionCache constructor: %p\n", this);
+
   farbling_enabled_ = false;
   scoped_refptr<const blink::SecurityOrigin> origin;
   if (auto* window = blink::DynamicTo<blink::LocalDOMWindow>(context)) {
@@ -180,11 +188,15 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
 }
 
 BraveSessionCache& BraveSessionCache::From(ExecutionContext& context) {
+  printf("ExecutionContext: %p\n", &context);
   BraveSessionCache* cache =
       Supplement<ExecutionContext>::From<BraveSessionCache>(context);
+  printf("cache found: %p\n", cache);
   if (!cache) {
     cache = MakeGarbageCollected<BraveSessionCache>(context);
+    printf("made garbage-collected cache: %p\n", cache);
     ProvideTo(context, cache);
+    printf("created another cache: %p\n", cache);
   }
   return *cache;
 }
@@ -203,7 +215,7 @@ AudioFarblingCallback BraveSessionCache::GetAudioFarblingCallback(
       }
       case BraveFarblingLevel::BALANCED: {
         const uint64_t* fudge = reinterpret_cast<const uint64_t*>(domain_key_);
-        const double maxUInt64AsDouble = UINT64_MAX;
+        const double maxUInt64AsDouble = (double) UINT64_MAX;
         double fudge_factor = 0.99 + ((*fudge / maxUInt64AsDouble) / 100);
         VLOG(1) << "audio fudge factor (based on session token) = "
                 << fudge_factor;
@@ -300,7 +312,7 @@ WTF::String BraveSessionCache::GenerateRandomString(std::string seed,
 }
 
 WTF::String BraveSessionCache::FarbledUserAgent(WTF::String real_user_agent) {
-  FarblingPRNG prng = MakePseudoRandomGenerator();
+  FarblingPRNG prng = MakePseudoRandomGenerator(FarbleKey::USER_AGENT);
   WTF::StringBuilder result;
   result.Append(real_user_agent);
   int extra = prng() % kFarbledUserAgentMaxExtraSpaces;
@@ -309,22 +321,34 @@ WTF::String BraveSessionCache::FarbledUserAgent(WTF::String real_user_agent) {
   return result.ToString();
 }
 
-int BraveSessionCache::FarbledInteger(
-  const std::string& key, int minValue, int maxValue, int defaultValue
-  ) {
+int BraveSessionCache::FarbledInteger(FarbleKey key,
+  int spoofValue, int minRandomOffset, int maxRandomOffset,
+  int defaultValue) {
+  printf("%p: ", this);
+  /*for (int i = 0; i < FarbleKey::KEY_COUNT; ++i) {
+    printf("%d ", farbledIntegers_[(FarbleKey) i]);
+  }
+  printf("(already)\n");*/
   if (!farbling_enabled_) {
     return defaultValue;
   }
-  if (farbledIntegers_.find(key) != farbledIntegers_.end()) {
-    return farbledIntegers_[key];
+  printf("yes, enabled\n");
+  if (farbledIntegers_.count(key) > 0) {
+    return farbledIntegers_[key] + spoofValue;
   }
-  crypto::HMAC h(crypto::HMAC::SHA256);
-  CHECK(h.Init(reinterpret_cast<const unsigned char*>(&domain_key_), sizeof domain_key_));
-  uint64_t farbled_integer_key[4];
-  CHECK(h.Sign(key, (uint8_t*) farbled_integer_key, sizeof farbled_integer_key));
-  int farbledInteger = (farbled_integer_key[0] % (1 + maxValue - minValue)) + minValue;
-  farbledIntegers_[key] = farbledInteger;
-  return farbledInteger;
+  FarblingPRNG prng = MakePseudoRandomGenerator(key);
+  farbledIntegers_[key] = prng() % (1 + maxRandomOffset - minRandomOffset) +
+                          minRandomOffset;
+  printf("%p: ", this);
+  for (int i = 0; i < FarbleKey::KEY_COUNT; ++i) {
+    if(farbledIntegers_.count((FarbleKey) i) > 0) {
+      printf("%d ", farbledIntegers_[(FarbleKey) i]);
+    } else {
+      printf("_ ");
+    }
+  }
+  printf("(new)\n");
+  return farbledIntegers_[key] + spoofValue;
 }
 
 bool BraveSessionCache::AllowFontFamily(
@@ -346,7 +370,7 @@ bool BraveSessionCache::AllowFontFamily(
               family_name.Utf8()))
         return true;
 #endif
-      FarblingPRNG prng = MakePseudoRandomGenerator();
+      FarblingPRNG prng = MakePseudoRandomGenerator(FarbleKey::FONT_FAMILY);
       prng.discard(family_name.Impl()->GetHash() % 16);
       return ((prng() % 2) == 0);
     }
@@ -356,11 +380,14 @@ bool BraveSessionCache::AllowFontFamily(
   return true;
 }
 
-FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator() {
-  uint64_t seed = *reinterpret_cast<uint64_t*>(domain_key_);
+FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator(FarbleKey key) {
+  uint64_t seed = *reinterpret_cast<uint64_t*>(domain_key_) ^ (unsigned int) key;
   return FarblingPRNG(seed);
+}
+
+FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator() {
+  return MakePseudoRandomGenerator(FarbleKey::NONE);
 }
 
 }  // namespace brave
 
-#include "src/third_party/blink/renderer/core/execution_context/execution_context.cc"

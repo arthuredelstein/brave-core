@@ -25,7 +25,7 @@ class AdsClientIOS : public ads::AdsClient {
   bool IsBrowserActive() const override;
   bool IsBrowserInFullScreenMode() const override;
   bool CanShowBackgroundNotifications() const override;
-  void ShowNotification(const ads::AdNotificationInfo& info) override;
+  void ShowNotification(const ads::NotificationAdInfo& info) override;
   bool ShouldShowNotifications() override;
   void CloseNotification(const std::string& uuid) override;
   void RecordAdEventForId(const std::string& id,
@@ -74,6 +74,8 @@ class AdsClientIOS : public ads::AdsClient {
   int64_t GetInt64Pref(const std::string& path) const override;
   void SetUint64Pref(const std::string& path, const uint64_t value) override;
   uint64_t GetUint64Pref(const std::string& path) const override;
+  void SetTimePref(const std::string& path, const base::Time value) override;
+  base::Time GetTimePref(const std::string& path) const override;
   void ClearPref(const std::string& path) override;
   bool HasPrefPath(const std::string& path) const override;
   void RecordP2AEvent(const std::string& name,

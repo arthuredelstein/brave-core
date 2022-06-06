@@ -17,9 +17,8 @@ namespace {
 std::vector<uint8_t> GetPublicKey(const std::string& private_key_hex) {
   std::vector<uint8_t> private_key;
   base::HexStringToBytes(private_key_hex, &private_key);
-  std::array<uint8_t, 32> payload;
-  std::copy_n(private_key.begin(), 32, payload.begin());
-  auto result = filecoin::bls_private_key_to_public_key(payload);
+  auto result = filecoin::bls_private_key_to_public_key(
+      rust::Slice<const uint8_t>{private_key.data(), private_key.size()});
   std::vector<uint8_t> public_key(result.begin(), result.end());
   return public_key;
 }
@@ -99,7 +98,7 @@ TEST(FilecoinKeyring, ImportFilecoinSECP) {
   ASSERT_FALSE(input_key.empty());
   std::vector<uint8_t> private_key(input_key.begin(), input_key.end());
 
-  FilecoinKeyring keyring;
+  FilecoinKeyring keyring(brave_wallet::mojom::kLocalhostChainId);
   auto address =
       keyring.ImportFilecoinAccount(private_key, mojom::kFilecoinTestnet,
                                     mojom::FilecoinAddressProtocol::SECP256K1);
@@ -117,7 +116,7 @@ TEST(FilecoinKeyring, ImportFilecoinBLS) {
   ASSERT_TRUE(FilecoinKeyring::DecodeImportPayload(private_key_hex,
                                                    &private_key, &protocol));
   EXPECT_EQ(protocol, mojom::FilecoinAddressProtocol::BLS);
-  FilecoinKeyring keyring;
+  FilecoinKeyring keyring(brave_wallet::mojom::kLocalhostChainId);
   std::string address = keyring.ImportFilecoinAccount(
       private_key, mojom::kFilecoinTestnet, protocol);
   EXPECT_EQ(address,
@@ -169,7 +168,7 @@ TEST(FilecoinKeyring, fil_private_key_public_key) {
 }
 
 TEST(FilecoinKeyring, SignTransaction) {
-  FilecoinKeyring keyring;
+  FilecoinKeyring keyring(brave_wallet::mojom::kLocalhostChainId);
   EXPECT_FALSE(keyring.SignTransaction(nullptr));
 
   auto transaction = FilTransaction::FromTxData(mojom::FilTxData::New(

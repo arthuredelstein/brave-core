@@ -6,11 +6,11 @@
 #ifndef BRAVE_VENDOR_BAT_NATIVE_ADS_SRC_BAT_ADS_INTERNAL_CONVERSIONS_CONVERSIONS_DATABASE_TABLE_H_
 #define BRAVE_VENDOR_BAT_NATIVE_ADS_SRC_BAT_ADS_INTERNAL_CONVERSIONS_CONVERSIONS_DATABASE_TABLE_H_
 
+#include <functional>
 #include <string>
 
 #include "bat/ads/ads_client_aliases.h"
 #include "bat/ads/internal/conversions/conversion_info_aliases.h"
-#include "bat/ads/internal/conversions/conversions_database_table_aliases.h"
 #include "bat/ads/internal/database/database_table_interface.h"
 #include "bat/ads/public/interfaces/ads.mojom.h"
 
@@ -18,10 +18,15 @@ namespace ads {
 namespace database {
 namespace table {
 
+using GetConversionsCallback =
+    std::function<void(const bool, const ConversionList&)>;
+
 class Conversions final : public TableInterface {
  public:
   Conversions();
   ~Conversions() override;
+  Conversions(const Conversions&) = delete;
+  Conversions& operator=(const Conversions&) = delete;
 
   void Save(const ConversionList& conversions, ResultCallback callback);
 

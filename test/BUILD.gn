@@ -68,7 +68,7 @@ static_library("brave_test_support_unit") {
     ":test_support",
     "//brave/browser/profiles",
     "//brave/common",
-    "//brave/common:pref_names",
+    "//brave/components/constants",
     "//components/gcm_driver",
     "//components/gcm_driver:gcm_buildflags",
     "//mojo/core/embedder",
@@ -85,6 +85,7 @@ test("brave_unit_tests") {
   configs += [ "//chrome/test:disable_thinlto_cache_flags" ]
 
   sources = [
+    "//brave/browser/brave_ads/search_result_ad/search_result_ad_service_unittest.cc",
     "//brave/browser/brave_content_browser_client_unittest.cc",
     "//brave/browser/brave_resources_util_unittest.cc",
     "//brave/browser/browsing_data/brave_browsing_data_remover_delegate_unittest.cc",
@@ -108,6 +109,7 @@ test("brave_unit_tests") {
     "//brave/chromium_src/services/network/public/cpp/cors/cors_unittest.cc",
     "//brave/common/brave_content_client_unittest.cc",
     "//brave/components/assist_ranker/ranker_model_loader_impl_unittest.cc",
+    "//brave/components/brave_ads/common/search_result_ad_util_unittest.cc",
     "//brave/components/brave_ads/content/browser/search_result_ad/search_result_ad_parsing_unittest.cc",
     "//brave/components/brave_perf_predictor/browser/bandwidth_linreg_unittest.cc",
     "//brave/components/brave_perf_predictor/browser/bandwidth_savings_predictor_unittest.cc",
@@ -160,6 +162,7 @@ test("brave_unit_tests") {
     "//brave/base:base_unittests",
     "//brave/browser",
     "//brave/browser:unit_tests",
+    "//brave/browser/brave_vpn/test:unit_tests",
     "//brave/browser/brave_wallet",
     "//brave/browser/brave_wallet:unit_tests",
     "//brave/browser/content_settings:unit_tests",
@@ -186,11 +189,11 @@ test("brave_unit_tests") {
     "//brave/chromium_src/components/autofill_assistant/browser:unit_tests",
     "//brave/chromium_src/components/privacy_sandbox:unit_tests",
     "//brave/chromium_src/net/base:unit_tests",
-    "//brave/common:network_constants",
-    "//brave/common:pref_names",
     "//brave/components/adblock_rust_ffi",
     "//brave/components/api_request_helper:api_request_helper_unit_tests",
     "//brave/components/brave_adaptive_captcha/buildflags",
+    "//brave/components/brave_ads/browser:test_support",
+    "//brave/components/brave_ads/common",
     "//brave/components/brave_ads/content/browser/search_result_ad",
     "//brave/components/brave_ads/test:brave_ads_unit_tests",
     "//brave/components/brave_component_updater/browser",
@@ -218,6 +221,7 @@ test("brave_unit_tests") {
     "//brave/components/brave_wallet/common:unit_tests",
     "//brave/components/brave_wallet/renderer/test:unit_tests",
     "//brave/components/child_process_monitor:unittests",
+    "//brave/components/constants",
     "//brave/components/de_amp/browser/test:unit_tests",
     "//brave/components/ipfs/buildflags",
     "//brave/components/ipfs/test:brave_ipfs_unit_tests",
@@ -241,7 +245,7 @@ test("brave_unit_tests") {
     "//brave/components/weekly_storage",
     "//brave/extensions:common",
     "//brave/mojo/brave_ast_patcher:unit_tests",
-    "//brave/net/proxy_resolution:unit_tests",
+    "//brave/net:unit_tests",
     "//brave/third_party/blink/renderer:renderer",
     "//brave/vendor/bat-native-ledger/test:bat_native_ledger_tests",
     "//brave/vendor/brave_base",
@@ -491,19 +495,13 @@ test("brave_unit_tests") {
       "//brave/browser/net/brave_torrent_redirect_network_delegate_helper_unittest.cc",
     ]
 
-    deps += [
-      "//brave/common:pref_names",
-      "//brave/components/brave_referrals/browser",
-    ]
+    deps += [ "//brave/components/brave_referrals/browser" ]
   }
 
   if (ethereum_remote_client_enabled) {
     sources +=
         [ "//brave/browser/extensions/ethereum_remote_client_unittest.cc" ]
-    deps += [
-      "//brave/browser/ethereum_remote_client",
-      "//brave/common:pref_names",
-    ]
+    deps += [ "//brave/browser/ethereum_remote_client" ]
   }
 
   if (enable_brave_translate_extension) {
@@ -596,7 +594,10 @@ static_library("browser_test_support") {
     "base/brave_test_launcher_delegate.h",
   ]
 
-  deps = [ "//chrome/browser" ]
+  deps = [
+    "//brave/browser/ui",
+    "//chrome/browser",
+  ]
 }
 
 static_library("browser_tests_runner") {
@@ -651,7 +652,6 @@ if (!is_android) {
       "//brave/browser/brave_wallet/solana_provider_browsertest.cc",
       "//brave/browser/brave_wallet/solana_provider_renderer_browsertest.cc",
       "//brave/browser/brave_wallet/wallet_watch_asset_browsertest.cc",
-      "//brave/browser/content_settings/brave_content_settings_registry_browsertest.cc",
       "//brave/browser/debounce/debounce_browsertest.cc",
       "//brave/browser/ephemeral_storage/blob_url_browsertest.cc",
       "//brave/browser/ephemeral_storage/ephemeral_storage_1p_browsertest.cc",
@@ -660,6 +660,7 @@ if (!is_android) {
       "//brave/browser/ephemeral_storage/ephemeral_storage_browsertest.cc",
       "//brave/browser/ephemeral_storage/ephemeral_storage_browsertest.h",
       "//brave/browser/ephemeral_storage/ephemeral_storage_qa_browsertest.cc",
+      "//brave/browser/ephemeral_storage/hsts_partitioning_browsertest.cc",
       "//brave/browser/extensions/api/brave_shields_api_browsertest.cc",
       "//brave/browser/extensions/api/brave_theme_api_browsertest.cc",
       "//brave/browser/extensions/brave_base_local_data_files_browsertest.cc",
@@ -806,6 +807,7 @@ if (!is_android) {
       "//brave/vendor/bat-native-ledger:publishers_proto",
       "//chrome/browser",
       "//components/commerce/core:feature_list",
+      "//components/gcm_driver:gcm_buildflags",
       "//components/history_clusters/core",
       "//components/lens",
       "//components/metrics_services_manager",
@@ -908,7 +910,7 @@ if (!is_android) {
     }
 
     if (toolkit_views) {
-      sources += [ "//brave/browser/ui/views/brave_ads/ad_notfication_popup_browsertest.cc" ]
+      sources += [ "//brave/browser/ui/views/brave_ads/notification_ad_popup_browsertest.cc" ]
       deps += [
         "//brave/browser/ui/views/brave_ads",
         "//brave/test/views/snapshot",
@@ -946,9 +948,6 @@ if (!is_android) {
       "//brave/browser/tor",
       "//brave/browser/ui",
       "//brave/browser/ui/tabs",
-      "//brave/common:network_constants",
-      "//brave/common:pref_names",
-      "//brave/common:switches",
       "//brave/components/brave_component_updater/browser",
       "//brave/components/brave_referrals/browser",
       "//brave/components/brave_referrals/common",
@@ -958,6 +957,7 @@ if (!is_android) {
       "//brave/components/brave_sync:prefs",
       "//brave/components/brave_wayback_machine",
       "//brave/components/brave_wayback_machine:buildflags",
+      "//brave/components/constants",
       "//brave/components/crypto_dot_com/browser",
       "//brave/components/ipfs/buildflags",
       "//brave/components/l10n/browser",
@@ -1070,8 +1070,6 @@ if (!is_android) {
       "//brave/browser/net",
       "//brave/browser/partnercustomizations:delegate_public_impl_java",
       "//brave/browser/themes",
-      "//brave/common:pref_names",
-      "//brave/common:switches",
       "//brave/components/brave_referrals/browser",
       "//brave/components/brave_referrals/common",
       "//brave/components/brave_rewards/common",
@@ -1085,6 +1083,7 @@ if (!is_android) {
       "//brave/components/brave_wallet/common",
       "//brave/components/brave_wallet/common:mojom",
       "//brave/components/brave_wayback_machine",
+      "//brave/components/constants",
       "//brave/components/ipfs",
       "//brave/components/ipfs/buildflags",
       "//brave/components/l10n/browser",
@@ -1111,6 +1110,7 @@ if (!is_android) {
       "//components/content_settings/renderer",
       "//components/embedder_support",
       "//components/externalauth/android:google_delegate_public_impl_java",
+      "//components/gcm_driver:gcm_buildflags",
       "//components/history_clusters/core",
       "//components/language/android:ulp_delegate_public_java",
       "//components/language/core/common",
@@ -1146,7 +1146,6 @@ if (!is_android) {
       "//brave/browser/brave_resources_browsertest.cc",
       "//brave/browser/brave_shields/cookie_pref_service_browsertest.cc",
       "//brave/browser/brave_stats/brave_stats_updater_browsertest.cc",
-      "//brave/browser/content_settings/brave_content_settings_registry_browsertest.cc",
       "//brave/browser/net/brave_system_request_handler_browsertest.cc",
       "//brave/browser/profiles/brave_profile_manager_browsertest.cc",
       "//brave/common/brave_channel_info_browsertest.cc",

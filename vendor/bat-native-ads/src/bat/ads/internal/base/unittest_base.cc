@@ -13,7 +13,7 @@
 #include "bat/ads/internal/base/unittest_file_util.h"
 #include "bat/ads/internal/base/unittest_time_util.h"
 #include "bat/ads/internal/base/unittest_util.h"
-#include "bat/ads/internal/database/database_initialize.h"
+#include "bat/ads/internal/database/database_manager.h"
 #include "bat/ads/internal/deprecated/client/client.h"
 #include "bat/ads/public/interfaces/ads.mojom.h"
 
@@ -33,9 +33,6 @@ UnitTestBase::UnitTestBase()
       platform_helper_mock_(std::make_unique<NiceMock<PlatformHelperMock>>()) {
   // You can do set-up work for each test here
   CHECK(temp_dir_.CreateUniqueTempDir());
-
-  brave_l10n::LocaleHelper::GetInstance()->set_for_testing(
-      locale_helper_mock_.get());
 
   PlatformHelper::GetInstance()->SetForTesting(platform_helper_mock_.get());
 }
@@ -200,19 +197,19 @@ void UnitTestBase::Initialize() {
   client_ = std::make_unique<Client>();
   client_->Initialize([](const bool success) { ASSERT_TRUE(success); });
 
-  ad_notifications_ = std::make_unique<AdNotifications>();
-  ad_notifications_->Initialize(
+  notification_ads_ = std::make_unique<NotificationAds>();
+  notification_ads_->Initialize(
       [](const bool success) { ASSERT_TRUE(success); });
 
   confirmations_state_ = std::make_unique<ConfirmationsState>();
   confirmations_state_->Initialize(
       [](const bool success) { ASSERT_TRUE(success); });
 
-  database_initialize_ = std::make_unique<database::Initialize>();
-  database_initialize_->CreateOrOpen(
-      [](const bool success) { ASSERT_TRUE(success); });
-
   diagnostics_ = std::make_unique<Diagnostics>();
+
+  database_manager_ = std::make_unique<DatabaseManager>();
+  database_manager_->CreateOrOpen(
+      [](const bool success) { ASSERT_TRUE(success); });
 
   browser_manager_ = std::make_unique<BrowserManager>();
 

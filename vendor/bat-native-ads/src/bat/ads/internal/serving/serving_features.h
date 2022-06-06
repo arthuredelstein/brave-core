@@ -14,10 +14,11 @@ namespace features {
 extern const base::Feature kServing;
 
 bool IsServingEnabled();
+
 int GetServingVersion();
 
-int GetDefaultAdNotificationsPerHour();
-int GetMaximumAdNotificationsPerDay();
+int GetDefaultNotificationAdsPerHour();
+int GetMaximumNotificationAdsPerDay();
 
 int GetMaximumInlineContentAdsPerHour();
 int GetMaximumInlineContentAdsPerDay();

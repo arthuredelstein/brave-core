@@ -21,7 +21,7 @@ class Time;
 
 namespace ads {
 
-struct AdNotificationInfo;
+struct NotificationAdInfo;
 
 class ADS_EXPORT AdsClient {
  public:
@@ -43,8 +43,8 @@ class ADS_EXPORT AdsClient {
   // backgrounded.
   virtual bool CanShowBackgroundNotifications() const = 0;
 
-  // Display |ad_notification| on the screen.
-  virtual void ShowNotification(const AdNotificationInfo& ad_notification) = 0;
+  // Display |notification_ad| on the screen.
+  virtual void ShowNotification(const NotificationAdInfo& notification_ad) = 0;
 
   // Close the notification for the specified |uuid|.
   virtual void CloseNotification(const std::string& uuid) = 0;
@@ -150,6 +150,7 @@ class ADS_EXPORT AdsClient {
   virtual std::string GetStringPref(const std::string& path) const = 0;
   virtual int64_t GetInt64Pref(const std::string& path) const = 0;
   virtual uint64_t GetUint64Pref(const std::string& path) const = 0;
+  virtual base::Time GetTimePref(const std::string& path) const = 0;
 
   // Update the value for the specified preference |path|.
   virtual void SetBooleanPref(const std::string& path, const bool value) = 0;
@@ -159,6 +160,7 @@ class ADS_EXPORT AdsClient {
                              const std::string& value) = 0;
   virtual void SetInt64Pref(const std::string& path, const int64_t value) = 0;
   virtual void SetUint64Pref(const std::string& path, const uint64_t value) = 0;
+  virtual void SetTimePref(const std::string& path, const base::Time value) = 0;
 
   // Remove the preference from the specified |path|.
   virtual void ClearPref(const std::string& path) = 0;

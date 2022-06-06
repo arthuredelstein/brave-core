@@ -13,9 +13,10 @@
 #include "base/strings/stringprintf.h"
 #include "base/time/time.h"
 #include "bat/ads/internal/ads_client_helper.h"
-#include "bat/ads/internal/base/database_statement_util.h"
+#include "bat/ads/internal/base/database_bind_util.h"
+#include "bat/ads/internal/base/database_column_util.h"
 #include "bat/ads/internal/base/database_table_util.h"
-#include "bat/ads/internal/base/database_util.h"
+#include "bat/ads/internal/base/database_transaction_util.h"
 #include "bat/ads/internal/base/logging_util.h"
 #include "bat/ads/internal/base/time_formatting_util.h"
 #include "bat/ads/internal/legacy_migration/rewards/legacy_rewards_migration_transaction_constants.h"
@@ -37,12 +38,12 @@ int BindParameters(mojom::DBCommand* command,
   int index = 0;
   for (const auto& transaction : transactions) {
     BindString(command, index++, transaction.id);
-    BindDouble(command, index++, transaction.created_at);
+    BindDouble(command, index++, transaction.created_at.ToDoubleT());
     BindString(command, index++, transaction.creative_instance_id);
     BindDouble(command, index++, transaction.value);
     BindString(command, index++, transaction.ad_type.ToString());
     BindString(command, index++, transaction.confirmation_type.ToString());
-    BindDouble(command, index++, transaction.reconciled_at);
+    BindDouble(command, index++, transaction.reconciled_at.ToDoubleT());
 
     count++;
   }
@@ -56,12 +57,12 @@ TransactionInfo GetFromRecord(mojom::DBRecord* record) {
   TransactionInfo transaction;
 
   transaction.id = ColumnString(record, 0);
-  transaction.created_at = ColumnDouble(record, 1);
+  transaction.created_at = base::Time::FromDoubleT(ColumnDouble(record, 1));
   transaction.creative_instance_id = ColumnString(record, 2);
   transaction.value = ColumnDouble(record, 3);
   transaction.ad_type = AdType(ColumnString(record, 4));
   transaction.confirmation_type = ConfirmationType(ColumnString(record, 5));
-  transaction.reconciled_at = ColumnDouble(record, 6);
+  transaction.reconciled_at = base::Time::FromDoubleT(ColumnDouble(record, 6));
 
   return transaction;
 }
@@ -203,7 +204,7 @@ void Transactions::Update(
 void Transactions::Delete(ResultCallback callback) {
   mojom::DBTransactionPtr transaction = mojom::DBTransaction::New();
 
-  util::Delete(transaction.get(), GetTableName());
+  DeleteTable(transaction.get(), GetTableName());
 
   AdsClientHelper::Get()->RunDBTransaction(
       std::move(transaction),
@@ -305,7 +306,7 @@ void Transactions::MigrateToV18(mojom::DBTransaction* transaction) {
 
   transaction->commands.push_back(std::move(command));
 
-  util::CreateIndex(transaction, "transactions", "id");
+  CreateTableIndex(transaction, "transactions", "id");
 }
 
 }  // namespace table

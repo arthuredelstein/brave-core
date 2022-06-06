@@ -9,7 +9,6 @@
 #include "brave/browser/brave_features_internal_names.h"
 #include "brave/browser/ethereum_remote_client/buildflags/buildflags.h"
 #include "brave/browser/ethereum_remote_client/features.h"
-#include "brave/common/brave_features.h"
 #include "brave/components/brave_ads/common/features.h"
 #include "brave/components/brave_component_updater/browser/features.h"
 #include "brave/components/brave_rewards/common/buildflags/buildflags.h"
@@ -549,13 +548,13 @@ const flags_ui::FeatureEntry::Choice kBraveSkusEnvChoices[] = {
      flag_descriptions::kBraveAdsCustomNotificationsName,                   \
      flag_descriptions::kBraveAdsCustomNotificationsDescription,            \
      kOsAll,                                                                \
-     FEATURE_VALUE_TYPE(brave_ads::features::kCustomAdNotifications)},      \
+     FEATURE_VALUE_TYPE(brave_ads::features::kCustomNotificationAds)},      \
     {"brave-ads-allowed-to-fallback-to-custom-push-notification-ads",       \
      flag_descriptions::kBraveAdsCustomNotificationsFallbackName,           \
      flag_descriptions::kBraveAdsCustomNotificationsFallbackDescription,    \
      kOsAll,                                                                \
      FEATURE_VALUE_TYPE(                                                    \
-       brave_ads::features::kAllowedToFallbackToCustomAdNotifications)},    \
+       brave_ads::features::kAllowedToFallbackToCustomNotificationAds)},    \
     {"brave-sync-v2",                                                       \
       flag_descriptions::kBraveSyncName,                                    \
       flag_descriptions::kBraveSyncDescription, kOsDesktop,                 \

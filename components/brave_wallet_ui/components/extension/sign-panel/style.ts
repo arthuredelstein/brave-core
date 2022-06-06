@@ -42,6 +42,9 @@ export const AccountNameText = styled.span`
   line-height: 20px;
   color: ${(p) => p.theme.color.text02};
   margin-bottom: 2px;
+  max-width: 80%;
+  word-break: break-word;
+  text-align: center;
 `
 
 export const NetworkText = styled.span`
@@ -88,6 +91,7 @@ export const MessageText = styled.span`
   text-align: left;
   color: ${(p) => p.theme.color.text02};
   word-break: break-word;
+  white-space: pre-wrap;
 `
 
 export const ButtonRow = styled.div`

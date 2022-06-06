@@ -117,6 +117,12 @@ class BraveWalletService : public KeyedService,
                        const url::Origin& origin,
                        const std::string& account,
                        ResetPermissionCallback callback) override;
+  void GetWebSitesWithPermission(
+      mojom::CoinType coin,
+      GetWebSitesWithPermissionCallback callback) override;
+  void ResetWebSitePermission(mojom::CoinType coin,
+                              const std::string& formed_website,
+                              ResetWebSitePermissionCallback callback) override;
   void GetActiveOrigin(GetActiveOriginCallback callback) override;
   void GeteTLDPlusOneFromOrigin(const url::Origin& origin,
                                 GetActiveOriginCallback callback) override;
@@ -223,6 +229,7 @@ class BraveWalletService : public KeyedService,
   void CancelAllGetEncryptionPublicKeyCallbacks();
   void CancelAllDecryptCallbacks();
 
+  int sign_message_id_ = 0;
   base::circular_deque<mojom::SignMessageRequestPtr> sign_message_requests_;
   base::circular_deque<SignMessageRequestCallback> sign_message_callbacks_;
   base::flat_map<std::string, mojom::EthereumProvider::RequestCallback>

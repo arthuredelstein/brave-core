@@ -6,13 +6,15 @@
 #include "bat/ads/internal/deprecated/client/preferences/saved_ad_info.h"
 
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 
 namespace ads {
 
 SavedAdInfo::SavedAdInfo() = default;
 
 SavedAdInfo::SavedAdInfo(const SavedAdInfo& ad) = default;
+
+SavedAdInfo& SavedAdInfo::operator=(const SavedAdInfo& info) = default;
 
 SavedAdInfo::~SavedAdInfo() = default;
 

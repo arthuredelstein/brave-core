@@ -8,7 +8,7 @@
 #include "brave/browser/ui/brave_browser.h"
 #include "brave/browser/ui/views/frame/brave_browser_view.h"
 #include "brave/browser/ui/views/window_closing_confirm_dialog_view.h"
-#include "brave/common/pref_names.h"
+#include "brave/components/constants/pref_names.h"
 #include "chrome/browser/download/download_manager_utils.h"
 #include "chrome/browser/download/download_prefs.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
@@ -53,16 +53,21 @@ void CancelClose() {
 class WindowClosingConfirmBrowserTest : public InProcessBrowserTest {
  public:
   void SetUpOnMainThread() override {
+    BraveBrowser::SuppressBrowserWindowClosingDialogForTesting(false);
+
     InProcessBrowserTest::SetUpOnMainThread();
 
     PrefService* prefs = browser()->profile()->GetPrefs();
-    // Disabled by default.
-    EXPECT_FALSE(prefs->GetBoolean(kEnableWindowClosingConfirm));
-
-    // Enable for testing.
-    prefs->SetBoolean(kEnableWindowClosingConfirm, true);
+    // Enabled by default.
+    EXPECT_TRUE(prefs->GetBoolean(kEnableWindowClosingConfirm));
 
     SetDialogCreationCallback();
+  }
+
+  void TearDownOnMainThread() override {
+    BraveBrowser::SuppressBrowserWindowClosingDialogForTesting(true);
+
+    InProcessBrowserTest::TearDownOnMainThread();
   }
 
   void SetDialogCreationCallback() {

@@ -66,7 +66,7 @@ import LockPanel from '../components/extension/lock-panel'
 import { getNetworkInfo } from '../utils/network-utils'
 import { isHardwareAccount } from '../utils/address-utils'
 import { useAssets, useSwap, useSend, useHasAccount, usePrevNetwork } from '../common/hooks'
-import { getUniqueAssets } from '../utils/asset-utils'
+import { getRampAssetSymbol, getUniqueAssets } from '../utils/asset-utils'
 import { getBuyAssetUrl } from '../common/async/lib'
 
 type Props = {
@@ -108,7 +108,8 @@ function Container (props: Props) {
     defaultCurrencies,
     transactions,
     userVisibleTokensInfo,
-    defaultAccounts
+    defaultAccounts,
+    defaultNetworks
   } = props.wallet
 
   const {
@@ -163,9 +164,12 @@ function Container (props: Props) {
   const { prevNetwork } = usePrevNetwork()
 
   React.useEffect(() => {
-    if (selectedPanel === 'connectWithSite') {
+    // Checking selectedAccounts length here to ensure that
+    // we only update this once on mount.
+    if (selectedPanel === 'connectWithSite' && selectedAccounts.length === 0) {
       const foundDefaultAccountInfo = defaultAccounts.find(account => connectingAccounts.includes(account.address.toLowerCase()))
       const foundDefaultAccount = accounts.find((account) => account.address.toLowerCase() === foundDefaultAccountInfo?.address?.toLowerCase() ?? '')
+
       if (foundDefaultAccount) {
         setSelectedAccounts([foundDefaultAccount])
       }
@@ -184,8 +188,11 @@ function Container (props: Props) {
   }
 
   const onSubmitBuy = () => {
+    const asset = selectedBuyOption === BraveWallet.OnRampProvider.kRamp
+      ? { ...selectedBuyAsset, symbol: getRampAssetSymbol(selectedBuyAsset) }
+      : selectedBuyAsset
     getBuyAssetUrl({
-      asset: selectedBuyAsset,
+      asset,
       onRampProvider: selectedBuyOption,
       chainId: selectedNetwork.chainId,
       address: selectedAccount.address,
@@ -645,6 +652,7 @@ function Container (props: Props) {
             onCancel={onCancelSigning}
             onSign={onSignData}
             selectedNetwork={getNetworkInfo(selectedNetwork.chainId, selectedNetwork.coin, networkList)}
+            defaultNetworks={defaultNetworks}
             // Pass a boolean here if the signing method is risky
             showWarning={false}
           />

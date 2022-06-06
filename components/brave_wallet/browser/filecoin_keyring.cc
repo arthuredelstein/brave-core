@@ -24,9 +24,8 @@ bool GetBLSPublicKey(const std::vector<uint8_t>& private_key,
   if (private_key.size() != 32 || !public_key_out)
     return false;
 
-  std::array<uint8_t, 32> payload;
-  std::copy_n(private_key.begin(), 32, payload.begin());
-  auto result = filecoin::bls_private_key_to_public_key(payload);
+  auto result = filecoin::bls_private_key_to_public_key(
+      rust::Slice<const uint8_t>{private_key.data(), private_key.size()});
   std::vector<uint8_t> public_key(result.begin(), result.end());
   if (std::all_of(public_key.begin(), public_key.end(),
                   [](int i) { return i == 0; }))
@@ -36,7 +35,12 @@ bool GetBLSPublicKey(const std::vector<uint8_t>& private_key,
 }
 }  // namespace
 
-FilecoinKeyring::FilecoinKeyring() = default;
+FilecoinKeyring::FilecoinKeyring(const std::string& chain_id) {
+  network_prefix_ = (chain_id == brave_wallet::mojom::kFilecoinMainnet)
+                        ? mojom::kFilecoinMainnet
+                        : mojom::kFilecoinTestnet;
+}
+
 FilecoinKeyring::~FilecoinKeyring() = default;
 
 // static
@@ -131,14 +135,29 @@ void FilecoinKeyring::RestoreFilecoinAccount(
   }
 }
 
+void FilecoinKeyring::ChainChangedEvent(const std::string& chain_id,
+                                        mojom::CoinType coin) {
+  if (coin != mojom::CoinType::FIL) {
+    return;
+  }
+  auto* network = (chain_id == brave_wallet::mojom::kFilecoinMainnet)
+                      ? mojom::kFilecoinMainnet
+                      : mojom::kFilecoinTestnet;
+
+  if (network_prefix_ != network) {
+    accounts_.clear();
+    network_prefix_ = *network;
+  }
+}
+
 std::string FilecoinKeyring::GetAddressInternal(HDKeyBase* hd_key_base) const {
   if (!hd_key_base)
     return std::string();
   HDKey* hd_key = static_cast<HDKey*>(hd_key_base);
-  // TODO(spylogsster): Get network from settings.
+
   return FilAddress::FromUncompressedPublicKey(
              hd_key->GetUncompressedPublicKey(),
-             mojom::FilecoinAddressProtocol::SECP256K1, mojom::kFilecoinTestnet)
+             mojom::FilecoinAddressProtocol::SECP256K1, network_prefix_)
       .EncodeAsString();
 }
 

@@ -7,8 +7,9 @@
 
 #include <utility>
 
-#include "mojo/public/cpp/bindings/sync_call_restrictions.h"
 #include "base/logging.h"
+#include "base/time/time.h"
+#include "mojo/public/cpp/bindings/sync_call_restrictions.h"
 
 namespace bat_ads {
 
@@ -59,7 +60,7 @@ bool BatAdsClientMojoBridge::IsBrowserInFullScreenMode() const {
 }
 
 void BatAdsClientMojoBridge::ShowNotification(
-    const ads::AdNotificationInfo& info) {
+    const ads::NotificationAdInfo& info) {
   if (!connected()) {
     return;
   }
@@ -433,6 +434,26 @@ void BatAdsClientMojoBridge::SetUint64Pref(
   }
 
   bat_ads_client_->SetUint64Pref(path, value);
+}
+
+base::Time BatAdsClientMojoBridge::GetTimePref(const std::string& path) const {
+  base::Time value;
+
+  if (!connected()) {
+    return value;
+  }
+
+  bat_ads_client_->GetTimePref(path, &value);
+  return value;
+}
+
+void BatAdsClientMojoBridge::SetTimePref(const std::string& path,
+                                         const base::Time value) {
+  if (!connected()) {
+    return;
+  }
+
+  bat_ads_client_->SetTimePref(path, value);
 }
 
 void BatAdsClientMojoBridge::ClearPref(

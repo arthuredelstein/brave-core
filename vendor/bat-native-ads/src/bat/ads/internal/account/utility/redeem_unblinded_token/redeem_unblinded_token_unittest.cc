@@ -11,11 +11,11 @@
 #include "bat/ads/internal/account/issuers/issuers_unittest_util.h"
 #include "bat/ads/internal/account/utility/redeem_unblinded_token/redeem_unblinded_token_delegate_mock.h"
 #include "bat/ads/internal/ads_client_helper.h"
+#include "bat/ads/internal/base/http_status_code.h"
 #include "bat/ads/internal/base/unittest_base.h"
 #include "bat/ads/internal/base/unittest_util.h"
 #include "bat/ads/internal/privacy/tokens/unblinded_tokens/unblinded_tokens_unittest_util.h"
 #include "bat/ads/pref_names.h"
-#include "net/http/http_status_code.h"
 
 // npm run test -- brave_unit_tests --filter=BatAds*
 
@@ -87,7 +87,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest, RedeemUnblindedTokenIfAdsAreEnabled) {
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   ConfirmationInfo expected_confirmation = confirmation;
@@ -124,7 +124,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest,
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   const ConfirmationInfo& expected_confirmation = confirmation;
@@ -184,7 +184,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest,
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
   confirmation.was_created = true;
 
   // Act
@@ -234,7 +234,7 @@ TEST_F(
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   ConfirmationInfo expected_confirmation = confirmation;
@@ -284,7 +284,7 @@ TEST_F(
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   ConfirmationInfo expected_confirmation = confirmation;
@@ -317,7 +317,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest, SendConfirmationIfAdsIsDisabled) {
   const URLEndpoints& endpoints = {
       {// Create confirmation request
        "/v2/confirmation/d990ed8d-d739-49fb-811b-c2e02158fb60",
-       {{418 /* I'm a teapot */, R"(
+       {{net::HTTP_IM_A_TEAPOT, R"(
             {
               "id" : "d990ed8d-d739-49fb-811b-c2e02158fb60",
               "payload" : {},
@@ -334,7 +334,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest, SendConfirmationIfAdsIsDisabled) {
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   const ConfirmationInfo& expected_confirmation = confirmation;
@@ -376,7 +376,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest,
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   const ConfirmationInfo& expected_confirmation = confirmation;
@@ -417,7 +417,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest,
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   const ConfirmationInfo& expected_confirmation = confirmation;
@@ -458,7 +458,7 @@ TEST_F(BatAdsRedeemUnblindedTokenTest,
       BuildConfirmation("d990ed8d-d739-49fb-811b-c2e02158fb60",
                         "8b742869-6e4a-490c-ac31-31b49130098a",
                         "546fe7b0-5047-4f28-a11c-81f14edcf0f6",
-                        ConfirmationType::kViewed, AdType::kAdNotification);
+                        ConfirmationType::kViewed, AdType::kNotificationAd);
 
   // Act
   const ConfirmationInfo& expected_confirmation = confirmation;

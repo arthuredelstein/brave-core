@@ -83,6 +83,10 @@ void ConfirmationsState::Initialize(InitializeCallback callback) {
   Load();
 }
 
+bool ConfirmationsState::IsInitialized() const {
+  return is_initialized_;
+}
+
 void ConfirmationsState::Load() {
   BLOG(3, "Loading confirmations state");
 
@@ -401,8 +405,8 @@ bool ConfirmationsState::GetFailedConfirmationsFromDictionary(
       confirmation.ad_type = AdType(*ad_type);
     } else {
       // Migrate legacy confirmations, this value is not used right now so safe
-      // to set to |kAdNotification|
-      confirmation.ad_type = AdType::kAdNotification;
+      // to set to |kNotificationAd|
+      confirmation.ad_type = AdType::kNotificationAd;
     }
 
     // Token info

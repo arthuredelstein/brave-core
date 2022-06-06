@@ -18,6 +18,7 @@ namespace ads {
 struct ADS_EXPORT HistoryItemInfo final {
   HistoryItemInfo();
   HistoryItemInfo(const HistoryItemInfo& info);
+  HistoryItemInfo& operator=(const HistoryItemInfo& info);
   ~HistoryItemInfo();
 
   bool operator==(const HistoryItemInfo& rhs) const;
@@ -26,7 +27,7 @@ struct ADS_EXPORT HistoryItemInfo final {
   std::string ToJson() const;
   bool FromJson(const std::string& json);
 
-  base::Time time;
+  base::Time created_at;
   AdContentInfo ad_content;
   CategoryContentInfo category_content;
 };

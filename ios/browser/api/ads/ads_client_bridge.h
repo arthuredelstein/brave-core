@@ -40,7 +40,7 @@
 - (void)save:(const std::string&)name
        value:(const std::string&)value
     callback:(ads::ResultCallback)callback;
-- (void)showNotification:(const ads::AdNotificationInfo&)info;
+- (void)showNotification:(const ads::NotificationAdInfo&)info;
 - (void)closeNotification:(const std::string&)id;
 - (void)recordAdEventForId:(const std::string&)id
                     adType:(const std::string&)ad_type
@@ -66,6 +66,8 @@
 - (int64_t)getInt64Pref:(const std::string&)path;
 - (void)setUint64Pref:(const std::string&)path value:(const uint64_t)value;
 - (uint64_t)getUint64Pref:(const std::string&)path;
+- (void)setTimePref:(const std::string&)path value:(const base::Time)value;
+- (base::Time)getTimePref:(const std::string&)path;
 - (void)clearPref:(const std::string&)path;
 - (bool)hasPrefPath:(const std::string&)path;
 - (void)recordP2AEvent:(const std::string&)name

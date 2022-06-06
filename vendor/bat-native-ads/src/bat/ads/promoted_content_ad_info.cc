@@ -6,13 +6,16 @@
 #include "bat/ads/promoted_content_ad_info.h"
 
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 
 namespace ads {
 
 PromotedContentAdInfo::PromotedContentAdInfo() = default;
 
 PromotedContentAdInfo::PromotedContentAdInfo(
+    const PromotedContentAdInfo& info) = default;
+
+PromotedContentAdInfo& PromotedContentAdInfo::operator=(
     const PromotedContentAdInfo& info) = default;
 
 PromotedContentAdInfo::~PromotedContentAdInfo() = default;

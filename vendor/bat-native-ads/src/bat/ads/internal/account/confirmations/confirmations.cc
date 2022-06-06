@@ -37,7 +37,7 @@
 namespace ads {
 
 namespace {
-constexpr int64_t kRetryAfterSeconds = 15;
+constexpr base::TimeDelta kRetryAfter = base::Seconds(15);
 }  // namespace
 
 Confirmations::Confirmations(privacy::TokenGeneratorInterface* token_generator)
@@ -93,7 +93,7 @@ void Confirmations::Retry() {
 
   DCHECK(!retry_timer_.IsRunning());
   const base::Time time = retry_timer_.StartWithPrivacy(
-      base::Seconds(kRetryAfterSeconds),
+      kRetryAfter,
       base::BindOnce(&Confirmations::OnRetry, base::Unretained(this)));
 
   BLOG(1, "Retry sending failed confirmations " << FriendlyDateAndTime(time));
@@ -285,8 +285,8 @@ void Confirmations::OnDidRedeemUnblindedToken(
   const int unblinded_payment_tokens_count =
       ConfirmationsState::Get()->get_unblinded_payment_tokens()->Count();
 
-  const base::Time next_token_redemption_at = base::Time::FromDoubleT(
-      AdsClientHelper::Get()->GetDoublePref(prefs::kNextTokenRedemptionAt));
+  const base::Time next_token_redemption_at =
+      AdsClientHelper::Get()->GetTimePref(prefs::kNextTokenRedemptionAt);
 
   BLOG(1, "Successfully redeemed unblinded token for "
               << confirmation.ad_type << " with confirmation id "

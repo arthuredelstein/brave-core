@@ -7,7 +7,7 @@
 
 #include "base/values.h"
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 
 namespace ads {
 
@@ -15,6 +15,9 @@ CategoryContentInfo::CategoryContentInfo() = default;
 
 CategoryContentInfo::CategoryContentInfo(const CategoryContentInfo& info) =
     default;
+
+CategoryContentInfo& CategoryContentInfo::operator=(
+    const CategoryContentInfo& info) = default;
 
 CategoryContentInfo::~CategoryContentInfo() = default;
 

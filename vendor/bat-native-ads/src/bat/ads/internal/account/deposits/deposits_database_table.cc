@@ -11,11 +11,11 @@
 #include "base/check.h"
 #include "base/strings/stringprintf.h"
 #include "bat/ads/internal/ads_client_helper.h"
-#include "bat/ads/internal/base/database_statement_util.h"
+#include "bat/ads/internal/base/database_bind_util.h"
+#include "bat/ads/internal/base/database_column_util.h"
 #include "bat/ads/internal/base/database_table_util.h"
-#include "bat/ads/internal/base/database_util.h"
+#include "bat/ads/internal/base/database_transaction_util.h"
 #include "bat/ads/internal/base/logging_util.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace ads {
 namespace database {
@@ -236,9 +236,9 @@ void Deposits::OnGetForCreativeInstanceId(
 
   mojom::DBRecordPtr record =
       std::move(response->result->get_records().front());
-  const DepositInfo& deposit = GetFromRecord(record.get());
+  DepositInfo deposit = GetFromRecord(record.get());
 
-  callback(/* success */ true, deposit);
+  callback(/* success */ true, std::move(deposit));
 }
 
 void Deposits::MigrateToV24(mojom::DBTransaction* transaction) {

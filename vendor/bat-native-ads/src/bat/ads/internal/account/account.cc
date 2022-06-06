@@ -17,7 +17,6 @@
 #include "bat/ads/internal/account/statement/statement.h"
 #include "bat/ads/internal/account/transactions/transactions.h"
 #include "bat/ads/internal/account/transactions/transactions_database_table.h"
-#include "bat/ads/internal/account/transactions/transactions_database_table_aliases.h"
 #include "bat/ads/internal/account/utility/redeem_unblinded_payment_tokens/redeem_unblinded_payment_tokens.h"
 #include "bat/ads/internal/account/utility/refill_unblinded_tokens/refill_unblinded_tokens.h"
 #include "bat/ads/internal/account/wallet/wallet.h"
@@ -82,6 +81,8 @@ bool Account::SetWallet(const std::string& id, const std::string& seed) {
   }
 
   NotifyWalletDidUpdate(wallet);
+
+  TopUpUnblindedTokens();
 
   return true;
 }
@@ -243,7 +244,7 @@ void Account::OnFailedToConfirm(const ConfirmationInfo& confirmation) {
   TopUpUnblindedTokens();
 }
 
-void Account::OnDidGetIssuers(const IssuersInfo& issuers) {
+void Account::OnDidFetchIssuers(const IssuersInfo& issuers) {
   const absl::optional<IssuerInfo>& issuer_optional =
       GetIssuerForType(issuers, IssuerType::kPayments);
   if (!issuer_optional) {
@@ -267,8 +268,8 @@ void Account::OnDidGetIssuers(const IssuersInfo& issuers) {
   TopUpUnblindedTokens();
 }
 
-void Account::OnFailedToGetIssuers() {
-  BLOG(0, "Failed to get issuers");
+void Account::OnFailedToFetchIssuers() {
+  BLOG(0, "Failed to fetch issuers");
 }
 
 void Account::OnDidRedeemUnblindedPaymentTokens(

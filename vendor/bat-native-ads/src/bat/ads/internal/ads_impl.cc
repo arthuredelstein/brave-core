@@ -10,7 +10,6 @@
 #include "base/check.h"
 #include "base/hash/hash.h"
 #include "bat/ads/ad_info.h"
-#include "bat/ads/ad_notification_info.h"
 #include "bat/ads/confirmation_type.h"
 #include "bat/ads/history_info.h"
 #include "bat/ads/history_item_info.h"
@@ -19,37 +18,43 @@
 #include "bat/ads/internal/account/account_util.h"
 #include "bat/ads/internal/account/wallet/wallet_info.h"
 #include "bat/ads/internal/ad_events/ad_events.h"
-#include "bat/ads/internal/ad_server/ad_server.h"
-#include "bat/ads/internal/ad_server/catalog/catalog.h"
-#include "bat/ads/internal/ad_server/catalog/catalog_util.h"
+#include "bat/ads/internal/ad_events/inline_content_ads/inline_content_ad.h"
+#include "bat/ads/internal/ad_events/new_tab_page_ads/new_tab_page_ad.h"
+#include "bat/ads/internal/ad_events/notification_ads/notification_ad.h"
+#include "bat/ads/internal/ad_events/promoted_content_ads/promoted_content_ad.h"
+#include "bat/ads/internal/ad_events/search_result_ads/search_result_ad.h"
 #include "bat/ads/internal/ads_client_helper.h"
 #include "bat/ads/internal/base/logging_util.h"
 #include "bat/ads/internal/base/platform_helper.h"
+#include "bat/ads/internal/base/search_engine_results_page_util.h"
 #include "bat/ads/internal/base/search_engine_util.h"
 #include "bat/ads/internal/base/string_util.h"
 #include "bat/ads/internal/base/time_formatting_util.h"
 #include "bat/ads/internal/base/url_util.h"
 #include "bat/ads/internal/browser_manager/browser_manager.h"
+#include "bat/ads/internal/catalog/catalog.h"
+#include "bat/ads/internal/catalog/catalog_info.h"
+#include "bat/ads/internal/catalog/catalog_util.h"
 #include "bat/ads/internal/conversions/conversion_queue_item_info.h"
 #include "bat/ads/internal/conversions/conversions.h"
 #include "bat/ads/internal/covariates/covariate_logs.h"
-#include "bat/ads/internal/creatives/ad_notifications/ad_notification.h"
-#include "bat/ads/internal/creatives/ad_notifications/ad_notifications.h"
-#include "bat/ads/internal/creatives/inline_content_ads/inline_content_ad.h"
-#include "bat/ads/internal/creatives/new_tab_page_ads/new_tab_page_ad.h"
-#include "bat/ads/internal/creatives/promoted_content_ads/promoted_content_ad.h"
-#include "bat/ads/internal/creatives/search_result_ads/search_result_ad.h"
 #include "bat/ads/internal/creatives/search_result_ads/search_result_ad_info.h"
-#include "bat/ads/internal/database/database_initialize.h"
+#include "bat/ads/internal/database/database_manager.h"
 #include "bat/ads/internal/deprecated/client/client.h"
 #include "bat/ads/internal/deprecated/confirmations/confirmations_state.h"
+#include "bat/ads/internal/deprecated/creatives/notification_ads/notification_ads.h"
 #include "bat/ads/internal/diagnostics/diagnostics.h"
 #include "bat/ads/internal/diagnostics/entries/last_unidle_time_diagnostic_util.h"
 #include "bat/ads/internal/features/features_util.h"
+#include "bat/ads/internal/geographic/subdivision/subdivision_targeting.h"
 #include "bat/ads/internal/history/history.h"
 #include "bat/ads/internal/legacy_migration/conversions/legacy_conversions_migration.h"
 #include "bat/ads/internal/legacy_migration/rewards/legacy_rewards_migration.h"
 #include "bat/ads/internal/privacy/tokens/token_generator.h"
+#include "bat/ads/internal/processors/behavioral/bandits/bandit_feedback_info.h"
+#include "bat/ads/internal/processors/behavioral/bandits/epsilon_greedy_bandit_processor.h"
+#include "bat/ads/internal/processors/behavioral/purchase_intent/purchase_intent_processor.h"
+#include "bat/ads/internal/processors/contextual/text_classification/text_classification_processor.h"
 #include "bat/ads/internal/resources/behavioral/anti_targeting/anti_targeting_info.h"
 #include "bat/ads/internal/resources/behavioral/anti_targeting/anti_targeting_resource.h"
 #include "bat/ads/internal/resources/behavioral/bandits/epsilon_greedy_bandit_resource.h"
@@ -59,22 +64,18 @@
 #include "bat/ads/internal/resources/contextual/text_classification/text_classification_resource.h"
 #include "bat/ads/internal/resources/country_components.h"
 #include "bat/ads/internal/resources/language_components.h"
-#include "bat/ads/internal/serving/ad_notifications/ad_notification_serving.h"
-#include "bat/ads/internal/serving/inline_content_ads/inline_content_ad_serving.h"
-#include "bat/ads/internal/serving/new_tab_page_ads/new_tab_page_ad_serving.h"
-#include "bat/ads/internal/serving/targeting/geographic/subdivision/subdivision_targeting.h"
+#include "bat/ads/internal/serving/inline_content_ad_serving.h"
+#include "bat/ads/internal/serving/new_tab_page_ad_serving.h"
+#include "bat/ads/internal/serving/notification_ad_serving.h"
 #include "bat/ads/internal/settings/settings.h"
 #include "bat/ads/internal/studies/studies_util.h"
 #include "bat/ads/internal/tab_manager/tab_info.h"
 #include "bat/ads/internal/tab_manager/tab_manager.h"
-#include "bat/ads/internal/targeting/processors/behavioral/bandits/bandit_feedback_info.h"
-#include "bat/ads/internal/targeting/processors/behavioral/bandits/epsilon_greedy_bandit_processor.h"
-#include "bat/ads/internal/targeting/processors/behavioral/purchase_intent/purchase_intent_processor.h"
-#include "bat/ads/internal/targeting/processors/contextual/text_classification/text_classification_processor.h"
 #include "bat/ads/internal/transfer/transfer.h"
-#include "bat/ads/internal/user_activity/browsing/user_activity.h"
-#include "bat/ads/internal/user_activity/idle_detection/idle_time.h"
+#include "bat/ads/internal/user_interaction/browsing/user_activity.h"
+#include "bat/ads/internal/user_interaction/idle_detection/idle_time.h"
 #include "bat/ads/new_tab_page_ad_info.h"
+#include "bat/ads/notification_ad_info.h"
 #include "bat/ads/pref_names.h"
 #include "bat/ads/promoted_content_ad_info.h"
 #include "bat/ads/statement_info.h"
@@ -94,9 +95,10 @@ AdsImpl::AdsImpl(AdsClient* ads_client)
 
 AdsImpl::~AdsImpl() {
   account_->RemoveObserver(this);
-  ad_notification_->RemoveObserver(this);
-  ad_notification_serving_->RemoveObserver(this);
-  ad_server_->RemoveObserver(this);
+  notification_ad_->RemoveObserver(this);
+  notification_ad_serving_->RemoveObserver(this);
+  catalog_->RemoveObserver(this);
+  database_manager_->RemoveObserver(this);
   transfer_->RemoveObserver(this);
   conversions_->RemoveObserver(this);
   inline_content_ad_->RemoveObserver(this);
@@ -140,7 +142,7 @@ void AdsImpl::Shutdown(ShutdownCallback callback) {
     return;
   }
 
-  ad_notifications_->CloseAndRemoveAll();
+  notification_ads_->CloseAndRemoveAll();
 
   callback(/* success */ true);
 }
@@ -155,11 +157,11 @@ void AdsImpl::ChangeLocale(const std::string& locale) {
 
 void AdsImpl::OnPrefChanged(const std::string& path) {
   if (path == prefs::kEnabled) {
-    MaybeServeAdNotificationsAtRegularIntervals();
+    MaybeServeNotificationAdsAtRegularIntervals();
   }
 
   account_->OnPrefChanged(path);
-  ad_notification_serving_->OnPrefChanged(path);
+  notification_ad_serving_->OnPrefChanged(path);
   subdivision_targeting_->OnPrefChanged(path);
 }
 
@@ -174,12 +176,12 @@ void AdsImpl::OnHtmlLoaded(const int32_t tab_id,
 
   const uint32_t hash = base::FastHash(html);
   if (hash == last_html_loaded_hash_) {
-    BLOG(1, "HTML content has not changed");
     return;
   }
   last_html_loaded_hash_ = hash;
 
   transfer_->MaybeTransferAd(tab_id, redirect_chain);
+
   conversions_->MaybeConvert(
       redirect_chain, html,
       conversions_resource_->get()->conversion_id_patterns);
@@ -196,7 +198,6 @@ void AdsImpl::OnTextLoaded(const int32_t tab_id,
 
   const uint32_t hash = base::FastHash(text);
   if (hash == last_text_loaded_hash_) {
-    BLOG(1, "Text content has not changed");
     return;
   }
   last_text_loaded_hash_ = hash;
@@ -204,7 +205,7 @@ void AdsImpl::OnTextLoaded(const int32_t tab_id,
   const GURL& url = redirect_chain.back();
 
   if (!url.SchemeIsHTTPOrHTTPS()) {
-    BLOG(1, "Visited URL is not supported");
+    BLOG(1, url.scheme() << " scheme is not supported for text content");
     return;
   }
 
@@ -215,12 +216,14 @@ void AdsImpl::OnTextLoaded(const int32_t tab_id,
     purchase_intent_processor_->Process(url);
   }
 
-  if (IsSearchEngine(url)) {
-    BLOG(1, "Search engine pages are not supported for text classification");
-  } else {
-    const std::string stripped_text = StripNonAlphaCharacters(text);
-    text_classification_processor_->Process(stripped_text);
+  if (IsSearchEngine(url) && !IsSearchEngineResultsPage(url)) {
+    BLOG(1,
+         "Search engine landing page is not supported for text classification");
+    return;
   }
+
+  const std::string stripped_text = StripNonAlphaCharacters(text);
+  text_classification_processor_->Process(stripped_text);
 }
 
 void AdsImpl::OnUserGesture(const int32_t page_transition_type) {
@@ -246,37 +249,37 @@ void AdsImpl::OnUnIdle(const int idle_time, const bool was_locked) {
 
   BLOG(1, "Browser state changed to unidle after " << base::Seconds(idle_time));
 
-  MaybeUpdateCatalog();
+  MaybeFetchCatalog();
 
   if (!ShouldRewardUser()) {
     return;
   }
 
   if (WasLocked(was_locked)) {
-    BLOG(1, "Ad notification not served: Screen was locked");
+    BLOG(1, "Notification ad not served: Screen was locked");
     return;
   }
 
   if (HasExceededMaximumIdleTime(idle_time)) {
-    BLOG(1, "Ad notification not served: Exceeded maximum idle time");
+    BLOG(1, "Notification ad not served: Exceeded maximum idle time");
     return;
   }
 
-  MaybeServeAdNotification();
+  MaybeServeNotificationAd();
 }
 
 void AdsImpl::OnBrowserDidEnterForeground() {
   BrowserManager::Get()->OnDidEnterForeground();
 
-  MaybeUpdateCatalog();
+  MaybeFetchCatalog();
 
-  MaybeServeAdNotificationsAtRegularIntervals();
+  MaybeServeNotificationAdsAtRegularIntervals();
 }
 
 void AdsImpl::OnBrowserDidEnterBackground() {
   BrowserManager::Get()->OnDidEnterBackground();
 
-  MaybeServeAdNotificationsAtRegularIntervals();
+  MaybeServeNotificationAdsAtRegularIntervals();
 }
 
 void AdsImpl::OnMediaPlaying(const int32_t tab_id) {
@@ -338,16 +341,16 @@ void AdsImpl::OnResourceComponentUpdated(const std::string& id) {
   }
 }
 
-bool AdsImpl::GetAdNotification(const std::string& placement_id,
-                                AdNotificationInfo* notification) {
+bool AdsImpl::GetNotificationAd(const std::string& placement_id,
+                                NotificationAdInfo* notification) {
   DCHECK(notification);
-  return ad_notifications_->Get(placement_id, notification);
+  return notification_ads_->Get(placement_id, notification);
 }
 
-void AdsImpl::TriggerAdNotificationEvent(
+void AdsImpl::TriggerNotificationAdEvent(
     const std::string& placement_id,
-    const mojom::AdNotificationEventType event_type) {
-  ad_notification_->FireEvent(placement_id, event_type);
+    const mojom::NotificationAdEventType event_type) {
+  notification_ad_->FireEvent(placement_id, event_type);
 }
 
 void AdsImpl::GetNewTabPageAd(GetNewTabPageAdCallback callback) {
@@ -532,6 +535,9 @@ void AdsImpl::set(privacy::TokenGeneratorInterface* token_generator) {
 
   diagnostics_ = std::make_unique<Diagnostics>();
 
+  database_manager_ = std::make_unique<DatabaseManager>();
+  database_manager_->AddObserver(this);
+
   browser_manager_ = std::make_unique<BrowserManager>();
 
   tab_manager_ = std::make_unique<TabManager>();
@@ -542,35 +548,33 @@ void AdsImpl::set(privacy::TokenGeneratorInterface* token_generator) {
   epsilon_greedy_bandit_resource_ =
       std::make_unique<resource::EpsilonGreedyBandit>();
   epsilon_greedy_bandit_processor_ =
-      std::make_unique<targeting::processor::EpsilonGreedyBandit>();
+      std::make_unique<processor::EpsilonGreedyBandit>();
 
   text_classification_resource_ =
       std::make_unique<resource::TextClassification>();
   text_classification_processor_ =
-      std::make_unique<targeting::processor::TextClassification>(
+      std::make_unique<processor::TextClassification>(
           text_classification_resource_.get());
 
   purchase_intent_resource_ = std::make_unique<resource::PurchaseIntent>();
-  purchase_intent_processor_ =
-      std::make_unique<targeting::processor::PurchaseIntent>(
-          purchase_intent_resource_.get());
+  purchase_intent_processor_ = std::make_unique<processor::PurchaseIntent>(
+      purchase_intent_resource_.get());
 
   anti_targeting_resource_ = std::make_unique<resource::AntiTargeting>();
 
   conversions_resource_ = std::make_unique<resource::Conversions>();
 
-  subdivision_targeting_ =
-      std::make_unique<targeting::geographic::SubdivisionTargeting>();
+  subdivision_targeting_ = std::make_unique<geographic::SubdivisionTargeting>();
 
-  ad_notification_serving_ = std::make_unique<ad_notifications::Serving>(
+  notification_ad_serving_ = std::make_unique<notification_ads::Serving>(
       subdivision_targeting_.get(), anti_targeting_resource_.get());
-  ad_notification_serving_->AddObserver(this);
-  ad_notification_ = std::make_unique<AdNotification>();
-  ad_notification_->AddObserver(this);
-  ad_notifications_ = std::make_unique<AdNotifications>();
+  notification_ad_serving_->AddObserver(this);
+  notification_ad_ = std::make_unique<NotificationAd>();
+  notification_ad_->AddObserver(this);
+  notification_ads_ = std::make_unique<NotificationAds>();
 
-  ad_server_ = std::make_unique<AdServer>();
-  ad_server_->AddObserver(this);
+  catalog_ = std::make_unique<Catalog>();
+  catalog_->AddObserver(this);
 
   transfer_ = std::make_unique<Transfer>();
   transfer_->AddObserver(this);
@@ -594,8 +598,6 @@ void AdsImpl::set(privacy::TokenGeneratorInterface* token_generator) {
   conversions_ = std::make_unique<Conversions>();
   conversions_->AddObserver(this);
 
-  database_ = std::make_unique<database::Initialize>();
-
   new_tab_page_ad_serving_ = std::make_unique<new_tab_page_ads::Serving>(
       subdivision_targeting_.get(), anti_targeting_resource_.get());
   new_tab_page_ad_serving_->AddObserver(this);
@@ -615,10 +617,9 @@ void AdsImpl::InitializeBrowserManager() {
 }
 
 void AdsImpl::InitializeDatabase(InitializeCallback callback) {
-  database_->CreateOrOpen([=](const bool success) {
+  DatabaseManager::Get()->CreateOrOpen([=](const bool success) {
     if (!success) {
-      BLOG(0,
-           "Failed to initialize database: " << database_->get_last_message());
+      BLOG(0, "Failed to create or open database");
       callback(/* success */ false);
       return;
     }
@@ -669,12 +670,12 @@ void AdsImpl::LoadConfirmationsState(InitializeCallback callback) {
       return;
     }
 
-    LoadAdNotificationsState(callback);
+    LoadNotificationAdsState(callback);
   });
 }
 
-void AdsImpl::LoadAdNotificationsState(InitializeCallback callback) {
-  ad_notifications_->Initialize([=](const bool success) {
+void AdsImpl::LoadNotificationAdsState(InitializeCallback callback) {
+  notification_ads_->Initialize([=](const bool success) {
     if (!success) {
       callback(/* success */ false);
       return;
@@ -704,10 +705,10 @@ void AdsImpl::Start() {
   LogActiveStudies();
 
 #if BUILDFLAG(IS_ANDROID)
-  // Ad notifications do not sustain a reboot or update, so we should remove
-  // orphaned ad notifications
-  ad_notifications_->RemoveAllAfterReboot();
-  ad_notifications_->RemoveAllAfterUpdate();
+  // Notification ads do not sustain a reboot or update, so we should remove
+  // orphaned notification ads
+  notification_ads_->RemoveAllAfterReboot();
+  notification_ads_->RemoveAllAfterUpdate();
 #endif
 
   CleanupAdEvents();
@@ -721,9 +722,9 @@ void AdsImpl::Start() {
 
   conversions_->StartTimerIfReady();
 
-  ad_server_->MaybeFetch();
+  catalog_->MaybeFetch();
 
-  MaybeServeAdNotificationsAtRegularIntervals();
+  MaybeServeNotificationAdsAtRegularIntervals();
 }
 
 void AdsImpl::CleanupAdEvents() {
@@ -737,30 +738,30 @@ void AdsImpl::CleanupAdEvents() {
   });
 }
 
-void AdsImpl::MaybeUpdateCatalog() {
+void AdsImpl::MaybeFetchCatalog() {
   if (!HasCatalogExpired()) {
     return;
   }
 
-  ad_server_->MaybeFetch();
+  catalog_->MaybeFetch();
 }
 
-void AdsImpl::MaybeServeAdNotification() {
+void AdsImpl::MaybeServeNotificationAd() {
   if (PlatformHelper::GetInstance()->IsMobile()) {
     return;
   }
 
-  ad_notification_serving_->MaybeServeAd();
+  notification_ad_serving_->MaybeServeAd();
 }
 
-bool AdsImpl::ShouldServeAdNotificationsAtRegularIntervals() const {
+bool AdsImpl::ShouldServeNotificationAdsAtRegularIntervals() const {
   return ShouldRewardUser() &&
          (BrowserManager::Get()->IsActive() ||
           AdsClientHelper::Get()->CanShowBackgroundNotifications()) &&
          settings::GetAdsPerHour() > 0;
 }
 
-void AdsImpl::MaybeServeAdNotificationsAtRegularIntervals() {
+void AdsImpl::MaybeServeNotificationAdsAtRegularIntervals() {
   if (!IsInitialized()) {
     return;
   }
@@ -769,17 +770,35 @@ void AdsImpl::MaybeServeAdNotificationsAtRegularIntervals() {
     return;
   }
 
-  if (ShouldServeAdNotificationsAtRegularIntervals()) {
-    ad_notification_serving_->StartServingAdsAtRegularIntervals();
+  if (ShouldServeNotificationAdsAtRegularIntervals()) {
+    notification_ad_serving_->StartServingAdsAtRegularIntervals();
   } else {
-    ad_notification_serving_->StopServingAdsAtRegularIntervals();
+    notification_ad_serving_->StopServingAdsAtRegularIntervals();
   }
+}
+
+void AdsImpl::OnWillMigrateDatabase(const int from_version,
+                                    const int to_version) {
+  BLOG(1, "Migrating database from schema version "
+              << from_version << " to schema version " << to_version);
+}
+
+void AdsImpl::OnDidMigrateDatabase(const int from_version,
+                                   const int to_version) {
+  BLOG(1, "Migrated database from schema version "
+              << from_version << " to schema version " << to_version);
+}
+
+void AdsImpl::OnFailedToMigrateDatabase(const int from_version,
+                                        const int to_version) {
+  BLOG(1, "Failed to migrate database from schema version "
+              << from_version << " to schema version " << to_version);
 }
 
 void AdsImpl::OnWalletDidUpdate(const WalletInfo& wallet) {
   BLOG(1, "Successfully set wallet");
 
-  MaybeServeAdNotificationsAtRegularIntervals();
+  MaybeServeNotificationAdsAtRegularIntervals();
 }
 
 void AdsImpl::OnWalletDidChange(const WalletInfo& wallet) {
@@ -813,58 +832,58 @@ void AdsImpl::OnStatementOfAccountsDidChange() {
   AdsClientHelper::Get()->OnAdRewardsChanged();
 }
 
-void AdsImpl::OnCatalogUpdated(const Catalog& catalog) {
+void AdsImpl::OnDidUpdateCatalog(const CatalogInfo& catalog) {
   epsilon_greedy_bandit_resource_->LoadFromCatalog(catalog);
 }
 
-void AdsImpl::OnDidServeAdNotification(const AdNotificationInfo& ad) {
-  ad_notification_->FireEvent(ad.placement_id,
-                              mojom::AdNotificationEventType::kServed);
+void AdsImpl::OnDidServeNotificationAd(const NotificationAdInfo& ad) {
+  notification_ad_->FireEvent(ad.placement_id,
+                              mojom::NotificationAdEventType::kServed);
 }
 
-void AdsImpl::OnAdNotificationViewed(const AdNotificationInfo& ad) {
+void AdsImpl::OnNotificationAdViewed(const NotificationAdInfo& ad) {
   account_->Deposit(ad.creative_instance_id, ad.type,
                     ConfirmationType::kViewed);
 
-  covariate_logs_->SetAdNotificationServedAt(base::Time::Now());
+  covariate_logs_->SetNotificationAdServedAt(base::Time::Now());
 }
 
-void AdsImpl::OnAdNotificationClicked(const AdNotificationInfo& ad) {
+void AdsImpl::OnNotificationAdClicked(const NotificationAdInfo& ad) {
   transfer_->set_last_clicked_ad(ad);
 
   account_->Deposit(ad.creative_instance_id, ad.type,
                     ConfirmationType::kClicked);
 
   epsilon_greedy_bandit_processor_->Process(
-      {ad.segment, mojom::AdNotificationEventType::kClicked});
+      {ad.segment, mojom::NotificationAdEventType::kClicked});
 
-  covariate_logs_->SetAdNotificationClicked(true);
+  covariate_logs_->SetNotificationAdClicked(true);
   covariate_logs_->LogTrainingInstance();
 }
 
-void AdsImpl::OnAdNotificationDismissed(const AdNotificationInfo& ad) {
+void AdsImpl::OnNotificationAdDismissed(const NotificationAdInfo& ad) {
   account_->Deposit(ad.creative_instance_id, ad.type,
                     ConfirmationType::kDismissed);
 
   epsilon_greedy_bandit_processor_->Process(
-      {ad.segment, mojom::AdNotificationEventType::kDismissed});
+      {ad.segment, mojom::NotificationAdEventType::kDismissed});
 
-  covariate_logs_->SetAdNotificationClicked(false);
+  covariate_logs_->SetNotificationAdClicked(false);
   covariate_logs_->LogTrainingInstance();
 }
 
-void AdsImpl::OnAdNotificationTimedOut(const AdNotificationInfo& ad) {
+void AdsImpl::OnNotificationAdTimedOut(const NotificationAdInfo& ad) {
   epsilon_greedy_bandit_processor_->Process(
-      {ad.segment, mojom::AdNotificationEventType::kTimedOut});
+      {ad.segment, mojom::NotificationAdEventType::kTimedOut});
 
-  covariate_logs_->SetAdNotificationClicked(false);
+  covariate_logs_->SetNotificationAdClicked(false);
   covariate_logs_->LogTrainingInstance();
 }
 
-void AdsImpl::OnAdNotificationEventFailed(
+void AdsImpl::OnNotificationAdEventFailed(
     const std::string& placement_id,
-    const mojom::AdNotificationEventType event_type) {
-  BLOG(1, "Failed to fire ad notification "
+    const mojom::NotificationAdEventType event_type) {
+  BLOG(1, "Failed to fire notification ad "
               << event_type << " event for placement id " << placement_id);
 }
 

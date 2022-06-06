@@ -8,8 +8,8 @@
 #include "base/memory/raw_ptr.h"
 #include "base/path_service.h"
 #include "brave/browser/extensions/api/brave_shields_api.h"
-#include "brave/common/brave_paths.h"
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
+#include "brave/components/constants/brave_paths.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/extensions/api/content_settings/content_settings_api.h"
 #include "chrome/browser/extensions/extension_function_test_utils.h"
@@ -201,17 +201,9 @@ IN_PROC_BROWSER_TEST_F(BraveShieldsAPIBrowserTest, AllowScriptsOnceDataURL) {
       << "Scripts from a.test and data URL should be temporarily allowed.";
 }
 
-IN_PROC_BROWSER_TEST_F(BraveShieldsAPIBrowserTest, PRE_AllowScriptsOnceIframe) {
-  // Block scripts in a PRE_ test to workaround an upstream bug [1] when a spare
-  // renderer process doesn't receive ContentSettings updates after being
-  // created.
-  // Workaround should be removed when upstream will be fixed.
-  //
-  // 1. https://bugs.chromium.org/p/chromium/issues/detail?id=1294211
-  BlockScripts();
-}
-
 IN_PROC_BROWSER_TEST_F(BraveShieldsAPIBrowserTest, AllowScriptsOnceIframe) {
+  BlockScripts();
+
   EXPECT_TRUE(NavigateToURLUntilLoadStop("a.com", "/remote_iframe.html"));
   EXPECT_EQ(GetActiveRenderFrameHosts().size(), 2u)
       << "All script loadings should be blocked.";

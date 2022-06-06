@@ -10,11 +10,15 @@
 #include <string>
 #include <vector>
 
-#include "bat/ads/ad_notification_info.h"
 #include "bat/ads/ads_client.h"
+#include "bat/ads/notification_ad_info.h"
 #include "brave/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
 #include "mojo/public/cpp/bindings/associated_remote.h"
 #include "mojo/public/cpp/bindings/pending_associated_remote.h"
+
+namespace base {
+class Time;
+}  // namespace base
 
 namespace bat_ads {
 
@@ -37,7 +41,7 @@ class BatAdsClientMojoBridge
   bool IsBrowserActive() const override;
   bool IsBrowserInFullScreenMode() const override;
 
-  void ShowNotification(const ads::AdNotificationInfo& info) override;
+  void ShowNotification(const ads::NotificationAdInfo& info) override;
   bool ShouldShowNotifications() override;
   void CloseNotification(const std::string& placement_id) override;
 
@@ -96,51 +100,24 @@ class BatAdsClientMojoBridge
       const int verbose_level,
       const std::string& message) override;
 
-  bool GetBooleanPref(
-      const std::string& path) const override;
-
-  void SetBooleanPref(
-      const std::string& path,
-      const bool value) override;
-
-  int GetIntegerPref(
-      const std::string& path) const override;
-
-  void SetIntegerPref(
-      const std::string& path,
-      const int value) override;
-
-  double GetDoublePref(
-      const std::string& path) const override;
-
-  void SetDoublePref(
-      const std::string& path,
-      const double value) override;
-
-  std::string GetStringPref(
-      const std::string& path) const override;
-
-  void SetStringPref(
-      const std::string& path,
-      const std::string& value) override;
-
-  int64_t GetInt64Pref(
-      const std::string& path) const override;
-
-  void SetInt64Pref(
-      const std::string& path,
-      const int64_t value) override;
-
-  uint64_t GetUint64Pref(
-      const std::string& path) const override;
-
+  bool GetBooleanPref(const std::string& path) const override;
+  void SetBooleanPref(const std::string& path, const bool value) override;
+  int GetIntegerPref(const std::string& path) const override;
+  void SetIntegerPref(const std::string& path, const int value) override;
+  double GetDoublePref(const std::string& path) const override;
+  void SetDoublePref(const std::string& path, const double value) override;
+  std::string GetStringPref(const std::string& path) const override;
+  void SetStringPref(const std::string& path,
+                     const std::string& value) override;
+  int64_t GetInt64Pref(const std::string& path) const override;
+  void SetInt64Pref(const std::string& path, const int64_t value) override;
+  uint64_t GetUint64Pref(const std::string& path) const override;
   void SetUint64Pref(
       const std::string& path,
       const uint64_t value) override;
-
-  void ClearPref(
-      const std::string& path) override;
-
+  base::Time GetTimePref(const std::string& path) const override;
+  void SetTimePref(const std::string& path, const base::Time value) override;
+  void ClearPref(const std::string& path) override;
   bool HasPrefPath(const std::string& path) const override;
 
  private:

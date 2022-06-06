@@ -16,19 +16,19 @@
 #include "bat/ads/internal/account/issuers/issuers_json_reader.h"
 #include "bat/ads/internal/account/issuers/issuers_url_request_builder.h"
 #include "bat/ads/internal/ads_client_helper.h"
+#include "bat/ads/internal/base/http_status_code.h"
 #include "bat/ads/internal/base/logging_util.h"
 #include "bat/ads/internal/base/time_formatting_util.h"
 #include "bat/ads/internal/server/url/url_request_string_util.h"
 #include "bat/ads/internal/server/url/url_response_string_util.h"
 #include "bat/ads/pref_names.h"
-#include "net/http/http_status_code.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace ads {
 
 namespace {
 
-constexpr int64_t kRetryAfterSeconds = 1 * base::Time::kSecondsPerMinute;
+constexpr base::TimeDelta kRetryAfter = base::Minutes(1);
 
 absl::optional<IssuersInfo> ParseJson(const std::string& json) {
   const absl::optional<IssuersInfo>& issuers_optional =
@@ -63,7 +63,7 @@ void Issuers::Fetch() {
 
   is_fetching_ = true;
 
-  BLOG(1, "GetIssuers");
+  BLOG(1, "FetchIssuers");
   BLOG(2, "GET /v1/issuers/");
 
   IssuersUrlRequestBuilder url_request_builder;
@@ -77,13 +77,17 @@ void Issuers::Fetch() {
 }
 
 void Issuers::OnFetch(const mojom::UrlResponse& url_response) {
-  BLOG(1, "OnGetIssuers");
+  BLOG(1, "OnFetchIssuers");
 
   BLOG(6, UrlResponseToString(url_response));
   BLOG(7, UrlResponseHeadersToString(url_response));
 
-  if (url_response.status_code != net::HTTP_OK) {
-    OnFailedToGetIssuers();
+  if (url_response.status_code == net::HTTP_UPGRADE_REQUIRED) {
+    BLOG(1, "Failed to fetch issuers as a browser upgrade is required");
+    OnFailedToFetchIssuers(/* should_retry */ false);
+    return;
+  } else if (url_response.status_code != net::HTTP_OK) {
+    OnFailedToFetchIssuers(/* should_retry */ true);
     return;
   }
 
@@ -91,44 +95,46 @@ void Issuers::OnFetch(const mojom::UrlResponse& url_response) {
       ParseJson(url_response.body);
   if (!issuers_optional) {
     BLOG(3, "Failed to parse response: " << url_response.body);
-    OnFailedToGetIssuers();
+    OnFailedToFetchIssuers(/* should_retry */ true);
     return;
   }
 
   const IssuersInfo& issuers = issuers_optional.value();
 
-  OnDidGetIssuers(issuers);
+  OnDidFetchIssuers(issuers);
 }
 
-void Issuers::OnDidGetIssuers(const IssuersInfo& issuers) {
+void Issuers::OnDidFetchIssuers(const IssuersInfo& issuers) {
   StopRetrying();
 
   is_fetching_ = false;
 
   if (delegate_) {
-    delegate_->OnDidGetIssuers(issuers);
+    delegate_->OnDidFetchIssuers(issuers);
   }
 
   FetchAfterDelay();
 }
 
-void Issuers::OnFailedToGetIssuers() {
+void Issuers::OnFailedToFetchIssuers(const bool should_retry) {
   is_fetching_ = false;
 
   if (delegate_) {
-    delegate_->OnFailedToGetIssuers();
+    delegate_->OnFailedToFetchIssuers();
   }
 
-  Retry();
+  if (should_retry) {
+    RetryAfterDelay();
+  }
 }
 
 void Issuers::FetchAfterDelay() {
   DCHECK(!retry_timer_.IsRunning());
 
-  const base::Time time = timer_.StartWithPrivacy(
+  const base::Time fetch_at = timer_.StartWithPrivacy(
       GetFetchDelay(), base::BindOnce(&Issuers::Fetch, base::Unretained(this)));
 
-  BLOG(1, "Fetch issuers " << FriendlyDateAndTime(time));
+  BLOG(1, "Fetch issuers " << FriendlyDateAndTime(fetch_at));
 }
 
 base::TimeDelta Issuers::GetFetchDelay() const {
@@ -136,18 +142,25 @@ base::TimeDelta Issuers::GetFetchDelay() const {
   return base::Milliseconds(ping);
 }
 
-void Issuers::Retry() {
+void Issuers::RetryAfterDelay() {
   DCHECK(!timer_.IsRunning());
 
-  const base::Time time = retry_timer_.StartWithPrivacy(
-      base::Seconds(kRetryAfterSeconds),
-      base::BindOnce(&Issuers::OnRetry, base::Unretained(this)));
+  const base::Time retry_at = retry_timer_.StartWithPrivacy(
+      kRetryAfter, base::BindOnce(&Issuers::OnRetry, base::Unretained(this)));
 
-  BLOG(1, "Retry fetching issuers " << FriendlyDateAndTime(time));
+  if (delegate_) {
+    delegate_->OnWillRetryFetchingIssuers(retry_at);
+  }
+
+  BLOG(1, "Retry fetching issuers " << FriendlyDateAndTime(retry_at));
 }
 
 void Issuers::OnRetry() {
   BLOG(1, "Retry fetching issuers");
+
+  if (delegate_) {
+    delegate_->OnDidRetryFetchingIssuers();
+  }
 
   Fetch();
 }

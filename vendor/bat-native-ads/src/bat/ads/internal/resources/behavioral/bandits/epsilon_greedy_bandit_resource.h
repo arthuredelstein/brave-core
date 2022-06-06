@@ -11,7 +11,7 @@
 
 namespace ads {
 
-class Catalog;
+struct CatalogInfo;
 
 namespace resource {
 
@@ -19,10 +19,12 @@ class EpsilonGreedyBandit final : public ResourceInterface<SegmentList> {
  public:
   EpsilonGreedyBandit();
   ~EpsilonGreedyBandit() override;
+  EpsilonGreedyBandit(const EpsilonGreedyBandit&) = delete;
+  EpsilonGreedyBandit& operator=(const EpsilonGreedyBandit&) = delete;
 
   bool IsInitialized() const override;
 
-  void LoadFromCatalog(const Catalog& catalog);
+  void LoadFromCatalog(const CatalogInfo& catalog);
 
   SegmentList get() const override;
 

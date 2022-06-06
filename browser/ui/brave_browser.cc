@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "brave/browser/ui/brave_browser.h"
-#include "brave/common/pref_names.h"
+#include "brave/components/constants/pref_names.h"
 #include "chrome/browser/lifetime/browser_close_manager.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/search/search.h"
@@ -23,6 +23,17 @@
 #include "chrome/browser/ui/tabs/tab_strip_model.h"
 #include "chrome/browser/ui/tabs/tab_strip_model_observer.h"
 #endif
+
+namespace {
+
+bool g_suppress_dialog_for_testing = false;
+
+}  // namespace
+
+// static
+void BraveBrowser::SuppressBrowserWindowClosingDialogForTesting(bool suppress) {
+  g_suppress_dialog_for_testing = suppress;
+}
 
 BraveBrowser::BraveBrowser(const CreateParams& params) : Browser(params) {
 #if BUILDFLAG(ENABLE_SIDEBAR)
@@ -138,6 +149,9 @@ void BraveBrowser::ResetTryToCloseWindow() {
 }
 
 bool BraveBrowser::ShouldAskForBrowserClosingBeforeHandlers() {
+  if (g_suppress_dialog_for_testing)
+    return false;
+
   // Don't need to ask when application closing is in-progress.
   if (BrowserCloseManager::BrowserClosingStarted())
     return false;

@@ -6,13 +6,16 @@
 #include "bat/ads/new_tab_page_ad_info.h"
 
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 
 namespace ads {
 
 NewTabPageAdInfo::NewTabPageAdInfo() = default;
 
 NewTabPageAdInfo::NewTabPageAdInfo(const NewTabPageAdInfo& info) = default;
+
+NewTabPageAdInfo& NewTabPageAdInfo::operator=(const NewTabPageAdInfo& info) =
+    default;
 
 NewTabPageAdInfo::~NewTabPageAdInfo() = default;
 

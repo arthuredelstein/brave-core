@@ -21,12 +21,12 @@
 #include "bat/ledger/mojom_structs.h"
 #include "brave/browser/brave_ads/ads_service_factory.h"
 #include "brave/browser/brave_rewards/rewards_service_factory.h"
-#include "brave/common/brave_paths.h"
 #include "brave/components/brave_ads/browser/ads_service.h"
 #include "brave/components/brave_ads/common/pref_names.h"
 #include "brave/components/brave_rewards/browser/rewards_service_impl.h"
 #include "brave/components/brave_rewards/browser/rewards_service_observer.h"
 #include "brave/components/brave_rewards/browser/test/common/rewards_browsertest_util.h"
+#include "brave/components/constants/brave_paths.h"
 #include "brave/components/l10n/browser/locale_helper_mock.h"
 #include "chrome/common/chrome_constants.h"
 #include "chrome/common/chrome_paths.h"
@@ -280,9 +280,6 @@ class BraveAdsBrowserTest : public InProcessBrowserTest,
   void MockLocaleHelper(const std::string& locale) {
     locale_helper_mock_ =
         std::make_unique<NiceMock<brave_l10n::LocaleHelperMock>>();
-
-    brave_l10n::LocaleHelper::GetInstance()->set_for_testing(
-        locale_helper_mock_.get());
 
     ON_CALL(*locale_helper_mock_, GetLocale()).WillByDefault(Return(locale));
   }

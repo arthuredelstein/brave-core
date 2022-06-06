@@ -7,7 +7,6 @@
 
 #include "base/time/time.h"
 #include "bat/ads/internal/conversions/conversion_info.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace ads {
 
@@ -26,8 +25,7 @@ absl::optional<ConversionInfo> BuildConversion(
       ad_mojom->conversion->advertiser_public_key;
   conversion.observation_window =
       static_cast<int>(ad_mojom->conversion->observation_window);
-  conversion.expire_at =
-      base::Time::FromDoubleT(ad_mojom->conversion->expire_at);
+  conversion.expire_at = ad_mojom->conversion->expire_at;
 
   if (!conversion.IsValid()) {
     return absl::nullopt;

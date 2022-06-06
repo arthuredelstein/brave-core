@@ -19,8 +19,6 @@
 #include "base/test/thread_test_helper.h"
 #include "brave/browser/brave_browser_process.h"
 #include "brave/browser/net/brave_ad_block_tp_network_delegate_helper.h"
-#include "brave/common/brave_paths.h"
-#include "brave/common/pref_names.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/brave_shields/browser/ad_block_component_installer.h"
 #include "brave/components/brave_shields/browser/ad_block_custom_filters_provider.h"
@@ -33,6 +31,8 @@
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
 #include "brave/components/brave_shields/common/features.h"
 #include "brave/components/brave_shields/common/pref_names.h"
+#include "brave/components/constants/brave_paths.h"
+#include "brave/components/constants/pref_names.h"
 #include "brave/components/de_amp/common/pref_names.h"
 #include "build/build_config.h"
 #include "chrome/browser/browser_process.h"
@@ -167,6 +167,10 @@ void AdBlockServiceTest::AssertTagExists(const std::string& tag,
       g_brave_browser_process->ad_block_service()->TagExistsForTest(tag);
   ASSERT_EQ(exists_default, expected_exists);
 
+  base::AutoLock lock(g_brave_browser_process->ad_block_service()
+                          ->regional_service_manager()
+                          ->regional_services_lock_);
+
   for (const auto& regional_service :
        g_brave_browser_process->ad_block_service()
            ->regional_service_manager()
@@ -268,6 +272,9 @@ bool AdBlockServiceTest::InstallRegionalAdBlockExtension(
     g_brave_browser_process->ad_block_service()
         ->regional_service_manager()
         ->EnableFilterList(uuid, true);
+    base::AutoLock lock(g_brave_browser_process->ad_block_service()
+                            ->regional_service_manager()
+                            ->regional_services_lock_);
     EXPECT_EQ(g_brave_browser_process->ad_block_service()
                   ->regional_service_manager()
                   ->regional_services_.size(),

@@ -7,7 +7,7 @@
 
 #include "base/values.h"
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace ads {
@@ -15,6 +15,8 @@ namespace ads {
 AdContentInfo::AdContentInfo() = default;
 
 AdContentInfo::AdContentInfo(const AdContentInfo& info) = default;
+
+AdContentInfo& AdContentInfo::operator=(const AdContentInfo& info) = default;
 
 AdContentInfo::~AdContentInfo() = default;
 
@@ -179,7 +181,7 @@ bool AdContentInfo::FromJson(const std::string& json) {
   if (document.HasMember("type") && document["type"].IsString()) {
     type = AdType(document["type"].GetString());
   } else {
-    type = AdType::kAdNotification;
+    type = AdType::kNotificationAd;
   }
 
   if (document.HasMember("uuid")) {

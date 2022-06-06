@@ -38,6 +38,8 @@ constexpr webui::LocalizedString kLocalizedStrings[] = {
     {"braveVpnFeature4", IDS_BRAVE_VPN_FEATURE_4},
     {"braveVpnFeature5", IDS_BRAVE_VPN_FEATURE_5},
     {"braveVpnLoading", IDS_BRAVE_VPN_LOADING},
+    {"braveVpnPurchaseFailed", IDS_BRAVE_VPN_PURCHASE_FAILED},
+    {"braveVpnSupportTicketFailed", IDS_BRAVE_VPN_SUPPORT_TICKET_FAILED},
     {"braveVpnEditPaymentMethod", IDS_BRAVE_VPN_EDIT_PAYMENT},
     {"braveVpnPaymentFailure", IDS_BRAVE_VPN_PAYMENT_FAILURE},
     {"braveVpnPaymentFailureReason", IDS_BRAVE_VPN_PAYMENT_FAILURE_REASON},
@@ -81,6 +83,7 @@ constexpr char kBraveVPNEntryName[] = "BraveVPN";
 constexpr char kRegionContinentKey[] = "continent";
 constexpr char kRegionNameKey[] = "name";
 constexpr char kRegionNamePrettyKey[] = "name-pretty";
+constexpr char kRegionCountryIsoCodeKey[] = "country-iso-code";
 constexpr char kCreateSupportTicket[] = "api/v1.2/partners/support-ticket";
 
 }  // namespace brave_vpn

@@ -18,7 +18,7 @@
 namespace ads {
 
 namespace {
-constexpr int kMinimumWaitTimeFrequencyCap = 1;
+constexpr int kMinimumWaitTimeCap = 1;
 }  // namespace
 
 MinimumWaitTimePermissionRule::MinimumWaitTimePermissionRule() = default;
@@ -33,7 +33,7 @@ bool MinimumWaitTimePermissionRule::ShouldAllow() {
   }
 
   const std::vector<base::Time>& history =
-      GetAdEvents(AdType::kAdNotification, ConfirmationType::kServed);
+      GetAdEvents(AdType::kNotificationAd, ConfirmationType::kServed);
 
   if (!DoesRespectCap(history)) {
     last_message_ = "Ad cannot be shown as minimum wait time has not passed";
@@ -58,7 +58,7 @@ bool MinimumWaitTimePermissionRule::DoesRespectCap(
       base::Seconds(base::Time::kSecondsPerHour / ads_per_hour);
 
   return DoesHistoryRespectRollingTimeConstraint(history, time_constraint,
-                                                 kMinimumWaitTimeFrequencyCap);
+                                                 kMinimumWaitTimeCap);
 }
 
 }  // namespace ads

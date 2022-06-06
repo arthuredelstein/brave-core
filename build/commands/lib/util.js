@@ -543,7 +543,8 @@ const util = {
   },
 
   buildTarget: (target = config.buildTarget, options = config.defaultOptions) => {
-    console.log('building ' + target + '...')
+    const buildId = crypto.randomUUID()
+    console.log('building ' + target + ' (id=' + buildId + ') ...')
 
     let num_compile_failure = 1
     if (config.ignore_compile_failure)
@@ -576,7 +577,7 @@ const util = {
         const gomaLoginInfo = util.runProcess('goma_auth', ['info'], options)
         if (gomaLoginInfo.status !== 0) {
           console.log('Login required for using Goma. This is only needed once')
-          util.run('goma_auth', ['login'], options)
+          util.run('goma_auth', ['login', '--no-browser'], options)
         }
         util.run('goma_ctl', ['ensure_start'], options)
       }
@@ -586,7 +587,10 @@ const util = {
       util.run('goma_ctl', ['showflags'], options)
       util.run('goma_ctl', ['stat'], options)
     }
-
+    
+    // Setting `AUTONINJA_BUILD_ID` allows tracing Goma remote execution which helps with
+    // debugging issues (e.g., slowness or remote-failures).
+    options.env.AUTONINJA_BUILD_ID = buildId
     util.run('autoninja', ninjaOpts, options)
 
     if (config.isCI && use_goma_online) {

@@ -9,22 +9,21 @@
 
 #include "base/json/json_writer.h"
 #include "base/values.h"
-#include "bat/ads/internal/ad_server/catalog/catalog_util.h"
-#include "bat/ads/internal/ads_client_helper.h"
 #include "bat/ads/internal/base/unittest_base.h"
 #include "bat/ads/internal/base/unittest_util.h"
-#include "bat/ads/pref_names.h"
+#include "bat/ads/internal/catalog/catalog_util.h"
 
 // npm run test -- brave_unit_tests --filter=BatAds*
 
 namespace ads {
+namespace user_data {
 
 namespace {
 
 constexpr char kCatalogId[] = "04a13086-8fd8-4dce-a44f-afe86f14a662";
 
 std::string GetCatalogAsJson() {
-  const base::DictionaryValue user_data = user_data::GetCatalog();
+  const base::DictionaryValue user_data = GetCatalog();
 
   std::string json;
   base::JSONWriter::Write(user_data, &json);
@@ -43,7 +42,7 @@ class BatAdsConfirmationCatalogDtoUserDataTest : public UnitTestBase {
 
 TEST_F(BatAdsConfirmationCatalogDtoUserDataTest, GetCatalog) {
   // Arrange
-  AdsClientHelper::Get()->SetStringPref(prefs::kCatalogId, kCatalogId);
+  SetCatalogId(kCatalogId);
 
   // Act
   const std::string json = GetCatalogAsJson();
@@ -55,4 +54,5 @@ TEST_F(BatAdsConfirmationCatalogDtoUserDataTest, GetCatalog) {
   EXPECT_EQ(expected_json, json);
 }
 
+}  // namespace user_data
 }  // namespace ads

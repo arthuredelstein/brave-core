@@ -14,7 +14,6 @@
 #include "brave/browser/search/ntp_utils.h"
 #include "brave/browser/themes/brave_dark_mode_utils.h"
 #include "brave/browser/ui/omnibox/brave_omnibox_client_impl.h"
-#include "brave/common/pref_names.h"
 #include "brave/components/binance/browser/buildflags/buildflags.h"
 #include "brave/components/brave_adaptive_captcha/buildflags/buildflags.h"
 #include "brave/components/brave_ads/browser/ads_p2a.h"
@@ -33,6 +32,7 @@
 #include "brave/components/brave_wallet/browser/brave_wallet_prefs.h"
 #include "brave/components/brave_wayback_machine/buildflags.h"
 #include "brave/components/brave_webtorrent/browser/buildflags/buildflags.h"
+#include "brave/components/constants/pref_names.h"
 #include "brave/components/crypto_dot_com/browser/buildflags/buildflags.h"
 #include "brave/components/de_amp/common/pref_names.h"
 #include "brave/components/ftx/browser/buildflags/buildflags.h"
@@ -43,6 +43,7 @@
 #include "brave/components/sidebar/buildflags/buildflags.h"
 #include "brave/components/speedreader/buildflags.h"
 #include "brave/components/tor/buildflags/buildflags.h"
+#include "brave/components/translate/core/common/buildflags.h"
 #include "build/build_config.h"
 #include "chrome/browser/prefetch/pref_names.h"
 #include "chrome/browser/prefetch/prefetch_prefs.h"
@@ -138,6 +139,10 @@ using extensions::FeatureSwitch;
 
 #if BUILDFLAG(ENABLE_BRAVE_VPN)
 #include "brave/components/brave_vpn/pref_names.h"
+#endif
+
+#if BUILDFLAG(ENABLE_BRAVE_TRANSLATE_GO)
+#include "brave/browser/translate/brave_translate_prefs_migration.h"
 #endif
 
 namespace brave {
@@ -426,7 +431,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   // We can turn customization mode on when we have add-shortcut feature.
   registry->SetDefaultPrefValue(ntp_prefs::kNtpUseMostVisitedTiles,
                                 base::Value(true));
-  registry->RegisterBooleanPref(kEnableWindowClosingConfirm, false);
+  registry->RegisterBooleanPref(kEnableWindowClosingConfirm, true);
   RegisterDefaultBraveBrowserPromptPrefs(registry);
 #endif
 
@@ -442,6 +447,10 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   BraveFarblingService::RegisterProfilePrefs(registry);
 
   RegisterProfilePrefsForMigration(registry);
+
+#if BUILDFLAG(ENABLE_BRAVE_TRANSLATE_GO)
+  translate::RegisterBraveProfilePrefsForMigration(registry);
+#endif
 }
 
 }  // namespace brave

@@ -6,13 +6,16 @@
 #include "bat/ads/internal/deprecated/client/preferences/filtered_advertiser_info.h"
 
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 
 namespace ads {
 
 FilteredAdvertiserInfo::FilteredAdvertiserInfo() = default;
 
 FilteredAdvertiserInfo::FilteredAdvertiserInfo(
+    const FilteredAdvertiserInfo& info) = default;
+
+FilteredAdvertiserInfo& FilteredAdvertiserInfo::operator=(
     const FilteredAdvertiserInfo& info) = default;
 
 FilteredAdvertiserInfo::~FilteredAdvertiserInfo() = default;

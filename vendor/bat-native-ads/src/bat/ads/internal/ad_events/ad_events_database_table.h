@@ -6,11 +6,11 @@
 #ifndef BRAVE_VENDOR_BAT_NATIVE_ADS_SRC_BAT_ADS_INTERNAL_AD_EVENTS_AD_EVENTS_DATABASE_TABLE_H_
 #define BRAVE_VENDOR_BAT_NATIVE_ADS_SRC_BAT_ADS_INTERNAL_AD_EVENTS_AD_EVENTS_DATABASE_TABLE_H_
 
+#include <functional>
 #include <string>
 
 #include "bat/ads/ads_client_aliases.h"
 #include "bat/ads/internal/ad_events/ad_event_info_aliases.h"
-#include "bat/ads/internal/ad_events/ad_events_database_table_aliases.h"
 #include "bat/ads/internal/database/database_table_interface.h"
 #include "bat/ads/public/interfaces/ads.mojom.h"
 
@@ -18,10 +18,14 @@ namespace ads {
 namespace database {
 namespace table {
 
+using GetAdEventsCallback = std::function<void(const bool, const AdEventList&)>;
+
 class AdEvents final : public TableInterface {
  public:
   AdEvents();
   ~AdEvents() override;
+  AdEvents(const AdEvents&) = delete;
+  AdEvents& operator=(const AdEvents&) = delete;
 
   void LogEvent(const AdEventInfo& ad_event, ResultCallback callback);
 

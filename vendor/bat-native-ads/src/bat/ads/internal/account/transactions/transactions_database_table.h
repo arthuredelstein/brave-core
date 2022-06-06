@@ -9,7 +9,6 @@
 #include <string>
 
 #include "bat/ads/ads_client_aliases.h"
-#include "bat/ads/internal/account/transactions/transactions_database_table_aliases.h"
 #include "bat/ads/internal/database/database_table_interface.h"
 #include "bat/ads/internal/privacy/tokens/unblinded_payment_tokens/unblinded_payment_token_info_aliases.h"
 #include "bat/ads/public/interfaces/ads.mojom.h"
@@ -23,10 +22,15 @@ namespace ads {
 namespace database {
 namespace table {
 
+using GetTransactionsCallback =
+    std::function<void(const bool, const TransactionList&)>;
+
 class Transactions final : public TableInterface {
  public:
   Transactions();
   ~Transactions() override;
+  Transactions(const Transactions&) = delete;
+  Transactions& operator=(const Transactions&) = delete;
 
   void Save(const TransactionList& transactions, ResultCallback callback);
 

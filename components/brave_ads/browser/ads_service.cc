@@ -28,7 +28,7 @@ void AdsService::RegisterProfilePrefs(
   registry->RegisterBooleanPref(prefs::kAdsWereDisabled, false);
   registry->RegisterBooleanPref(prefs::kHasAdsP3AState, false);
 
-  registry->RegisterBooleanPref(prefs::kShouldShowMyFirstAdNotification, true);
+  registry->RegisterBooleanPref(prefs::kShouldShowMyFirstNotificationAd, true);
 
   registry->RegisterIntegerPref(prefs::kSupportedCountryCodesLastSchemaVersion,
                                 0);
@@ -41,9 +41,9 @@ void AdsService::RegisterProfilePrefs(
 
   registry->RegisterBooleanPref(ads::prefs::kEnabled, false);
 
-  registry->RegisterIntegerPref(prefs::kAdNotificationLastScreenPositionX, 0);
-  registry->RegisterIntegerPref(prefs::kAdNotificationLastScreenPositionY, 0);
-  registry->RegisterBooleanPref(prefs::kAdNotificationDidFallbackToCustom,
+  registry->RegisterIntegerPref(prefs::kNotificationAdLastScreenPositionX, 0);
+  registry->RegisterIntegerPref(prefs::kNotificationAdLastScreenPositionY, 0);
+  registry->RegisterBooleanPref(prefs::kNotificationAdDidFallbackToCustom,
                                 false);
 
   registry->RegisterBooleanPref(ads::prefs::kShouldAllowConversionTracking,
@@ -63,8 +63,7 @@ void AdsService::RegisterProfilePrefs(
   registry->RegisterStringPref(ads::prefs::kCatalogId, "");
   registry->RegisterIntegerPref(ads::prefs::kCatalogVersion, 0);
   registry->RegisterInt64Pref(ads::prefs::kCatalogPing, 0);
-  registry->RegisterDoublePref(ads::prefs::kCatalogLastUpdated,
-                               base::Time().ToDoubleT());
+  registry->RegisterTimePref(ads::prefs::kCatalogLastUpdated, base::Time());
 
   registry->RegisterIntegerPref(ads::prefs::kIssuerPing, 7200000);
 
@@ -72,8 +71,8 @@ void AdsService::RegisterProfilePrefs(
   registry->RegisterStringPref(ads::prefs::kEpsilonGreedyBanditEligibleSegments,
                                "");
 
-  registry->RegisterDoublePref(ads::prefs::kNextTokenRedemptionAt,
-                               base::Time::Now().ToDoubleT());
+  registry->RegisterTimePref(ads::prefs::kNextTokenRedemptionAt,
+                             base::Time::Now());
 
   registry->RegisterBooleanPref(ads::prefs::kHasMigratedConversionState, false);
   registry->RegisterBooleanPref(ads::prefs::kHasMigratedRewardsState, false);

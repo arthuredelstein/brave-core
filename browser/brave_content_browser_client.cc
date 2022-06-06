@@ -34,8 +34,6 @@
 #include "brave/browser/profiles/brave_renderer_updater_factory.h"
 #include "brave/browser/profiles/profile_util.h"
 #include "brave/browser/skus/skus_service_factory.h"
-#include "brave/common/pref_names.h"
-#include "brave/common/webui_url_constants.h"
 #include "brave/components/binance/browser/buildflags/buildflags.h"
 #include "brave/components/brave_ads/common/features.h"
 #include "brave/components/brave_federated/features.h"
@@ -58,6 +56,8 @@
 #include "brave/components/brave_wallet/browser/solana_provider_impl.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
 #include "brave/components/brave_webtorrent/browser/buildflags/buildflags.h"
+#include "brave/components/constants/pref_names.h"
+#include "brave/components/constants/webui_url_constants.h"
 #include "brave/components/cosmetic_filters/browser/cosmetic_filters_resources.h"
 #include "brave/components/cosmetic_filters/common/cosmetic_filters.mojom.h"
 #include "brave/components/de_amp/browser/de_amp_throttle.h"
@@ -240,6 +240,8 @@ void BindBraveAdsHost(
 #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)
   auto* context = frame_host->GetBrowserContext();
   auto* profile = Profile::FromBrowserContext(context);
+  content::WebContents* web_contents =
+      content::WebContents::FromRenderFrameHost(frame_host);
 
   mojo::MakeSelfOwnedReceiver(
 #if BUILDFLAG(IS_ANDROID)
@@ -247,7 +249,7 @@ void BindBraveAdsHost(
 #elif BUILDFLAG(ENABLE_EXTENSIONS)
       std::make_unique<brave_ads::BraveAdsHost>(
 #endif  // BUILDFLAG(IS_ANDROID)
-          profile),
+          profile, web_contents),
       std::move(receiver));
 #endif  // BUILDFLAG(IS_ANDROID) || BUILDFLAG(ENABLE_EXTENSIONS)
 }
@@ -309,11 +311,18 @@ void MaybeBindSolanaProvider(
           frame_host->GetBrowserContext());
   if (!keyring_service)
     return;
+
+  auto* brave_wallet_service =
+      brave_wallet::BraveWalletServiceFactory::GetServiceForContext(
+          frame_host->GetBrowserContext());
+  if (!brave_wallet_service)
+    return;
+
   content::WebContents* web_contents =
       content::WebContents::FromRenderFrameHost(frame_host);
   mojo::MakeSelfOwnedReceiver(
       std::make_unique<brave_wallet::SolanaProviderImpl>(
-          keyring_service,
+          keyring_service, brave_wallet_service,
           std::make_unique<brave_wallet::BraveWalletProviderDelegateImpl>(
               web_contents, frame_host)),
       std::move(receiver));
@@ -497,7 +506,9 @@ void BraveContentBrowserClient::RegisterBrowserInterfaceBindersForFrame(
         base::BindRepeating(&BindBraveSearchDefaultHost));
   }
 
-  if (brave_ads::features::IsRequestAdsEnabledApiEnabled()) {
+  if (brave_ads::features::IsRequestAdsEnabledApiEnabled() ||
+      base::FeatureList::IsEnabled(
+          brave_ads::features::kSupportBraveSearchResultAdConfirmationEvents)) {
     map->Add<brave_ads::mojom::BraveAdsHost>(
         base::BindRepeating(&BindBraveAdsHost));
   }

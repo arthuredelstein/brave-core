@@ -15,13 +15,13 @@
 // npm run test -- brave_unit_tests --filter=BatAds*
 
 namespace ads {
+namespace user_data {
 
 namespace {
 
 std::string GetTotalsAsJson(
     const privacy::UnblindedPaymentTokenList& unblinded_payment_tokens) {
-  const base::DictionaryValue user_data =
-      user_data::GetTotals(unblinded_payment_tokens);
+  const base::DictionaryValue user_data = GetTotals(unblinded_payment_tokens);
 
   std::string json;
   base::JSONWriter::Write(user_data, &json);
@@ -50,17 +50,17 @@ TEST(BatAdsTotalsUserDataTest, GetTotals) {
 
   const privacy::UnblindedPaymentTokenInfo unblinded_payment_token_1 =
       privacy::CreateUnblindedPaymentToken(ConfirmationType::kViewed,
-                                           AdType::kAdNotification);
+                                           AdType::kNotificationAd);
   unblinded_payment_tokens.push_back(unblinded_payment_token_1);
 
   const privacy::UnblindedPaymentTokenInfo unblinded_payment_token_2 =
       privacy::CreateUnblindedPaymentToken(ConfirmationType::kViewed,
-                                           AdType::kAdNotification);
+                                           AdType::kNotificationAd);
   unblinded_payment_tokens.push_back(unblinded_payment_token_2);
 
   const privacy::UnblindedPaymentTokenInfo unblinded_payment_token_3 =
       privacy::CreateUnblindedPaymentToken(ConfirmationType::kClicked,
-                                           AdType::kAdNotification);
+                                           AdType::kNotificationAd);
   unblinded_payment_tokens.push_back(unblinded_payment_token_3);
 
   const privacy::UnblindedPaymentTokenInfo unblinded_payment_token_4 =
@@ -78,4 +78,5 @@ TEST(BatAdsTotalsUserDataTest, GetTotals) {
   EXPECT_EQ(expected_json, json);
 }
 
+}  // namespace user_data
 }  // namespace ads

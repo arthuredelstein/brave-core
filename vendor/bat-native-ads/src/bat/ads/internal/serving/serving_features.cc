@@ -15,13 +15,13 @@ namespace {
 
 constexpr char kFeatureName[] = "AdServing";
 
-constexpr char kFieldTrialParameterDefaultAdNotificationsPerHour[] =
+constexpr char kFieldTrialParameterDefaultNotificationAdsPerHour[] =
     "default_ad_notifications_per_hour";
-constexpr int kDefaultDefaultAdNotificationsPerHour =
-    kDefaultAdNotificationsPerHour;
-constexpr char kFieldTrialParameterMaximumAdNotificationsPerDay[] =
+constexpr int kDefaultDefaultNotificationAdsPerHour =
+    kDefaultNotificationAdsPerHour;
+constexpr char kFieldTrialParameterMaximumNotificationAdsPerDay[] =
     "maximum_ad_notifications_per_day";
-constexpr int kDefaultMaximumAdNotificationsPerDay = 40;
+constexpr int kDefaultMaximumNotificationAdsPerDay = 40;
 
 constexpr char kFieldTrialParameterMaximumInlineContentAdsPerHour[] =
     "maximum_inline_content_ads_per_hour";
@@ -69,16 +69,21 @@ bool IsServingEnabled() {
   return base::FeatureList::IsEnabled(kServing);
 }
 
-int GetDefaultAdNotificationsPerHour() {
+int GetServingVersion() {
   return GetFieldTrialParamByFeatureAsInt(
-      kServing, kFieldTrialParameterDefaultAdNotificationsPerHour,
-      kDefaultDefaultAdNotificationsPerHour);
+      kServing, kFieldTrialParameterServingVersion, kDefaultServingVersion);
 }
 
-int GetMaximumAdNotificationsPerDay() {
+int GetDefaultNotificationAdsPerHour() {
   return GetFieldTrialParamByFeatureAsInt(
-      kServing, kFieldTrialParameterMaximumAdNotificationsPerDay,
-      kDefaultMaximumAdNotificationsPerDay);
+      kServing, kFieldTrialParameterDefaultNotificationAdsPerHour,
+      kDefaultDefaultNotificationAdsPerHour);
+}
+
+int GetMaximumNotificationAdsPerDay() {
+  return GetFieldTrialParamByFeatureAsInt(
+      kServing, kFieldTrialParameterMaximumNotificationAdsPerDay,
+      kDefaultMaximumNotificationAdsPerDay);
 }
 
 int GetMaximumInlineContentAdsPerHour() {
@@ -139,11 +144,6 @@ int GetBrowsingHistoryDaysAgo() {
   return GetFieldTrialParamByFeatureAsInt(
       kServing, kFieldTrialParameterBrowsingHistoryDaysAgo,
       kDefaultBrowsingHistoryDaysAgo);
-}
-
-int GetServingVersion() {
-  return GetFieldTrialParamByFeatureAsInt(
-      kServing, kFieldTrialParameterServingVersion, kDefaultServingVersion);
 }
 
 }  // namespace features

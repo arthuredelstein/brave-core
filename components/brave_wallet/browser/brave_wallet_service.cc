@@ -582,6 +582,26 @@ void BraveWalletService::ResetPermission(mojom::CoinType coin,
     std::move(callback).Run(false);
 }
 
+void BraveWalletService::GetWebSitesWithPermission(
+    mojom::CoinType coin,
+    GetWebSitesWithPermissionCallback callback) {
+  if (delegate_)
+    delegate_->GetWebSitesWithPermission(coin, std::move(callback));
+  else
+    std::move(callback).Run(std::vector<std::string>());
+}
+
+void BraveWalletService::ResetWebSitePermission(
+    mojom::CoinType coin,
+    const std::string& formed_website,
+    ResetWebSitePermissionCallback callback) {
+  if (delegate_)
+    delegate_->ResetWebSitePermission(coin, formed_website,
+                                      std::move(callback));
+  else
+    std::move(callback).Run(false);
+}
+
 // static
 void BraveWalletService::MigrateUserAssetEthContractAddress(
     PrefService* prefs) {
@@ -926,6 +946,9 @@ void BraveWalletService::OnGetImportInfo(
 void BraveWalletService::AddSignMessageRequest(
     mojom::SignMessageRequestPtr request,
     SignMessageRequestCallback callback) {
+  if (request->id < 0) {
+    request->id = sign_message_id_++;
+  }
   sign_message_requests_.push_back(std::move(request));
   sign_message_callbacks_.push_back(std::move(callback));
 }

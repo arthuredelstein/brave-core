@@ -7,13 +7,15 @@
 
 #include "bat/ads/history_item_info.h"
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 
 namespace ads {
 
 HistoryInfo::HistoryInfo() = default;
 
 HistoryInfo::HistoryInfo(const HistoryInfo& info) = default;
+
+HistoryInfo& HistoryInfo::operator=(const HistoryInfo& info) = default;
 
 HistoryInfo::~HistoryInfo() = default;
 

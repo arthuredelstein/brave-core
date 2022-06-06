@@ -12,8 +12,9 @@
 #include "base/callback.h"
 #include "base/containers/flat_map.h"
 #include "base/logging.h"
-#include "bat/ads/ad_notification_info.h"
+#include "base/time/time.h"
 #include "bat/ads/ads.h"
+#include "bat/ads/notification_ad_info.h"
 #include "url/gurl.h"
 
 using std::placeholders::_1;
@@ -251,12 +252,12 @@ void AdsClientMojoBridge::UrlRequest(ads::mojom::UrlRequestPtr url_request,
 // static
 void AdsClientMojoBridge::ShowNotification(
     const std::string& json) {
-  ads::AdNotificationInfo ad_notification;
-  if (!ad_notification.FromJson(json)) {
+  ads::NotificationAdInfo notification_ad;
+  if (!notification_ad.FromJson(json)) {
     return;
   }
 
-  ads_client_->ShowNotification(ad_notification);
+  ads_client_->ShowNotification(notification_ad);
 }
 
 void AdsClientMojoBridge::CloseNotification(
@@ -370,6 +371,16 @@ void AdsClientMojoBridge::SetUint64Pref(
     const std::string& path,
     const uint64_t value) {
   ads_client_->SetUint64Pref(path, value);
+}
+
+void AdsClientMojoBridge::GetTimePref(const std::string& path,
+                                      GetTimePrefCallback callback) {
+  std::move(callback).Run(ads_client_->GetTimePref(path));
+}
+
+void AdsClientMojoBridge::SetTimePref(const std::string& path,
+                                      const base::Time value) {
+  ads_client_->SetTimePref(path, value);
 }
 
 void AdsClientMojoBridge::ClearPref(

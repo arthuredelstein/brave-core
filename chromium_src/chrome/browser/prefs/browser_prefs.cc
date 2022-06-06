@@ -8,12 +8,13 @@
 #include "brave/browser/brave_rewards/rewards_prefs_util.h"
 #include "brave/browser/search/ntp_utils.h"
 #include "brave/browser/themes/brave_dark_mode_utils.h"
-#include "brave/common/pref_names.h"
 #include "brave/components/brave_sync/brave_sync_prefs.h"
 #include "brave/components/brave_wallet/browser/brave_wallet_prefs.h"
 #include "brave/components/brave_wallet/browser/keyring_service.h"
+#include "brave/components/constants/pref_names.h"
 #include "brave/components/decentralized_dns/utils.h"
 #include "brave/components/tor/buildflags/buildflags.h"
+#include "brave/components/translate/core/common/buildflags.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/common/pref_names.h"
 #include "components/gcm_driver/gcm_buildflags.h"
@@ -32,6 +33,10 @@
 #if !BUILDFLAG(ENABLE_EXTENSIONS)
 #define CHROME_BROWSER_WEB_APPLICATIONS_WEB_APP_PROVIDER_H_
 #endif  // !BUILDFLAG(ENABLE_EXTENSIONS)
+
+#if BUILDFLAG(ENABLE_BRAVE_TRANSLATE_GO)
+#include "brave/browser/translate/brave_translate_prefs_migration.h"
+#endif
 
 #define MigrateObsoleteProfilePrefs MigrateObsoleteProfilePrefs_ChromiumImpl
 #define MigrateObsoleteLocalStatePrefs \
@@ -82,6 +87,11 @@ void MigrateObsoleteProfilePrefs(Profile* profile) {
 
   // Added 01/2022
   brave_rewards::MigrateObsoleteProfilePrefs(profile->GetPrefs());
+
+  // Added 05/2022
+#if BUILDFLAG(ENABLE_BRAVE_TRANSLATE_GO)
+  translate::MigrateBraveProfilePrefs(profile->GetPrefs());
+#endif
 }
 
 // This method should be periodically pruned of year+ old migrations.

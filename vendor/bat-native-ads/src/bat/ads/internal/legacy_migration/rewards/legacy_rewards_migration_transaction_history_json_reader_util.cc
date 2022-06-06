@@ -12,7 +12,6 @@
 #include "base/values.h"
 #include "bat/ads/confirmation_type.h"
 #include "bat/ads/transaction_info.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace ads {
 namespace rewards {
@@ -38,9 +37,11 @@ absl::optional<TransactionInfo> ParseTransaction(const base::Value& value) {
     return absl::nullopt;
   }
 
-  if (!base::StringToDouble(*created_at, &transaction.created_at)) {
+  double created_at_as_double = 0.0;
+  if (!base::StringToDouble(*created_at, &created_at_as_double)) {
     return absl::nullopt;
   }
+  transaction.created_at = base::Time::FromDoubleT(created_at_as_double);
 
   // Value
   const absl::optional<double> value_optional = value.FindDoubleKey(kValueKey);

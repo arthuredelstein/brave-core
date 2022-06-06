@@ -29,12 +29,15 @@ class ConfirmationsState final {
  public:
   ConfirmationsState();
   ~ConfirmationsState();
+  ConfirmationsState(const ConfirmationsState&) = delete;
+  ConfirmationsState& operator=(const ConfirmationsState&) = delete;
 
   static ConfirmationsState* Get();
 
   static bool HasInstance();
 
   void Initialize(InitializeCallback callback);
+  bool IsInitialized() const;
 
   void Load();
   void Save();

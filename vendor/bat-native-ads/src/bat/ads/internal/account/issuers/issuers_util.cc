@@ -14,7 +14,6 @@
 #include "bat/ads/internal/ads_client_helper.h"
 #include "bat/ads/internal/deprecated/confirmations/confirmations_state.h"
 #include "bat/ads/pref_names.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace ads {
 
@@ -61,6 +60,15 @@ IssuersInfo GetIssuers() {
   issuers.issuers = ConfirmationsState::Get()->GetIssuers();
 
   return issuers;
+}
+
+bool HasIssuers() {
+  if (!IssuerExistsForType(IssuerType::kConfirmations) ||
+      !IssuerExistsForType(IssuerType::kPayments)) {
+    return false;
+  }
+
+  return true;
 }
 
 bool HasIssuersChanged(const IssuersInfo& issuers) {

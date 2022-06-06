@@ -105,7 +105,7 @@ bool AllowFingerprinting(ExecutionContext* context) {
   blink::WebContentSettingsClient* settings =
       GetContentSettingsClientFor(context);
   if (settings)
-    return settings->AllowFingerprinting(true);
+    return settings->AllowFingerprinting();
   return true;
 }
 

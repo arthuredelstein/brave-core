@@ -99,11 +99,15 @@
   <message name="IDS_BRAVE_VPN_FEATURE_5" desc="Key feature for selling advertising">
     24/7 support
   </message>
-
+  <message name="IDS_BRAVE_VPN_SUPPORT_TICKET_FAILED" desc="Label to show failed response from support ticket creation request">
+    Failed to create support ticket, check your connection.
+  </message>
   <message name="IDS_BRAVE_VPN_LOADING" desc="Label to show below loader icon">
     One moment while loading…
   </message>
-
+  <message name="IDS_BRAVE_VPN_PURCHASE_FAILED " desc="Label to show when purchase status failed">
+    Unable to check the status of your purchase. This could be caused by a network problem.
+  </message>
   <message name="IDS_BRAVE_VPN_EDIT_PAYMENT" desc="Button title to update payment information">
     Edit payment method
   </message>
@@ -186,5 +190,17 @@
 
   <message name="IDS_BRAVE_VPN_CONNECT_NOT_ALLOWED" desc="A highlited note on the main panel when permission from the user is not allowed to create a VPN profile on OS-level">
     VPN connection failed. Please try connecting again, and be sure to click Allow to enable Brave's VPN configuration.
+  </message>
+
+  <message name="IDS_BRAVE_VPN_DNS_CHANGE_ALERT" desc="A text shown to user when he changed DNS settings with Brave VPN enabled">
+    Turning off secure DNS or using default servers on Windows may reveal the names of the sites you visit to your Internet service provider. Brave does not recommend doing this. Do you want to do it anyways?
+  </message>
+
+  <message name="IDS_BRAVE_VPN_DNS_POLICY_ALERT" desc="A text shown to user when he enabled Brave VPN with disabled DoH by policies">
+    Secure DNS is disabled by your organization's policies. Using Brave VPN without Secure DNS may reveal the names of the sites you visit to your Internet service provider or organization.
+  </message>
+
+  <message name="IDS_BRAVE_VPN_DNS_POLICY_CHECKBOX" desc="A text shown to user on dialog's checkbpox when he enabled Brave VPN with disabled DoH by policies">
+    Do not warn me about this anymore.
   </message>
 </grit-part>

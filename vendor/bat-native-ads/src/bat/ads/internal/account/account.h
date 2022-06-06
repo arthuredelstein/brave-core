@@ -41,6 +41,8 @@ class Account final : public ConfirmationsDelegate,
  public:
   explicit Account(privacy::TokenGeneratorInterface* token_generator);
   ~Account() override;
+  Account(const Account&) = delete;
+  Account& operator=(const Account&) = delete;
 
   void AddObserver(AccountObserver* observer);
   void RemoveObserver(AccountObserver* observer);
@@ -91,8 +93,8 @@ class Account final : public ConfirmationsDelegate,
   void OnFailedToConfirm(const ConfirmationInfo& confirmation) override;
 
   // IssuersDelegate:
-  void OnDidGetIssuers(const IssuersInfo& issuers) override;
-  void OnFailedToGetIssuers() override;
+  void OnDidFetchIssuers(const IssuersInfo& issuers) override;
+  void OnFailedToFetchIssuers() override;
 
   // RedeemUnblindedPaymentTokensDelegate:
   void OnDidRedeemUnblindedPaymentTokens(

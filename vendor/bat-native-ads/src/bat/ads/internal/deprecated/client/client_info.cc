@@ -9,7 +9,7 @@
 
 #include "base/check.h"
 #include "bat/ads/internal/base/logging_util.h"
-#include "bat/ads/internal/deprecated/json_helper.h"
+#include "bat/ads/internal/deprecated/json/json_helper.h"
 #include "build/build_config.h"
 
 namespace ads {
@@ -17,6 +17,8 @@ namespace ads {
 ClientInfo::ClientInfo() = default;
 
 ClientInfo::ClientInfo(const ClientInfo& info) = default;
+
+ClientInfo& ClientInfo::operator=(const ClientInfo& info) = default;
 
 ClientInfo::~ClientInfo() = default;
 

@@ -9,8 +9,17 @@
 #include "base/strings/strcat.h"
 #include "base/strings/stringprintf.h"
 #include "base/threading/sequenced_task_runner_handle.h"
+#include "brave/components/constants/brave_services_key.h"
 #include "brave/components/translate/core/common/brave_translate_constants.h"
 #include "brave/components/translate/core/common/brave_translate_features.h"
+
+namespace translate {
+namespace google_apis {
+std::string GetAPIKey() {
+  return BUILDFLAG(BRAVE_SERVICES_KEY);
+}
+}  // namespace google_apis
+}  // namespace translate
 
 #define TranslateScript ChromiumTranslateScript
 #include "src/components/translate/core/browser/translate_script.cc"
@@ -22,7 +31,7 @@ const char* kRedirectAllRequestsToSecurityOrigin = R"(
   const useGoogleTranslateEndpoint = %s;
   const securityOriginHost = new URL(securityOrigin).host;
   const redirectToSecurityOrigin = (url) => {
-    new_url = new URL(url);
+    let new_url = new URL(url);
     if (useGoogleTranslateEndpoint && new_url.pathname === '/translate') {
       new_url.host = 'translate.googleapis.com';
       new_url.pathname = '/translate_a/t';

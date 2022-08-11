@@ -87,7 +87,8 @@ blink::WebContentSettingsClient* GetContentSettingsClientFor(
     return settings;
   // Avoid blocking fingerprinting in WebUI pages.
   const String protocol = context->GetSecurityOrigin()->Protocol();
-  if (protocol != url::kHttpsScheme && protocol != url::kHttpScheme) {
+  if (protocol == url::kAboutScheme || protocol == "chrome" ||
+      protocol == "brave") {
     return settings;
   }
   if (auto* window = blink::DynamicTo<blink::LocalDOMWindow>(context)) {

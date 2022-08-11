@@ -153,10 +153,6 @@ int MaybeFarbleScreenInteger(ExecutionContext* context,
 }
 
 bool BlockScreenFingerprinting(ExecutionContext* context) {
-// Don't apply this protection on mobile.
-#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
-  return false;
-#else
   if (!base::FeatureList::IsEnabled(
           blink::features::kBraveBlockScreenFingerprinting)) {
     return false;
@@ -164,7 +160,6 @@ bool BlockScreenFingerprinting(ExecutionContext* context) {
   BraveFarblingLevel level =
       GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF);
   return level != BraveFarblingLevel::OFF;
-#endif
 }
 
 int FarbledPointerScreenCoordinate(const DOMWindow* view,

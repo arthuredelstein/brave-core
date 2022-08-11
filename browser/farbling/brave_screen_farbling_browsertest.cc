@@ -190,18 +190,22 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
             "`);";
         Browser* popup = OpenPopup(script);
         gfx::Rect childBounds = popup->window()->GetBounds();
+        auto* parent_contents = contents();
+        auto* popup_contents = popup->tab_strip_model()->GetActiveWebContents();
+        const int popup_inner_width = EvalJs(popup_contents, "innerWidth").value.GetInt();
+        const int popup_inner_height = EvalJs(popup_contents, "innerHeight").value.GetInt();
         if (!allow_fingerprinting && !DisableFlag()) {
-          EXPECT_GE(childBounds.x(), parentBounds.x());
-          EXPECT_GE(childBounds.y(), parentBounds.y());
+          EXPECT_GE(childBounds.x(), 10 + parentBounds.x());
+          EXPECT_GE(childBounds.y(), 10 + parentBounds.y());
           EXPECT_LE(childBounds.x(), 18 + parentBounds.x());
           EXPECT_LE(childBounds.y(), 18 + parentBounds.y());
-          EXPECT_LT(childBounds.width(), parentBounds.width() - 10);
-          EXPECT_LT(childBounds.height(), parentBounds.height() - 10);
+          EXPECT_LE(popup_inner_width, EvalJs(parent_contents, "innerWidth + 8"));
+          EXPECT_LE(popup_inner_height, EvalJs(parent_contents, "innerHeight + 8"));
         } else {
           EXPECT_LE(childBounds.x(), 10 + parentBounds.x());
           EXPECT_LE(childBounds.y(), 10 + parentBounds.y());
-          EXPECT_GE(childBounds.width(), parentBounds.width() - 10);
-          EXPECT_GE(childBounds.height(), parentBounds.height() - 10);
+          EXPECT_GE(popup_inner_width, EvalJs(parent_contents, "innerWidth"));
+          EXPECT_GE(popup_inner_height, EvalJs(parent_contents, "innerHeight"));
         }
       }
     }

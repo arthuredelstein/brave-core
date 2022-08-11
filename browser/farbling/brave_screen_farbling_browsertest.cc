@@ -23,47 +23,7 @@ using brave_shields::ControlType;
 
 const gfx::Rect testWindowBounds[] = {
     gfx::Rect(50, 50, 100, 100), gfx::Rect(50, 50, 100, 0),
-    gfx::Rect(200, 100, 0, 100), gfx::Rect(-100, -200, 20000, 10000),
-    gfx::Rect(0, 0, 0, 0)};
-
-const char* testScreenSizeScripts[] = {
-    "window.outerWidth - window.innerWidth",
-    "window.outerHeight - window.innerHeight",
-    "window.screen.availWidth - window.innerWidth",
-    "window.screen.availHeight - window.innerHeight",
-    "window.screen.width - window.innerWidth",
-    "window.screen.height - window.innerHeight",
-};
-
-#define PREPARE_TEST_EVENT                                   \
-  "let fakeScreenX = 100, fakeScreenY = 200; "               \
-  "let fakeClientX = 300, fakeClientY = 400; "               \
-  "let testEvent = document.createEvent('MouseEvent'); "     \
-  "testEvent.initMouseEvent('click', true, true, window, 1," \
-  "fakeScreenX + devicePixelRatio * fakeClientX,"            \
-  "fakeScreenY + devicePixelRatio * fakeClientY,"            \
-  "fakeClientX, fakeClientY, false, false, false, false, 0, null); "
-
-const char* testWindowPositionScripts[] = {
-    "window.screenX", "window.screenY",
-    /* window.screen.availLeft is usually 0, so we don't test that here. */
-    "window.screen.availTop",
-    PREPARE_TEST_EVENT
-    "testEvent.screenX - devicePixelRatio * testEvent.clientX",
-    PREPARE_TEST_EVENT
-    "testEvent.screenY - devicePixelRatio * testEvent.clientY"};
-
-const char* mediaQueryTestScripts[] = {
-    "matchMedia(`(max-device-width: ${innerWidth + 8}px) and "
-    "(min-device-width: ${innerWidth}px)`).matches",
-    "matchMedia(`(max-device-height: ${innerHeight + 8}px) and "
-    "(min-device-height: ${innerHeight}px)`).matches"};
-
-const gfx::Rect popupParentWindowBounds[] = {
-    gfx::Rect(50, 50, 150, 150),
-    gfx::Rect(50, 50, 1000, 200),
-    gfx::Rect(100, 500, 90, 10000),
-};
+    gfx::Rect(200, 100, 0, 100), gfx::Rect(0, 0, 0, 0)};
 
 class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
  public:
@@ -98,14 +58,10 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
     return HostContentSettingsMapFactory::GetForProfile(browser()->profile());
   }
 
-  void AllowFingerprinting() {
+  void SetFingerprintingSetting(bool allow) {
     brave_shields::SetFingerprintingControlType(
-        content_settings(), ControlType::ALLOW, top_level_page_url_);
-  }
-
-  void SetFingerprintingDefault() {
-    brave_shields::SetFingerprintingControlType(
-        content_settings(), ControlType::DEFAULT, top_level_page_url_);
+        content_settings(), allow ? ControlType::ALLOW : ControlType::DEFAULT,
+        top_level_page_url_);
   }
 
   content::WebContents* contents() const {
@@ -131,8 +87,16 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
   const GURL& farbling_url() { return farbling_url_; }
 
   void FarbleScreenSize() {
+    const char* testScreenSizeScripts[] = {
+        "window.outerWidth - window.innerWidth",
+        "window.outerHeight - window.innerHeight",
+        "window.screen.availWidth - window.innerWidth",
+        "window.screen.availHeight - window.innerHeight",
+        "window.screen.width - window.innerWidth",
+        "window.screen.height - window.innerHeight",
+    };
     for (bool allow_fingerprinting : {false, true}) {
-      allow_fingerprinting ? AllowFingerprinting() : SetFingerprintingDefault();
+      SetFingerprintingSetting(allow_fingerprinting);
       for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
         browser()->window()->SetBounds(testWindowBounds[j]);
         NavigateToURLUntilLoadStop(farbling_url());
@@ -140,36 +104,52 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
              ++i) {
           std::string testScreenSizeScriptsAbs =
               std::string("Math.abs(") + testScreenSizeScripts[i] + ")";
-          if (allow_fingerprinting || DisableFlag()) {
-            EXPECT_LT(8, EvalJs(contents(), testScreenSizeScriptsAbs));
-          } else {
+          if (!allow_fingerprinting && !DisableFlag()) {
             EXPECT_GE(8, EvalJs(contents(), testScreenSizeScriptsAbs));
+          } else {
+            EXPECT_LT(8, EvalJs(contents(), testScreenSizeScriptsAbs));
           }
         }
       }
     }
   }
 
+#define PREPARE_TEST_EVENT                                   \
+  "let fakeScreenX = 100, fakeScreenY = 200; "               \
+  "let fakeClientX = 300, fakeClientY = 400; "               \
+  "let testEvent = document.createEvent('MouseEvent'); "     \
+  "testEvent.initMouseEvent('click', true, true, window, 1," \
+  "fakeScreenX + devicePixelRatio * fakeClientX,"            \
+  "fakeScreenY + devicePixelRatio * fakeClientY,"            \
+  "fakeClientX, fakeClientY, false, false, false, false, 0, null); "
+
   void FarbleWindowPosition() {
     for (bool allow_fingerprinting : {false, true}) {
-      for (int i = 0;
-           i < static_cast<int>(std::size(testWindowPositionScripts)); ++i) {
-        bool protectionFoundDisabled = false;
-        for (int j = 0; j < static_cast<int>(std::size(testWindowBounds));
-             ++j) {
-          browser()->window()->SetBounds(testWindowBounds[j]);
-          allow_fingerprinting ? AllowFingerprinting()
-                               : SetFingerprintingDefault();
-          NavigateToURLUntilLoadStop(farbling_url());
-          content::EvalJsResult result =
-              EvalJs(contents(), testWindowPositionScripts[i]);
-          int resultInt = result.value.GetInt();
-          if (abs(resultInt) > 8) {
-            protectionFoundDisabled = true;
-          }
+      for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
+        browser()->window()->SetBounds(testWindowBounds[j]);
+        SetFingerprintingSetting(allow_fingerprinting);
+        NavigateToURLUntilLoadStop(farbling_url());
+        if (!allow_fingerprinting && !DisableFlag()) {
+          EXPECT_GE(8, EvalJs(contents(), "window.screenX"));
+          EXPECT_GE(8, EvalJs(contents(), "window.screenY"));
+          EXPECT_GE(8, EvalJs(contents(), "window.screen.availLeft"));
+          EXPECT_GE(8, EvalJs(contents(), "window.screen.availTop"));
+          EXPECT_GE(
+              8,
+              EvalJs(
+                  contents(), PREPARE_TEST_EVENT
+                  "testEvent.screenX - devicePixelRatio * testEvent.clientX"));
+          EXPECT_GE(
+              8,
+              EvalJs(
+                  contents(), PREPARE_TEST_EVENT
+                  "testEvent.screenY - devicePixelRatio * testEvent.clientY"));
+        } else {
+          EXPECT_LE(testWindowBounds[j].x(),
+                    EvalJs(contents(), "window.screenX"));
+          EXPECT_LE(testWindowBounds[j].y(),
+                    EvalJs(contents(), "window.screenY"));
         }
-        EXPECT_EQ(protectionFoundDisabled,
-                  allow_fingerprinting || DisableFlag());
       }
     }
   }
@@ -178,40 +158,51 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
     for (bool allow_fingerprinting : {false, true}) {
       for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
         browser()->window()->SetBounds(testWindowBounds[j]);
-        allow_fingerprinting ? AllowFingerprinting()
-                             : SetFingerprintingDefault();
+        SetFingerprintingSetting(allow_fingerprinting);
         NavigateToURLUntilLoadStop(farbling_url());
-        for (int i = 0; i < static_cast<int>(std::size(mediaQueryTestScripts));
-             ++i) {
-          EXPECT_EQ(!DisableFlag() && !allow_fingerprinting,
-                    EvalJs(contents(), mediaQueryTestScripts[i]));
-        }
+        EXPECT_EQ(
+            !allow_fingerprinting && !DisableFlag(),
+            EvalJs(contents(),
+                   "matchMedia(`(max-device-width: ${innerWidth + 8}px) and "
+                   "(min-device-width: ${innerWidth}px)`).matches"));
+        EXPECT_EQ(
+            !allow_fingerprinting && !DisableFlag(),
+            EvalJs(contents(),
+                   "matchMedia(`(max-device-height: ${innerHeight + 8}px) and "
+                   "(min-device-height: ${innerHeight}px)`).matches"));
       }
     }
   }
 
   void FarbleScreenPopupPosition() {
     for (bool allow_fingerprinting : {false, true}) {
-      for (int j = 0; j < static_cast<int>(std::size(popupParentWindowBounds));
-           ++j) {
+      for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
         browser()->window()->SetBounds(testWindowBounds[j]);
-        allow_fingerprinting ? AllowFingerprinting()
-                             : SetFingerprintingDefault();
+        SetFingerprintingSetting(allow_fingerprinting);
         NavigateToURLUntilLoadStop(farbling_url());
         gfx::Rect parentBounds = browser()->window()->GetBounds();
         const char* script =
-            "open('http://d.test/', '', `left=${screen.availLeft + "
-            "20},top=${screen.availTop + 20},width=${screen.availWidth - "
-            "40},height=${screen.availHeight - 40}`);";
+            "open('http://d.test/', '', `"
+            "left=${screen.availLeft + 10},"
+            "top=${screen.availTop + 10},"
+            "width=${screen.availWidth - 10},"
+            "height=${screen.availHeight - 10}"
+            "`);";
         Browser* popup = OpenPopup(script);
         gfx::Rect childBounds = popup->window()->GetBounds();
-        bool windowPositionProtected =
-            (childBounds.x() < 28 + parentBounds.x()) &&
-            (childBounds.y() < 28 + parentBounds.y()) &&
-            (childBounds.width() < parentBounds.width()) &&
-            (childBounds.height() < parentBounds.height());
-        EXPECT_EQ(!windowPositionProtected,
-                  allow_fingerprinting || DisableFlag());
+        if (!allow_fingerprinting && !DisableFlag()) {
+          EXPECT_GE(childBounds.x(), parentBounds.x());
+          EXPECT_GE(childBounds.y(), parentBounds.y());
+          EXPECT_LE(childBounds.x(), 18 + parentBounds.x());
+          EXPECT_LE(childBounds.y(), 18 + parentBounds.y());
+          EXPECT_LT(childBounds.width(), parentBounds.width() - 10);
+          EXPECT_LT(childBounds.height(), parentBounds.height() - 10);
+        } else {
+          EXPECT_LE(childBounds.x(), 10 + parentBounds.x());
+          EXPECT_LE(childBounds.y(), 10 + parentBounds.y());
+          EXPECT_GE(childBounds.width(), parentBounds.width() - 10);
+          EXPECT_GE(childBounds.height(), parentBounds.height() - 10);
+        }
       }
     }
   }

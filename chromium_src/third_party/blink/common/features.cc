@@ -49,12 +49,12 @@ const base::Feature kRestrictWebSocketsPool{"RestrictWebSocketsPool",
                                             base::FEATURE_ENABLED_BY_DEFAULT};
 
 // Enable protection against fingerprinting on screen dimensions.
-const base::Feature kBraveBlockScreenFingerprinting{
-    "kBraveBlockScreenFingerprinting",
+const base::Feature kBraveBlockScreenFingerprinting {
+  "kBraveBlockScreenFingerprinting",
 #if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
-    base::FEATURE_DISABLED_BY_DEFAULT
+      base::FEATURE_DISABLED_BY_DEFAULT
 #else
-    base::FEATURE_ENABLED_BY_DEFAULT
+      base::FEATURE_ENABLED_BY_DEFAULT
 #endif
 };
 

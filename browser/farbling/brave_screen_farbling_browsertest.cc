@@ -86,6 +86,11 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
 
   const GURL& farbling_url() { return farbling_url_; }
 
+  void SetBounds(const gfx::Rect& bounds) {
+    browser()->window()->SetBounds(bounds);
+    content::RunAllPendingInMessageLoop();
+  }
+
   void FarbleScreenSize() {
     const char* testScreenSizeScripts[] = {
         "window.outerWidth - window.innerWidth",
@@ -98,7 +103,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
     for (bool allow_fingerprinting : {false, true}) {
       SetFingerprintingSetting(allow_fingerprinting);
       for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
-        browser()->window()->SetBounds(testWindowBounds[j]);
+        SetBounds(testWindowBounds[j]);
         NavigateToURLUntilLoadStop(farbling_url());
         for (int i = 0; i < static_cast<int>(std::size(testScreenSizeScripts));
              ++i) {
@@ -125,9 +130,9 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
 
   void FarbleWindowPosition() {
     for (bool allow_fingerprinting : {false, true}) {
+      SetFingerprintingSetting(allow_fingerprinting);
       for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
-        browser()->window()->SetBounds(testWindowBounds[j]);
-        SetFingerprintingSetting(allow_fingerprinting);
+        SetBounds(testWindowBounds[j]);
         NavigateToURLUntilLoadStop(farbling_url());
         if (!allow_fingerprinting && !DisableFlag()) {
           EXPECT_GE(8, EvalJs(contents(), "window.screenX"));
@@ -156,9 +161,9 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
 
   void FarbleScreenMediaQuery() {
     for (bool allow_fingerprinting : {false, true}) {
+      SetFingerprintingSetting(allow_fingerprinting);
       for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
-        browser()->window()->SetBounds(testWindowBounds[j]);
-        SetFingerprintingSetting(allow_fingerprinting);
+        SetBounds(testWindowBounds[j]);
         NavigateToURLUntilLoadStop(farbling_url());
         EXPECT_EQ(
             !allow_fingerprinting && !DisableFlag(),
@@ -176,9 +181,9 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
 
   void FarbleScreenPopupPosition() {
     for (bool allow_fingerprinting : {false, true}) {
+      SetFingerprintingSetting(allow_fingerprinting);
       for (int j = 0; j < static_cast<int>(std::size(testWindowBounds)); ++j) {
-        browser()->window()->SetBounds(testWindowBounds[j]);
-        SetFingerprintingSetting(allow_fingerprinting);
+        SetBounds(testWindowBounds[j]);
         NavigateToURLUntilLoadStop(farbling_url());
         gfx::Rect parentBounds = browser()->window()->GetBounds();
         const char* script =

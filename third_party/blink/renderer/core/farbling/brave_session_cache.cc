@@ -175,6 +175,20 @@ int FarbledPointerScreenCoordinate(const DOMWindow* view,
   return FarbleInteger(context, key, zoom_factor * client_coordinate, 0, 8);
 }
 
+bool AllowTimeStampFingerprinting(ExecutionContext* context) {
+  if (!base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps)) {
+    return true;
+  }
+  BraveFarblingLevel level =
+      GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF);
+  return level == BraveFarblingLevel::OFF;
+}
+
+DOMHighResTimeStamp RoundTimeStamp(DOMHighResTimeStamp time_stamp) {
+  // Round to the nearest millisecond
+  return round(time_stamp);
+}
+
 BraveSessionCache::BraveSessionCache(ExecutionContext& context)
     : Supplement<ExecutionContext>(context) {
   farbling_enabled_ = false;

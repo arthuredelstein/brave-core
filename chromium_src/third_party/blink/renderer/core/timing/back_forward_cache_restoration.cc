@@ -9,7 +9,7 @@
 
 namespace blink {
 
-void LargestContentfulPaint::RoundOffTimes() {
+void BackForwardCacheRestoration::RoundOffTimes() {
   page_show_event_start_ = round(page_show_event_start_);
   page_show_event_end_ = round(page_show_event_end_);
   PerformanceEntry::RoundOffTimes();

@@ -14,6 +14,6 @@
 
 #include "src/third_party/blink/renderer/core/timing/back_forward_cache_restoration.h"
 
-#undef loadTime
+#undef pageShowEventEnd
 
 #endif  // BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_BACK_FORWARD_CACHE_RESTORATION_H_

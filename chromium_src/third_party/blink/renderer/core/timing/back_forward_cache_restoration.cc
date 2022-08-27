@@ -4,7 +4,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "third_party/blink/renderer/core/timing/back_forward_cache_restoration.h"
-#include "base/time/time.h"
 
 #include "src/third_party/blink/renderer/core/timing/back_forward_cache_restoration.cc"
 

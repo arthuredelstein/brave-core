@@ -12,7 +12,7 @@
 
 #define now()                                                             \
   MonotonicTimeToDOMHighResTimeStamp_ChromiumImpl(base::TimeTicks) const; \
-  DOMHighResTimeStamp now_ChromiumImpl() const; \
+  DOMHighResTimeStamp now_ChromiumImpl() const;                           \
   DOMHighResTimeStamp now()
 
 #define cross_origin_isolated_capability_ \

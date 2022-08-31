@@ -7,6 +7,11 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_ENTRY_H_
 
+// Prevent #define collisions
+#include "third_party/blink/public/platform/scheduler/web_scoped_virtual_time_pauser.h"
+#include "third_party/blink/renderer/core/timing/performance_server_timing.h"
+#include "third_party/blink/renderer/platform/network/server_timing_header.h"
+
 #define IsResource                 \
   dummy_ [[maybe_unused]] = false; \
   virtual void RoundOffTimes();    \
@@ -17,9 +22,20 @@
   dummy2_ [[maybe_unused]] = false; \
   double start_time_
 
+#define duration_                                               \
+  duration_;                                                    \
+  bool allow_fingerprinting_ = true;                            \
+  PerformanceEntry(const AtomicString& name, double start_time, \
+                   double finish_time, uint32_t navigation_id,  \
+                   bool allow_fingerprinting);                  \
+  PerformanceEntry(double duration, const AtomicString& name,   \
+                   double start_time, uint32_t navigation_id,   \
+                   bool allow_fingerprinting)
+
 #include "src/third_party/blink/renderer/core/timing/performance_entry.h"
 
 #undef IsResource
 #undef start_time_
+#undef duration_
 
 #endif  // BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_ENTRY_H_

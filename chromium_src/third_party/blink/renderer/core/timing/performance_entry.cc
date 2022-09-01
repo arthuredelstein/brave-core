@@ -9,10 +9,12 @@
 
 namespace blink {
 
-void PerformanceEntry::RoundOffTimes() {
-  printf("RoundOffTimes: start_time_: %f\n", start_time_);
-  start_time_ = round(start_time_);
-  duration_ = round(duration_);
+void PerformanceEntry::RoundOffTimes(bool allow_fingerprinting) {
+  if (allow_fingerprinting) {
+    printf("RoundOffTimes: start_time_: %f\n", start_time_);
+    start_time_ = round(start_time_);
+    duration_ = round(duration_);
+  }
 }
 
 PerformanceEntry::PerformanceEntry(const AtomicString& name,
@@ -21,7 +23,7 @@ PerformanceEntry::PerformanceEntry(const AtomicString& name,
                                    uint32_t navigation_id,
                                    bool allow_fingerprinting)
     : PerformanceEntry(name, start_time, finish_time, navigation_id) {
-  allow_fingerprinting_ = allow_fingerprinting;
+  RoundOffTimes(allow_fingerprinting);
 }
 PerformanceEntry::PerformanceEntry(double duration,
                                    const AtomicString& name,
@@ -29,7 +31,7 @@ PerformanceEntry::PerformanceEntry(double duration,
                                    uint32_t navigation_id,
                                    bool allow_fingerprinting)
     : PerformanceEntry(duration, name, start_time, navigation_id) {
-  allow_fingerprinting_ = allow_fingerprinting;
+  RoundOffTimes(allow_fingerprinting);
 }
 
 }  // namespace blink

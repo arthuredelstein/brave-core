@@ -14,7 +14,7 @@
 
 #define IsResource                 \
   dummy_ [[maybe_unused]] = false; \
-  virtual void RoundOffTimes();    \
+  void RoundOffTimes(bool allowFingerprinting);    \
   bool isResource
 
 // Remove constness of start_time_.
@@ -24,7 +24,6 @@
 
 #define duration_                                               \
   duration_;                                                    \
-  bool allow_fingerprinting_ = true;                            \
   PerformanceEntry(const AtomicString& name, double start_time, \
                    double finish_time, uint32_t navigation_id,  \
                    bool allow_fingerprinting);                  \

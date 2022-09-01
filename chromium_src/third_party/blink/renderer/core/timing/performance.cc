@@ -14,9 +14,6 @@
 #define MonotonicTimeToDOMHighResTimeStamp \
   MonotonicTimeToDOMHighResTimeStamp_ChromiumImpl
 
-#define EnqueuePerformanceEntry \
-  RoundOffTimes(entry, allow_fingerprinting_)->EnqueuePerformanceEntry
-
 #define GetNavigationId(...) GetNavigationId(__VA_ARGS__), allow_fingerprinting_
 
 #define now now_ChromiumImpl

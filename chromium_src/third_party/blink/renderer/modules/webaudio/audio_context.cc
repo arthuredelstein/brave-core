@@ -20,7 +20,6 @@ AudioTimestamp* AudioContext::getOutputTimestamp(
   const bool allow_fingerprinting = brave::AllowFingerprinting(context);
   if (!allow_fingerprinting) {
     audioTimestamp->setContextTime(round(audioTimestamp->getContextTimeOr(0.0)));
-    audioTimestamp->setPerformanceTime(round(audioTimestamp->getPerformanceTimeOr(0.0)));
   }
   return audioTimestamp;
 }

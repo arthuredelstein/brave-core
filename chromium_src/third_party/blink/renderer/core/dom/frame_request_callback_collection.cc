@@ -11,7 +11,7 @@
 
 #undef ExecuteFrameCallbacks
 
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
+#include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 
 namespace blink {
 

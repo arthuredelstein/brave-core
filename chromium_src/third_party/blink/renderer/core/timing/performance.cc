@@ -4,6 +4,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "third_party/blink/renderer/core/timing/performance.h"
+
+#include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 #include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "third_party/blink/renderer/core/timing/performance_observer.h"
 

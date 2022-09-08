@@ -7,8 +7,11 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_H_
 
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
 #include "third_party/blink/renderer/core/timing/performance_resource_timing.h"
+
+namespace blink {
+  class ExecutionContext;
+}  // namespace blink
 
 #define now()                                                             \
   MonotonicTimeToDOMHighResTimeStamp_ChromiumImpl(base::TimeTicks) const; \

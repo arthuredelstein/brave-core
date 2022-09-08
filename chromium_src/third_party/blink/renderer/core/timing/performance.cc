@@ -27,8 +27,6 @@
 #undef GetNavigationId
 #undef now
 
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
-
 namespace blink {
 
 namespace {

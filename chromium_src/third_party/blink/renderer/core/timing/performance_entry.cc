@@ -7,8 +7,6 @@
 
 #include "src/third_party/blink/renderer/core/timing/performance_entry.cc"
 
-#include "third_party/blink/renderer/core/execution_context/execution_context.h"
-
 namespace blink {
 
 void PerformanceEntry::RoundOffTimes(bool allow_fingerprinting) {

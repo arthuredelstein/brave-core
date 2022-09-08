@@ -14,6 +14,8 @@ blink::DOMHighResTimeStamp MaybeRound(blink::DOMHighResTimeStamp raw_value,
 
 }  // namespace
 
+#include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
+
 #define setPresentationTime(X) \
   setPresentationTime(MaybeRound(X, allow_fingerprinting_))
 

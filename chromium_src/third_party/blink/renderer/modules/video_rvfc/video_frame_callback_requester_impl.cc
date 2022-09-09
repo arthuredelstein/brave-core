@@ -20,7 +20,7 @@ blink::DOMHighResTimeStamp MaybeRound(blink::DOMHighResTimeStamp raw_value,
   setPresentationTime(MaybeRound(X, allow_fingerprinting_))
 
 #define setExpectedDisplayTime(X) \
-  setPresentationTime(MaybeRound(X, allow_fingerprinting_))
+  setExpectedDisplayTime(MaybeRound(X, allow_fingerprinting_))
 
 #define callback_collection_(X)                                   \
   allow_fingerprinting_(                                          \

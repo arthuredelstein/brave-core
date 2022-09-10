@@ -10,7 +10,7 @@
 #include "third_party/blink/renderer/core/timing/performance_resource_timing.h"
 
 namespace blink {
-  class ExecutionContext;
+class ExecutionContext;
 }  // namespace blink
 
 #define now()                                                             \

@@ -15,11 +15,13 @@ namespace blink {
 
 AudioTimestamp* AudioContext::getOutputTimestamp(
     ScriptState* script_state) const {
-  AudioTimestamp* audioTimestamp = getOutputTimestamp_ChromiumImpl(script_state);
+  AudioTimestamp* audioTimestamp =
+      getOutputTimestamp_ChromiumImpl(script_state);
   ExecutionContext* context = GetExecutionContext();
   const bool allow_fingerprinting = brave::AllowFingerprinting(context);
   if (!allow_fingerprinting) {
-    audioTimestamp->setContextTime(round(audioTimestamp->getContextTimeOr(0.0)));
+    audioTimestamp->setContextTime(
+        round(audioTimestamp->getContextTimeOr(0.0)));
   }
   return audioTimestamp;
 }

@@ -19,7 +19,8 @@ void XRFrameRequestCallbackCollection::ExecuteCallbacks(XRSession* session,
                                                         double timestamp,
                                                         XRFrame* frame) {
   bool allow_fingerprinting = brave::AllowFingerprinting(context_);
-  ExecuteCallbacks_ChromiumImpl(session, allow_fingerprinting ? timestamp : round(timestamp), frame);
+  ExecuteCallbacks_ChromiumImpl(
+      session, allow_fingerprinting ? timestamp : round(timestamp), frame);
 }
 
 }  // namespace blink

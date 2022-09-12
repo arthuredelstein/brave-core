@@ -18,10 +18,8 @@ namespace blink {
 void FrameRequestCallbackCollection::ExecuteFrameCallbacks(
     double high_res_now_ms,
     double high_res_now_ms_legacy) {
-  if (!brave::AllowFingerprinting(context_)) {
-    high_res_now_ms = round(high_res_now_ms);
-    high_res_now_ms_legacy = round(high_res_now_ms_legacy);
-  }
+  high_res_now_ms = brave::MaybeRoundTimeStamp(context_, high_res_now_ms);
+  high_res_now_ms_legacy = brave::MaybeRoundTimeStamp(context_, high_res_now_ms_legacy);
   ExecuteFrameCallbacks_ChromiumImpl(high_res_now_ms, high_res_now_ms_legacy);
 }
 

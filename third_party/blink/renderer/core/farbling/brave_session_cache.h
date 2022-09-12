@@ -13,6 +13,7 @@
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "third_party/abseil-cpp/absl/random/random.h"
 #include "third_party/blink/renderer/core/core_export.h"
+#include "third_party/blink/renderer/core/dom/dom_high_res_time_stamp.h"
 #include "third_party/blink/renderer/core/execution_context/execution_context.h"
 #include "third_party/blink/renderer/core/frame/dom_window.h"
 #include "third_party/blink/renderer/platform/wtf/text/atomic_string.h"
@@ -23,6 +24,7 @@ class WebContentSettingsClient;
 
 namespace brave {
 
+using blink::DOMHighResTimeStamp;
 using blink::DOMWindow;
 using blink::ExecutionContext;
 using blink::GarbageCollected;
@@ -61,6 +63,8 @@ CORE_EXPORT int FarbledPointerScreenCoordinate(const DOMWindow* view,
                                                FarbleKey key,
                                                int client_coordinate,
                                                int true_screen_coordinate);
+CORE_EXPORT DOMHighResTimeStamp
+MaybeRoundTimeStamp(ExecutionContext* context, DOMHighResTimeStamp time_stamp);
 
 class CORE_EXPORT BraveSessionCache final
     : public GarbageCollected<BraveSessionCache>,

@@ -175,6 +175,17 @@ int FarbledPointerScreenCoordinate(const DOMWindow* view,
   return FarbleInteger(context, key, zoom_factor * client_coordinate, 0, 8);
 }
 
+DOMHighResTimeStamp MaybeRoundTimeStamp(ExecutionContext* context,
+                                        DOMHighResTimeStamp time_stamp) {
+  if (base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps)) {
+    return time_stamp;
+  }
+  BraveFarblingLevel level =
+      GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF);
+  bool shouldRound = level != BraveFarblingLevel::OFF;
+  return shouldRound ? round(time_stamp) : time_stamp;
+}
+
 BraveSessionCache::BraveSessionCache(ExecutionContext& context)
     : Supplement<ExecutionContext>(context) {
   farbling_enabled_ = false;

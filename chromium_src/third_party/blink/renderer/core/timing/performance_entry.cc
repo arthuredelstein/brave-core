@@ -13,8 +13,6 @@ void PerformanceEntry::RoundOffTimes(bool allow_fingerprinting) {
   if (!allow_fingerprinting) {
     start_time_ = round(start_time_);
     duration_ = round(duration_);
-    printf("RoundOffTimes: start_time_: %f, duration_: %f\n", start_time_,
-           duration_);
   }
 }
 

@@ -7,6 +7,8 @@
 
 #include "src/third_party/blink/renderer/core/timing/back_forward_cache_restoration.cc"
 
+#include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
+
 namespace blink {
 
 void BackForwardCacheRestoration::RoundOffTimes() {

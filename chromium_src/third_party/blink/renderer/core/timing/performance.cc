@@ -20,12 +20,18 @@
 
 #define now now_ChromiumImpl
 
+#define timeOrigin timeOrigin_ChromiumImpl
+
+#define BuildJSONValue BuildJSONValue_ChromiumImpl
+
 #include "src/third_party/blink/renderer/core/timing/performance.cc"
 
 #undef cross_origin_isolated_capability_
 #undef MonotonicTimeToDOMHighResTimeStamp
 #undef GetNavigationId
 #undef now
+#undef timeOrigin
+#undef BuildJSONValue
 
 namespace blink {
 
@@ -86,6 +92,14 @@ DOMHighResTimeStamp Performance::MonotonicTimeToDOMHighResTimeStamp(
 DOMHighResTimeStamp Performance::now() const {
   return MaybeRoundDOMHighResTimeStamp(now_ChromiumImpl(),
                                        allow_fingerprinting_);
+}
+
+DOMHighResTimeStamp Performance::timeOrigin() const {
+  return  MaybeRoundDOMHighResTimeStamp(timeOrigin_ChromiumImpl(), allow_fingerprinting_);
+}
+
+void Performance::BuildJSONValue(V8ObjectBuilder& builder) const {
+  builder.AddNumber("timeOrigin", timeOrigin());
 }
 
 }  // namespace blink

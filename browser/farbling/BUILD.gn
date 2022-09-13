@@ -22,6 +22,7 @@ if (!is_android) {
       "brave_offscreencanvas_farbling_browsertest.cc",
       "brave_screen_farbling_browsertest.cc",
       "brave_speech_synthesis_farbling_browsertest.cc",
+      "brave_timestamp_rounding_browsertest.cc",
       "brave_webaudio_farbling_browsertest.cc",
       "brave_webgl_farbling_browsertest.cc",
     ]

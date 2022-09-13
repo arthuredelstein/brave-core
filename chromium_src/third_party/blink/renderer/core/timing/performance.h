@@ -7,7 +7,12 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_H_
 
+#include "third_party/blink/renderer/core/timing/largest_contentful_paint.h"
+#include "third_party/blink/renderer/core/timing/layout_shift.h"
+#include "third_party/blink/renderer/core/timing/performance_element_timing.h"
+#include "third_party/blink/renderer/core/timing/performance_long_task_timing.h"
 #include "third_party/blink/renderer/core/timing/performance_resource_timing.h"
+#include "third_party/blink/renderer/core/timing/performance_event_timing.h"
 
 namespace blink {
 class ExecutionContext;
@@ -36,10 +41,20 @@ class ExecutionContext;
       ExecutionContext* context);                                        \
   static DOMHighResTimeStamp ClampTimeResolution
 
+#define timeOrigin                 \
+  timeOrigin_ChromiumImpl() const; \
+  DOMHighResTimeStamp timeOrigin
+
+#define BuildJSONValue                                 \
+  BuildJSONValue_ChromiumImpl(V8ObjectBuilder&) const; \
+  virtual void BuildJSONValue
+
 #include "src/third_party/blink/renderer/core/timing/performance.h"
 
 #undef now
 #undef cross_origin_isolated_capability_
 #undef ClampTimeResolution
+#undef timeOrigin
+#undef BuildJSONValue
 
 #endif  // BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_H_

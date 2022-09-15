@@ -17,7 +17,7 @@
 #undef DOMHighResTimeStamp
 #undef ConvertDOMHighResTimeStampToSeconds
 
-#include "third_party/blink/public/common/features.h"
+#include "base/feature_list.h"
 
 namespace blink {
 

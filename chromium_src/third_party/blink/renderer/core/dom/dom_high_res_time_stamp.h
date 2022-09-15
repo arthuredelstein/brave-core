@@ -17,8 +17,6 @@
 #undef DOMHighResTimeStamp
 #undef ConvertDOMHighResTimeStampToSeconds
 
-#include "base/feature_list.h"
-
 namespace blink {
 
 class DOMHighResTimeStamp {
@@ -31,10 +29,7 @@ class DOMHighResTimeStamp {
   void operator=(double rhs) { value_ = rhs; }
   void operator=(int rhs) { value_ = rhs; }
 
-  double GetValue() const {
-    bool shouldRound = base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps);
-    return shouldRound ? round(value_) : value_;
-  }
+  double GetValue() const;
 
  private:
   double value_;

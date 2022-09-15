@@ -28,7 +28,11 @@ class DOMHighResTimeStamp {
   operator double() const { return GetValue(); }
   void operator=(double rhs) { value_ = rhs; }
   void operator=(int rhs) { value_ = rhs; }
-  double GetValue() const { return value_; }
+
+  double GetValue() const {
+    bool shouldRound = base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps);
+    return shouldRound ? round(value_) : value_;
+  }
 
  private:
   double value_;

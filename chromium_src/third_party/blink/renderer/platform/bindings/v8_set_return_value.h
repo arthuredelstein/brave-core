@@ -20,8 +20,8 @@ inline void V8SetReturnValue(const CallbackInfo& info,
   V8SetReturnValue(info, double(value));
 }
 
-}   // namespace bindings
+}  // namespace bindings
 
-}   // namespace blink
+}  // namespace blink
 
 #endif  // BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_PLATFORM_BINDINGS_V8_SET_RETURN_VALUE_H_

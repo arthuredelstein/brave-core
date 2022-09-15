@@ -7,7 +7,7 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_RESOURCE_TIMING_H_
 
-#define WorkerReady \
+#define WorkerReady                                \
   WorkerReady_ChromiumImpl() const { return 0.0; } \
   DOMHighResTimeStamp WorkerReady
 

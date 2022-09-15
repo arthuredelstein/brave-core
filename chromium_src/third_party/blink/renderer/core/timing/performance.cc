@@ -5,8 +5,7 @@
 
 #include "third_party/blink/renderer/core/timing/performance.h"
 
-#define Milliseconds(A)                         \
-  Milliseconds(static_cast<double>(A))
+#define Milliseconds(A) Milliseconds(static_cast<double>(A))
 
 #include "src/third_party/blink/renderer/core/timing/performance.cc"
 

@@ -7,8 +7,8 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_H_
 
-#define timeOrigin() \
-  timeOrigin() const; \
+#define timeOrigin()                                                        \
+  timeOrigin() const;                                                       \
   double MonotonicTimeToDOMHighResTimeStampAsDouble(base::TimeTicks) const; \
   double nowAsDouble()
 

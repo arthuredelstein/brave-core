@@ -9,7 +9,8 @@
 
 #define DOMHighResTimeStamp DOMHighResTimeStamp_ChromiumImpl
 
-#define ConvertDOMHighResTimeStampToSeconds ConvertDOMHighResTimeStampToSeconds_ChromiumImpl
+#define ConvertDOMHighResTimeStampToSeconds \
+  ConvertDOMHighResTimeStampToSeconds_ChromiumImpl
 
 #include "src/third_party/blink/renderer/core/dom/dom_high_res_time_stamp.h"
 
@@ -19,14 +20,15 @@
 namespace blink {
 
 class DOMHighResTimeStamp {
-public:
-  constexpr DOMHighResTimeStamp(int rhs): value_(rhs) { }
-  constexpr DOMHighResTimeStamp(double rhs): value_(rhs) { }
+ public:
+  constexpr DOMHighResTimeStamp(int rhs) : value_(rhs) {}
+  constexpr DOMHighResTimeStamp(double rhs) : value_(rhs) {}
   operator double() const { return getValue(); }
   void operator=(double rhs) { value_ = rhs; }
   void operator=(int rhs) { value_ = rhs; }
   double getValue() const { return value_; }
-private:
+
+ private:
   double value_;
 };
 

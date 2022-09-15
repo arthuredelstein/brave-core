@@ -7,6 +7,4 @@
 
 #include "src/third_party/blink/renderer/core/timing/performance_timing.cc"
 
-namespace blink {
-
-}  // namespace blink
+namespace blink {}  // namespace blink

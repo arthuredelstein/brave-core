@@ -9,8 +9,6 @@
 
 #include "src/third_party/blink/renderer/platform/bindings/v8_set_return_value.h"
 
-//#include "third_party/blink/renderer/core/dom/dom_high_res_time_stamp.h"
-
 namespace blink {
 
 namespace bindings {

@@ -17,6 +17,8 @@
 #undef DOMHighResTimeStamp
 #undef ConvertDOMHighResTimeStampToSeconds
 
+#include "brave/third_party/blink/renderer/core/dom/dom_high_res_time_stamp_feature.h"
+
 namespace blink {
 
 class DOMHighResTimeStamp {
@@ -29,7 +31,10 @@ class DOMHighResTimeStamp {
   void operator=(double rhs) { value_ = rhs; }
   void operator=(int rhs) { value_ = rhs; }
 
-  double GetValue() const;
+  double GetValue() const {
+    bool should_round = brave::DOMHighResTimeStampFeature::IsEnabled();
+    return should_round ? round(value_) : value_;
+  }
 
  private:
   double value_;

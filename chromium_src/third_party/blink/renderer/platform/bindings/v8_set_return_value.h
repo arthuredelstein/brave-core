@@ -9,7 +9,7 @@
 
 #include "src/third_party/blink/renderer/platform/bindings/v8_set_return_value.h"
 
-#include "third_party/blink/renderer/core/dom/dom_high_res_time_stamp.h"
+//#include "third_party/blink/renderer/core/dom/dom_high_res_time_stamp.h"
 
 namespace blink {
 
@@ -17,7 +17,7 @@ namespace bindings {
 
 template <typename CallbackInfo>
 inline void V8SetReturnValue(const CallbackInfo& info,
-                             DOMHighResTimeStamp value,
+                             double value,
                              V8ReturnValue::PrimitiveType<double>) {
   V8SetReturnValue(info, static_cast<double>(value));
 }

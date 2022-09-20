@@ -36,12 +36,15 @@ double TimeClamper::MaybeRoundMilliseconds(double value) {
 
 // static
 int TimeClamper::FineResolutionMicroseconds() {
-  return TimeClamper::ShouldRound() ? kBraveTimerResolutionMicroseconds : kFineResolutionMicroseconds_ChromiumImpl;
+  return TimeClamper::ShouldRound() ? kBraveTimerResolutionMicroseconds
+                                    : kFineResolutionMicroseconds_ChromiumImpl;
 }
 
 // static
 int TimeClamper::CoarseResolutionMicroseconds() {
-  return TimeClamper::ShouldRound() ? kBraveTimerResolutionMicroseconds : kCoarseResolutionMicroseconds_ChromiumImpl;
+  return TimeClamper::ShouldRound()
+             ? kBraveTimerResolutionMicroseconds
+             : kCoarseResolutionMicroseconds_ChromiumImpl;
 }
 
 }  // namespace blink

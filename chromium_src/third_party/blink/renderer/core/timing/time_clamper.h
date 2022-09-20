@@ -11,12 +11,12 @@
 // kFineResolutionMicroseconds won't compile and will need to be fixed.
 #define kCoarseResolutionMicroseconds kCoarseResolutionMicroseconds_ChromiumImpl
 
-#define kFineResolutionMicroseconds             \
-  kFineResolutionMicroseconds_ChromiumImpl = 5; \
-  static int CoarseResolutionMicroseconds();    \
-  static int FineResolutionMicroseconds();      \
+#define kFineResolutionMicroseconds                   \
+  kFineResolutionMicroseconds_ChromiumImpl = 5;       \
+  static int CoarseResolutionMicroseconds();          \
+  static int FineResolutionMicroseconds();            \
   static double MaybeRoundMilliseconds(double value); \
-  static bool ShouldRound();                    \
+  static bool ShouldRound();                          \
   int dummy
 
 #include "src/third_party/blink/renderer/core/timing/time_clamper.h"

@@ -7,6 +7,8 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_TIME_CLAMPER_H_
 
+// Any future usages of kCoarseResolutionMicroseconds or kFineResolutionMicroseconds
+// won't compile and will need to be fixed.
 #define kCoarseResolutionMicroseconds kCoarseResolutionMicroseconds_ChromiumImpl
 
 #define kFineResolutionMicroseconds \

@@ -5,10 +5,24 @@
 
 #include "third_party/blink/renderer/core/timing/time_clamper.h"
 
-#define kFineResolutionMicroseconds 1000
-#define kCoarseResolutionMicroseconds 1000
+#define kFineResolutionMicroseconds FineResolutionMicroseconds()
+#define kCoarseResolutionMicroseconds CoarseResolutionMicroseconds()
 
 #include "src/third_party/blink/renderer/core/timing/time_clamper.cc"
 
-#undef kFineResolutionMicroseconds
-#undef kCoarseResolutionMicroseconds
+#undef FineResolutionMicroseconds
+#undef CoarseResolutionMicroseconds
+
+namespace blink {
+
+// static
+int TimeClamper::FineResolutionMicroseconds() {
+  return 1000;
+}
+
+// static
+int TimeClamper::CoarseResolutionMicroseconds() {
+  return 1000;
+}
+
+}  // namespace blink

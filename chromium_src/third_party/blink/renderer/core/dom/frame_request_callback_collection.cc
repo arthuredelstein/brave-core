@@ -5,8 +5,10 @@
 
 #include "third_party/blink/renderer/core/dom/frame_request_callback_collection.h"
 
+#include "third_party/blink/renderer/core/timing/time_clamper.h"
+
 #define InvokeAndReportException(ARG0, ARG_HIGHRESTIME) \
-  InvokeAndReportException(ARG0, round(ARG_HIGHRESTIME))
+  InvokeAndReportException(ARG0, TimeClamper::MaybeRoundMilliseconds(ARG_HIGHRESTIME))
 
 #include "src/third_party/blink/renderer/core/dom/frame_request_callback_collection.cc"
 

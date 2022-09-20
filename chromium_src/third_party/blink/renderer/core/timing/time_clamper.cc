@@ -18,8 +18,14 @@
 
 namespace blink {
 
+// static
 bool TimeClamper::ShouldRound() {
   return base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps);
+}
+
+// static
+double TimeClamper::MaybeRoundMilliseconds(double value) {
+  return ShouldRound() ? round(value) : value;
 }
 
 // static

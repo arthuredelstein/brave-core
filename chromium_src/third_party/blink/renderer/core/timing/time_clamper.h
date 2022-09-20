@@ -15,6 +15,7 @@
   kFineResolutionMicroseconds_ChromiumImpl = 5; \
   static int CoarseResolutionMicroseconds();    \
   static int FineResolutionMicroseconds();      \
+  static double MaybeRoundMilliseconds(double value); \
   static bool ShouldRound();                    \
   int dummy
 

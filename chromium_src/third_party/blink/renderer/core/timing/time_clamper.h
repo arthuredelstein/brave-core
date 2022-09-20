@@ -7,14 +7,14 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_TIME_CLAMPER_H_
 
-// Any future usages of kCoarseResolutionMicroseconds or kFineResolutionMicroseconds
-// won't compile and will need to be fixed.
+// Any future usages of kCoarseResolutionMicroseconds or
+// kFineResolutionMicroseconds won't compile and will need to be fixed.
 #define kCoarseResolutionMicroseconds kCoarseResolutionMicroseconds_ChromiumImpl
 
-#define kFineResolutionMicroseconds \
+#define kFineResolutionMicroseconds             \
   kFineResolutionMicroseconds_ChromiumImpl = 5; \
-  static int CoarseResolutionMicroseconds(); \
-  static int FineResolutionMicroseconds(); \
+  static int CoarseResolutionMicroseconds();    \
+  static int FineResolutionMicroseconds();      \
   int dummy
 
 #include "src/third_party/blink/renderer/core/timing/time_clamper.h"

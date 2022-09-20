@@ -58,7 +58,7 @@ const base::Feature kBraveBlockScreenFingerprinting{
     "kBraveBlockScreenFingerprinting", base::FEATURE_DISABLED_BY_DEFAULT};
 
 // Disable protection against fingerprinting via high-resolution time stamps.
-const base::Feature kBraveRoundTimeStamps{"kBraveRoundTimeStamps",
+const base::Feature kBraveRoundTimeStamps{"BraveRoundTimeStamps",
                                           base::FEATURE_DISABLED_BY_DEFAULT};
 }  // namespace features
 }  // namespace blink

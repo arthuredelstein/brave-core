@@ -15,6 +15,7 @@
   kFineResolutionMicroseconds_ChromiumImpl = 5; \
   static int CoarseResolutionMicroseconds();    \
   static int FineResolutionMicroseconds();      \
+  static bool ShouldRound();                    \
   int dummy
 
 #include "src/third_party/blink/renderer/core/timing/time_clamper.h"

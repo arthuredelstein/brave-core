@@ -18,19 +18,18 @@
 
 namespace blink {
 
-int TimeClamper::ShouldRound() {
+bool TimeClamper::ShouldRound() {
   return base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps);
 }
 
-  
 // static
 int TimeClamper::FineResolutionMicroseconds() {
-  return TimeClamper::ShouldRound() ? kFineResolutionMicroseconds_ChromiumImpl : 1000;
+  return TimeClamper::ShouldRound() ? 1000 : kFineResolutionMicroseconds_ChromiumImpl;
 }
 
 // static
 int TimeClamper::CoarseResolutionMicroseconds() {
-  return TimeClamper::ShouldRound() ? kCoarseResolutionMicroseconds_ChromiumImpl : 1000;
+  return TimeClamper::ShouldRound() ? 1000 : kCoarseResolutionMicroseconds_ChromiumImpl;
 }
 
 }  // namespace blink

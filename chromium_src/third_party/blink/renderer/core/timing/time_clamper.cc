@@ -18,6 +18,12 @@
 
 namespace blink {
 
+namespace {
+
+constexpr static double kBraveTimerResolutionMicroseconds = 1000;
+
+}  // namespace
+
 // static
 bool TimeClamper::ShouldRound() {
   return base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps);
@@ -30,12 +36,12 @@ double TimeClamper::MaybeRoundMilliseconds(double value) {
 
 // static
 int TimeClamper::FineResolutionMicroseconds() {
-  return TimeClamper::ShouldRound() ? 1000 : kFineResolutionMicroseconds_ChromiumImpl;
+  return TimeClamper::ShouldRound() ? kBraveTimerResolutionMicroseconds : kFineResolutionMicroseconds_ChromiumImpl;
 }
 
 // static
 int TimeClamper::CoarseResolutionMicroseconds() {
-  return TimeClamper::ShouldRound() ? 1000 : kCoarseResolutionMicroseconds_ChromiumImpl;
+  return TimeClamper::ShouldRound() ? kBraveTimerResolutionMicroseconds : kCoarseResolutionMicroseconds_ChromiumImpl;
 }
 
 }  // namespace blink

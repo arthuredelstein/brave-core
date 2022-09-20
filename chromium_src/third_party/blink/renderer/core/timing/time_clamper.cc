@@ -13,16 +13,24 @@
 #undef FineResolutionMicroseconds
 #undef CoarseResolutionMicroseconds
 
+#include "base/feature_list.h"
+#include "third_party/blink/public/common/features.h"
+
 namespace blink {
 
+int TimeClamper::ShouldRound() {
+  return base::FeatureList::IsEnabled(blink::features::kBraveRoundTimeStamps);
+}
+
+  
 // static
 int TimeClamper::FineResolutionMicroseconds() {
-  return 1000;
+  return TimeClamper::ShouldRound() ? kFineResolutionMicroseconds_ChromiumImpl : 1000;
 }
 
 // static
 int TimeClamper::CoarseResolutionMicroseconds() {
-  return 1000;
+  return TimeClamper::ShouldRound() ? kCoarseResolutionMicroseconds_ChromiumImpl : 1000;
 }
 
 }  // namespace blink

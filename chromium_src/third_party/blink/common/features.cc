@@ -58,7 +58,7 @@ const base::Feature kRestrictWebSocketsPool{"RestrictWebSocketsPool",
 const base::Feature kBraveBlockScreenFingerprinting{
     "BraveBlockScreenFingerprinting", base::FEATURE_DISABLED_BY_DEFAULT};
 
-// Enabled HTTPS-Only Mode in Private Windows with Tor by default.
+// Enable HTTPS-Only Mode in Private Windows with Tor by default.
 const base::Feature kBraveTorWindowsHttpsOnly{"BraveTorWindowsHttpsOnly",
                                               base::FEATURE_ENABLED_BY_DEFAULT};
 

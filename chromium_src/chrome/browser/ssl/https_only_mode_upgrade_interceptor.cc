@@ -8,9 +8,11 @@
 #include "net/base/url_util.cc"
 
 namespace {
-  bool IsOnion(const GURL& url) {
-    return net::IsSubdomainOf(url.host(), "onion");
-  }
+
+bool IsOnion(const GURL& url) {
+  return net::IsSubdomainOf(url.host(), "onion");
+}
+
 }  // namespace
 
 #define IsLocalhost(URL) IsLocalhost(URL) && !IsOnion(URL)

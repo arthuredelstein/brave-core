@@ -193,7 +193,8 @@ constexpr char kBraveBlockScreenFingerprintingDescription[] =
 constexpr char kBraveTorWindowsHttpsOnlyName[] =
     "Use HTTPS-Only Mode in Private Windows with Tor";
 constexpr char kBraveTorWindowsHttpsOnlyDescription[] =
-    "Prevents Private Windows with Tor from making any insecure HTTP connections "
+    "Prevents Private Windows with Tor from making any insecure HTTP "
+    "connections "
     "without warning the user first.";
 
 constexpr char kBraveSpeedreaderName[] = "Enable SpeedReader";

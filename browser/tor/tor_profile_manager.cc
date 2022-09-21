@@ -122,7 +122,8 @@ void TorProfileManager::InitTorProfileUserPrefs(Profile* profile) {
   pref_service->SetString(prefs::kWebRTCIPHandlingPolicy,
                           blink::kWebRTCIPHandlingDisableNonProxiedUdp);
   pref_service->SetBoolean(prefs::kSafeBrowsingEnabled, false);
-  if (base::FeatureList::IsEnabled(blink::features::kBraveTorWindowsHttpsOnly)) {
+  if (base::FeatureList::IsEnabled(
+          blink::features::kBraveTorWindowsHttpsOnly)) {
     pref_service->SetBoolean(prefs::kHttpsOnlyModeEnabled, true);
   }
   // https://blog.torproject.org/bittorrent-over-tor-isnt-good-idea

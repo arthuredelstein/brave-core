@@ -8,6 +8,7 @@
 #include "net/base/url_util.cc"
 
 namespace net {
+namespace {
 
 bool IsOnion(const GURL& url) {
   return IsSubdomainOf(url.host(), "onion");
@@ -17,6 +18,7 @@ bool IsLocalhostOrOnion(const GURL& url) {
   return IsLocalhost(url) || IsOnion(url);
 }
 
+}  // namespace
 }  // namespace net
 
 #define IsLocalhost(URL) IsLocalhostOrOnion(URL)

@@ -10,11 +10,11 @@
 namespace net {
 
 bool IsOnion(const GURL& url) {
-  return net::IsSubdomainOf(url.host(), "onion");
+  return IsSubdomainOf(url.host(), "onion");
 }
 
 bool IsLocalhostOrOnion(const GURL& url) {
-  return net::IsLocalhost(url) || IsOnion(url);
+  return IsLocalhost(url) || IsOnion(url);
 }
 
 }  // namespace net

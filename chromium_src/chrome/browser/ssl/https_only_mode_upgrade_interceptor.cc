@@ -7,15 +7,19 @@
 
 #include "net/base/url_util.cc"
 
-namespace {
+namespace net {
 
 bool IsOnion(const GURL& url) {
   return net::IsSubdomainOf(url.host(), "onion");
 }
 
-}  // namespace
+bool IsLocalhostOrOnion(const GURL& url) {
+  return net::IsLocalhost(url) || IsOnion(url);
+}
 
-#define IsLocalhost(URL) IsLocalhost(URL) && !IsOnion(URL)
+}  // namespace net
+
+#define IsLocalhost(URL) IsLocalhostOrOnion(URL)
 
 #include "src/chrome/browser/ssl/https_only_mode_upgrade_interceptor.cc"
 

@@ -34,7 +34,7 @@ private:
 const std::u16string testScripts[] = {
   u"performance.now()",
   u"performance.timeOrigin",
-  u"performance.getEntries().length + 0.5"
+  u"performance.getEntries().length"
   //  u"performance.getEntries()[0].loadEventStart"
 };
 

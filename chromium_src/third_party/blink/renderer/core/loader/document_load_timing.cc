@@ -5,7 +5,8 @@
 
 #include "third_party/blink/renderer/core/loader/document_load_timing.h"
 
-#define MonotonicTimeToZeroBasedDocumentTime MonotonicTimeToZeroBasedDocumentTime_ChromiumImpl
+#define MonotonicTimeToZeroBasedDocumentTime \
+  MonotonicTimeToZeroBasedDocumentTime_ChromiumImpl
 
 #include "src/third_party/blink/renderer/core/loader/document_load_timing.cc"
 
@@ -18,7 +19,7 @@ namespace blink {
 base::TimeDelta DocumentLoadTiming::MonotonicTimeToZeroBasedDocumentTime(
     base::TimeTicks monotonic_time) const {
   return TimeClamper::MaybeRoundTimeDelta(
-                                             MonotonicTimeToZeroBasedDocumentTime_ChromiumImpl(monotonic_time));
+      MonotonicTimeToZeroBasedDocumentTime_ChromiumImpl(monotonic_time));
 }
 
 }  // namespace blink

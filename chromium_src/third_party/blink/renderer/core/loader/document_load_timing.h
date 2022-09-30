@@ -7,7 +7,7 @@
 
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_LOADER_DOCUMENT_LOAD_TIMING_H_
 
-#define MonotonicTimeToZeroBasedDocumentTime \
+#define MonotonicTimeToZeroBasedDocumentTime                   \
   MonotonicTimeToZeroBasedDocumentTime(base::TimeTicks) const; \
   base::TimeDelta MonotonicTimeToZeroBasedDocumentTime_ChromiumImpl
 

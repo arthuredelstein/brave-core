@@ -14,6 +14,7 @@
 #undef CoarseResolutionMicroseconds
 
 #include "base/feature_list.h"
+#include "base/time/time.h"
 #include "third_party/blink/public/common/features.h"
 
 namespace blink {
@@ -32,6 +33,12 @@ bool TimeClamper::ShouldRound() {
 // static
 double TimeClamper::MaybeRoundMilliseconds(double value) {
   return ShouldRound() ? round(value) : value;
+}
+
+// static
+base::TimeDelta TimeClamper::MaybeRoundTimeDelta(base::TimeDelta value) {
+  return ShouldRound() ? value.RoundToMultiple(base::Microseconds(1000))
+                       : value;
 }
 
 // static

@@ -4,6 +4,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "third_party/blink/renderer/modules/xr/xr_frame_request_callback_collection.h"
+#include "third_party/blink/renderer/bindings/modules/v8/v8_xr_frame_request_callback.h"
 
 #include "third_party/blink/renderer/core/timing/time_clamper.h"
 

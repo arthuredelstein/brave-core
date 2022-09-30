@@ -1,12 +1,15 @@
-/* Copyright (c) 2022 The Brave Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+/ AA *Copyright(c) 2022 The Brave Authors.All rights reserved.*This Source Code
+    Form is subject to the terms of the Mozilla Public *License,
+    v.2.0. If a copy of the MPL was not distributed with this file,
+    *You can obtain one at http :  // mozilla.org/MPL/2.0/. */
 
 #include <string>
 
 #include "base/test/scoped_feature_list.h"
 #include "base/test/scoped_mock_clock_override.h"
+#include "base/test/task_environment.h"
+#include "base/test/test_mock_time_task_runner.h"
+#include "base/time/time.h"
 #include "brave/components/brave_shields/common/features.h"
 #include "content/public/renderer/render_frame.h"
 #include "content/public/test/render_view_test.h"
@@ -15,43 +18,74 @@
 #include "third_party/blink/public/web/web_document.h"
 #include "third_party/blink/public/web/web_element.h"
 #include "third_party/blink/public/web/web_local_frame.h"
-//#include "third_party/blink/renderer/core/timing/dom_window_performance.h"
+// #include "third_party/blink/renderer/core/timing/dom_window_performance.h"
 #include "third_party/blink/public/web/web_performance.h"
 
-using blink::features::kBraveRoundTimeStamps;
+                                   using blink::features::kBraveRoundTimeStamps;
 
 class BraveTimeStampRoundingRenderViewTest : public content::RenderViewTest {
  public:
-  BraveTimeStampRoundingRenderViewTest() {
-    feature_list_.InitAndDisableFeature(kBraveRoundTimeStamps);
+  double ExecuteJSAndReturnDouble(const std::u16string& script) {
+    double result;
+    EXPECT_TRUE(ExecuteJavaScriptAndReturnNumberValue(script, &result));
+    return result;
   }
-  ~BraveTimeStampRoundingRenderViewTest() override = default;
 
-private:
+  void CheckRounded(const std::u16string& script, bool expect_rounded) {
+    double result = ExecuteJSAndReturnDouble(script);
+    if (expect_rounded) {
+      EXPECT_EQ(round(result) - result, 0);
+    } else {
+      EXPECT_NE(round(result) - result, 0);
+    }
+    std::cout << script << ": " << result << std::endl;
+  }
+
+  void Advance100Microseconds() {
+    task_environment_.AdvanceClock(base::Milliseconds(0.1));
+    task_environment_.RunUntilIdle();
+  }
+
+  void RunRoundingTests(bool expect_rounded) {
+    LoadHTML("<html><body>hi</body></html>");
+    Advance100Microseconds();
+    CheckRounded(u"performance.now()", expect_rounded);
+    Advance100Microseconds();
+    CheckRounded(u"performance.mark('test').startTime", expect_rounded);
+    Advance100Microseconds();
+    if (expect_rounded) {
+      CheckRounded(u"performance.timeOrigin", true);
+    }
+  }
+
+ protected:
   base::test::ScopedFeatureList feature_list_;
 };
 
-const std::u16string testScripts[] = {
-  u"performance.now()",
-  u"performance.timeOrigin",
-  u"performance.getEntries().length"
-  //  u"performance.getEntries()[0].loadEventStart"
+class BraveTimeStampRoundingRenderViewTest_Enable
+    : public BraveTimeStampRoundingRenderViewTest {
+ public:
+  BraveTimeStampRoundingRenderViewTest_Enable() {
+    feature_list_.InitAndEnableFeature(kBraveRoundTimeStamps);
+  }
+  ~BraveTimeStampRoundingRenderViewTest_Enable() override = default;
 };
 
+class BraveTimeStampRoundingRenderViewTest_Disable
+    : public BraveTimeStampRoundingRenderViewTest {
+ public:
+  BraveTimeStampRoundingRenderViewTest_Disable() {
+    feature_list_.InitAndDisableFeature(kBraveRoundTimeStamps);
+  }
+  ~BraveTimeStampRoundingRenderViewTest_Disable() override = default;
+};
 
-TEST_F(BraveTimeStampRoundingRenderViewTest, SynchronousApisRounded) {
-  // Set time override.
-  auto performance = GetMainFrame()->Performance();
-  //base::TimeTicks before = base::TimeTicks::Now();
-  //performance.ResetTimeOriginForTesting(before);
-
-  //for (int j = 0; j < 10; ++j) {
-    for (int i = 0; i < static_cast<int>(std::size(testScripts)); ++i) {
-      double result;
-      EXPECT_TRUE(ExecuteJavaScriptAndReturnNumberValue(testScripts[i], &result));
-      std::cout << testScripts[i] << ": " << result << std::endl;
-      EXPECT_EQ(round(result) - result, 0);
-    }
-    //}
-
+TEST_F(BraveTimeStampRoundingRenderViewTest_Enable, SynchronousApisRounded) {
+  RunRoundingTests(true);
 }
+
+TEST_F(BraveTimeStampRoundingRenderViewTest_Disable,
+       SynchronousApisRounded_Disable) {
+  RunRoundingTests(false);
+}
+B

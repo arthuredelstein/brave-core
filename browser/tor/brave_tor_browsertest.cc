@@ -20,6 +20,7 @@
 #include "brave/browser/tor/tor_profile_manager.h"
 #include "brave/browser/tor/tor_profile_service_factory.h"
 #include "brave/components/brave_component_updater/browser/brave_component.h"
+#include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/constants/brave_paths.h"
 #include "brave/components/tor/brave_tor_client_updater.h"
 #include "brave/components/tor/brave_tor_pluggable_transport_updater.h"
@@ -28,6 +29,7 @@
 #include "brave/components/tor/tor_profile_service.h"
 #include "brave/components/tor/tor_utils.h"
 #include "build/build_config.h"
+#include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
@@ -363,8 +365,14 @@ IN_PROC_BROWSER_TEST_F(BraveTorTest_EnableTorHttpsOnlyFlag,
   DownloadTorClient();
 
   Profile* tor_profile = OpenTorWindow();
-  PrefService* prefs = tor_profile->GetPrefs();
-
-  // Check that HTTPS-Only Mode has been enabled for the Tor window.
-  EXPECT_TRUE(prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled));
+  if (prefs blah blah) {
+    PrefService* prefs = tor_profile->GetPrefs();
+    // Check that HTTPS-Only Mode has been enabled for the Tor window.
+    EXPECT_TRUE(prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled));
+  } else {
+    HostContentSettingsMap* map =
+      HostContentSettingsMapFactory::GetForProfile(tor_profile);
+    EXPECT_EQ(brave_shields::ControlType::BLOCK,
+            brave_shields::GetHttpsUpgradeControlType(map, GURL()));
+  }
 }

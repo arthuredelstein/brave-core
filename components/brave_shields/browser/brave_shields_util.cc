@@ -12,6 +12,8 @@
 #include "base/logging.h"
 #include "base/notreached.h"
 #include "base/strings/string_number_conversions.h"
+#include "brave/browser/brave_browser_process.h"
+#include "brave/components/brave_component_updater/browser/https_upgrade_exceptions_service.h"
 #include "brave/components/brave_shields/browser/brave_shields_p3a.h"
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
 #include "brave/components/brave_shields/common/brave_shield_utils.h"
@@ -33,6 +35,8 @@
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 #include "url/gurl.h"
 #include "url/origin.h"
+
+#include <iostream>
 
 using content::Referrer;
 
@@ -585,28 +589,44 @@ bool IsBraveShieldsManaged(PrefService* prefs,
          info.source == content_settings::SettingSource::SETTING_SOURCE_POLICY;
 }
 
-void SetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
-                               bool enable,
-                               const GURL& url,
-                               PrefService* local_state) {
+void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
+                                ControlType type,
+                                const GURL& url,
+                                PrefService* local_state) {
   auto primary_pattern = GetPatternFromURL(url);
-
+  std::cout << "SetHttpsUpgradeControlType: controlType " << type << ", " << url << std::endl;
   if (!primary_pattern.IsValid())
     return;
 
+  ContentSetting setting;
+  if (type == ControlType::ALLOW) {
+    // Allow http connections
+    setting = CONTENT_SETTING_ALLOW;
+  } else if (type == ControlType::BLOCK) {
+    // Require https
+    setting = CONTENT_SETTING_BLOCK;
+  } else if (type == ControlType::BLOCK_THIRD_PARTY) {
+    // Prefer https
+    setting = CONTENT_SETTING_ASK;
+  } else {
+    // Fall back to default
+    setting = CONTENT_SETTING_DEFAULT;
+  }
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
-      ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES,
-      // this is 'allow_http_upgradeable_resources' so enabling
-      // httpse will set the value to 'BLOCK'
-      enable ? CONTENT_SETTING_BLOCK : CONTENT_SETTING_ALLOW);
+      ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES, setting);
+
+  // Reset the HTTPS fallback map.
+  const GURL& secure_url = GURL("https://" + url.host());
+  map->SetWebsiteSettingDefaultScope(
+      secure_url, GURL(), ContentSettingsType::HTTP_ALLOWED, base::Value());
 
   RecordShieldsSettingChanged(local_state);
 }
 
-void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
-                                 bool enable,
-                                 const GURL& url) {
+void ResetHttpsUpgradeEnabled(HostContentSettingsMap* map,
+                              bool enable,
+                              const GURL& url) {
   auto primary_pattern = GetPatternFromURL(url);
 
   if (!primary_pattern.IsValid())
@@ -618,11 +638,54 @@ void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
       CONTENT_SETTING_DEFAULT);
 }
 
-bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
+ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
+                                       const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
+  std::cout << "GetHttpsUpgradeControlType: " << url << " ";
+  if (setting == CONTENT_SETTING_ALLOW) {
+    // Disabled (allow http)
+    std::cout << "controlType: " << ControlType::ALLOW << std::endl;
+    return ControlType::ALLOW;
+  } else if (setting == CONTENT_SETTING_BLOCK) {
+    // HTTPS Only (block http)
+    std::cout << "controlType: " << ControlType::BLOCK << std::endl;
+    return ControlType::BLOCK;
+  } else if (setting == CONTENT_SETTING_ASK) {
+    // HTTPS Only (block http)
+    std::cout << "controlType: " << ControlType::BLOCK_THIRD_PARTY << std::endl;
+    return ControlType::BLOCK;
+  } else {
+    // HTTPS by default (upgrade when available)
+    std::cout << "controlType: " << ControlType::DEFAULT << std::endl;
+    return ControlType::DEFAULT;
+  }
+}
 
-  return setting == CONTENT_SETTING_ALLOW ? false : true;
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
+  // Don't upgrade if shields are down.
+  if (!brave_shields::GetBraveShieldsEnabled(map, url)) {
+    return false;
+  }
+  const ControlType controlType =
+      brave_shields::GetHttpsUpgradeControlType(map, url);
+  // Always upgrade for Strict HTTPS Upgrade.
+  if (controlType == ControlType::BLOCK) {
+    return true;
+  }
+  // Upgrade for Standard HTTPS upgrade if host is not on the exceptions list.
+  if (controlType == ControlType::DEFAULT &&
+      g_brave_browser_process->https_upgrade_exceptions_service()
+          ->CanUpgradeToHTTPS(url)) {
+    return true;
+  }
+  return false;
+}
+
+bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url) {
+  return brave_shields::GetBraveShieldsEnabled(map, url) &&
+         brave_shields::GetHttpsUpgradeControlType(map, url) ==
+             ControlType::BLOCK;
 }
 
 void SetNoScriptControlType(HostContentSettingsMap* map,

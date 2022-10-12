@@ -226,9 +226,16 @@ CookieBlockMode BraveShieldsDataController::GetCookieBlockMode() {
   }
 }
 
-bool BraveShieldsDataController::GetHTTPSEverywhereEnabled() {
-  return brave_shields::GetHTTPSEverywhereEnabled(
+HttpsUpgradeMode BraveShieldsDataController::GetHttpsUpgradeMode() {
+  ControlType control_type = brave_shields::GetHttpsUpgradeControlType(
       GetHostContentSettingsMap(web_contents()), GetCurrentSiteURL());
+  if (control_type == ControlType::ALLOW) {
+    return HttpsUpgradeMode::DISABLED;
+  } else if (control_type == ControlType::BLOCK) {
+    return HttpsUpgradeMode::STRICT;
+  } else {
+    return HttpsUpgradeMode::STANDARD;
+  }
 }
 
 bool BraveShieldsDataController::GetNoScriptEnabled() {
@@ -316,6 +323,22 @@ void BraveShieldsDataController::SetCookieBlockMode(CookieBlockMode mode) {
   ReloadWebContents();
 }
 
+void BraveShieldsDataController::SetHttpsUpgradeMode(HttpsUpgradeMode mode) {
+  ControlType control_type;
+  if (mode == HttpsUpgradeMode::DISABLED) {
+    control_type = ControlType::ALLOW;
+  } else if (mode == HttpsUpgradeMode::STRICT) {
+    control_type = ControlType::BLOCK;
+  } else {
+    control_type = ControlType::DEFAULT;
+  }
+  brave_shields::SetHttpsUpgradeControlType(
+      GetHostContentSettingsMap(web_contents()), control_type,
+      GetCurrentSiteURL(), g_browser_process->local_state());
+
+  ReloadWebContents();
+}
+
 void BraveShieldsDataController::SetIsNoScriptEnabled(bool is_enabled) {
   ControlType control_type;
 
@@ -327,14 +350,6 @@ void BraveShieldsDataController::SetIsNoScriptEnabled(bool is_enabled) {
 
   brave_shields::SetNoScriptControlType(
       GetHostContentSettingsMap(web_contents()), control_type,
-      GetCurrentSiteURL(), g_browser_process->local_state());
-
-  ReloadWebContents();
-}
-
-void BraveShieldsDataController::SetIsHTTPSEverywhereEnabled(bool is_enabled) {
-  brave_shields::SetHTTPSEverywhereEnabled(
-      GetHostContentSettingsMap(web_contents()), is_enabled,
       GetCurrentSiteURL(), g_browser_process->local_state());
 
   ReloadWebContents();

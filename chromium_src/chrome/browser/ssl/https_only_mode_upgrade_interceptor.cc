@@ -5,7 +5,27 @@
 
 #include "chrome/browser/ssl/https_only_mode_upgrade_interceptor.h"
 
+#include "brave/components/brave_shields/browser/brave_shields_util.h"
+#include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+#include "components/prefs/pref_service.h"
 #include "net/base/url_util.h"
+
+class GURL;
+
+namespace content {
+class BrowserContext;
+}  // namespace content
+
+namespace {
+
+bool HttpsUpgradeIfPossible(content::BrowserContext* context, const GURL& url) {
+  HostContentSettingsMap* map =
+      HostContentSettingsMapFactory::GetForProfile(context);
+  return brave_shields::GetBraveShieldsEnabled(map, url) &&
+         brave_shields::GetHTTPSEverywhereEnabled(map, url);
+}
+
+}  // namespace
 
 namespace net {
 namespace {
@@ -22,7 +42,12 @@ bool IsLocalhostOrOnion(const GURL& url) {
 }  // namespace net
 
 #define IsLocalhost(URL) IsLocalhostOrOnion(URL)
+#define GetBoolean(PREF_NAME) \
+  GetBooleanOr(               \
+      PREF_NAME,              \
+      HttpsUpgradeIfPossible(browser_context, tentative_resource_request.url))
 
 #include "src/chrome/browser/ssl/https_only_mode_upgrade_interceptor.cc"
 
 #undef IsLocalHost
+#undef GetBoolean

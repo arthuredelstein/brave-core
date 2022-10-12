@@ -6,6 +6,7 @@
 #include "chrome/browser/ssl/https_only_mode_upgrade_interceptor.h"
 
 #include "net/base/url_util.h"
+#include "components/prefs/pref_service.h"
 
 namespace net {
 namespace {
@@ -22,7 +23,9 @@ bool IsLocalhostOrOnion(const GURL& url) {
 }  // namespace net
 
 #define IsLocalhost(URL) IsLocalhostOrOnion(URL)
+#define GetBoolean(PREF_NAME) GetBooleanOr(PREF_NAME, true)
 
 #include "src/chrome/browser/ssl/https_only_mode_upgrade_interceptor.cc"
 
 #undef IsLocalHost
+#undef GetBoolean

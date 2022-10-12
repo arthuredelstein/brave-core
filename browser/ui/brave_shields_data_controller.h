@@ -24,6 +24,7 @@
 using brave_shields::mojom::AdBlockMode;
 using brave_shields::mojom::CookieBlockMode;
 using brave_shields::mojom::FingerprintMode;
+using brave_shields::mojom::HttpsUpgradeMode;
 using content::NavigationEntry;
 
 namespace brave_shields {
@@ -63,13 +64,13 @@ class BraveShieldsDataController
   AdBlockMode GetAdBlockMode();
   FingerprintMode GetFingerprintMode();
   CookieBlockMode GetCookieBlockMode();
-  bool GetHTTPSEverywhereEnabled();
+  HttpsUpgradeMode GetHttpsUpgradeMode();
   bool GetNoScriptEnabled();
   void SetAdBlockMode(AdBlockMode mode);
   void SetFingerprintMode(FingerprintMode mode);
   void SetCookieBlockMode(CookieBlockMode mode);
+  void SetHttpsUpgradeMode(HttpsUpgradeMode mode);
   void SetIsNoScriptEnabled(bool is_enabled);
-  void SetIsHTTPSEverywhereEnabled(bool is_enabled);
 
   void AddObserver(Observer* obs);
   void RemoveObserver(Observer* obs);

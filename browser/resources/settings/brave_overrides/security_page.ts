@@ -25,6 +25,17 @@ RegisterPolymerTemplateModifications({
     } else {
       passwordsLeakToggle.setAttribute('hidden', 'true')
     }
+    const httpsOnlyModeToggleTemplate = templateContent.querySelector(`template[if*='showHttpsOnlyModeSetting_']`)
+    if (!httpsOnlyModeToggleTemplate) {
+      console.error('[Brave Settings Overrides] Could not find template with if*=showHttpsOnlyModeSetting_ on security page.')
+    } else {
+      const httpsOnlyModeToggle = httpsOnlyModeToggleTemplate.content.getElementById('httpsOnlyModeToggle')
+      if (!httpsOnlyModeToggle) {
+        console.error('[Brave Settings Overrides] Could not find httpsOnlyModeToggle on security page.')
+      } else {
+        httpsOnlyModeToggle.setAttribute('hidden', 'true')
+      }
+    }
     const link = templateContent.getElementById('advanced-protection-program-link')
     if (!link) {
       console.error('[Brave Settings Overrides] Could not find advanced-protection-program-link id on security page.')

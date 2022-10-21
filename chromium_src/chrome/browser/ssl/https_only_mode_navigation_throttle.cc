@@ -4,12 +4,15 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "chrome/browser/ssl/https_only_mode_navigation_throttle.h"
+#include "components/prefs/pref_service.h"
 
 #define WillFailRequest WillFailRequest_ChromiumImpl
+#define GetBoolean(PREF_NAME) GetBooleanOr(PREF_NAME, true)
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
 
 #undef WillFailRequest
+#undef GetBoolean
 
 #include "base/threading/sequenced_task_runner_handle.h"
 #include "chrome/browser/profiles/profile.h"
@@ -21,6 +24,12 @@
 content::NavigationThrottle::ThrottleCheckResult
 HttpsOnlyModeNavigationThrottle::WillFailRequest() {
   auto* handle = navigation_handle();
+  auto* contents = handle->GetWebContents();
+  Profile* profile = Profile::FromBrowserContext(contents->GetBrowserContext());
+  auto* prefs = profile->GetPrefs();
+  if (prefs && prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {
+    return WillFailRequest_ChromiumImpl();
+  }
 
   const net::SSLInfo info = handle->GetSSLInfo().value_or(net::SSLInfo());
   int cert_status = info.cert_status;
@@ -31,7 +40,6 @@ HttpsOnlyModeNavigationThrottle::WillFailRequest() {
   }
 
   // Don't fall back if the Interceptor didn't upgrade this navigation.
-  auto* contents = handle->GetWebContents();
   auto* tab_helper = HttpsOnlyModeTabHelper::FromWebContents(contents);
   if (!tab_helper->is_navigation_upgraded()) {
     // Don't fall back.
@@ -42,7 +50,6 @@ HttpsOnlyModeNavigationThrottle::WillFailRequest() {
   tab_helper->set_is_navigation_upgraded(false);
   tab_helper->set_is_navigation_fallback(true);
   auto request_url = handle->GetURL();
-  Profile* profile = Profile::FromBrowserContext(contents->GetBrowserContext());
   StatefulSSLHostStateDelegate* state =
       static_cast<StatefulSSLHostStateDelegate*>(
           profile->GetSSLHostStateDelegate());

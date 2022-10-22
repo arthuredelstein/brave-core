@@ -4,12 +4,32 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "chrome/browser/ssl/https_only_mode_navigation_throttle.h"
+
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
+#include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "components/prefs/pref_service.h"
+#include "content/public/browser/navigation_handle.h"
+#include "content/public/browser/web_contents.h"
+
+namespace content {
+class BrowserContext;
+}  // namespace content
+
+namespace {
+
+bool GetHTTPSEverywhereEnabled(content::NavigationHandle* handle) {
+  content::BrowserContext* context =
+      handle->GetWebContents()->GetBrowserContext();
+  HostContentSettingsMap* map =
+      HostContentSettingsMapFactory::GetForProfile(context);
+  return brave_shields::GetHTTPSEverywhereEnabled(map, handle->GetURL());
+}
+
+}  // namespace
 
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
-  GetBooleanOr(PREF_NAME, brave_shields::GetHTTPSEverywhereEnabled(handle))
+  GetBooleanOr(PREF_NAME, GetHTTPSEverywhereEnabled(handle))
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
 

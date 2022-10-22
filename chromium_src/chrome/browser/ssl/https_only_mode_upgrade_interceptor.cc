@@ -18,11 +18,11 @@ class BrowserContext;
 
 namespace {
 
-bool GetHTTPSEverywhereEnabled(content::BrowserContext* context,
-                               const GURL& url) {
+bool HttpsUpgradeIfPossible(content::BrowserContext* context, const GURL& url) {
   HostContentSettingsMap* map =
       HostContentSettingsMapFactory::GetForProfile(context);
-  return brave_shields::GetHTTPSEverywhereEnabled(map, url);
+  return brave_shields::GetBraveShieldsEnabled(map, url) &&
+         brave_shields::GetHTTPSEverywhereEnabled(map, url);
 }
 
 }  // namespace
@@ -42,10 +42,10 @@ bool IsLocalhostOrOnion(const GURL& url) {
 }  // namespace net
 
 #define IsLocalhost(URL) IsLocalhostOrOnion(URL)
-#define GetBoolean(PREF_NAME)                             \
-  GetBooleanOr(PREF_NAME,                                 \
-               GetHTTPSEverywhereEnabled(browser_context, \
-                                         tentative_resource_request.url))
+#define GetBoolean(PREF_NAME) \
+  GetBooleanOr(               \
+      PREF_NAME,              \
+      HttpsUpgradeIfPossible(browser_context, tentative_resource_request.url))
 
 #include "src/chrome/browser/ssl/https_only_mode_upgrade_interceptor.cc"
 

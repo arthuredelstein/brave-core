@@ -17,19 +17,21 @@ class BrowserContext;
 
 namespace {
 
-bool GetHTTPSEverywhereEnabled(content::NavigationHandle* handle) {
+bool HttpsUpgradeIfPossible(content::NavigationHandle* handle) {
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
   HostContentSettingsMap* map =
       HostContentSettingsMapFactory::GetForProfile(context);
-  return brave_shields::GetHTTPSEverywhereEnabled(map, handle->GetURL());
+  const GURL& url = handle->GetURL();
+  return brave_shields::GetBraveShieldsEnabled(map, url) &&
+         brave_shields::GetHTTPSEverywhereEnabled(map, url);
 }
 
 }  // namespace
 
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
-  GetBooleanOr(PREF_NAME, GetHTTPSEverywhereEnabled(handle))
+  GetBooleanOr(PREF_NAME, HttpsUpgradeIfPossible(handle))
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
 

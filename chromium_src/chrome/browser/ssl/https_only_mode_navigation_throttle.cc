@@ -4,10 +4,12 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "chrome/browser/ssl/https_only_mode_navigation_throttle.h"
+#include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "components/prefs/pref_service.h"
 
 #define WillFailRequest WillFailRequest_ChromiumImpl
-#define GetBoolean(PREF_NAME) GetBooleanOr(PREF_NAME, true)
+#define GetBoolean(PREF_NAME) \
+  GetBooleanOr(PREF_NAME, brave_shields::GetHTTPSEverywhereEnabled(handle))
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
 

@@ -6,8 +6,8 @@
 #ifndef BRAVE_CHROMIUM_SRC_COMPONENTS_PREFS_PREF_SERVICE_H_
 #define BRAVE_CHROMIUM_SRC_COMPONENTS_PREFS_PREF_SERVICE_H_
 
-#define GetBoolean                                        \
-  GetBooleanOr(const std::string& path, bool other) const;      \
+#define GetBoolean                                         \
+  GetBooleanOr(const std::string& path, bool other) const; \
   bool GetBoolean
 
 #include "src/components/prefs/pref_service.h"

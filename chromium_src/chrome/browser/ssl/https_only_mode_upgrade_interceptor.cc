@@ -5,8 +5,8 @@
 
 #include "chrome/browser/ssl/https_only_mode_upgrade_interceptor.h"
 
-#include "net/base/url_util.h"
 #include "components/prefs/pref_service.h"
+#include "net/base/url_util.h"
 
 namespace net {
 namespace {

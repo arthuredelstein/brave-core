@@ -19,6 +19,7 @@
 #include "brave/components/brave_shields/common/pref_names.h"
 #include "brave/components/content_settings/core/common/content_settings_util.h"
 #include "brave/components/debounce/common/features.h"
+#include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -27,6 +28,8 @@
 #include "components/content_settings/core/common/pref_names.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/navigation_handle.h"
+#include "content/public/browser/web_contents.h"
 #include "content/public/common/referrer.h"
 #include "net/base/features.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
@@ -610,6 +613,12 @@ bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
 
   return setting == CONTENT_SETTING_ALLOW ? false : true;
+}
+
+bool GetHTTPSEverywhereEnabled(content::NavigationHandle* handle) {
+  HostContentSettingsMap* map = HostContentSettingsMapFactory::GetForProfile(
+      handle->GetWebContents()->GetBrowserContext());
+  return GetHTTPSEverywhereEnabled(map, handle->GetURL());
 }
 
 void SetNoScriptControlType(HostContentSettingsMap* map,

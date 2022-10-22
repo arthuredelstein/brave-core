@@ -15,6 +15,7 @@
 
 namespace content {
 struct Referrer;
+class NavigationHandle;
 }
 
 namespace content_settings {
@@ -108,6 +109,7 @@ void SetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
 // reset to the default value
 void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
 bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
+bool GetHTTPSEverywhereEnabled(content::NavigationHandle* handle);
 
 void SetNoScriptControlType(HostContentSettingsMap* map,
                             ControlType type,

@@ -20,11 +20,10 @@ namespace {
 bool HttpsUpgradeIfPossible(content::NavigationHandle* handle) {
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
+  const GURL& url = handle->GetURL();
   HostContentSettingsMap* map =
       HostContentSettingsMapFactory::GetForProfile(context);
-  const GURL& url = handle->GetURL();
-  return brave_shields::GetBraveShieldsEnabled(map, url) &&
-         brave_shields::GetHTTPSEverywhereEnabled(map, url);
+  return brave_shields::ShouldUpgradeToHttps(map, url);
 }
 
 }  // namespace

@@ -12,6 +12,8 @@
 #include "base/logging.h"
 #include "base/notreached.h"
 #include "base/strings/string_number_conversions.h"
+#include "brave/browser/brave_browser_process.h"
+#include "brave/components/brave_component_updater/browser/https_upgrade_exceptions_service.h"
 #include "brave/components/brave_shields/browser/brave_shields_p3a.h"
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
 #include "brave/components/brave_shields/common/brave_shield_utils.h"
@@ -610,6 +612,13 @@ bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
 
   return setting == CONTENT_SETTING_ALLOW ? false : true;
+}
+
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
+  return brave_shields::GetBraveShieldsEnabled(map, url) &&
+         brave_shields::GetHTTPSEverywhereEnabled(map, url) &&
+         g_brave_browser_process->https_upgrade_exceptions_service()
+             ->CanUpgradeToHTTPS(url);
 }
 
 void SetNoScriptControlType(HostContentSettingsMap* map,

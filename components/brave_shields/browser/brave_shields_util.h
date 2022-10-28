@@ -108,6 +108,7 @@ void SetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
 // reset to the default value
 void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
 bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url);
 
 void SetNoScriptControlType(HostContentSettingsMap* map,
                             ControlType type,

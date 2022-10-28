@@ -21,8 +21,7 @@ namespace {
 bool HttpsUpgradeIfPossible(content::BrowserContext* context, const GURL& url) {
   HostContentSettingsMap* map =
       HostContentSettingsMapFactory::GetForProfile(context);
-  return brave_shields::GetBraveShieldsEnabled(map, url) &&
-         brave_shields::GetHTTPSEverywhereEnabled(map, url);
+  return brave_shields::ShouldUpgradeToHttps(map, url);
 }
 
 }  // namespace

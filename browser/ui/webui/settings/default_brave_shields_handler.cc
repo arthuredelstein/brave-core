@@ -61,7 +61,7 @@ void DefaultBraveShieldsHandler::RegisterMessages() {
           &DefaultBraveShieldsHandler::SetFingerprintingControlType,
           base::Unretained(this)));
   web_ui()->RegisterMessageCallback(
-      "setHttpsUpgradeEnabled",
+      "setHttpsUpgradeModeControlType",
       base::BindRepeating(
           &DefaultBraveShieldsHandler::SetHttpsUpgradeModeControlType,
           base::Unretained(this)));

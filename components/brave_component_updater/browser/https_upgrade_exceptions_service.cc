@@ -29,6 +29,7 @@ void HttpsUpgradeExceptionsService::LoadHTTPSUpgradeExceptions(
   if (!file_stream.is_open()) {
     return;
   }
+  exceptional_domains_.clear();
   for (std::string line; std::getline(file_stream, line);) {
     if (!line.empty()) {
       exceptional_domains_.insert(line);

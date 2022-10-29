@@ -574,28 +574,37 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                              : ControlType::BLOCK;
 }
 
-void SetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
-                               bool enable,
-                               const GURL& url,
-                               PrefService* local_state) {
+void SetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
+                                 ControlType type,
+                                 const GURL& url,
+                                 PrefService* local_state) {
   auto primary_pattern = GetPatternFromURL(url);
 
   if (!primary_pattern.IsValid())
     return;
 
+  ContentSetting setting;
+  if (type == ControlType::ALLOW) {
+    // Allow http connections
+    setting = CONTENT_SETTING_ALLOW;
+  } else if (type == ControlType::BLOCK) {
+    // Allow https only
+    setting = CONTENT_SETTING_BLOCK;
+  } else {
+    // Upgrade to https when available
+    setting = CONTENT_SETTING_DEFAULT;
+  }
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
       ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES,
-      // this is 'allow_http_upgradeable_resources' so enabling
-      // httpse will set the value to 'BLOCK'
-      enable ? CONTENT_SETTING_BLOCK : CONTENT_SETTING_ALLOW);
+      setting);
 
   RecordShieldsSettingChanged(local_state);
 }
 
-void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
-                                 bool enable,
-                                 const GURL& url) {
+void ResetHttpsUpgradeModeEnabled(HostContentSettingsMap* map,
+                                  bool enable,
+                                  const GURL& url) {
   auto primary_pattern = GetPatternFromURL(url);
 
   if (!primary_pattern.IsValid())
@@ -607,16 +616,24 @@ void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
       CONTENT_SETTING_DEFAULT);
 }
 
-bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
+ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map, const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
-
-  return setting == CONTENT_SETTING_ALLOW ? false : true;
+  if (setting == CONTENT_SETTING_ALLOW) {
+    // Disabled (allow http)
+    return ControlType::ALLOW;
+  } else if (setting == CONTENT_SETTING_BLOCK) {
+    // HTTPS Only (block http)
+    return ControlType::BLOCK;
+  } else {
+    // HTTPS by default (upgrade when available)
+    return ControlType::DEFAULT;
+  }
 }
 
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
   return brave_shields::GetBraveShieldsEnabled(map, url) &&
-         brave_shields::GetHTTPSEverywhereEnabled(map, url) &&
+    brave_shields::GetHttpsUpgradeModeControlType(map, url) != ControlType::ALLOW &&
          g_brave_browser_process->https_upgrade_exceptions_service()
              ->CanUpgradeToHTTPS(url);
 }

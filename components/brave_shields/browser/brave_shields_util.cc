@@ -575,9 +575,9 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
 }
 
 void SetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
-                                 ControlType type,
-                                 const GURL& url,
-                                 PrefService* local_state) {
+                                    ControlType type,
+                                    const GURL& url,
+                                    PrefService* local_state) {
   auto primary_pattern = GetPatternFromURL(url);
 
   if (!primary_pattern.IsValid())
@@ -596,8 +596,7 @@ void SetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
   }
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
-      ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES,
-      setting);
+      ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES, setting);
 
   RecordShieldsSettingChanged(local_state);
 }
@@ -616,7 +615,8 @@ void ResetHttpsUpgradeModeEnabled(HostContentSettingsMap* map,
       CONTENT_SETTING_DEFAULT);
 }
 
-ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map, const GURL& url) {
+ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
+                                           const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
   if (setting == CONTENT_SETTING_ALLOW) {
@@ -633,7 +633,8 @@ ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map, const GU
 
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
   return brave_shields::GetBraveShieldsEnabled(map, url) &&
-    brave_shields::GetHttpsUpgradeModeControlType(map, url) != ControlType::ALLOW &&
+         brave_shields::GetHttpsUpgradeModeControlType(map, url) !=
+             ControlType::ALLOW &&
          g_brave_browser_process->https_upgrade_exceptions_service()
              ->CanUpgradeToHTTPS(url);
 }

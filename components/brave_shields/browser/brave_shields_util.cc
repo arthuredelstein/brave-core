@@ -598,6 +598,11 @@ void SetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
       primary_pattern, ContentSettingsPattern::Wildcard(),
       ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES, setting);
 
+  // Reset the HTTPS fallback map.
+  const GURL& secure_url = GURL("https://" + url.host());
+  map->SetWebsiteSettingDefaultScope(
+      secure_url, GURL(), ContentSettingsType::HTTP_ALLOWED, base::Value());
+
   RecordShieldsSettingChanged(local_state);
 }
 
@@ -637,6 +642,12 @@ bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
              ControlType::ALLOW &&
          g_brave_browser_process->https_upgrade_exceptions_service()
              ->CanUpgradeToHTTPS(url);
+}
+
+bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url) {
+  return brave_shields::GetBraveShieldsEnabled(map, url) &&
+         brave_shields::GetHttpsUpgradeModeControlType(map, url) ==
+             ControlType::BLOCK;
 }
 
 void SetNoScriptControlType(HostContentSettingsMap* map,

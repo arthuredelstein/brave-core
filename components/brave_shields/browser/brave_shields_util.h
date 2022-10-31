@@ -110,6 +110,7 @@ void ResetHttpsUpgradeModeEnabled(HostContentSettingsMap* map, const GURL& url);
 ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
                                            const GURL& url);
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url);
+bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url);
 
 void SetNoScriptControlType(HostContentSettingsMap* map,
                             ControlType type,

@@ -48,9 +48,15 @@ content::NavigationThrottle::ThrottleCheckResult
 HttpsOnlyModeNavigationThrottle::WillFailRequest() {
   auto* handle = navigation_handle();
   auto* contents = handle->GetWebContents();
-  Profile* profile = Profile::FromBrowserContext(contents->GetBrowserContext());
+  const GURL& request_url = handle->GetURL();
+  content::BrowserContext* context =
+      handle->GetWebContents()->GetBrowserContext();
+  HostContentSettingsMap* map =
+      HostContentSettingsMapFactory::GetForProfile(context);
+  Profile* profile = Profile::FromBrowserContext(context);
   auto* prefs = profile->GetPrefs();
-  if (prefs && prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {
+  if ((prefs && prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) ||
+      brave_shields::ShouldForceHttps(map, request_url)) {
     return WillFailRequest_ChromiumImpl();
   }
 
@@ -72,7 +78,6 @@ HttpsOnlyModeNavigationThrottle::WillFailRequest() {
   // We are going to fall back.
   tab_helper->set_is_navigation_upgraded(false);
   tab_helper->set_is_navigation_fallback(true);
-  auto request_url = handle->GetURL();
   StatefulSSLHostStateDelegate* state =
       static_cast<StatefulSSLHostStateDelegate*>(
           profile->GetSSLHostStateDelegate());

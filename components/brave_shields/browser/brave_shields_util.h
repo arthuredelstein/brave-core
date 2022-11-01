@@ -102,9 +102,9 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                          const GURL& url);
 
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
-                                    ControlType type,
-                                    const GURL& url,
-                                    PrefService* local_state = nullptr);
+                                ControlType type,
+                                const GURL& url,
+                                PrefService* local_state = nullptr);
 // reset to the default value
 void ResetHttpsUpgradeEnabled(HostContentSettingsMap* map, const GURL& url);
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,

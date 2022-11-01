@@ -575,9 +575,9 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
 }
 
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
-                                    ControlType type,
-                                    const GURL& url,
-                                    PrefService* local_state) {
+                                ControlType type,
+                                const GURL& url,
+                                PrefService* local_state) {
   auto primary_pattern = GetPatternFromURL(url);
 
   if (!primary_pattern.IsValid())
@@ -607,8 +607,8 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
 }
 
 void ResetHttpsUpgradeEnabled(HostContentSettingsMap* map,
-                                  bool enable,
-                                  const GURL& url) {
+                              bool enable,
+                              const GURL& url) {
   auto primary_pattern = GetPatternFromURL(url);
 
   if (!primary_pattern.IsValid())
@@ -621,7 +621,7 @@ void ResetHttpsUpgradeEnabled(HostContentSettingsMap* map,
 }
 
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
-                                           const GURL& url) {
+                                       const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
   if (setting == CONTENT_SETTING_ALLOW) {

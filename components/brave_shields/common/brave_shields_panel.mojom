@@ -87,5 +87,5 @@ enum CookieBlockMode {
 enum HttpsUpgradeMode {
   DISABLED,
   STANDARD,
-  HTTPS_ONLY
+  STRICT
 };

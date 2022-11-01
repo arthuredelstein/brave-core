@@ -114,14 +114,14 @@
   </message>
 
   <message name="IDS_BRAVE_SHIELDS_HTTPS_UPGRADE_MODE_DISABLED" desc="Menu option that would block some fingerprinting website scripts.">
-    Allow HTTP connections
+    Don't upgrade HTTP connections
   </message>
 
   <message name="IDS_BRAVE_SHIELDS_HTTPS_UPGRADE_MODE_STANDARD" desc="Menu option that .">
     Upgrade connections to HTTPS
   </message>
 
-  <message name="IDS_BRAVE_SHIELDS_HTTPS_UPGRADE_MODE_HTTPS_ONLY" desc="Menu option that enables HTTPS-Only Mode.">
+  <message name="IDS_BRAVE_SHIELDS_HTTPS_UPGRADE_MODE_STRICT" desc="Menu option that enables HTTPS-Only Mode.">
     Only connect with HTTPS
   </message>
 

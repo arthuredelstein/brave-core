@@ -29,7 +29,7 @@ const fingerprintModeOptions = [
 const httpsUpgradeModeOptions = [
   { value: HttpsUpgradeMode.DISABLED, text: getLocale('braveShieldsHttpsUpgradeModeDisabled') },
   { value: HttpsUpgradeMode.STANDARD, text: getLocale('braveShieldsHttpsUpgradeModeStandard') },
-  { value: HttpsUpgradeMode.HTTPS_ONLY, text: getLocale('braveShieldsHttpsUpgradeModeHttpsOnly') }
+  { value: HttpsUpgradeMode.STRICT, text: getLocale('braveShieldsHttpsUpgradeModeStrict') }
 ]
 
 function GlobalSettings () {

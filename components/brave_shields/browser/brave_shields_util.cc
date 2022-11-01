@@ -574,7 +574,7 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                              : ControlType::BLOCK;
 }
 
-void SetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
+void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                     ControlType type,
                                     const GURL& url,
                                     PrefService* local_state) {
@@ -606,7 +606,7 @@ void SetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
   RecordShieldsSettingChanged(local_state);
 }
 
-void ResetHttpsUpgradeModeEnabled(HostContentSettingsMap* map,
+void ResetHttpsUpgradeEnabled(HostContentSettingsMap* map,
                                   bool enable,
                                   const GURL& url) {
   auto primary_pattern = GetPatternFromURL(url);
@@ -620,7 +620,7 @@ void ResetHttpsUpgradeModeEnabled(HostContentSettingsMap* map,
       CONTENT_SETTING_DEFAULT);
 }
 
-ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
+ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                            const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
       url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
@@ -638,7 +638,7 @@ ControlType GetHttpsUpgradeModeControlType(HostContentSettingsMap* map,
 
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
   return brave_shields::GetBraveShieldsEnabled(map, url) &&
-         brave_shields::GetHttpsUpgradeModeControlType(map, url) !=
+         brave_shields::GetHttpsUpgradeControlType(map, url) !=
              ControlType::ALLOW &&
          g_brave_browser_process->https_upgrade_exceptions_service()
              ->CanUpgradeToHTTPS(url);
@@ -646,7 +646,7 @@ bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
 
 bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url) {
   return brave_shields::GetBraveShieldsEnabled(map, url) &&
-         brave_shields::GetHttpsUpgradeModeControlType(map, url) ==
+         brave_shields::GetHttpsUpgradeControlType(map, url) ==
              ControlType::BLOCK;
 }
 

@@ -227,12 +227,12 @@ CookieBlockMode BraveShieldsDataController::GetCookieBlockMode() {
 }
 
 HttpsUpgradeMode BraveShieldsDataController::GetHttpsUpgradeMode() {
-  ControlType control_type = brave_shields::GetHttpsUpgradeModeControlType(
+  ControlType control_type = brave_shields::GetHttpsUpgradeControlType(
       GetHostContentSettingsMap(web_contents()), GetCurrentSiteURL());
   if (control_type == ControlType::ALLOW) {
     return HttpsUpgradeMode::DISABLED;
   } else if (control_type == ControlType::BLOCK) {
-    return HttpsUpgradeMode::HTTPS_ONLY;
+    return HttpsUpgradeMode::STRICT;
   } else {
     return HttpsUpgradeMode::STANDARD;
   }
@@ -327,12 +327,12 @@ void BraveShieldsDataController::SetHttpsUpgradeMode(HttpsUpgradeMode mode) {
   ControlType control_type;
   if (mode == HttpsUpgradeMode::DISABLED) {
     control_type = ControlType::ALLOW;
-  } else if (mode == HttpsUpgradeMode::HTTPS_ONLY) {
+  } else if (mode == HttpsUpgradeMode::STRICT) {
     control_type = ControlType::BLOCK;
   } else {
     control_type = ControlType::DEFAULT;
   }
-  brave_shields::SetHttpsUpgradeModeControlType(
+  brave_shields::SetHttpsUpgradeControlType(
       GetHostContentSettingsMap(web_contents()), control_type,
       GetCurrentSiteURL(), g_browser_process->local_state());
 

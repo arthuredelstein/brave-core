@@ -17,7 +17,7 @@ provideStrings({
   braveShieldsHTTPSEnable: 'Enable HTTPS',
   braveShieldsHttpsUpgradeModeDisabled: 'Don\'t upgrade connections to HTTPS',
   braveShieldsHttpsUpgradeModeStandard: 'Upgrade connections to HTTPS',
-  braveShieldsHttpsUpgradeModeHttpsOnly: 'Only use HTTPS connections',
+  braveShieldsHttpsUpgradeModeStrict: 'Only use HTTPS connections',
   braveShieldsScriptsBlocked: 'Block scripts',
   braveShieldsScriptsBlockedEnable: 'Enable Scripts Blocked',
   braveShieldsTrackersAndAds: 'Trackers & ads',

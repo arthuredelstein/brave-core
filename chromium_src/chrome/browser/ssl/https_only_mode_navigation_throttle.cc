@@ -93,7 +93,7 @@ HttpsOnlyModeNavigationThrottle::WillFailRequest() {
   url_params.redirect_chain.clear();
   // Use the original fallback URL.
   url_params.url = tab_helper->fallback_url();
-  // Launch a new task to open the fallback URL.
+  // Launch a new task to navigate to the fallback URL.
   base::SequencedTaskRunnerHandle::Get()->PostTask(
       FROM_HERE, base::BindOnce(
                      [](base::WeakPtr<content::WebContents> contents,

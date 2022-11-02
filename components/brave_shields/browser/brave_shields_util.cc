@@ -637,11 +637,23 @@ ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
 }
 
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
-  return brave_shields::GetBraveShieldsEnabled(map, url) &&
-         brave_shields::GetHttpsUpgradeControlType(map, url) !=
-             ControlType::ALLOW &&
-         g_brave_browser_process->https_upgrade_exceptions_service()
-             ->CanUpgradeToHTTPS(url);
+  // Don't upgrade if shields are down.
+  if (!brave_shields::GetBraveShieldsEnabled(map, url)) {
+    return false;
+  }
+  const ControlType controlType =
+      brave_shields::GetHttpsUpgradeControlType(map, url);
+  // Always upgrade for Strict HTTPS Upgrade.
+  if (controlType == ControlType::BLOCK) {
+    return true;
+  }
+  // Upgrade for Standard HTTPS upgrade if host is not on the exceptions list.
+  if (controlType == ControlType::DEFAULT &&
+      g_brave_browser_process->https_upgrade_exceptions_service()
+          ->CanUpgradeToHTTPS(url)) {
+    return true;
+  }
+  return false;
 }
 
 bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url) {

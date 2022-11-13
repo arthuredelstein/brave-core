@@ -46,7 +46,7 @@ public class BravePrivacySettingsTest {
     private static final String PREF_INCOGNITO_LOCK = "incognito_lock";
     private static final String PREF_PHONE_AS_A_SECURITY_KEY = "phone_as_a_security_key";
 
-    private static int BRAVE_PRIVACY_SETTINGS_NUMBER_OF_ITEMS = 23;
+    private static int BRAVE_PRIVACY_SETTINGS_NUMBER_OF_ITEMS = 22;
 
     private int mItemsLeft;
 
@@ -71,7 +71,6 @@ public class BravePrivacySettingsTest {
         checkPreferenceExists(PREF_CAN_MAKE_PAYMENT);
         checkPreferenceExists(PREF_CLEAR_BROWSING_DATA);
         checkPreferenceExists(PREF_DO_NOT_TRACK);
-        checkPreferenceExists(PREF_HTTPS_FIRST_MODE);
         // TODO : Need to add back the test once we have fix ready for safe browsing
         // checkPreferenceExists(PREF_SAFE_BROWSING);
         checkPreferenceExists(PREF_SECURE_DNS);
@@ -80,6 +79,7 @@ public class BravePrivacySettingsTest {
 
         checkPreferenceRemoved(PREF_NETWORK_PREDICTIONS);
         checkPreferenceRemoved(PREF_SYNC_AND_SERVICES_LINK);
+        checkPreferenceRemoved(PREF_HTTPS_FIRST_MODE);
 
         assertEquals(BRAVE_PRIVACY_SETTINGS_NUMBER_OF_ITEMS, mItemsLeft);
     }

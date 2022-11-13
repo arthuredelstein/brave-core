@@ -101,7 +101,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final String[] NEW_PRIVACY_PREFERENCE_ORDER = {
             PREF_BRAVE_SHIELDS_GLOBALS_SECTION, //  shields globals  section
             PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_HTTPSE,
-            PREF_HTTPS_FIRST_MODE, PREF_BLOCK_SCRIPTS, PREF_BLOCK_CROSS_SITE_COOKIES,
+            PREF_BLOCK_SCRIPTS, PREF_BLOCK_CROSS_SITE_COOKIES,
             PREF_FINGERPRINTING_PROTECTION, PREF_FINGERPRINT_LANGUAGE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section
             PREF_CLEAR_ON_EXIT, PREF_CLEAR_BROWSING_DATA,
@@ -135,7 +135,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private ChromeSwitchPreference mAutocompleteBraveSuggestedSites;
     private ChromeSwitchPreference mHttpsePref;
     private ChromeSwitchPreference mDeAmpPref;
-    private ChromeSwitchPreference mHttpsFirstModePref;
     private BraveDialogPreference mFingerprintingProtectionPref;
     private ChromeSwitchPreference mBlockScriptsPref;
     private ChromeSwitchPreference mCloseTabsOnExitPref;
@@ -196,9 +195,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
 
         mDeAmpPref = (ChromeSwitchPreference) findPreference(PREF_DE_AMP);
         mDeAmpPref.setOnPreferenceChangeListener(this);
-
-        mHttpsFirstModePref = (ChromeSwitchPreference) findPreference(PREF_HTTPS_FIRST_MODE);
-        mHttpsFirstModePref.setVisible(mHttpsePref.isChecked());
 
         mCanMakePayment = (ChromeSwitchPreference) findPreference(PREF_CAN_MAKE_PAYMENT);
         mCanMakePayment.setOnPreferenceChangeListener(this);
@@ -282,6 +278,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         removePreferenceIfPresent(PREF_NETWORK_PREDICTIONS);
         removePreferenceIfPresent(PREF_PRIVACY_SANDBOX);
         removePreferenceIfPresent(PREF_SAFE_BROWSING);
+        removePreferenceIfPresent(PREF_HTTPS_FIRST_MODE);
 
         if (mCookieListOptInPageAndroidHandler != null) {
             mCookieListOptInPageAndroidHandler.shouldShowDialog(shouldShowDialog -> {
@@ -319,15 +316,12 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         if (PREF_HTTPSE.equals(key)) {
             boolean newValueBool = (boolean) newValue;
             BravePrefServiceBridge.getInstance().setHTTPSEEnabled(newValueBool);
-            mHttpsFirstModePref.setVisible(newValueBool);
             if (newValueBool) {
                 // Restore state of HTTPS_ONLY_MODE.
                 UserPrefs.get(Profile.getLastUsedRegularProfile())
                         .setBoolean(Pref.HTTPS_ONLY_MODE_ENABLED,
                                 ContextUtils.getAppSharedPreferences().getBoolean(
                                         PREF_HTTPS_ONLY_MODE_ENABLED_SAVED_STATE, false));
-                mHttpsFirstModePref.setChecked(UserPrefs.get(Profile.getLastUsedRegularProfile())
-                                                       .getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED));
             } else {
                 // Save state for HTTPS_ONLY_MODE and disable it.
                 sharedPreferencesEditor.putBoolean(PREF_HTTPS_ONLY_MODE_ENABLED_SAVED_STATE,

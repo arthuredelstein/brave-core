@@ -36,6 +36,13 @@ public class BravePrefServiceBridge {
     }
 
     /**
+     * @param HttpsUpgrade setting
+     */
+    public String getHttpsUpgradeControlType() {
+        return BravePrefServiceBridgeJni.get().getHttpsUpgradeControlType();
+    }
+
+    /**
      * @param whether De-AMP should be enabled.
      */
     public void setDeAmpEnabled(boolean enabled) {
@@ -302,6 +309,7 @@ public class BravePrefServiceBridge {
         String getNoScriptControlType();
 
         void setHttpsUpgradeControlType(String type);
+        String getHttpsUpgradeControlType();
 
         void setDeAmpEnabled(boolean enabled);
         void setIpfsGatewayEnabled(boolean enabled);

@@ -233,7 +233,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
             if (!BraveShieldsUtils.hasShieldsTooltipShown(BraveShieldsUtils.PREF_SHIELDS_TOOLTIP)) {
                 blockersInfo = addBlockerNames(blockersInfo, subresource);
             }
-        } else if (block_type.equals(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTP_UPGRADABLE_RESOURCES)) {
+        } else if (block_type.equals(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTPS_UPGRADE)) {
             blockersInfo.mHTTPSUpgrades++;
         } else if (block_type.equals(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_JAVASCRIPTS)) {
             blockersInfo.mScriptsBlocked++;
@@ -845,7 +845,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 if (0 != mHost.length()) {
-                    BraveShieldsContentSettings.setShields(mProfile, mHost, BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTP_UPGRADABLE_RESOURCES, isChecked, false);
+                    BraveShieldsContentSettings.setShields(mProfile, mHost, BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTPS_UPGRADE, isChecked, false);
                     if (null != mMenuObserver) {
                         mMenuObserver.onMenuTopShieldsChanged(isChecked, false);
                     }
@@ -867,7 +867,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
         }
         if (0 != mHost.length()) {
             if (BraveShieldsContentSettings.getShields(mProfile, mHost, BraveShieldsContentSettings.RESOURCE_IDENTIFIER_BRAVE_SHIELDS)) {
-                if (BraveShieldsContentSettings.getShields(mProfile, mHost, BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTP_UPGRADABLE_RESOURCES)) {
+                if (BraveShieldsContentSettings.getShields(mProfile, mHost, BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTPS_UPGRADE)) {
                     braveShieldsHTTPSEverywhereSwitch.setChecked(true);
                 } else {
                     braveShieldsHTTPSEverywhereSwitch.setChecked(false);

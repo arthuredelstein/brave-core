@@ -99,7 +99,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
 
     private static final String[] NEW_PRIVACY_PREFERENCE_ORDER = {
             PREF_BRAVE_SHIELDS_GLOBALS_SECTION, //  shields globals  section
-            PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP,
+            PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_HTTPS_UPGRADE,
             PREF_BLOCK_SCRIPTS, PREF_BLOCK_CROSS_SITE_COOKIES,
             PREF_FINGERPRINTING_PROTECTION, PREF_FINGERPRINT_LANGUAGE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section
@@ -222,9 +222,9 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                 (ChromeSwitchPreference) findPreference(PREF_FINGERPRINT_LANGUAGE);
         mFingerprntLanguagePref.setOnPreferenceChangeListener(this);
 
-        //        mHttpsUpgradePref =
-        //        (BraveDialogPreference) findPreference(PREF_HTTPS_UPGRADE);
-        //mHttpsUpgradePref.setOnPreferenceChangeListener(this);
+        mHttpsUpgradePref =
+                (BraveDialogPreference) findPreference(PREF_HTTPS_UPGRADE);
+        mHttpsUpgradePref.setOnPreferenceChangeListener(this);
 
         mCloseTabsOnExitPref = (ChromeSwitchPreference) findPreference(PREF_CLOSE_TABS_ON_EXIT);
         mCloseTabsOnExitPref.setOnPreferenceChangeListener(this);
@@ -314,7 +314,6 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                 ContextUtils.getAppSharedPreferences().edit();
         if (PREF_DE_AMP.equals(key)) {
             BravePrefServiceBridge.getInstance().setDeAmpEnabled((boolean) newValue);
-
         } else if (PREF_IPFS_GATEWAY.equals(key)) {
             BravePrefServiceBridge.getInstance().setIpfsGatewayEnabled((boolean) newValue);
         } else if (PREF_BLOCK_COOKIE_CONSENT_NOTICES.equals(key)) {
@@ -353,15 +352,21 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                             BraveShieldsContentSettings.BLOCK_RESOURCE)) {
                 BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
                         BraveShieldsContentSettings.BLOCK_RESOURCE);
+                mHttpsUpgradePref.setSummary(getActivity().getResources().getString(
+                        R.string.https_upgrade_option_1));
                 mHttpsUpgradePref.setCheckedIndex(0);
             } else if (newValue instanceof String
                     && String.valueOf(newValue).equals(BraveShieldsContentSettings.DEFAULT)) {
                 BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
                         BraveShieldsContentSettings.DEFAULT);
+                mHttpsUpgradePref.setSummary(getActivity().getResources().getString(
+                        R.string.https_upgrade_option_2));
                 mHttpsUpgradePref.setCheckedIndex(1);
             } else {
                 BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
                         BraveShieldsContentSettings.ALLOW_RESOURCE);
+                mHttpsUpgradePref.setSummary(getActivity().getResources().getString(
+                        R.string.https_upgrade_option_3));
                 mHttpsUpgradePref.setCheckedIndex(2);
             }
         } else if (PREF_BLOCK_CROSS_SITE_COOKIES.equals(key)) {
@@ -525,11 +530,17 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         }
 
         if (httpsUpgradePref.equals(BraveShieldsContentSettings.BLOCK_RESOURCE)) {
-            //            mHttpsUpgradePref.setCheckedIndex(0);
+            mHttpsUpgradePref.setCheckedIndex(0);
+            mHttpsUpgradePref.setSummary(
+                    getActivity().getResources().getString(R.string.https_upgrade_option_1));
         } else if (httpsUpgradePref.equals(BraveShieldsContentSettings.DEFAULT)) {
-            //mHttpsUpgradePref.setCheckedIndex(1);
+            mHttpsUpgradePref.setCheckedIndex(1);
+            mHttpsUpgradePref.setSummary(
+                    getActivity().getResources().getString(R.string.https_upgrade_option_2));
         } else if (httpsUpgradePref.equals(BraveShieldsContentSettings.ALLOW_RESOURCE)) {
-            //mHttpsUpgradePref.setCheckedIndex(2);
+            mHttpsUpgradePref.setCheckedIndex(2);
+            mHttpsUpgradePref.setSummary(
+                    getActivity().getResources().getString(R.string.https_upgrade_option_3));
         }
 
         mSearchSuggestions.setChecked(mPrefServiceBridge.getBoolean(Pref.SEARCH_SUGGEST_ENABLED));

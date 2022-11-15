@@ -586,6 +586,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
         detailsLayouts.add(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_TRACKERS);
         detailsLayouts.add(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_FINGERPRINTING);
         detailsLayouts.add(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_COOKIES);
+        detailsLayouts.add(BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTPS_UPGRADE);
 
         int layoutId = 0;
         int mSecondaryLayoutId = 0;
@@ -623,6 +624,15 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
                     option1StringId = R.string.block_cookies_option_1;
                     option2StringId = R.string.block_cross_site_cookies;
                     option3StringId = R.string.block_cookies_option_3;
+                    break;
+                case BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTPS_UPGRADE:
+                    //layoutId = R.id.brave_shields_https_upgrade_layout_id;
+                    mSecondaryLayoutId = R.id.brave_shields_https_upgrade_layout_id;
+                    titleStringId = R.string.https_upgrade_title;
+                    subtitleStringId = R.string.https_upgrade_text;
+                    option1StringId = R.string.https_upgrade_option_1;
+                    option2StringId = R.string.https_upgrade_option_2;
+                    option3StringId = R.string.https_upgrade_option_3;
                     break;
             }
 

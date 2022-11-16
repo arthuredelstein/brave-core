@@ -626,8 +626,8 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
                     option3StringId = R.string.block_cookies_option_3;
                     break;
                 case BraveShieldsContentSettings.RESOURCE_IDENTIFIER_HTTPS_UPGRADE:
-                    //layoutId = R.id.brave_shields_https_upgrade_layout_id;
-                    mSecondaryLayoutId = R.id.brave_shields_https_upgrade_layout_id;
+                    layoutId = R.id.brave_shields_https_upgrade_layout_id;
+                    mSecondaryLayoutId = R.id.brave_shields_secondary_https_upgrade_layout_id;
                     titleStringId = R.string.https_upgrade_title;
                     subtitleStringId = R.string.https_upgrade_text;
                     option1StringId = R.string.https_upgrade_option_1;

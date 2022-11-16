@@ -28,7 +28,7 @@
 		android:textColor="@color/shield_text_color" />
 
 	<include
-		android:id="@+id/brave_shields_https_upgrade_layout_id"
+		android:id="@+id/brave_shields_secondary_https_upgrade_layout_id"
 		layout="@layout/brave_shields_toggle_layout"/>
 
 	<include

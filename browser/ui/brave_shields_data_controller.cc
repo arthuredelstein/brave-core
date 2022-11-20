@@ -8,6 +8,8 @@
 
 #include <string>
 
+#include <iostream>
+
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
 #include "chrome/browser/browser_process.h"
@@ -229,6 +231,7 @@ CookieBlockMode BraveShieldsDataController::GetCookieBlockMode() {
 HttpsUpgradeMode BraveShieldsDataController::GetHttpsUpgradeMode() {
   ControlType control_type = brave_shields::GetHttpsUpgradeControlType(
       GetHostContentSettingsMap(web_contents()), GetCurrentSiteURL());
+  std::cout << "BraveShieldsDataController::GetHttpsUpgradeMode, ctonrol_type=" << control_type << " " << GetCurrentSiteURL() << std::endl;
   if (control_type == ControlType::ALLOW) {
     return HttpsUpgradeMode::DISABLED;
   } else if (control_type == ControlType::BLOCK) {
@@ -336,6 +339,7 @@ void BraveShieldsDataController::SetHttpsUpgradeMode(HttpsUpgradeMode mode) {
   } else {
     control_type = ControlType::DEFAULT;
   }
+  std::cout << "BraveShieldsDataController::SetHttpsUpgradeMode, controlType =" << control_type << " " << GetCurrentSiteURL() << std::endl;
   brave_shields::SetHttpsUpgradeControlType(
       GetHostContentSettingsMap(web_contents()), control_type,
       GetCurrentSiteURL(), g_browser_process->local_state());

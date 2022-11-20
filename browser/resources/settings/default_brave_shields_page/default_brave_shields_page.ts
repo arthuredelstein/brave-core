@@ -72,7 +72,7 @@ class BraveShieldsPage extends BraveShieldsPageBase {
           value: function () {
             return [
                 { value: 'block', name: loadTimeData.getString('strictHttpsUpgrade') },
-                { value: 'default', name: loadTimeData.getString('standardHttpsUpgrade') },
+                { value: 'block_third_party', name: loadTimeData.getString('standardHttpsUpgrade') },
                 { value: 'allow', name: loadTimeData.getString('disabledHttpsUpgrade') }
             ];
           }

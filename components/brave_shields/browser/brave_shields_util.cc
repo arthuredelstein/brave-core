@@ -648,13 +648,13 @@ ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
     std::cout << "controlType: " << ControlType::ALLOW << std::endl;
     return ControlType::ALLOW;
   } else if (setting == CONTENT_SETTING_BLOCK) {
-    // HTTPS Only (block http)
+    // HTTPS Only (require https)
     std::cout << "controlType: " << ControlType::BLOCK << std::endl;
     return ControlType::BLOCK;
   } else if (setting == CONTENT_SETTING_ASK) {
-    // HTTPS Only (block http)
+    // HTTPS Only (prefer https)
     std::cout << "controlType: " << ControlType::BLOCK_THIRD_PARTY << std::endl;
-    return ControlType::BLOCK;
+    return ControlType::BLOCK_THIRD_PARTY;
   } else {
     // HTTPS by default (upgrade when available)
     std::cout << "controlType: " << ControlType::DEFAULT << std::endl;

@@ -674,7 +674,7 @@ bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
     return true;
   }
   // Upgrade for Standard HTTPS upgrade if host is not on the exceptions list.
-  if (controlType == ControlType::DEFAULT &&
+  if (controlType == ControlType::BLOCK_THIRD_PARTY &&
       g_brave_browser_process->https_upgrade_exceptions_service()
           ->CanUpgradeToHTTPS(url)) {
     return true;

@@ -7,6 +7,17 @@ import {RegisterPolymerTemplateModifications} from 'chrome://resources/polymer_o
 
 RegisterPolymerTemplateModifications({
   'settings-security-page': (templateContent) => {
+    const httpsOnlyModeToggleTemplate = templateContent.querySelector(`template[if*='showHttpsOnlyModeSetting_']`)
+    if (!httpsOnlyModeToggleTemplate) {
+      console.error('[Brave Settings Overrides] Could not find template with if*=showHttpsOnlyModeSetting_ on security page.')
+    } else {
+      const httpsOnlyModeToggle = httpsOnlyModeToggleTemplate.content.getElementById('httpsOnlyModeToggle')
+      if (!httpsOnlyModeToggle) {
+        console.error('[Brave Settings Overrides] Could not find httpsOnlyModeToggle on security page.')
+      } else {
+        httpsOnlyModeToggle.setAttribute('hidden', 'true')
+      }
+    }
     const safeBrowsingReportingToggle = templateContent.getElementById('safeBrowsingReportingToggle')
     if (!safeBrowsingReportingToggle) {
       console.error('[Brave Settings Overrides] Could not find safeBrowsingReportingToggle id on security page.')

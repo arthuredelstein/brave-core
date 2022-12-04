@@ -23,6 +23,8 @@ class BrowserContext;
 
 namespace {
 
+constexpr base::TimeDelta g_tor_fallback_delay = base::Seconds(20);
+
 bool HttpsUpgradeIfPossible(content::NavigationHandle* handle) {
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
@@ -43,8 +45,8 @@ bool IsTor(content::NavigationHandle* handle) {
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
   GetBooleanOr(PREF_NAME, HttpsUpgradeIfPossible(handle))
-#define SetNavigationTimeout(DEFAULT_TIMEOUT)                         \
-  SetNavigationTimeout(IsTor(navigation_handle()) ? base::Seconds(20) \
+#define SetNavigationTimeout(DEFAULT_TIMEOUT)                            \
+  SetNavigationTimeout(IsTor(navigation_handle()) ? g_tor_fallback_delay \
                                                   : DEFAULT_TIMEOUT)
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"

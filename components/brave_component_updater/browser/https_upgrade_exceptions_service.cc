@@ -4,12 +4,14 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "brave/components/brave_component_updater/browser/https_upgrade_exceptions_service.h"
-#include "base/files/file_path.h"
-#include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 
 #include <fstream>
+#include <memory>
 #include <set>
 #include <string>
+
+#include "base/files/file_path.h"
+#include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 
 #define HTTPS_UPGRADE_EXCEPTIONS_DAT_FILE "https-upgrade-exceptions-list.dat"
 #define HTTPS_UPGRADE_EXCEPTIONS_DAT_FILE_VERSION "1"

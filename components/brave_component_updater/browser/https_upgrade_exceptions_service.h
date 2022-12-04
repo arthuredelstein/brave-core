@@ -6,12 +6,13 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_COMPONENT_UPDATER_BROWSER_HTTPS_UPGRADE_EXCEPTIONS_SERVICE_H_
 #define BRAVE_COMPONENTS_BRAVE_COMPONENT_UPDATER_BROWSER_HTTPS_UPGRADE_EXCEPTIONS_SERVICE_H_
 
+#include <memory>
+#include <set>
+#include <string>
+
 #include "base/files/file_path.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
-
-#include <set>
-#include <string>
 
 namespace brave_component_updater {
 

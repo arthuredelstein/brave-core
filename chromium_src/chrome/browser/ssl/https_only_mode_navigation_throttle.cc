@@ -5,10 +5,16 @@
 
 #include "chrome/browser/ssl/https_only_mode_navigation_throttle.h"
 
+#include "base/threading/sequenced_task_runner_handle.h"
+#include "base/time/time.h"
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+#include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/ssl/https_only_mode_controller_client.h"
 #include "components/prefs/pref_service.h"
+#include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
 #include "content/public/browser/navigation_handle.h"
+#include "content/public/browser/page_navigator.h"
 #include "content/public/browser/web_contents.h"
 
 namespace content {
@@ -26,22 +32,25 @@ bool HttpsUpgradeIfPossible(content::NavigationHandle* handle) {
   return brave_shields::ShouldUpgradeToHttps(map, url);
 }
 
+bool IsTor(content::NavigationHandle* handle) {
+  auto* context = handle->GetWebContents()->GetBrowserContext();
+  Profile* profile = Profile::FromBrowserContext(context);
+  return profile->IsTor();
+}
+
 }  // namespace
 
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
   GetBooleanOr(PREF_NAME, HttpsUpgradeIfPossible(handle))
+#define SetNavigationTimeout(DEFAULT_TIMEOUT) \
+  SetNavigationTimeout(IsTor(navigation_handle()) ? base::Seconds(20) : DEFAULT_TIMEOUT)
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
 
 #undef WillFailRequest
 #undef GetBoolean
-
-#include "base/threading/sequenced_task_runner_handle.h"
-#include "chrome/browser/profiles/profile.h"
-#include "chrome/browser/ssl/https_only_mode_controller_client.h"
-#include "components/security_interstitials/content/stateful_ssl_host_state_delegate.h"
-#include "content/public/browser/page_navigator.h"
+#undef SetNavigationTimeout
 
 // Called if there is a non-OK net::Error in the completion status.
 content::NavigationThrottle::ThrottleCheckResult

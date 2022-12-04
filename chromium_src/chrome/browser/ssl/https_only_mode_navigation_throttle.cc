@@ -23,9 +23,10 @@ class BrowserContext;
 
 namespace {
 
+// Tor is slow and needs a longer fallback delay
 constexpr base::TimeDelta g_tor_fallback_delay = base::Seconds(20);
 
-bool HttpsUpgradeIfPossible(content::NavigationHandle* handle) {
+bool ShouldUpgradeToHttps(content::NavigationHandle* handle) {
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
   const GURL& url = handle->GetURL();
@@ -44,7 +45,7 @@ bool IsTor(content::NavigationHandle* handle) {
 
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
-  GetBooleanOr(PREF_NAME, HttpsUpgradeIfPossible(handle))
+  GetBooleanOr(PREF_NAME, ShouldUpgradeToHttps(handle))
 #define SetNavigationTimeout(DEFAULT_TIMEOUT)                            \
   SetNavigationTimeout(IsTor(navigation_handle()) ? g_tor_fallback_delay \
                                                   : DEFAULT_TIMEOUT)

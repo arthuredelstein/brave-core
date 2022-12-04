@@ -32,9 +32,7 @@ class HttpsUpgradeBrowserTest : public InProcessBrowserTest {
   HttpsUpgradeBrowserTest() = default;
   ~HttpsUpgradeBrowserTest() override = default;
 
-  void SetUp() override {
-    InProcessBrowserTest::SetUp();
-  }
+  void SetUp() override { InProcessBrowserTest::SetUp(); }
 
   void SetUpOnMainThread() override {
     g_brave_browser_process->https_upgrade_exceptions_service()

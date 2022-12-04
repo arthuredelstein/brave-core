@@ -43,8 +43,9 @@ bool IsTor(content::NavigationHandle* handle) {
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
   GetBooleanOr(PREF_NAME, HttpsUpgradeIfPossible(handle))
-#define SetNavigationTimeout(DEFAULT_TIMEOUT) \
-  SetNavigationTimeout(IsTor(navigation_handle()) ? base::Seconds(20) : DEFAULT_TIMEOUT)
+#define SetNavigationTimeout(DEFAULT_TIMEOUT)                         \
+  SetNavigationTimeout(IsTor(navigation_handle()) ? base::Seconds(20) \
+                                                  : DEFAULT_TIMEOUT)
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
 

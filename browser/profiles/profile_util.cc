@@ -12,19 +12,19 @@
 #include "base/memory/raw_ptr.h"
 #include "base/metrics/histogram_macros.h"
 #include "brave/components/brave_shields/browser/brave_shields_p3a.h"
+#include "brave/components/brave_shields/common/brave_shield_utils.h"
 #include "brave/components/constants/brave_constants.h"
 #include "brave/components/constants/pref_names.h"
-#include "chrome/common/pref_names.h"
 #include "brave/components/ntp_background_images/common/pref_names.h"
 #include "brave/components/search_engines/brave_prepopulated_engines.h"
 #include "brave/components/tor/buildflags/buildflags.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/common/pref_names.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/common/pref_names.h"
 #include "components/prefs/pref_service.h"
 #include "components/search_engines/search_engines_pref_names.h"
-#include "brave/components/brave_shields/common/brave_shield_utils.h"
 
 using ntp_background_images::prefs::kNewTabPageShowBackgroundImage;
 using ntp_background_images::prefs::kNewTabPageShowSponsoredImagesBackgroundImage; // NOLINT
@@ -106,8 +106,8 @@ void MigrateHttpsOnlyPrefToHttpsUpgradeSetting(Profile* profile) {
   auto* prefs = profile->GetPrefs();
   if (prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {
     brave_shields::SetHttpsUpgradeControlType(
-      HostContentSettingsMapFactory::GetForProfile(profile),
-      brave_shields::ControlType::BLOCK, GURL());
+        HostContentSettingsMapFactory::GetForProfile(profile),
+        brave_shields::ControlType::BLOCK, GURL());
     prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, false);
   }
 }

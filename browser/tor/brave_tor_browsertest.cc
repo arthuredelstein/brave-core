@@ -364,7 +364,7 @@ IN_PROC_BROWSER_TEST_F(BraveTorTest_EnableTorHttpsOnlyFlag,
 
   Profile* tor_profile = OpenTorWindow();
   HostContentSettingsMap* map =
-    HostContentSettingsMapFactory::GetForProfile(tor_profile);
+      HostContentSettingsMapFactory::GetForProfile(tor_profile);
 
   // Check that HTTPS-Only Mode has been enabled for the Tor window.
   EXPECT_EQ(brave_shields::ControlType::BLOCK,

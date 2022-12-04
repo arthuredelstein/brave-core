@@ -125,10 +125,10 @@ void TorProfileManager::InitTorProfileUserPrefs(Profile* profile) {
                           blink::kWebRTCIPHandlingDisableNonProxiedUdp);
   pref_service->SetBoolean(prefs::kSafeBrowsingEnabled, false);
   if (base::FeatureList::IsEnabled(
-        blink::features::kBraveTorWindowsHttpsOnly)) {
+          blink::features::kBraveTorWindowsHttpsOnly)) {
     brave_shields::SetHttpsUpgradeControlType(
-      HostContentSettingsMapFactory::GetForProfile(profile),
-      brave_shields::ControlType::BLOCK, GURL());
+        HostContentSettingsMapFactory::GetForProfile(profile),
+        brave_shields::ControlType::BLOCK, GURL());
   }
   // https://blog.torproject.org/bittorrent-over-tor-isnt-good-idea
 #if BUILDFLAG(ENABLE_BRAVE_WEBTORRENT)

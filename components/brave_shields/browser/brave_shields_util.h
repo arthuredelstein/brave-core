@@ -103,6 +103,8 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
 bool IsBraveShieldsManaged(PrefService* prefs,
                            HostContentSettingsMap* map,
                            GURL url);
+
+bool IsHttpsByDefaultFeatureEnabled();
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 ControlType type,
                                 const GURL& url,

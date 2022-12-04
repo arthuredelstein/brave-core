@@ -33,6 +33,7 @@
 #include "content/public/common/referrer.h"
 #include "net/base/features.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+#include "third_party/blink/public/common/features.h"
 #include "url/gurl.h"
 #include "url/origin.h"
 
@@ -587,6 +588,11 @@ bool IsBraveShieldsManaged(PrefService* prefs,
          info.source == content_settings::SettingSource::SETTING_SOURCE_POLICY;
 }
 
+bool IsHttpsByDefaultFeatureEnabled() {
+  return base::FeatureList::IsEnabled(
+    blink::features::kHttpsByDefault);
+}
+
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 ControlType type,
                                 const GURL& url,
@@ -655,6 +661,10 @@ ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
 }
 
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
+  // Don't upgrade if feature is disabled.
+  if (!IsHttpsByDefaultFeatureEnabled()) {
+    return false;
+  }
   // Don't upgrade if shields are down.
   if (!brave_shields::GetBraveShieldsEnabled(map, url)) {
     return false;

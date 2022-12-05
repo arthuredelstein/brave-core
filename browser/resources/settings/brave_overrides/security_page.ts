@@ -4,6 +4,7 @@
 // you can obtain one at https://mozilla.org/MPL/2.0/.
 
 import {RegisterPolymerTemplateModifications} from 'chrome://resources/polymer_overriding.js'
+import {loadTimeData} from 'chrome://resources/js/load_time_data.m.js';
 
 RegisterPolymerTemplateModifications({
   'settings-security-page': (templateContent) => {
@@ -25,15 +26,17 @@ RegisterPolymerTemplateModifications({
     } else {
       passwordsLeakToggle.setAttribute('hidden', 'true')
     }
-    const httpsOnlyModeToggleTemplate = templateContent.querySelector(`template[if*='showHttpsOnlyModeSetting_']`)
-    if (!httpsOnlyModeToggleTemplate) {
-      console.error('[Brave Settings Overrides] Could not find template with if*=showHttpsOnlyModeSetting_ on security page.')
-    } else {
-      const httpsOnlyModeToggle = httpsOnlyModeToggleTemplate.content.getElementById('httpsOnlyModeToggle')
-      if (!httpsOnlyModeToggle) {
-        console.error('[Brave Settings Overrides] Could not find httpsOnlyModeToggle on security page.')
+    if (loadTimeData.getBoolean("isHttpsByDefaultEnabled")) {
+      const httpsOnlyModeToggleTemplate = templateContent.querySelector(`template[if*='showHttpsOnlyModeSetting_']`)
+      if (!httpsOnlyModeToggleTemplate) {
+        console.error('[Brave Settings Overrides] Could not find template with if*=showHttpsOnlyModeSetting_ on security page.')
       } else {
-        httpsOnlyModeToggle.setAttribute('hidden', 'true')
+        const httpsOnlyModeToggle = httpsOnlyModeToggleTemplate.content.getElementById('httpsOnlyModeToggle')
+        if (!httpsOnlyModeToggle) {
+          console.error('[Brave Settings Overrides] Could not find httpsOnlyModeToggle on security page.')
+        } else {
+          httpsOnlyModeToggle.setAttribute('hidden', 'true')
+        }
       }
     }
     const link = templateContent.getElementById('advanced-protection-program-link')

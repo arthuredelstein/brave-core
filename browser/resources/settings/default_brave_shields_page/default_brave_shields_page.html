@@ -74,7 +74,7 @@
       </template>
     </select>
   </div>
-  <div class="settings-box">
+  <div hidden="[[!isHttpsByDefaultEnabled_]]" class="settings-box">
     <div class="start">$i18n{httpsUpgradeControlLabel}</div>
     <select id="httpsUpgradeControlType" class="md-select"
         on-change="onHttpsUpgradeControlChange_">

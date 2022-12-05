@@ -91,6 +91,10 @@ class BraveShieldsPage extends BraveShieldsPageBase {
       isAdBlockRoute_: {
         type: Boolean,
         value: false
+      },
+      isHttpsByDefaultEnabled_: {
+        type: Boolean,
+        value: loadTimeData.getBoolean('isHttpsByDefaultEnabled')
       }
     }
   }

@@ -11,6 +11,7 @@ import { getLocale } from '../../../../../common/locale'
 import getPanelBrowserAPI, { AdBlockMode, CookieBlockMode, FingerprintMode, HttpsUpgradeMode } from '../../api/panel_browser_api'
 import DataContext from '../../state/context'
 import { ViewType } from '../../state/component_types'
+import { loadTimeData } from '../../../../../common/loadTimeData'
 
 const adBlockModeOptions = [
   { value: AdBlockMode.AGGRESSIVE, text: getLocale('braveShieldsTrackersAndAdsBlockedAgg') },
@@ -98,6 +99,7 @@ function AdvancedControlsContent () {
 
   const adsListCount = siteBlockInfo?.adsList.length ?? 0
   const jsListCount = siteBlockInfo?.jsList.length ?? 0
+  const isHttpsByDefaultEnabled = loadTimeData.getBoolean('isHttpsByDefaultEnabled');
 
   return (
     <section
@@ -131,7 +133,7 @@ function AdvancedControlsContent () {
             <span>{adsListCount > 99 ? '99+' : adsListCount}</span>
           </S.CountButton>
         </S.ControlGroup>
-        <S.ControlGroup>
+        {isHttpsByDefaultEnabled && <S.ControlGroup>
           <div className="col-2">
             <Select
               value={siteSettings?.httpsUpgradeMode}
@@ -145,7 +147,7 @@ function AdvancedControlsContent () {
               })}
             </Select>
           </div>
-        </S.ControlGroup>
+        </S.ControlGroup>}
         <S.ControlGroup>
           <label>
             <span>{getLocale('braveShieldsScriptsBlocked')}</span>

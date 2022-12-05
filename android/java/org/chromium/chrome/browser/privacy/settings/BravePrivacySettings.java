@@ -102,7 +102,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
 
     private static final String[] NEW_PRIVACY_PREFERENCE_ORDER = {
             PREF_BRAVE_SHIELDS_GLOBALS_SECTION, //  shields globals  section
-            PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_HTTPS_UPGRADE,
+            PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_HTTPS_FIRST_MODE, PREF_HTTPS_UPGRADE,
             PREF_BLOCK_SCRIPTS, PREF_BLOCK_CROSS_SITE_COOKIES, PREF_FINGERPRINTING_PROTECTION,
             PREF_FINGERPRINT_LANGUAGE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section
@@ -276,7 +276,11 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         removePreferenceIfPresent(PREF_NETWORK_PREDICTIONS);
         removePreferenceIfPresent(PREF_PRIVACY_SANDBOX);
         removePreferenceIfPresent(PREF_SAFE_BROWSING);
-        removePreferenceIfPresent(PREF_HTTPS_FIRST_MODE);
+        if (ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT)) {
+            removePreferenceIfPresent(PREF_HTTPS_FIRST_MODE);
+        } else {
+            removePreferenceIfPresent(PREF_HTTPS_UPGRADE);
+        }
 
         if (!ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_ANDROID_SAFE_BROWSING)) {
             removePreferenceIfPresent(PREF_SAFE_BROWSING);

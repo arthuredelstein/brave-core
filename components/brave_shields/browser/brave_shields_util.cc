@@ -589,8 +589,7 @@ bool IsBraveShieldsManaged(PrefService* prefs,
 }
 
 bool IsHttpsByDefaultFeatureEnabled() {
-  return base::FeatureList::IsEnabled(
-    blink::features::kHttpsByDefault);
+  return base::FeatureList::IsEnabled(blink::features::kHttpsByDefault);
 }
 
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,

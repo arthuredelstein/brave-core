@@ -388,10 +388,10 @@ constexpr char kAllowCertainClientHintsDescription[] =
     "Allows setting certain request client hints (sec-ch-ua, sec-ch-ua-mobile, "
     "sec-ch-ua-platform)";
 
-constexpr char kHttpsByDefaultName[] =
-    "Use HTTPS by Default";
+constexpr char kHttpsByDefaultName[] = "Use HTTPS by Default";
 constexpr char kHttpsByDefaultDescription[] =
-    "Attempt to connect to all websites using HTTPS before falling back to HTTP.";
+    "Attempt to connect to all websites using HTTPS before falling back to "
+    "HTTP.";
 
 #if defined(TOOLKIT_VIEWS)
 constexpr char kBraveVerticalTabsName[] = "Vertical tabs";

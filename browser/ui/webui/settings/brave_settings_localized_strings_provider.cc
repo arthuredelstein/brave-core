@@ -693,9 +693,9 @@ void BraveAddLocalizedStrings(content::WebUIDataSource* html_source,
                           base::FeatureList::IsEnabled(
                               brave_wallet::features::kBraveWalletSnsFeature));
 
-  html_source->AddBoolean("isHttpsByDefaultEnabled",
-                          base::FeatureList::IsEnabled(
-                              blink::features::kHttpsByDefault));
+  html_source->AddBoolean(
+      "isHttpsByDefaultEnabled",
+      base::FeatureList::IsEnabled(blink::features::kHttpsByDefault));
 
   if (base::FeatureList::IsEnabled(
           net::features::kBraveFirstPartyEphemeralStorage)) {

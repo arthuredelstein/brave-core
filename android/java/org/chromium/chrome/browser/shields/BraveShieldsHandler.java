@@ -732,7 +732,7 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
         }
         if (!ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT)) {
             mSecondaryLayout.findViewById(R.id.brave_shields_secondary_https_upgrade_layout_id)
-                .setVisibility(View.GONE);
+                    .setVisibility(View.GONE);
         }
     }
 

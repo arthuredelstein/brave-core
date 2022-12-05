@@ -66,6 +66,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.chromium.base.BraveFeatureList;
 import org.chromium.base.SysUtils;
 import org.chromium.base.task.AsyncTask;
 import org.chromium.chrome.R;
@@ -73,6 +74,7 @@ import org.chromium.chrome.browser.BraveRewardsHelper;
 import org.chromium.chrome.browser.BraveRewardsNativeWorker;
 import org.chromium.chrome.browser.app.BraveActivity;
 import org.chromium.chrome.browser.brave_stats.BraveStatsUtil;
+import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.night_mode.GlobalNightModeStateProviderHolder;
 import org.chromium.chrome.browser.onboarding.OnboardingPrefManager;
 import org.chromium.chrome.browser.preferences.website.BraveShieldsContentSettings;
@@ -727,6 +729,10 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
                             }
                         }
                     });
+        }
+        if (!ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT)) {
+            mSecondaryLayout.findViewById(R.id.brave_shields_secondary_https_upgrade_layout_id)
+                .setVisibility(View.GONE);
         }
     }
 

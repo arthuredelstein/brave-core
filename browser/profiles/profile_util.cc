@@ -104,11 +104,22 @@ void SetDefaultThirdPartyCookieBlockValue(Profile* profile) {
 
 void MigrateHttpsOnlyPrefToHttpsUpgradeSetting(Profile* profile) {
   auto* prefs = profile->GetPrefs();
-  if (prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {
-    brave_shields::SetHttpsUpgradeControlType(
-        HostContentSettingsMapFactory::GetForProfile(profile),
-        brave_shields::ControlType::BLOCK, GURL());
-    prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, false);
+  auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
+  if (brave_shields::IsHttpsByDefaultFeatureEnabled()) {
+    // In HTTPS by Default, if we previously had HTTPS-Only enabled, then
+    // enable Strict HTTPS Upgrades by default, and disable the HTTPS-Only pref.
+    if (prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {
+      brave_shields::SetHttpsUpgradeControlType(map, brave_shields::ControlType::BLOCK, GURL());
+      prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, false);
+    }
+  } else {
+    // When HTTPS by Default is disabled, check if we had Strict HTTPS Upgrades
+    // enabled before, and if so, enable HTTPS-Only Mode and then changes the
+    // HTTPS Upgrade setting to Standard.
+    if (brave_shields::GetHttpsUpgradeControlType(map, GURL()) == brave_shields::ControlType::BLOCK) {
+      prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, true);
+      brave_shields::SetHttpsUpgradeControlType(map, brave_shields::ControlType::BLOCK_THIRD_PARTY, GURL());
+    }
   }
 }
 

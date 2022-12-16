@@ -35,8 +35,10 @@
 #include "chrome/browser/ui/browser_finder.h"
 #include "chrome/common/chrome_paths.h"
 #include "chrome/common/chrome_switches.h"
+#include "chrome/common/pref_names.h"
 #include "chrome/test/base/in_process_browser_test.h"
 #include "chrome/test/base/ui_test_utils.h"
+#include "components/prefs/pref_service.h"
 #include "content/public/test/browser_test.h"
 #include "content/public/test/test_utils.h"
 #include "gmock/gmock.h"
@@ -363,10 +365,14 @@ IN_PROC_BROWSER_TEST_F(BraveTorTest_EnableTorHttpsOnlyFlag,
   DownloadTorClient();
 
   Profile* tor_profile = OpenTorWindow();
-  HostContentSettingsMap* map =
+  if (prefs blah blah) {
+    PrefService* prefs = tor_profile->GetPrefs();
+    // Check that HTTPS-Only Mode has been enabled for the Tor window.
+    EXPECT_TRUE(prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled));
+  } else {
+    HostContentSettingsMap* map =
       HostContentSettingsMapFactory::GetForProfile(tor_profile);
-
-  // Check that HTTPS-Only Mode has been enabled for the Tor window.
-  EXPECT_EQ(brave_shields::ControlType::BLOCK,
+    EXPECT_EQ(brave_shields::ControlType::BLOCK,
             brave_shields::GetHttpsUpgradeControlType(map, GURL()));
+  }
 }

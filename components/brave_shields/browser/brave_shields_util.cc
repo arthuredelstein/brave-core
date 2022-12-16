@@ -622,7 +622,7 @@ void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
 
 bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
-      url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
+      url, GURL(), ContentSettingsType::BRAVE_HTTPS_UPGRADE);
 
   return setting == CONTENT_SETTING_ALLOW ? false : true;
 }
@@ -655,7 +655,7 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
   }
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
-      ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES, setting);
+      ContentSettingsType::BRAVE_HTTPS_UPGRADE, setting);
 
   // Reset the HTTPS fallback map.
   const GURL& secure_url = GURL("https://" + url.host());
@@ -675,14 +675,14 @@ void ResetHttpsUpgradeEnabled(HostContentSettingsMap* map,
 
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
-      ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES,
+      ContentSettingsType::BRAVE_HTTPS_UPGRADE,
       CONTENT_SETTING_DEFAULT);
 }
 
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                        const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
-      url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
+      url, GURL(), ContentSettingsType::BRAVE_HTTPS_UPGRADE);
   if (setting == CONTENT_SETTING_ALLOW) {
     // Disabled (allow http)
     return ControlType::ALLOW;

@@ -17,6 +17,7 @@ const char kAds[] = "shieldsAds";
 const char kCosmeticFiltering[] = "cosmeticFiltering";
 const char kTrackers[] = "trackers";
 const char kHTTPUpgradableResources[] = "httpUpgradableResources";
+const char kHTTPSUpgrades[] = "httpsUpgrades";
 const char kJavaScript[] = "javascript";
 const char kFingerprintingV2[] = "fingerprintingV2";
 const char kBraveShields[] = "braveShields";

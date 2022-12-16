@@ -36,7 +36,7 @@ void ContentSettingsRegistry::BraveInit() {
            ContentSettingsInfo::EXCEPTIONS_ON_SECURE_AND_INSECURE_ORIGINS);
 
   Register(ContentSettingsType::BRAVE_HTTPS_UPGRADE,
-           brave_shields::kHTTPUpgrades, CONTENT_SETTING_ASK,
+           brave_shields::kHTTPSUpgrades, CONTENT_SETTING_ASK,
            WebsiteSettingsInfo::SYNCABLE, AllowlistedSchemes(),
            ValidSettings(CONTENT_SETTING_ALLOW, CONTENT_SETTING_ASK,
                          CONTENT_SETTING_BLOCK),

@@ -18,6 +18,7 @@ provideStrings({
   braveShieldsGlobalSettingsTitle: 'Global Shield settings',
   braveShieldsChangeDefaults: 'Global defaults',
   braveShieldsCustomizeAdblockLists: 'Filter lists',
+  braveShieldsConnectionsUpgraded: 'Upgrade connections to HTTPS',
   braveShieldsHTTPSEnable: 'Enable HTTPS',
   braveShieldsHttpsUpgradeModeDisabled: 'Don\'t upgrade connections to HTTPS',
   braveShieldsHttpsUpgradeModeStandard: 'Upgrade connections to HTTPS',

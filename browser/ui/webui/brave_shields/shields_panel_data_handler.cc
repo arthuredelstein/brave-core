@@ -69,6 +69,8 @@ void ShieldsPanelDataHandler::GetSiteSettings(
       active_shields_data_controller_->GetFingerprintMode();
   settings.cookie_block_mode =
       active_shields_data_controller_->GetCookieBlockMode();
+  settings.is_https_everywhere_enabled =
+      active_shields_data_controller_->GetHTTPSEverywhereEnabled();
   settings.https_upgrade_mode =
       active_shields_data_controller_->GetHttpsUpgradeMode();
   settings.is_noscript_enabled =
@@ -110,6 +112,13 @@ void ShieldsPanelDataHandler::SetIsNoScriptsEnabled(bool is_enabled) {
     return;
 
   active_shields_data_controller_->SetIsNoScriptEnabled(is_enabled);
+}
+
+void ShieldsPanelDataHandler::SetHTTPSEverywhereEnabled(bool is_enabled) {
+  if (!active_shields_data_controller_)
+    return;
+
+  active_shields_data_controller_->SetIsHTTPSEverywhereEnabled(is_enabled);
 }
 
 void ShieldsPanelDataHandler::SetBraveShieldsEnabled(bool is_enabled) {

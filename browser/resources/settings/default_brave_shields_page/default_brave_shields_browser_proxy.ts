@@ -110,6 +110,7 @@ export class DefaultBraveShieldsBrowserProxyImpl implements DefaultBraveShieldsB
   /** @override */
   setHTTPSEverywhereEnabled(value) {
     chrome.send('setHTTPSEverywhereEnabled', [value]);
+  }
 
   /** @override */
   getHttpsUpgradeControlType() {

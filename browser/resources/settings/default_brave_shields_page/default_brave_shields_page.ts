@@ -117,6 +117,7 @@ class BraveShieldsPage extends BraveShieldsPageBase {
     this.onAdControlChange_ = this.onAdControlChange_.bind(this)
     this.onCookieControlChange_ = this.onCookieControlChange_.bind(this)
     this.onFingerprintingControlChange_ = this.onFingerprintingControlChange_.bind(this)
+    this.onHTTPSEverywhereControlChange_ = this.onHTTPSEverywhereControlChange_.bind(this)
     this.onHttpsUpgradeControlChange_ =
       this.onHttpsUpgradeControlChange_.bind(this)
     this.onNoScriptControlChange_ = this.onNoScriptControlChange_.bind(this)
@@ -172,6 +173,9 @@ class BraveShieldsPage extends BraveShieldsPageBase {
   onFingerprintingControlChange_ () {
     this.browserProxy_.setFingerprintingControlType(this.$.fingerprintingControlType.value)
   }
+
+  onHTTPSEverywhereControlChange_ () {
+    this.browserProxy_.setHTTPSEverywhereEnabled(this.$.httpsEverywhereControlType.checked)
 
   onHttpsUpgradeControlChange_ () {
     this.browserProxy_.setHttpsUpgradeControlType(

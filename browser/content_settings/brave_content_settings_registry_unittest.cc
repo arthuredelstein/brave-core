@@ -125,6 +125,13 @@ TEST_F(BraveContentSettingsRegistryTest, GetInitialDefaultSetting) {
   }
 
   {
+    SCOPED_TRACE("Content setting: BRAVE_HTTP_UPGRADABLE_RESOURCES");
+    info =
+        registry()->Get(ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
+    EXPECT_EQ(CONTENT_SETTING_BLOCK, info->GetInitialDefaultSetting());
+  }
+
+  {
     SCOPED_TRACE("Content setting: BRAVE_SHIELDS");
     info = registry()->Get(ContentSettingsType::BRAVE_SHIELDS);
     EXPECT_EQ(CONTENT_SETTING_ALLOW, info->GetInitialDefaultSetting());

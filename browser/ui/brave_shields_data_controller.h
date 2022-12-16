@@ -65,6 +65,7 @@ class BraveShieldsDataController
   FingerprintMode GetFingerprintMode();
   CookieBlockMode GetCookieBlockMode();
   bool IsBraveShieldsManaged();
+  bool GetHTTPSEverywhereEnabled();
   HttpsUpgradeMode GetHttpsUpgradeMode();
   bool GetNoScriptEnabled();
   void SetAdBlockMode(AdBlockMode mode);
@@ -72,6 +73,7 @@ class BraveShieldsDataController
   void SetCookieBlockMode(CookieBlockMode mode);
   void SetHttpsUpgradeMode(HttpsUpgradeMode mode);
   void SetIsNoScriptEnabled(bool is_enabled);
+  void SetIsHTTPSEverywhereEnabled(bool is_enabled);
 
   void AddObserver(Observer* obs);
   void RemoveObserver(Observer* obs);

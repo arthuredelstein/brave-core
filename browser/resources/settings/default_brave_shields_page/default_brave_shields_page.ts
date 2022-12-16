@@ -176,6 +176,7 @@ class BraveShieldsPage extends BraveShieldsPageBase {
 
   onHTTPSEverywhereControlChange_ () {
     this.browserProxy_.setHTTPSEverywhereEnabled(this.$.httpsEverywhereControlType.checked)
+  }
 
   onHttpsUpgradeControlChange_ () {
     this.browserProxy_.setHttpsUpgradeControlType(

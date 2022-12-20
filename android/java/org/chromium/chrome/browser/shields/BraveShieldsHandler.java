@@ -748,6 +748,11 @@ public class BraveShieldsHandler implements BraveRewardsHelper.LargeIconReadyCal
         mUpgradeHttpsText.setText(R.string.brave_shields_https_everywhere_switch);
         setupHTTPSEverywhereSwitchClick(mBraveShieldsHTTPSEverywhereSwitch);
 
+        if (ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT)) {
+            mSecondaryLayout.findViewById(R.id.brave_shields_upgrade_https_id)
+                    .setVisibility(View.GONE);
+        }
+
         LinearLayout mBlockScriptsLayout = mSecondaryLayout.findViewById(R.id.brave_shields_block_scripts_id);
         TextView mBlockScriptsText = mBlockScriptsLayout.findViewById(R.id.brave_shields_switch_text);
         mBraveShieldsBlockingScriptsSwitch = mBlockScriptsLayout.findViewById(R.id.brave_shields_switch);

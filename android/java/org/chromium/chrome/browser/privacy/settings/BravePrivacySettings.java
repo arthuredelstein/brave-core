@@ -297,6 +297,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         removePreferenceIfPresent(PREF_SAFE_BROWSING);
         if (ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT)) {
             removePreferenceIfPresent(PREF_HTTPS_FIRST_MODE);
+            removePreferenceIfPresent(PREF_HTTPSE);
         } else {
             removePreferenceIfPresent(PREF_HTTPS_UPGRADE);
         }

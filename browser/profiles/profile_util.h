@@ -48,7 +48,7 @@ void SetDefaultThirdPartyCookieBlockValue(Profile* profile);
 
 // Checks if the user previously had HTTPS-Only Mode enabled. If so,
 // set the HttpsUpgrade default setting to strict.
-void MigrateHttpsOnlyPrefToHttpsUpgradeSetting(Profile* profile);
+void MigrateBetweenHttpsOnlyPrefAndHttpsUpgradeSetting(Profile* profile);
 
 }  // namespace brave
 

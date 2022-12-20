@@ -212,6 +212,9 @@ This file contains all "about" strings.  It is set to NOT be translated, in tran
       <message name="IDS_STATS_NOTIFICATION_ON"  desc="Text for Turn on notifications">
         Turn on notifications
       </message>
+      <message name="IDS_BRAVE_SHIELDS_HTTPS_EVERYWHERE_SWITCH" desc="Switch for HTTPS Everywhere.">
+        Upgrade connections to HTTPS
+      </message>
       <message name="IDS_NEXT_TIP_DATE"  desc="Text for Next tip date">
         Next tip date
       </message>
@@ -298,6 +301,9 @@ This file contains all "about" strings.  It is set to NOT be translated, in tran
       </message>
       <message name="IDS_PROBLEM_SENDING_YOUR_TIP_DESCRIPTION" desc="Text for problem sending tip description">
         Please close and reopen the tipping banner to try again.
+      </message>
+      <message name="IDS_BRAVE_SHIELDS_HTTPS_EVERYWHERE_SWITCH_SUMMARY" desc="Summary for HTTPS Everywhere.">
+        Opens some sites using a secure HTTPS connection instead of plain HTTP.
       </message>
       <message name="IDS_DE_AMP_SWITCH" desc="Switch to activate De-AMP feature">
         Auto-redirect AMP pages

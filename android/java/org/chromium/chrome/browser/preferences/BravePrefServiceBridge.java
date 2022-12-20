@@ -29,6 +29,13 @@ public class BravePrefServiceBridge {
     }
 
     /**
+     * @param whether HTTPSE should be enabled.
+     */
+    public void setHTTPSEEnabled(boolean enabled) {
+        BravePrefServiceBridgeJni.get().setHTTPSEEnabled(enabled);
+    }
+
+    /**
      * @param HttpsUpgrade setting
      */
     public void setHttpsUpgradeControlType(String type) {
@@ -307,6 +314,8 @@ public class BravePrefServiceBridge {
 
         void setNoScriptControlType(String type);
         String getNoScriptControlType();
+
+        void setHTTPSEEnabled(boolean enabled);
 
         void setHttpsUpgradeControlType(String type);
         String getHttpsUpgradeControlType();

@@ -86,6 +86,13 @@ std::string GetWebRTCIPHandlingPreference(WebRTCIPHandlingPolicy policy) {
 namespace chrome {
 namespace android {
 
+void JNI_BravePrefServiceBridge_SetHTTPSEEnabled(JNIEnv* env,
+                                                 jboolean enabled) {
+  brave_shields::SetHTTPSEverywhereEnabled(
+      HostContentSettingsMapFactory::GetForProfile(GetOriginalProfile()),
+      enabled, GURL(), g_browser_process->local_state());
+}
+
 void JNI_BravePrefServiceBridge_SetHttpsUpgradeControlType(
     JNIEnv* env,
     const base::android::JavaParamRef<jstring>& type) {

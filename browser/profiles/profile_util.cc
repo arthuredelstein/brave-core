@@ -109,9 +109,9 @@ void MigrateHttpsUpgradeSettings(Profile* profile) {
   auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
   if (brave_shields::IsHttpsByDefaultFeatureEnabled()) {
     // Migrate forwards from HTTPS-Everywhere to HTTPS Upgrades.
-    bool httspUpgradeControlType = ControlType::ALLOW;
+    ControlType httpsUpgradeControlType = ControlType::ALLOW;
     if (brave_shields::GetHTTPSEverywhereEnabled(map, GURL())) {
-      httspUpgradeControlType = ControlType::BLOCK_THIRD_PARTY;
+      httpsUpgradeControlType = ControlType::BLOCK_THIRD_PARTY;
       brave_shields::SetHTTPSEverywhereEnabled(map, false, GURL());
     }
     if (prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {

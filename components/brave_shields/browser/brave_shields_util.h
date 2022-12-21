@@ -107,14 +107,15 @@ void SetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
                                bool enable,
                                const GURL& url,
                                PrefService* local_state = nullptr);
+// reset to the default value
+void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
+bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
+
 bool IsHttpsByDefaultFeatureEnabled();
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 ControlType type,
                                 const GURL& url,
                                 PrefService* local_state = nullptr);
-// reset to the default value
-void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
-bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url);
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                        const GURL& url);
 bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url);

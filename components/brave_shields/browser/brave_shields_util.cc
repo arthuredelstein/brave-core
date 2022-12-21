@@ -622,7 +622,7 @@ void ResetHTTPSEverywhereEnabled(HostContentSettingsMap* map,
 
 bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
-      url, GURL(), ContentSettingsType::BRAVE_HTTPS_UPGRADE);
+      url, GURL(), ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES);
 
   return setting == CONTENT_SETTING_ALLOW ? false : true;
 }

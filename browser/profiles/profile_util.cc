@@ -105,12 +105,14 @@ void SetDefaultThirdPartyCookieBlockValue(Profile* profile) {
 
 void MigrateHttpsUpgradeSettings(Profile* profile) {
   // If user flips the HTTPS by Default feature flag
+  printf("----------------------MigrateHttpsUpgradeSettings---------------\n");
   auto* prefs = profile->GetPrefs();
   auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
   if (brave_shields::IsHttpsByDefaultFeatureEnabled()) {
     // Migrate forwards from HTTPS-Everywhere settings to HTTPS Upgrades,
     bool httpsEverywhereEnabled = brave_shields::GetHTTPSEverywhereEnabled(map, GURL());
     bool httpsOnlyModeEnabled = prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled);
+    printf("%d %d\n", httpsEverywhereEnabled, httpsOnlyModeEnabled);
     if (httpsOnlyModeEnabled) {
       brave_shields::SetHttpsUpgradeControlType(
         map, ControlType::BLOCK, GURL());
@@ -121,6 +123,12 @@ void MigrateHttpsUpgradeSettings(Profile* profile) {
     }
     if (httpsEverywhereEnabled) {
       brave_shields::SetHTTPSEverywhereEnabled(map, false, GURL());
+      printf("set to HTTPS-E enabled to false.\n");
+    }
+    {
+      bool httpsEverywhereEnabled1 = brave_shields::GetHTTPSEverywhereEnabled(map, GURL());
+      bool httpsOnlyModeEnabled1 = prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled);
+      printf("%d %d\n", httpsEverywhereEnabled1, httpsOnlyModeEnabled1);
     }
   } else {
     // Migrate backwards from HTTPS Upgrades to HTTPS Everywhere settings.

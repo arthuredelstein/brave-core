@@ -105,42 +105,28 @@ void SetDefaultThirdPartyCookieBlockValue(Profile* profile) {
 
 void MigrateHttpsUpgradeSettings(Profile* profile) {
   // If user flips the HTTPS by Default feature flag
-  printf("----------------------MigrateHttpsUpgradeSettings---------------\n");
   auto* prefs = profile->GetPrefs();
   auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
   if (brave_shields::IsHttpsByDefaultFeatureEnabled()) {
-    // Migrate forwards from HTTPS-Everywhere settings to HTTPS Upgrades,
-    bool httpsEverywhereEnabled = brave_shields::GetHTTPSEverywhereEnabled(map, GURL());
-    bool httpsOnlyModeEnabled = prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled);
-    printf("%d %d\n", httpsEverywhereEnabled, httpsOnlyModeEnabled);
-    if (httpsOnlyModeEnabled) {
-      brave_shields::SetHttpsUpgradeControlType(
-        map, ControlType::BLOCK, GURL());
-      prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, false);
-    } else if (httpsEverywhereEnabled && !httpsOnlyModeEnabled) {
-      brave_shields::SetHttpsUpgradeControlType(
-        map, ControlType::BLOCK_THIRD_PARTY, GURL());
-    }
-    if (httpsEverywhereEnabled) {
+    // Migrate forwards from HTTPS-Everywhere to HTTPS Upgrades.
+    bool httspUpgradeControlType = ControlType::ALLOW;
+    if (brave_shields::GetHTTPSEverywhereEnabled(map, GURL())) {
+      httspUpgradeControlType = ControlType::BLOCK_THIRD_PARTY;
       brave_shields::SetHTTPSEverywhereEnabled(map, false, GURL());
-      printf("set to HTTPS-E enabled to false.\n");
     }
-    {
-      bool httpsEverywhereEnabled1 = brave_shields::GetHTTPSEverywhereEnabled(map, GURL());
-      bool httpsOnlyModeEnabled1 = prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled);
-      printf("%d %d\n", httpsEverywhereEnabled1, httpsOnlyModeEnabled1);
-    }
-  } else {
-    // Migrate backwards from HTTPS Upgrades to HTTPS Everywhere settings.
-    ControlType httpsUpgradeControlType = brave_shields::GetHttpsUpgradeControlType(map, GURL());
-    if (httpsUpgradeControlType == ControlType::BLOCK) {
-      prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, true);
-      brave_shields::SetHTTPSEverywhereEnabled(map, true, GURL());
-    } else if (httpsUpgradeControlType == ControlType::BLOCK_THIRD_PARTY) {
+    if (prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled)) {
+      httpsUpgradeControlType = ControlType::BLOCK;
       prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled, false);
-      brave_shields::SetHTTPSEverywhereEnabled(map, true, GURL());
     }
+    brave_shields::SetHttpsUpgradeControlType(
+        map, httpsUpgradeControlType, GURL());
+  } else {
+    // Migrate backwards from HTTPS Upgrades to HTTPS Everywhere.
+    ControlType httpsUpgradeControlType = brave_shields::GetHttpsUpgradeControlType(map, GURL());
     if (httpsUpgradeControlType != ControlType::ALLOW) {
+      brave_shields::SetHTTPSEverywhereEnabled(map, true, GURL());
+      prefs->SetBoolean(prefs::kHttpsOnlyModeEnabled,
+        httpsUpgradeControlType == ControlType::BLOCK);
       brave_shields::SetHttpsUpgradeControlType(
         map, ControlType::ALLOW, GURL());
     }

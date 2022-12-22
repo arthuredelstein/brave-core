@@ -5,9 +5,9 @@
 
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 
-#include <iostream>
 #include <memory>
 
+#include "base/debug/stack_trace.h"
 #include "base/debug/dump_without_crashing.h"
 #include "base/feature_list.h"
 #include "base/logging.h"
@@ -636,7 +636,6 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 ControlType type,
                                 const GURL& url,
                                 PrefService* local_state) {
-  LOG(ERROR) << "-------SetHttpsUpgradeControlType---- " << type << " " << url;
   auto primary_pattern = GetPatternFromURL(url);
   if (!primary_pattern.IsValid())
     return;
@@ -655,7 +654,6 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
     // Fall back to default
     setting = CONTENT_SETTING_DEFAULT;
   }
-  LOG(ERROR) << "SetHttpsUpgradeControlType ==> ControlType=" << type << ", ContentSetting=" << setting;
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
       ContentSettingsType::BRAVE_HTTPS_UPGRADE, setting);
@@ -672,7 +670,6 @@ ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                        const GURL& url) {
   ContentSetting setting = map->GetContentSetting(
       url, GURL(), ContentSettingsType::BRAVE_HTTPS_UPGRADE);
-  LOG(ERROR) << "GetHttpsUpgradeControlType ==> ContentSetting=" << setting;
   if (setting == CONTENT_SETTING_ALLOW) {
     // Disabled (allow http)
     return ControlType::ALLOW;

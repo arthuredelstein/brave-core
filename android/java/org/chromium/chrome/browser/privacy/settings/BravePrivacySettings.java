@@ -382,7 +382,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                 mHttpsUpgradePref.setCheckedIndex(0);
             } else if ((int) newValue == 1) {
                 BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
-                        BraveShieldsContentSettings.DEFAULT);
+                        BraveShieldsContentSettings.BLOCK_THIRDPARTY_RESOURCE);
                 mHttpsUpgradePref.setSummary(
                         getActivity().getResources().getString(R.string.https_upgrade_option_2));
                 mHttpsUpgradePref.setCheckedIndex(1);
@@ -589,7 +589,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
             mHttpsUpgradePref.setCheckedIndex(0);
             mHttpsUpgradePref.setSummary(
                     getActivity().getResources().getString(R.string.https_upgrade_option_1));
-        } else if (httpsUpgradePref.equals(BraveShieldsContentSettings.DEFAULT)) {
+        } else if (httpsUpgradePref.equals(BraveShieldsContentSettings.BLOCK_THIRDPARTY_RESOURCE)) {
             mHttpsUpgradePref.setCheckedIndex(1);
             mHttpsUpgradePref.setSummary(
                     getActivity().getResources().getString(R.string.https_upgrade_option_2));

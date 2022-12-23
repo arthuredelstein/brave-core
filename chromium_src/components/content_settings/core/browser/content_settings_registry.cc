@@ -37,9 +37,9 @@ void ContentSettingsRegistry::BraveInit() {
 
   Register(ContentSettingsType::BRAVE_HTTPS_UPGRADE,
            brave_shields::kHTTPSUpgrades, CONTENT_SETTING_ASK,
-           WebsiteSettingsInfo::SYNCABLE, AllowlistedSchemes(),
-           ValidSettings(CONTENT_SETTING_ALLOW, CONTENT_SETTING_ASK,
-                         CONTENT_SETTING_BLOCK),
+           WebsiteSettingsInfo::SYNCABLE, /*allowlisted_schemes=*/{},
+           /*valid_settings=*/{CONTENT_SETTING_ALLOW, CONTENT_SETTING_ASK,
+                               CONTENT_SETTING_BLOCK},
            WebsiteSettingsInfo::TOP_ORIGIN_ONLY_SCOPE,
            WebsiteSettingsRegistry::DESKTOP |
                WebsiteSettingsRegistry::PLATFORM_ANDROID,

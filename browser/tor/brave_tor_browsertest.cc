@@ -348,31 +348,53 @@ IN_PROC_BROWSER_TEST_F(BraveTorTest, ResetBridges) {
   EXPECT_FALSE(CheckComponentExists(tor::kTorPluggableTransportComponentId));
 }
 
-class BraveTorTest_EnableTorHttpsOnlyFlag : public BraveTorTest {
+class BraveTorTest_EnableTorHttpsOnlyFlag
+    : public BraveTorTest,
+      public ::testing::WithParamInterface<bool> {
  public:
   BraveTorTest_EnableTorHttpsOnlyFlag() {
-    feature_list_.InitAndEnableFeature(
-        blink::features::kBraveTorWindowsHttpsOnly);
+    if (IsBraveHttpsByDefaultEnabled()) {
+      scoped_feature_list_.InitWithFeatures(
+          {blink::features::kBraveTorWindowsHttpsOnly,
+           blink::features::kHttpsByDefault} /* enabled */,
+          {} /* disabled */
+      );
+    } else {
+      scoped_feature_list_.InitWithFeatures(
+          {blink::features::kBraveTorWindowsHttpsOnly} /* enabled */,
+          {blink::features::kHttpsByDefault} /* disabled */
+      );
+    }
+    //    BraveTorTest::SetUp();
   }
 
+  ~BraveTorTest_EnableTorHttpsOnlyFlag() override = default;
+
+  bool IsBraveHttpsByDefaultEnabled() { return GetParam(); }
+
  protected:
-  base::test::ScopedFeatureList feature_list_;
+  base::test::ScopedFeatureList scoped_feature_list_;
 };
 
-IN_PROC_BROWSER_TEST_F(BraveTorTest_EnableTorHttpsOnlyFlag,
+IN_PROC_BROWSER_TEST_P(BraveTorTest_EnableTorHttpsOnlyFlag,
                        TorWindowHttpsOnly) {
   EXPECT_FALSE(TorProfileServiceFactory::IsTorDisabled());
   DownloadTorClient();
 
   Profile* tor_profile = OpenTorWindow();
-  if (prefs blah blah) {
+  if (IsBraveHttpsByDefaultEnabled()) {
+    base::RunLoop().RunUntilIdle();
+    HostContentSettingsMap* map =
+        HostContentSettingsMapFactory::GetForProfile(tor_profile);
+    EXPECT_EQ(brave_shields::ControlType::BLOCK,
+              brave_shields::GetHttpsUpgradeControlType(map, GURL()));
+  } else {
     PrefService* prefs = tor_profile->GetPrefs();
     // Check that HTTPS-Only Mode has been enabled for the Tor window.
     EXPECT_TRUE(prefs->GetBoolean(prefs::kHttpsOnlyModeEnabled));
-  } else {
-    HostContentSettingsMap* map =
-      HostContentSettingsMapFactory::GetForProfile(tor_profile);
-    EXPECT_EQ(brave_shields::ControlType::BLOCK,
-            brave_shields::GetHttpsUpgradeControlType(map, GURL()));
   }
 }
+
+INSTANTIATE_TEST_SUITE_P(BraveTorTest_EnableTorHttpsOnlyFlag,
+                         BraveTorTest_EnableTorHttpsOnlyFlag,
+                         ::testing::Bool());

@@ -51,6 +51,7 @@
 #include "content/public/browser/child_process_security_policy.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
+#include "third_party/blink/public/common/features.h"
 #include "url/gurl.h"
 
 #if BUILDFLAG(ENABLE_BRAVE_REFERRALS)
@@ -198,6 +199,10 @@ void BraveBrowserProcessImpl::StartBraveServices() {
   ad_block_service()->Start();
   https_everywhere_service()->Start();
   resource_component();
+
+  if (base::FeatureList::IsEnabled(blink::features::kHttpsByDefault)) {
+    https_upgrade_exceptions_service();
+  }
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
   extension_whitelist_service();

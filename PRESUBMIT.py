@@ -236,12 +236,11 @@ def CheckForIncludeGuards(original_check, input_api, output_api, **kwargs):
             return affected_file
 
         return [
-            PrependBrave(f) for f in filter(self.FilterSourceFile,
-                                            original_method(source_file))
+            PrependBrave(f)
+            for f in filter(self.FilterSourceFile, original_method(source_file))
         ]
 
-    with override_utils.override_scope_function(input_api,
-                                                AffectedSourceFiles):
+    with override_utils.override_scope_function(input_api, AffectedSourceFiles):
         return original_check(input_api, output_api, **kwargs)
 
 

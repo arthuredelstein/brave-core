@@ -808,7 +808,7 @@ TEST_F(BraveShieldsUtilTest, SetHTTPSEverywhereEnabled_ForOrigin) {
 TEST_F(BraveShieldsUtilTest, GetHTTPSEverywhereEnabled_Default) {
   auto* map = HostContentSettingsMapFactory::GetForProfile(profile());
 
-  auto setting = brave_shields::GetHTTPSEverywhereEnabled(map, GURL());
+  auto setting = brave_shields::(map, GURL());
   EXPECT_EQ(true, setting);
 
   /* ALLOW */

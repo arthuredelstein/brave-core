@@ -89,6 +89,10 @@ BASE_FEATURE(kRestrictEventSourcePool,
              base::FEATURE_ENABLED_BY_DEFAULT
 #endif
 );
+// Enabled HTTPS by Default.
+BASE_FEATURE(kHttpsByDefault,
+             "HttpsByDefault",
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 }  // namespace features
 }  // namespace blink

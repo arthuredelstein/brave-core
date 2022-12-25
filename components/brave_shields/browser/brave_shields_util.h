@@ -14,7 +14,6 @@
 #include "services/network/public/mojom/referrer_policy.mojom.h"
 
 namespace content {
-class BrowserContext;
 struct Referrer;
 }
 
@@ -119,7 +118,7 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 PrefService* local_state = nullptr);
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                        const GURL& url);
-bool ShouldUpgradeToHttps(content::BrowserContext* context, const GURL& url);
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url);
 bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url);
 
 void SetNoScriptControlType(HostContentSettingsMap* map,

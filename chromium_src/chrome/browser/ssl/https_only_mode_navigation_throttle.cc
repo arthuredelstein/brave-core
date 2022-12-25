@@ -29,8 +29,14 @@ constexpr base::TimeDelta g_tor_fallback_delay = base::Seconds(20);
 bool ShouldUpgradeToHttps(content::NavigationHandle* handle) {
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
+  Profile* profile = Profile::FromBrowserContext(context);
+  if (profile->IsTor()) {
+    return true;
+  }
   const GURL& url = handle->GetURL();
-  return brave_shields::ShouldUpgradeToHttps(context, url);
+  HostContentSettingsMap* map =
+      HostContentSettingsMapFactory::GetForProfile(context);
+  return brave_shields::ShouldUpgradeToHttps(map, url);
 }
 
 bool IsTor(content::NavigationHandle* handle) {

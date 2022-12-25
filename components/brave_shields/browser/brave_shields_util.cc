@@ -22,8 +22,6 @@
 #include "brave/components/constants/pref_names.h"
 #include "brave/components/content_settings/core/common/content_settings_util.h"
 #include "brave/components/debounce/common/features.h"
-#include "chrome/browser/content_settings/host_content_settings_map_factory.h"
-#include "chrome/browser/profiles/profile.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -687,14 +685,7 @@ ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
   }
 }
 
-bool ShouldUpgradeToHttps(content::BrowserContext* context, const GURL& url) {
-  HostContentSettingsMap* map =
-      HostContentSettingsMapFactory::GetForProfile(context);
-  Profile* profile = Profile::FromBrowserContext(context);
-  // Upgrade if this is a Tor window.
-  if (profile->IsTor()) {
-    return true;
-  }
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
   // Don't upgrade if feature is disabled.
   if (!IsHttpsByDefaultFeatureEnabled()) {
     return false;

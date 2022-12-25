@@ -17,6 +17,20 @@ namespace content {
 class BrowserContext;
 }  // namespace content
 
+namespace {
+
+bool ShouldUpgradeToHttps(content::BrowserContext* context, const GURL& url) {
+  Profile* profile = Profile::FromBrowserContext(context);
+  if (profile->IsTor()) {
+    return true;
+  }
+  HostContentSettingsMap* map =
+      HostContentSettingsMapFactory::GetForProfile(context);
+  return brave_shields::ShouldUpgradeToHttps(map, url);
+}
+
+}  // namespace
+
 namespace net {
 namespace {
 
@@ -34,7 +48,7 @@ bool IsLocalhostOrOnion(const GURL& url) {
 #define IsLocalhost(URL) IsLocalhostOrOnion(URL)
 #define GetBoolean(PREF_NAME)                       \
   GetBooleanOr(PREF_NAME,                           \
-               brave_shields::ShouldUpgradeToHttps( \
+               ShouldUpgradeToHttps( \
                    browser_context, tentative_resource_request.url))
 
 #include "src/chrome/browser/ssl/https_only_mode_upgrade_interceptor.cc"

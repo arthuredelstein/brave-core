@@ -32,10 +32,10 @@ bool IsLocalhostOrOnion(const GURL& url) {
 }  // namespace net
 
 #define IsLocalhost(URL) IsLocalhostOrOnion(URL)
-#define GetBoolean(PREF_NAME) \
-  GetBooleanOr(               \
-      PREF_NAME,              \
-      brave_shields::ShouldUpgradeToHttps(browser_context, tentative_resource_request.url))
+#define GetBoolean(PREF_NAME)                       \
+  GetBooleanOr(PREF_NAME,                           \
+               brave_shields::ShouldUpgradeToHttps( \
+                   browser_context, tentative_resource_request.url))
 
 #include "src/chrome/browser/ssl/https_only_mode_upgrade_interceptor.cc"
 

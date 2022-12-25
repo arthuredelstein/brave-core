@@ -383,7 +383,8 @@ IN_PROC_BROWSER_TEST_P(BraveTorTest_EnableTorHttpsOnlyFlag,
 
   Profile* tor_profile = OpenTorWindow();
   if (IsBraveHttpsByDefaultEnabled()) {
-    EXPECT_TRUE(brave_shields::ShouldUpgradeToHttps(tor_profile, GURL("https://example.com")));
+    EXPECT_TRUE(brave_shields::ShouldUpgradeToHttps(
+        tor_profile, GURL("https://example.com")));
   } else {
     PrefService* prefs = tor_profile->GetPrefs();
     // Check that HTTPS-Only Mode has been enabled for the Tor window.

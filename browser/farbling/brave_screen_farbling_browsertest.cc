@@ -35,7 +35,7 @@ namespace {
 
 const gfx::Rect kTestWindowBounds[] = {
     gfx::Rect(200, 100, 300, 200), gfx::Rect(50, 50, 200, 200),
-    gfx::Rect(50, 50, 555, 444), gfx::Rect(0, 0, 200, 200)};
+    gfx::Rect(50, 50, 555, 511), gfx::Rect(0, 0, 200, 200)};
 
 }  // namespace
 
@@ -177,16 +177,20 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
             EXPECT_GE(8, EvalJs(host, "window.outerWidth - parent.innerWidth"));
             EXPECT_GE(8,
                       EvalJs(host, "window.outerHeight - parent.innerHeight"));
+            EXPECT_GE(8, EvalJs(host,
+                                "window.screen.availWidth - Math.max(450, "
+                                "parent.innerWidth)"));
+            EXPECT_GE(8, EvalJs(host,
+                                "window.screen.availHeight -  Math.max(450, "
+                                "parent.innerHeight)"));
             EXPECT_GE(
                 8,
-                EvalJs(host, "window.screen.availWidth - parent.innerWidth"));
-            EXPECT_GE(
-                8,
-                EvalJs(host, "window.screen.availHeight - parent.innerHeight"));
-            EXPECT_GE(8,
-                      EvalJs(host, "window.screen.width - parent.innerWidth"));
-            EXPECT_GE(
-                8, EvalJs(host, "window.screen.height - parent.innerHeight"));
+                EvalJs(
+                    host,
+                    "window.screen.width - Math.max(450, parent.innerWidth)"));
+            EXPECT_GE(8, EvalJs(host,
+                                "window.screen.height - Math.max(450, "
+                                "parent.innerHeight)"));
           } else {
             EXPECT_LE(0, EvalJs(host, "window.outerWidth - parent.innerWidth"));
             EXPECT_LT(8,
@@ -294,8 +298,10 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
         if (!allow_fingerprinting && !IsFlagDisabled()) {
           EXPECT_GE(child_bounds.x(), parent_bounds.x());
           EXPECT_GE(child_bounds.y(), parent_bounds.y());
-          EXPECT_GE(10 + parent_bounds.width(), child_bounds.width());
-          EXPECT_GE(10 + parent_bounds.height(), child_bounds.height());
+          int maxWidth = 10 + std::max(450, parent_bounds.width());
+          int maxHeight = 10 + std::max(450, parent_bounds.width());
+          EXPECT_GE(maxWidth, child_bounds.width());
+          EXPECT_GE(maxHeight, child_bounds.height());
         } else {
           EXPECT_LE(child_bounds.x(), std::max(80, 10 + parent_bounds.x()));
           EXPECT_LE(child_bounds.y(), std::max(80, 10 + parent_bounds.y()));

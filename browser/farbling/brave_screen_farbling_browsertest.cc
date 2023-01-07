@@ -35,17 +35,16 @@ namespace {
 
 const gfx::Rect kTestWindowBounds[] = {
     gfx::Rect(200, 100, 300, 200), gfx::Rect(50, 50, 200, 200),
-    gfx::Rect(50, 50, 555, 511), gfx::Rect(0, 0, 200, 200)};
+    gfx::Rect(50, 50, 475, 460), gfx::Rect(0, 0, 200, 200)};
 
 }  // namespace
 
 // A helper class to wait for widget bounds changes beyond given thresholds.
 class WidgetBoundsChangeWaiter final : public views::WidgetObserver {
  public:
-  WidgetBoundsChangeWaiter(views::Widget* widget, int move_by, int resize_by)
+  WidgetBoundsChangeWaiter(views::Widget* widget, int threshold)
       : widget_(widget),
-        move_by_(move_by),
-        resize_by_(resize_by),
+        threshold_(threshold),
         initial_bounds_(widget->GetWindowBoundsInScreen()) {
     widget_->AddObserver(this);
   }
@@ -71,14 +70,14 @@ class WidgetBoundsChangeWaiter final : public views::WidgetObserver {
 
  private:
   bool BoundsChangeMeetsThreshold(const gfx::Rect& rect) const {
-    return (std::abs(rect.x() - initial_bounds_.x()) >= move_by_ ||
-            std::abs(rect.y() - initial_bounds_.y()) >= move_by_) &&
-           (std::abs(rect.width() - initial_bounds_.width()) >= resize_by_ ||
-            std::abs(rect.height() - initial_bounds_.height()) >= resize_by_);
+    return std::abs(rect.x() - initial_bounds_.x()) >= threshold_ &&
+           std::abs(rect.y() - initial_bounds_.y()) >= threshold_ &&
+           std::abs(rect.width() - initial_bounds_.width()) >= threshold_ &&
+           std::abs(rect.height() - initial_bounds_.height()) >= threshold_;
   }
 
   const raw_ptr<views::Widget> widget_;
-  const int move_by_, resize_by_;
+  const int threshold_;
   const gfx::Rect initial_bounds_;
   base::RunLoop run_loop_;
 };
@@ -316,7 +315,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
                              "resizeTo(outerWidth + 13, outerHeight + 14)");
           auto* widget = views::Widget::GetWidgetForNativeWindow(
               popup->window()->GetNativeWindow());
-          WidgetBoundsChangeWaiter(widget, 10, 10).Wait();
+          WidgetBoundsChangeWaiter(widget, 10).Wait();
           auto bounds_after = popup->window()->GetBounds();
           EXPECT_EQ(11, bounds_after.x() - bounds_before.x());
           EXPECT_EQ(12, bounds_after.y() - bounds_before.y());

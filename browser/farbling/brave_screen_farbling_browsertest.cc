@@ -312,9 +312,10 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
           auto* widget = views::Widget::GetWidgetForNativeWindow(
               popup->window()->GetNativeWindow());
           auto waiter = WidgetBoundsChangeWaiter(widget, 10);
-          ExecuteScript(popup_contents, "moveTo(screenX + 11, screenY + 12)");
-          ExecuteScript(popup_contents,
-                        "resizeTo(outerWidth + 13, outerHeight + 14)");
+          ASSERT_TRUE(
+              ExecJs(popup_contents, "moveTo(screenX + 11, screenY + 12)"));
+          ASSERT_TRUE(ExecJs(popup_contents,
+                             "resizeTo(outerWidth + 13, outerHeight + 14)"));
           waiter.Wait();
           auto bounds_after = popup->window()->GetBounds();
           EXPECT_EQ(11, bounds_after.x() - bounds_before.x());

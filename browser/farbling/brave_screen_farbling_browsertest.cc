@@ -309,13 +309,13 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
         }
         if (!test_iframe) {
           auto bounds_before = popup->window()->GetBounds();
-          ExecuteScriptAsync(popup_contents,
-                             "moveTo(screenX + 11, screenY + 12)");
-          ExecuteScriptAsync(popup_contents,
-                             "resizeTo(outerWidth + 13, outerHeight + 14)");
           auto* widget = views::Widget::GetWidgetForNativeWindow(
               popup->window()->GetNativeWindow());
-          WidgetBoundsChangeWaiter(widget, 10).Wait();
+          auto waiter = WidgetBoundsChangeWaiter(widget, 10);
+          ExecuteScript(popup_contents, "moveTo(screenX + 11, screenY + 12)");
+          ExecuteScript(popup_contents,
+                        "resizeTo(outerWidth + 13, outerHeight + 14)");
+          waiter.Wait();
           auto bounds_after = popup->window()->GetBounds();
           EXPECT_EQ(11, bounds_after.x() - bounds_before.x());
           EXPECT_EQ(12, bounds_after.y() - bounds_before.y());

@@ -80,5 +80,10 @@ BASE_FEATURE(kBraveRoundTimeStamps,
              "BraveRoundTimeStamps",
              base::FEATURE_ENABLED_BY_DEFAULT);
 
+// Enable EventSource connection pool limit per eTLD+1.
+BASE_FEATURE(kRestrictEventSourcePool,
+             "RestrictEventSourcePool",
+             base::FEATURE_ENABLED_BY_DEFAULT);
+
 }  // namespace features
 }  // namespace blink

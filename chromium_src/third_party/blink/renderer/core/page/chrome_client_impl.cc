@@ -30,13 +30,13 @@ const display::ScreenInfos& ChromeClientImpl::BraveGetScreenInfos(
     return GetScreenInfos(frame);
   }
   // Don't tell window screen is smaller than 450x450.
-  int minWidth =
+  int min_width =
       FarbleInteger(context, brave::FarbleKey::kWindowInnerWidth, 450, 0, 8);
-  int minHeight =
+  int min_height =
       FarbleInteger(context, brave::FarbleKey::kWindowInnerHeight, 450, 0, 8);
   gfx::Rect farbled_screen_rect(dom_window->screenX(), dom_window->screenY(),
-                                std::max(minWidth, dom_window->outerWidth()),
-                                std::max(minHeight, dom_window->outerHeight()));
+                                std::max(min_width, dom_window->outerWidth()),
+                                std::max(min_height, dom_window->outerHeight()));
   screen_info.rect = farbled_screen_rect;
   screen_info.available_rect = farbled_screen_rect;
   screen_info.is_extended = false;

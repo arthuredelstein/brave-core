@@ -102,9 +102,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
 
     ASSERT_TRUE(embedded_test_server()->Start());
 
-    top_url_ = embedded_test_server()->GetURL("a.com", "/");
-    iframe_url_ = embedded_test_server()->GetURL("a.com", "/iframe.html");
-    popup_url_ = embedded_test_server()->GetURL("a.com", "/simple.html");
+    parent_url_ = embedded_test_server()->GetURL("a.com", "/iframe.html");
   }
 
   void TearDown() override {
@@ -127,7 +125,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
   void SetFingerprintingSetting(bool allow) {
     brave_shields::SetFingerprintingControlType(
         ContentSettings(), allow ? ControlType::ALLOW : ControlType::DEFAULT,
-        IframeUrl());
+        parent_url());
   }
 
   content::WebContents* Contents() const {
@@ -224,7 +222,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
       SetFingerprintingSetting(allow_fingerprinting);
       for (int i = 0; i < static_cast<int>(std::size(kTestWindowBounds)); ++i) {
         SetBounds(kTestWindowBounds[i]);
-        NavigateToURLUntilLoadStop(IframeUrl());
+        NavigateToURLUntilLoadStop(parent_url());
         for (bool test_iframe : {false, true}) {
           content::RenderFrameHost* host = test_iframe ? Parent() : IFrame();
           if (!allow_fingerprinting && !IsFlagDisabled()) {
@@ -256,7 +254,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
       SetBounds(kTestWindowBounds[j]);
       for (bool allow_fingerprinting : {false, true}) {
         SetFingerprintingSetting(allow_fingerprinting);
-        NavigateToURLUntilLoadStop(IframeUrl());
+        NavigateToURLUntilLoadStop(parent_url());
         for (bool test_iframe : {false, true}) {
           content::RenderFrameHost* host = test_iframe ? Parent() : IFrame();
           EXPECT_EQ(
@@ -281,7 +279,7 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
     } while (parent_bounds.width() > 600 || parent_bounds.height() > 600);
     for (bool allow_fingerprinting : {false, true}) {
       SetFingerprintingSetting(allow_fingerprinting);
-      NavigateToURLUntilLoadStop(IframeUrl());
+      NavigateToURLUntilLoadStop(parent_url());
       for (bool test_iframe : {false, true}) {
         const char* script =
             "open('/simple.html', '', `"
@@ -327,17 +325,13 @@ class BraveScreenFarblingBrowserTest : public InProcessBrowserTest {
     }
   }
 
-  GURL& IframeUrl() { return iframe_url_; }
-  GURL& TopUrl() { return top_url_; }
-  GURL& PopupUrl() { return popup_url_; }
+  GURL& parent_url() { return parent_url_; }
 
  protected:
   base::test::ScopedFeatureList feature_list_;
 
  private:
-  GURL top_url_;
-  GURL iframe_url_;
-  GURL popup_url_;
+  GURL parent_url_;
   std::unique_ptr<ChromeContentClient> content_client_;
   std::unique_ptr<BraveContentBrowserClient> browser_content_client_;
 };
@@ -366,12 +360,12 @@ class BraveScreenFarblingBrowserTest_DisableFlag
 
 IN_PROC_BROWSER_TEST_F(BraveScreenFarblingBrowserTest_EnableFlag,
                        FarbleScreenSize_EnableFlag) {
-  FarbleScreenSize(IframeUrl(), true);
+  FarbleScreenSize(parent_url(), true);
 }
 
 IN_PROC_BROWSER_TEST_F(BraveScreenFarblingBrowserTest_DisableFlag,
                        FarbleScreenSize_DisableFlag) {
-  FarbleScreenSize(IframeUrl(), true);
+  FarbleScreenSize(parent_url(), true);
 }
 
 IN_PROC_BROWSER_TEST_F(BraveScreenFarblingBrowserTest_EnableFlag,

@@ -409,7 +409,7 @@ IN_PROC_BROWSER_TEST_F(BraveScreenFarblingBrowserTest_EnableFlag,
 
 IN_PROC_BROWSER_TEST_F(BraveScreenFarblingBrowserTest_DisableFlag,
                        FarbleScreenPopupPosition_DisableFlag_1) {
-  FarbleScreenPopupPosition(1);
+  1 + FarbleScreenPopupPosition(1);
 }
 
 IN_PROC_BROWSER_TEST_F(BraveScreenFarblingBrowserTest_EnableFlag,

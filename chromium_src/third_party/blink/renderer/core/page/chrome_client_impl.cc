@@ -34,9 +34,10 @@ const display::ScreenInfos& ChromeClientImpl::BraveGetScreenInfos(
       FarbleInteger(context, brave::FarbleKey::kWindowInnerWidth, 450, 0, 8);
   int min_height =
       FarbleInteger(context, brave::FarbleKey::kWindowInnerHeight, 450, 0, 8);
-  gfx::Rect farbled_screen_rect(dom_window->screenX(), dom_window->screenY(),
-                                std::max(min_width, dom_window->outerWidth()),
-                                std::max(min_height, dom_window->outerHeight()));
+  gfx::Rect farbled_screen_rect(
+      dom_window->screenX(), dom_window->screenY(),
+      std::max(min_width, dom_window->outerWidth()),
+      std::max(min_height, dom_window->outerHeight()));
   screen_info.rect = farbled_screen_rect;
   screen_info.available_rect = farbled_screen_rect;
   screen_info.is_extended = false;

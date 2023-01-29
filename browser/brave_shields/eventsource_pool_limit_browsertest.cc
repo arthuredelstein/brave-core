@@ -10,8 +10,6 @@
 #include "brave/components/constants/brave_paths.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/browser/ui/browser.h"
-#include "chrome/test/base/in_process_browser_test.h"
 #include "chrome/test/base/ui_test_utils.h"
 #include "content/public/test/browser_test.h"
 #include "content/public/test/content_mock_cert_verifier.h"
@@ -22,6 +20,15 @@
 #include "net/test/embedded_test_server/http_request.h"
 #include "third_party/blink/public/common/features.h"
 #include "url/gurl.h"
+
+#if BUILDFLAG(IS_ANDROID)
+#include "chrome/browser/ui/android/tab_model/tab_model.h"
+#include "chrome/browser/ui/android/tab_model/tab_model_list.h"
+#include "chrome/test/base/android/android_browser_test.h"
+#else
+#include "chrome/browser/ui/browser.h"
+#include "chrome/test/base/in_process_browser_test.h"
+#endif
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
 #include "chrome/browser/extensions/chrome_test_extension_loader.h"
@@ -100,12 +107,12 @@ class EmbeddedTestServerKeepAlive : public EmbeddedTestServer {
 
 }  // namespace
 
-class EventSourcePoolLimitBrowserTest : public InProcessBrowserTest {
+class EventSourcePoolLimitBrowserTest : public PlatformBrowserTest {
  public:
   EventSourcePoolLimitBrowserTest() = default;
 
   void SetUpOnMainThread() override {
-    InProcessBrowserTest::SetUpOnMainThread();
+    PlatformBrowserTest::SetUpOnMainThread();
     host_resolver()->AddRule("*", "127.0.0.1");
     brave::RegisterPathProvider();
     mock_cert_verifier_.mock_cert_verifier()->set_default_result(net::OK);
@@ -172,22 +179,22 @@ class EventSourcePoolLimitBrowserTest : public InProcessBrowserTest {
   }
 
   void SetUpCommandLine(base::CommandLine* command_line) override {
-    InProcessBrowserTest::SetUpCommandLine(command_line);
+    PlatformBrowserTest::SetUpCommandLine(command_line);
     mock_cert_verifier_.SetUpCommandLine(command_line);
   }
 
   void SetUpInProcessBrowserTestFixture() override {
-    InProcessBrowserTest::SetUpInProcessBrowserTestFixture();
+    PlatformBrowserTest::SetUpInProcessBrowserTestFixture();
     mock_cert_verifier_.SetUpInProcessBrowserTestFixture();
   }
 
   void TearDownInProcessBrowserTestFixture() override {
     mock_cert_verifier_.TearDownInProcessBrowserTestFixture();
-    InProcessBrowserTest::TearDownInProcessBrowserTestFixture();
+    PlatformBrowserTest::TearDownInProcessBrowserTestFixture();
   }
 
   HostContentSettingsMap* content_settings() {
-    return HostContentSettingsMapFactory::GetForProfile(browser()->profile());
+    return HostContentSettingsMapFactory::GetForProfile(GetProfile());
   }
 
   // Makes use of Cross Site Redirector
@@ -208,6 +215,13 @@ class EventSourcePoolLimitBrowserTest : public InProcessBrowserTest {
         --n;
       }
     }
+  }
+  Profile* GetProfile() {
+#if BUILDFLAG(IS_ANDROID)
+    return TabModelList::models()[0]->GetProfile();
+#else
+    return browser()->profile();
+#endif
   }
 
  protected:
@@ -365,7 +379,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
   })");
   test_extension_dir.WriteFile(FILE_PATH_LITERAL("empty.html"), "");
 
-  extensions::ChromeTestExtensionLoader extension_loader(browser()->profile());
+  extensions::ChromeTestExtensionLoader extension_loader(GetProfile());
   scoped_refptr<const extensions::Extension> extension =
       extension_loader.LoadExtension(test_extension_dir.UnpackedPath());
   const GURL url = extension->GetResourceURL("/empty.html");

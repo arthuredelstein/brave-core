@@ -6,6 +6,7 @@
 #include <string>
 
 #include "base/path_service.h"
+#include "base/test/scoped_feature_list.h"
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/constants/brave_paths.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -216,12 +217,19 @@ class EventSourcePoolLimitBrowserTest : public PlatformBrowserTest {
       }
     }
   }
+
   Profile* GetProfile() {
 #if BUILDFLAG(IS_ANDROID)
     return TabModelList::models()[0]->GetProfile();
 #else
     return browser()->profile();
 #endif
+  }
+
+  content::RenderFrameHost* OpenInNewTab(const GURL& url) {
+    return ui_test_utils::NavigateToURLWithDisposition(
+        browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
+        ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
   }
 
  protected:
@@ -233,9 +241,7 @@ class EventSourcePoolLimitBrowserTest : public PlatformBrowserTest {
 IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
                        PoolIsLimitedByDefault) {
   const GURL url(https_server_.GetURL("a.com", "/simple.html"));
-  auto* rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* rfh = OpenInNewTab(url);
 
   OpenEventSourcesAndExpectLimited(rfh, kEventSourcesOpenScript,
                                    kEventSourcesPoolLimit);
@@ -251,9 +257,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
       https_server_.GetURL("b.com", "/ephemeral_storage.html"));
 
   // Open a.com with nested b.com.
-  auto* a_com_rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), a_com_url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* a_com_rfh = OpenInNewTab(a_com_url);
   auto* b_com0_in_a_com_rfh = GetNthChildFrameWithHost(a_com_rfh, "b.com");
 
   // Test EventSource limit in nested b.com.
@@ -271,9 +275,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
   OpenEventSources(a_com_in_a_com_rfh, kEventSourcesOpenScript, 1);
 
   // Open b.com with a nested a.com.
-  auto* b_com_rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), b_com_url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* b_com_rfh = OpenInNewTab(b_com_url);
   auto* a_com_in_b_com_rfh = GetNthChildFrameWithHost(b_com_rfh, "a.com");
 
   // Test EventSources limit in nested a.com.
@@ -288,9 +290,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
                        ServiceWorkerIsLimited) {
   const GURL url(https_server_.GetURL("a.com", "/simple.html"));
 
-  auto* rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* rfh = OpenInNewTab(url);
 
   const std::string& register_sw_script = content::JsReplace(
       kRegisterSwScript, "service-worker-eventsource-limit.js");
@@ -311,9 +311,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
                        SandboxedFramesAreLimited) {
   const GURL a_com_url(
       https_server_.GetURL("a.com", "/csp_sandboxed_frame.html"));
-  auto* a_com_rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), a_com_url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* a_com_rfh = OpenInNewTab(a_com_url);
   EXPECT_TRUE(a_com_rfh->GetLastCommittedOrigin().opaque());
 
   // Ensure the limit is applied to main a.com and child c.com frames.
@@ -325,9 +323,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
 
   const GURL b_com_url(
       https_server_.GetURL("b.com", "/csp_sandboxed_frame.html"));
-  auto* b_com_rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), b_com_url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* b_com_rfh = OpenInNewTab(b_com_url);
   EXPECT_TRUE(b_com_rfh->GetLastCommittedOrigin().opaque());
 
   // Ensure the limit is applied to main b.com and child c.com frames.
@@ -344,9 +340,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
   // Disable shields.
   brave_shields::SetBraveShieldsEnabled(content_settings(), false, url);
 
-  auto* a_com_rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* a_com_rfh = OpenInNewTab(url);
 
   // No limits should be active.
   OpenEventSources(a_com_rfh, kEventSourcesOpenScript,
@@ -383,9 +377,7 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
   scoped_refptr<const extensions::Extension> extension =
       extension_loader.LoadExtension(test_extension_dir.UnpackedPath());
   const GURL url = extension->GetResourceURL("/empty.html");
-  auto* extension_rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* extension_rfh = OpenInNewTab(url);
   ASSERT_TRUE(extension_rfh);
   OpenEventSources(extension_rfh, kEventSourcesOpenScript,
                    kEventSourcesPoolLimit + 5);
@@ -407,9 +399,7 @@ class EventSourcePoolLimitDisabledBrowserTest
 IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitDisabledBrowserTest,
                        PoolIsNotLimited) {
   const GURL url(https_server_.GetURL("a.com", "/simple.html"));
-  auto* rfh = ui_test_utils::NavigateToURLWithDisposition(
-      browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui_test_utils::BROWSER_TEST_WAIT_FOR_LOAD_STOP);
+  auto* rfh = OpenInNewTab(url);
 
   // No limits should be active.
   OpenEventSources(rfh, kEventSourcesOpenScript, kEventSourcesPoolLimit + 5);

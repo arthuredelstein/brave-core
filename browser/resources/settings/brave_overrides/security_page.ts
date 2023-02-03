@@ -4,7 +4,7 @@
 // you can obtain one at https://mozilla.org/MPL/2.0/.
 
 import {RegisterPolymerTemplateModifications} from 'chrome://resources/polymer_overriding.js'
-import {loadTimeData} from 'chrome://resources/js/load_time_data.m.js';
+import {loadTimeData} from '//resources/js/load_time_data.js';
 
 RegisterPolymerTemplateModifications({
   'settings-security-page': (templateContent) => {

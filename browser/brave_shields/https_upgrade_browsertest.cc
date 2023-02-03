@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "base/test/scoped_feature_list.h"
 #include "brave/browser/brave_browser_process.h"
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
@@ -11,10 +12,8 @@
 #include "chrome/browser/interstitials/security_interstitial_page_test_utils.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ssl/https_only_mode_upgrade_interceptor.h"
-#include "chrome/browser/ui/browser.h"
 #include "chrome/common/pref_names.h"
-#include "chrome/test/base/in_process_browser_test.h"
-#include "chrome/test/base/ui_test_utils.h"
+#include "chrome/test/base/chrome_test_utils.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/test/browser_test.h"
 #include "content/public/test/browser_test_utils.h"
@@ -24,6 +23,13 @@
 #include "net/dns/mock_host_resolver.h"
 #include "third_party/blink/public/common/features.h"
 #include "url/gurl.h"
+
+#if BUILDFLAG(IS_ANDROID)
+#include "chrome/test/base/android/android_browser_test.h"
+#else
+#include "chrome/browser/ui/browser.h"
+#include "chrome/test/base/in_process_browser_test.h"
+#endif
 
 using blink::features::kHttpsByDefault;
 using brave_shields::ControlType;
@@ -51,16 +57,22 @@ const TestStruct test_combinations[] = {
     {true, "secure2.test", ControlType::BLOCK_THIRD_PARTY, PageResult::HTTPS},
     {true, "secure3.test", ControlType::BLOCK, PageResult::HTTPS}};
 
+#if BUILDFLAG(IS_ANDROID)
+base::FilePath GetChromeTestDataDir() {
+  return base::FilePath(FILE_PATH_LITERAL("net/data/url_request_unittest"));
+}
+#endif
+
 }  // namespace
 
-class HttpsUpgradeBrowserTest : public InProcessBrowserTest {
+class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
  public:
   HttpsUpgradeBrowserTest() = default;
   ~HttpsUpgradeBrowserTest() override = default;
 
   void SetUp() override {
     feature_list_.InitAndEnableFeature(kHttpsByDefault);
-    InProcessBrowserTest::SetUp();
+    PlatformBrowserTest::SetUp();
   }
 
   void SetUpOnMainThread() override {
@@ -107,17 +119,18 @@ class HttpsUpgradeBrowserTest : public InProcessBrowserTest {
     mock_cert_verifier_.TearDownInProcessBrowserTestFixture();
   }
 
-  bool NavigateToURLUntilLoadStop(const GURL& url) {
-    EXPECT_TRUE(ui_test_utils::NavigateToURL(browser(), url));
-    return WaitForLoadStop(Contents());
+  void NavigateToURL(const GURL& url) {
+    content::NavigateToURLBlockUntilNavigationsComplete(Contents(), url, 1,
+                                                        true);
   }
 
-  content::WebContents* Contents() const {
-    return browser()->tab_strip_model()->GetActiveWebContents();
+  content::WebContents* Contents() {
+    return chrome_test_utils::GetActiveWebContents(this);
   }
 
   HostContentSettingsMap* ContentSettings() {
-    return HostContentSettingsMapFactory::GetForProfile(browser()->profile());
+    return HostContentSettingsMapFactory::GetForProfile(
+        chrome_test_utils::GetProfile(this));
   }
 
  protected:
@@ -145,7 +158,7 @@ IN_PROC_BROWSER_TEST_F(HttpsUpgradeBrowserTest, CheckUpgrades) {
           g_browser_process->local_state());
       base::RunLoop().RunUntilIdle();
       content::TestNavigationObserver nav_observer(Contents(), 1);
-      NavigateToURLUntilLoadStop(initial_url);
+      NavigateToURL(initial_url);
       nav_observer.Wait();
       bool navigation_succeeded = nav_observer.last_navigation_succeeded();
       bool interstitial_showing =

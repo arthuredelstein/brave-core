@@ -70,11 +70,6 @@ BASE_FEATURE(kBraveBlockScreenFingerprinting,
              "BraveBlockScreenFingerprinting",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
-// Enables HTTPS-Only Mode in Private Windows with Tor by default.
-BASE_FEATURE(kBraveTorWindowsHttpsOnly,
-             "BraveTorWindowsHttpsOnly",
-             base::FEATURE_ENABLED_BY_DEFAULT);
-
 // Enables protection against fingerprinting via high-resolution time stamps.
 BASE_FEATURE(kBraveRoundTimeStamps,
              "BraveRoundTimeStamps",
@@ -89,10 +84,6 @@ BASE_FEATURE(kRestrictEventSourcePool,
              base::FEATURE_ENABLED_BY_DEFAULT
 #endif
 );
-// Enabled HTTPS by Default.
-BASE_FEATURE(kHttpsByDefault,
-             "HttpsByDefault",
-             base::FEATURE_DISABLED_BY_DEFAULT);
 
 }  // namespace features
 }  // namespace blink

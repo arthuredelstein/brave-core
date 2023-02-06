@@ -29,7 +29,7 @@
     &preferences::features::kBraveBackgroundVideoPlayback,   \
     &safe_browsing::features::kBraveAndroidSafeBrowsing,     \
     &debounce::features::kBraveDebounce,                     \
-    &blink::features::kHttpsByDefault
+    &net::features::kBraveHttpsByDefault
 // clang-format on
 
 #include "src/chrome/browser/flags/android/chrome_feature_list.cc"

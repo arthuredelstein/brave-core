@@ -626,7 +626,7 @@ bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
 }
 
 bool IsHttpsByDefaultFeatureEnabled() {
-  return base::FeatureList::IsEnabled(blink::features::kHttpsByDefault);
+  return base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault);
 }
 
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,

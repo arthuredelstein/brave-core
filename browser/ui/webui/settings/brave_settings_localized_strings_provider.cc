@@ -34,7 +34,6 @@
 #include "extensions/buildflags/buildflags.h"
 #include "extensions/common/extension_urls.h"
 #include "net/base/features.h"
-#include "third_party/blink/public/common/features.h"
 #include "ui/base/l10n/l10n_util.h"
 
 namespace settings {
@@ -745,7 +744,7 @@ void BraveAddLocalizedStrings(content::WebUIDataSource* html_source,
 
   html_source->AddBoolean(
       "isHttpsByDefaultEnabled",
-      base::FeatureList::IsEnabled(blink::features::kHttpsByDefault));
+      base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault));
 
   if (base::FeatureList::IsEnabled(
           net::features::kBraveFirstPartyEphemeralStorage)) {

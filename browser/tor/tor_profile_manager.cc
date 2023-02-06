@@ -23,7 +23,7 @@
 #include "components/prefs/pref_service.h"
 #include "components/safe_browsing/core/common/safe_browsing_prefs.h"
 #include "components/translate/core/browser/translate_pref_names.h"
-#include "third_party/blink/public/common/features.h"
+#include "net/base/features.h"
 #include "third_party/blink/public/common/peerconnection/webrtc_ip_handling_policy.h"
 
 namespace {
@@ -120,9 +120,8 @@ void TorProfileManager::InitTorProfileUserPrefs(Profile* profile) {
   pref_service->SetString(prefs::kWebRTCIPHandlingPolicy,
                           blink::kWebRTCIPHandlingDisableNonProxiedUdp);
   pref_service->SetBoolean(prefs::kSafeBrowsingEnabled, false);
-  if (base::FeatureList::IsEnabled(
-          blink::features::kBraveTorWindowsHttpsOnly)) {
-    if (base::FeatureList::IsEnabled(blink::features::kHttpsByDefault)) {
+  if (base::FeatureList::IsEnabled(net::features::kBraveTorWindowsHttpsOnly)) {
+    if (base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault)) {
       brave_shields::SetHttpsUpgradeControlType(
           HostContentSettingsMapFactory::GetForProfile(profile),
           brave_shields::ControlType::BLOCK, GURL());

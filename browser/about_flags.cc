@@ -430,8 +430,8 @@ constexpr char kAllowCertainClientHintsDescription[] =
     "Allows setting certain request client hints (sec-ch-ua, sec-ch-ua-mobile, "
     "sec-ch-ua-platform)";
 
-constexpr char kHttpsByDefaultName[] = "Use HTTPS by Default";
-constexpr char kHttpsByDefaultDescription[] =
+constexpr char kBraveHttpsByDefaultName[] = "Use HTTPS by Default";
+constexpr char kBraveHttpsByDefaultDescription[] =
     "Attempt to connect to all websites using HTTPS before falling back to "
     "HTTP.";
 
@@ -818,7 +818,7 @@ constexpr char kRestrictEventSourcePoolDescription[] =
       flag_descriptions::kBraveTorWindowsHttpsOnlyName,                     \
       flag_descriptions::kBraveTorWindowsHttpsOnlyDescription,              \
       kOsAll, FEATURE_VALUE_TYPE(                                           \
-          blink::features::kBraveTorWindowsHttpsOnly)},                     \
+          net::features::kBraveTorWindowsHttpsOnly)},                       \
     {"brave-round-time-stamps",                                             \
       flag_descriptions::kBraveRoundTimeStampsName,                         \
       flag_descriptions::kBraveRoundTimeStampsDescription,                  \
@@ -845,10 +845,10 @@ constexpr char kRestrictEventSourcePoolDescription[] =
       kOsAll, FEATURE_VALUE_TYPE(                                           \
           brave_sync::features::kBraveSyncSendAllHistory)},                 \
     {"https-by-default",                                                    \
-      flag_descriptions::kHttpsByDefaultName,                               \
-      flag_descriptions::kHttpsByDefaultDescription,                        \
+      flag_descriptions::kBraveHttpsByDefaultName,                               \
+      flag_descriptions::kBraveHttpsByDefaultDescription,                        \
       kOsAll, FEATURE_VALUE_TYPE(                                           \
-          blink::features::kHttpsByDefault)},                               \
+          net::features::kBraveHttpsByDefault)},                                 \
     BRAVE_IPFS_FEATURE_ENTRIES                                              \
     BRAVE_NATIVE_WALLET_FEATURE_ENTRIES                                     \
     BRAVE_NEWS_FEATURE_ENTRIES                                              \

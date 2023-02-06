@@ -42,7 +42,7 @@
 #include "content/public/test/browser_test.h"
 #include "content/public/test/test_utils.h"
 #include "gmock/gmock.h"
-#include "third_party/blink/public/common/features.h"
+#include "net/base/features.h"
 
 namespace {
 
@@ -355,15 +355,15 @@ class BraveTorTest_EnableTorHttpsOnlyFlag
   BraveTorTest_EnableTorHttpsOnlyFlag() {
     if (IsBraveHttpsByDefaultEnabled()) {
       std::vector<base::test::FeatureRef> enabled_features{
-          blink::features::kBraveTorWindowsHttpsOnly,
-          blink::features::kHttpsByDefault};
+          net::features::kBraveTorWindowsHttpsOnly,
+          net::features::kBraveHttpsByDefault};
       std::vector<base::test::FeatureRef> disabled_features{/* none */};
       scoped_feature_list_.InitWithFeatures(enabled_features,
                                             disabled_features);
     } else {
       scoped_feature_list_.InitWithFeatures(
-          {blink::features::kBraveTorWindowsHttpsOnly} /* enabled */,
-          {blink::features::kHttpsByDefault} /* disabled */
+          {net::features::kBraveTorWindowsHttpsOnly} /* enabled */,
+          {net::features::kBraveHttpsByDefault} /* disabled */
       );
     }
     //    BraveTorTest::SetUp();

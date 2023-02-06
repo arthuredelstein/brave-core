@@ -19,9 +19,9 @@
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/content_mock_cert_verifier.h"
 #include "content/public/test/test_navigation_observer.h"
+#include "net/base/features.h"
 #include "net/cert/x509_certificate.h"
 #include "net/dns/mock_host_resolver.h"
-#include "third_party/blink/public/common/features.h"
 #include "url/gurl.h"
 
 #if BUILDFLAG(IS_ANDROID)
@@ -30,8 +30,8 @@
 #include "chrome/test/base/in_process_browser_test.h"
 #endif
 
-using blink::features::kHttpsByDefault;
 using brave_shields::ControlType;
+using net::features::kBraveHttpsByDefault;
 
 namespace {
 
@@ -69,7 +69,7 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
   ~HttpsUpgradeBrowserTest() override = default;
 
   void SetUp() override {
-    feature_list_.InitAndEnableFeature(kHttpsByDefault);
+    feature_list_.InitAndEnableFeature(kBraveHttpsByDefault);
     PlatformBrowserTest::SetUp();
   }
 

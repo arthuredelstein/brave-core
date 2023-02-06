@@ -28,8 +28,7 @@
     &playlist::features::kPlaylist,                          \
     &preferences::features::kBraveBackgroundVideoPlayback,   \
     &safe_browsing::features::kBraveAndroidSafeBrowsing,     \
-    &debounce::features::kBraveDebounce,                     \
-    &net::features::kBraveHttpsByDefault
+    &debounce::features::kBraveDebounce
 // clang-format on
 
 #include "src/chrome/browser/flags/android/chrome_feature_list.cc"

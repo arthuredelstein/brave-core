@@ -25,9 +25,12 @@ class BrowserContext;
 namespace {
 
 // Tor is slow and needs a longer fallback delay
-constexpr base::TimeDelta g_tor_fallback_delay = base::Seconds(20);
+constexpr base::TimeDelta kTorFallbackDelay = base::Seconds(20);
 
 bool ShouldUpgradeToHttps(content::NavigationHandle* handle) {
+  if (!brave_shields::IsHttpsByDefaultFeatureEnabled()) {
+    return false;
+  }
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
   Profile* profile = Profile::FromBrowserContext(context);
@@ -52,8 +55,8 @@ bool IsTor(content::NavigationHandle* handle) {
 #define WillFailRequest WillFailRequest_ChromiumImpl
 #define GetBoolean(PREF_NAME) \
   GetBooleanOr(PREF_NAME, ShouldUpgradeToHttps(handle))
-#define SetNavigationTimeout(DEFAULT_TIMEOUT)                            \
-  SetNavigationTimeout(IsTor(navigation_handle()) ? g_tor_fallback_delay \
+#define SetNavigationTimeout(DEFAULT_TIMEOUT)                         \
+  SetNavigationTimeout(IsTor(navigation_handle()) ? kTorFallbackDelay \
                                                   : DEFAULT_TIMEOUT)
 
 #include "src/chrome/browser/ssl/https_only_mode_navigation_throttle.cc"
@@ -65,6 +68,10 @@ bool IsTor(content::NavigationHandle* handle) {
 // Called if there is a non-OK net::Error in the completion status.
 content::NavigationThrottle::ThrottleCheckResult
 HttpsOnlyModeNavigationThrottle::WillFailRequest() {
+  if (!brave_shields::IsHttpsByDefaultFeatureEnabled()) {
+    return WillFailRequest_ChromiumImpl();
+  }
+
   auto* handle = navigation_handle();
   auto* contents = handle->GetWebContents();
   const GURL& request_url = handle->GetURL();

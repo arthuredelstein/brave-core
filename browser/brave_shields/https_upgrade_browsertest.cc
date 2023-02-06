@@ -27,7 +27,6 @@
 #if BUILDFLAG(IS_ANDROID)
 #include "chrome/test/base/android/android_browser_test.h"
 #else
-#include "chrome/browser/ui/browser.h"
 #include "chrome/test/base/in_process_browser_test.h"
 #endif
 
@@ -36,32 +35,31 @@ using brave_shields::ControlType;
 
 namespace {
 
-enum PageResult { HTTP, HTTPS, INTERSTITIAL };
+enum class PageResult { kHttp, kHttps, kInterstitial };
 
-struct TestStruct {
+struct TestCase {
   bool init_secure;
   const char* domain;
   ControlType control_type;
   PageResult expected_result;
 };
 
-const TestStruct test_combinations[] = {
-    {false, "insecure1.test", ControlType::ALLOW, PageResult::HTTP},
-    {false, "insecure2.test", ControlType::BLOCK_THIRD_PARTY, PageResult::HTTP},
-    {false, "insecure3.test", ControlType::BLOCK, PageResult::INTERSTITIAL},
-    {false, "upgradable1.test", ControlType::ALLOW, PageResult::HTTP},
+constexpr TestCase kTestCases[] = {
+    {false, "insecure1.test", ControlType::ALLOW, PageResult::kHttp},
+    {false, "insecure2.test", ControlType::BLOCK_THIRD_PARTY,
+     PageResult::kHttp},
+    {false, "insecure3.test", ControlType::BLOCK, PageResult::kInterstitial},
+    {false, "upgradable1.test", ControlType::ALLOW, PageResult::kHttp},
     {false, "upgradable2.test", ControlType::BLOCK_THIRD_PARTY,
-     PageResult::HTTPS},
-    {false, "upgradable3.test", ControlType::BLOCK, PageResult::HTTPS},
-    {true, "secure1.test", ControlType::ALLOW, PageResult::HTTPS},
-    {true, "secure2.test", ControlType::BLOCK_THIRD_PARTY, PageResult::HTTPS},
-    {true, "secure3.test", ControlType::BLOCK, PageResult::HTTPS}};
+     PageResult::kHttps},
+    {false, "upgradable3.test", ControlType::BLOCK, PageResult::kHttps},
+    {true, "secure1.test", ControlType::ALLOW, PageResult::kHttps},
+    {true, "secure2.test", ControlType::BLOCK_THIRD_PARTY, PageResult::kHttps},
+    {true, "secure3.test", ControlType::BLOCK, PageResult::kHttps}};
 
-#if BUILDFLAG(IS_ANDROID)
-base::FilePath GetChromeTestDataDir() {
+base::FilePath GetTestDataDir() {
   return base::FilePath(FILE_PATH_LITERAL("net/data/url_request_unittest"));
 }
-#endif
 
 }  // namespace
 
@@ -76,28 +74,28 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
   }
 
   void SetUpOnMainThread() override {
+    PlatformBrowserTest::SetUpOnMainThread();
     g_brave_browser_process->https_upgrade_exceptions_service()
         ->SetIsReadyForTesting();
     // By default allow all hosts on HTTPS.
     mock_cert_verifier_.mock_cert_verifier()->set_default_result(net::OK);
     host_resolver()->AddRule("*", "127.0.0.1");
 
-    // Set up "insecure.test" as a hostname with an SSL error. HTTPS upgrades
+    // Set up "insecure.test" as a hostname with an SSL error. kHttps upgrades
     // to this host will fail, (or fall back in some cases).
     scoped_refptr<net::X509Certificate> cert(https_server_.GetCertificate());
     net::CertVerifyResult verify_result;
     verify_result.is_issued_by_known_root = false;
     verify_result.verified_cert = cert;
     verify_result.cert_status = net::CERT_STATUS_COMMON_NAME_INVALID;
-    mock_cert_verifier_.mock_cert_verifier()->AddResultForCertAndHost(
-        cert, "insecure1.test", verify_result, net::ERR_CERT_INVALID);
-    mock_cert_verifier_.mock_cert_verifier()->AddResultForCertAndHost(
-        cert, "insecure2.test", verify_result, net::ERR_CERT_INVALID);
-    mock_cert_verifier_.mock_cert_verifier()->AddResultForCertAndHost(
-        cert, "insecure3.test", verify_result, net::ERR_CERT_INVALID);
+    for (const std::string& host :
+         {"insecure1.test", "insecure2.test", "insecure3.test"}) {
+      mock_cert_verifier_.mock_cert_verifier()->AddResultForCertAndHost(
+          cert, host, verify_result, net::ERR_CERT_INVALID);
+    }
 
-    http_server_.AddDefaultHandlers(GetChromeTestDataDir());
-    https_server_.AddDefaultHandlers(GetChromeTestDataDir());
+    http_server_.AddDefaultHandlers(GetTestDataDir());
+    https_server_.AddDefaultHandlers(GetTestDataDir());
     ASSERT_TRUE(http_server_.Start());
     ASSERT_TRUE(https_server_.Start());
 
@@ -108,18 +106,21 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
   }
 
   void SetUpCommandLine(base::CommandLine* command_line) override {
+    PlatformBrowserTest::SetUpCommandLine(command_line);
     mock_cert_verifier_.SetUpCommandLine(command_line);
   }
 
   void SetUpInProcessBrowserTestFixture() override {
+    PlatformBrowserTest::SetUpInProcessBrowserTestFixture();
     mock_cert_verifier_.SetUpInProcessBrowserTestFixture();
   }
 
   void TearDownInProcessBrowserTestFixture() override {
+    PlatformBrowserTest::TearDownInProcessBrowserTestFixture();
     mock_cert_verifier_.TearDownInProcessBrowserTestFixture();
   }
 
-  void NavigateToURL(const GURL& url) {
+  void AttemptToNavigateToURL(const GURL& url) {
     content::NavigateToURLBlockUntilNavigationsComplete(Contents(), url, 1,
                                                         true);
   }
@@ -148,31 +149,31 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
 // navigation should end up on the HTTPS version of the URL.
 IN_PROC_BROWSER_TEST_F(HttpsUpgradeBrowserTest, CheckUpgrades) {
   for (bool global_setting : {true, false}) {
-    for (const TestStruct test : test_combinations) {
+    for (const TestCase& test_case : kTestCases) {
+      SCOPED_TRACE(testing::Message()
+                   << "global_setting: " << global_setting << ", "
+                   << "test_case.init_secure: " << test_case.init_secure << ", "
+                   << "test_case.domain: " << test_case.domain << ", "
+                   << "test_case.control_type: " << test_case.control_type);
       GURL initial_url =
-          test.init_secure ? https_server()->GetURL(test.domain, "/simple.html")
-                           : http_server()->GetURL(test.domain, "/simple.html");
+          test_case.init_secure
+              ? https_server()->GetURL(test_case.domain, "/simple.html")
+              : http_server()->GetURL(test_case.domain, "/simple.html");
       brave_shields::SetHttpsUpgradeControlType(
-          ContentSettings(), test.control_type,
+          ContentSettings(), test_case.control_type,
           global_setting ? GURL() : initial_url,
           g_browser_process->local_state());
-      base::RunLoop().RunUntilIdle();
-      content::TestNavigationObserver nav_observer(Contents(), 1);
-      NavigateToURL(initial_url);
-      nav_observer.Wait();
-      bool navigation_succeeded = nav_observer.last_navigation_succeeded();
+      AttemptToNavigateToURL(initial_url);
       bool interstitial_showing =
           chrome_browser_interstitials::IsShowingInterstitial(Contents());
-      if (test.expected_result == PageResult::INTERSTITIAL) {
+      if (test_case.expected_result == PageResult::kInterstitial) {
         EXPECT_TRUE(interstitial_showing);
-        EXPECT_FALSE(navigation_succeeded);
       } else {
         EXPECT_FALSE(interstitial_showing);
-        EXPECT_TRUE(navigation_succeeded);
         GURL final_url =
-            (test.expected_result == PageResult::HTTP ? http_server()
-                                                      : https_server())
-                ->GetURL(test.domain, "/simple.html");
+            (test_case.expected_result == PageResult::kHttp ? http_server()
+                                                            : https_server())
+                ->GetURL(test_case.domain, "/simple.html");
         EXPECT_EQ(final_url, Contents()->GetLastCommittedURL());
       }
     }

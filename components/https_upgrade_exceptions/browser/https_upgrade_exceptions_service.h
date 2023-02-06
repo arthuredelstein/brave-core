@@ -17,15 +17,13 @@
 
 namespace https_upgrade_exceptions {
 
-using brave_component_updater::LocalDataFilesObserver;
-using brave_component_updater::LocalDataFilesService;
-
-class HttpsUpgradeExceptionsService : public LocalDataFilesObserver {
+class HttpsUpgradeExceptionsService
+    : public brave_component_updater::LocalDataFilesObserver {
  public:
   explicit HttpsUpgradeExceptionsService(
-      LocalDataFilesService* local_data_files_service);
+      brave_component_updater::LocalDataFilesService* local_data_files_service);
 
-  // implementation of LocalDataFilesObserver
+  // implementation of brave_component_updater::LocalDataFilesObserver
   void OnComponentReady(const std::string& component_id,
                         const base::FilePath& install_dir,
                         const std::string& manifest) override;
@@ -45,7 +43,7 @@ class HttpsUpgradeExceptionsService : public LocalDataFilesObserver {
 // Creates the HttpsUpgradeExceptionsService
 std::unique_ptr<HttpsUpgradeExceptionsService>
 HttpsUpgradeExceptionsServiceFactory(
-    LocalDataFilesService* local_data_files_service);
+    brave_component_updater::LocalDataFilesService* local_data_files_service);
 
 }  // namespace https_upgrade_exceptions
 

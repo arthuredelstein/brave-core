@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "base/containers/contains.h"
 #include "base/files/file_path.h"
 #include "base/strings/string_split.h"
 #include "base/task/thread_pool.h"
@@ -46,7 +47,7 @@ void HttpsUpgradeExceptionsService::OnDATFileDataReady(
   std::vector<std::string> lines = base::SplitString(
       contents, "\n", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
   for (const auto& line : lines) {
-    exceptional_domains_.insert(line);
+    exceptional_domains_.insert(std::move(line));
   }
   is_ready_ = true;
   return;
@@ -59,7 +60,7 @@ bool HttpsUpgradeExceptionsService::CanUpgradeToHTTPS(const GURL& url) {
     return false;
   }
   // Allow upgrade only if the domain is not on the exceptions list.
-  return exceptional_domains_.find(url.host()) == exceptional_domains_.end();
+  return !base::Contains(exceptional_domains_, url.host());
 }
 
 // implementation of LocalDataFilesObserver

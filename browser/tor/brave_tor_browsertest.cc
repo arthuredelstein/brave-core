@@ -354,11 +354,12 @@ class BraveTorTest_EnableTorHttpsOnlyFlag
  public:
   BraveTorTest_EnableTorHttpsOnlyFlag() {
     if (IsBraveHttpsByDefaultEnabled()) {
-      scoped_feature_list_.InitWithFeatures(
-          {blink::features::kBraveTorWindowsHttpsOnly,
-           blink::features::kHttpsByDefault} /* enabled */,
-          {} /* disabled */
-      );
+      std::vector<base::test::FeatureRef> enabled_features{
+          blink::features::kBraveTorWindowsHttpsOnly,
+          blink::features::kHttpsByDefault};
+      std::vector<base::test::FeatureRef> disabled_features{/* none */};
+      scoped_feature_list_.InitWithFeatures(enabled_features,
+                                            disabled_features);
     } else {
       scoped_feature_list_.InitWithFeatures(
           {blink::features::kBraveTorWindowsHttpsOnly} /* enabled */,

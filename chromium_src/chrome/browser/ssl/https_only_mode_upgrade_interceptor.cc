@@ -21,6 +21,9 @@ class BrowserContext;
 namespace {
 
 bool ShouldUpgradeToHttps(content::BrowserContext* context, const GURL& url) {
+  if (!brave_shields::IsHttpsByDefaultFeatureEnabled()) {
+    return false;
+  }
   Profile* profile = Profile::FromBrowserContext(context);
   if (profile->IsTor()) {
     return true;

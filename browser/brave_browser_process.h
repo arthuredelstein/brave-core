@@ -41,10 +41,6 @@ class AdBlockService;
 class HTTPSEverywhereService;
 }  // namespace brave_shields
 
-namespace https_upgrade_exceptions {
-class HttpsUpgradeExceptionsService;
-}  // namespace https_upgrade_exceptions
-
 namespace brave_stats {
 class BraveStatsUpdater;
 }  // namespace brave_stats
@@ -58,6 +54,10 @@ class GreaselionDownloadService;
 namespace debounce {
 class DebounceComponentInstaller;
 }  // namespace debounce
+
+namespace https_upgrade_exceptions {
+class HttpsUpgradeExceptionsService;
+}  // namespace https_upgrade_exceptions
 
 namespace misc_metrics {
 class MenuMetrics;

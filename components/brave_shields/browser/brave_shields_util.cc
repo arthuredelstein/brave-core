@@ -657,7 +657,7 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
       ContentSettingsType::BRAVE_HTTPS_UPGRADE, setting);
 
   // Reset the HTTPS fallback map.
-  if (url == GURL()) {
+  if (url.is_empty()) {
     map->ClearSettingsForOneType(ContentSettingsType::HTTP_ALLOWED);
   } else {
     const GURL& secure_url = GURL("https://" + url.host());
@@ -701,13 +701,13 @@ bool ShouldUpgradeToHttps(
   if (!GetBraveShieldsEnabled(map, url)) {
     return false;
   }
-  const ControlType controlType = GetHttpsUpgradeControlType(map, url);
+  const ControlType control_type = GetHttpsUpgradeControlType(map, url);
   // Always upgrade for Strict HTTPS Upgrade.
-  if (controlType == ControlType::BLOCK) {
+  if (control_type == ControlType::BLOCK) {
     return true;
   }
   // Upgrade for Standard HTTPS upgrade if host is not on the exceptions list.
-  if (controlType == ControlType::BLOCK_THIRD_PARTY &&
+  if (control_type == ControlType::BLOCK_THIRD_PARTY &&
       https_upgrade_exceptions_service &&
       https_upgrade_exceptions_service->CanUpgradeToHTTPS(url)) {
     return true;

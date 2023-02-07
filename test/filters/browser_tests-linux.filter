@@ -22,7 +22,6 @@
 -ExtensionDialogTest.*
 -ExtensionStartupTest.*
 -ExternalProtocolHandlerSandboxBrowserTest.*
--HttpsOnlyModePrefsBrowserTest.PrefStatesRecorded
 -IndividualNetworkContextsPrefetchProxyBrowserTest.*
 -LayoutInstabilityTest.*
 -MultiscreenWindowPlacementPermissionContextTest.IsExtendedCrossOriginAllow

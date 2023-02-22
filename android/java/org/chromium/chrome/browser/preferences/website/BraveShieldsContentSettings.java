@@ -19,7 +19,9 @@ public class BraveShieldsContentSettings {
     static public final String RESOURCE_IDENTIFIER_ADS = "shieldsAds";
     static public final String RESOURCE_IDENTIFIER_TRACKERS = "trackers";
     static public final String RESOURCE_IDENTIFIER_DATA_SAVED = "data_saved";
-    static public final String RESOURCE_IDENTIFIER_HTTP_UPGRADABLE_RESOURCES = "httpUpgradableResources";
+    static public final String RESOURCE_IDENTIFIER_HTTP_UPGRADABLE_RESOURCES =
+            "httpUpgradableResources";
+    static public final String RESOURCE_IDENTIFIER_HTTPS_UPGRADE = "https_upgrade";
     static public final String RESOURCE_IDENTIFIER_BRAVE_SHIELDS = "braveShields";
     static public final String RESOURCE_IDENTIFIER_FINGERPRINTING = "fingerprinting";
     static public final String RESOURCE_IDENTIFIER_COOKIES = "shieldsCookies";
@@ -44,7 +46,7 @@ public class BraveShieldsContentSettings {
     private BraveShieldsContentSettings() {
         mNativeBraveShieldsContentSettings = 0;
         mBraveShieldsContentSettingsObservers =
-            new ArrayList<BraveShieldsContentSettingsObserver>();
+                new ArrayList<BraveShieldsContentSettingsObserver>();
         init();
     }
 
@@ -74,15 +76,16 @@ public class BraveShieldsContentSettings {
         BraveShieldsContentSettingsJni.get().destroy(mNativeBraveShieldsContentSettings);
     }
 
-    static public void setShields(Profile profile, String host, String resourceIndentifier, boolean value,
-                                  boolean fromTopShields) {
+    static public void setShields(Profile profile, String host, String resourceIndentifier,
+            boolean value, boolean fromTopShields) {
         String setting_string = (value ? BLOCK_RESOURCE : ALLOW_RESOURCE);
         if (resourceIndentifier.equals(RESOURCE_IDENTIFIER_BRAVE_SHIELDS)) {
             BraveShieldsContentSettingsJni.get().setBraveShieldsEnabled(value, host, profile);
         } else if (resourceIndentifier.equals(RESOURCE_IDENTIFIER_HTTP_UPGRADABLE_RESOURCES)) {
             BraveShieldsContentSettingsJni.get().setHTTPSEverywhereEnabled(value, host, profile);
         } else if (resourceIndentifier.equals(RESOURCE_IDENTIFIER_JAVASCRIPTS)) {
-            BraveShieldsContentSettingsJni.get().setNoScriptControlType(setting_string, host, profile);
+            BraveShieldsContentSettingsJni.get().setNoScriptControlType(
+                    setting_string, host, profile);
         }
     }
 

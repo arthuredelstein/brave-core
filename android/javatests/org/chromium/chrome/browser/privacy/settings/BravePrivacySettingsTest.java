@@ -32,6 +32,7 @@ import org.chromium.content_public.browser.test.util.TestThreadUtils;
 // Checks if changes have been made to the Chromium privacy settings
 @Batch(Batch.PER_CLASS)
 @RunWith(ChromeJUnit4ClassRunner.class)
+@Batch(Batch.UNIT_TESTS)
 public class BravePrivacySettingsTest {
     // Chromium Prefs that are being checked
     private static final String PREF_CAN_MAKE_PAYMENT = "can_make_payment";

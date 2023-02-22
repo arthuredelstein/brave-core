@@ -25,8 +25,7 @@ import org.chromium.chrome.browser.profiles.Profile;
 
 @JNINamespace("chrome::android")
 public class BravePrefServiceBridge {
-    private BravePrefServiceBridge() {
-    }
+    private BravePrefServiceBridge() {}
 
     private static BravePrefServiceBridge sInstance;
 
@@ -137,6 +136,20 @@ public class BravePrefServiceBridge {
         return BravePrefServiceBridgeJni.get().getShowNews();
     }
 
+    /**
+     * @param HttpsUpgrade setting
+     */
+    public void setHttpsUpgradeControlType(String type) {
+        BravePrefServiceBridgeJni.get().setHttpsUpgradeControlType(type);
+    }
+
+    /**
+     * @param HttpsUpgrade setting
+     */
+    public String getHttpsUpgradeControlType() {
+        return BravePrefServiceBridgeJni.get().getHttpsUpgradeControlType();
+    }
+
     @NativeMethods
     interface Natives {
         void setCookiesBlockType(String type);
@@ -175,5 +188,8 @@ public class BravePrefServiceBridge {
 
         void setShowNews(boolean value);
         boolean getShowNews();
+
+        void setHttpsUpgradeControlType(String type);
+        String getHttpsUpgradeControlType();
     }
 }

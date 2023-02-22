@@ -83,6 +83,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final String PREF_BLOCK_SCRIPTS = "scripts_block";
     public static final String PREF_FINGERPRINTING_PROTECTION = "fingerprinting_protection";
     private static final String PREF_CLOSE_TABS_ON_EXIT = "close_tabs_on_exit";
+    private static final String PREF_HTTPS_UPGRADE = "https_upgrade";
     private static final String PREF_SEND_P3A = "send_p3a_analytics";
     private static final String PREF_SEND_CRASH_REPORTS = "send_crash_reports";
     private static final String PREF_BRAVE_STATS_USAGE_PING = "brave_stats_usage_ping";
@@ -110,7 +111,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
             PREF_BRAVE_SHIELDS_GLOBALS_SECTION, //  shields globals  section
             PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_DEBOUNCE, PREF_HTTPSE,
             PREF_HTTPS_FIRST_MODE, PREF_BLOCK_SCRIPTS, PREF_BLOCK_CROSS_SITE_COOKIES,
-            PREF_FINGERPRINTING_PROTECTION, PREF_FINGERPRINT_LANGUAGE,
+            PREF_FINGERPRINTING_PROTECTION, PREF_FINGERPRINT_LANGUAGE, PREF_HTTPS_UPGRADE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section
             PREF_CLEAR_ON_EXIT, PREF_CLEAR_BROWSING_DATA,
             PREF_BRAVE_SOCIAL_BLOCKING_SECTION, // social blocking section
@@ -129,7 +130,8 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private final int STANDARD = 1;
     private final int ALLOW = 2;
 
-    private final PrefService mPrefServiceBridge = UserPrefs.get(Profile.getLastUsedRegularProfile());
+    private final PrefService mPrefServiceBridge =
+            UserPrefs.get(Profile.getLastUsedRegularProfile());
     private final PrivacyPreferencesManagerImpl mPrivacyPrefManager =
             PrivacyPreferencesManagerImpl.getInstance();
     private final ChromeManagedPreferenceDelegate mManagedPreferenceDelegate =
@@ -144,6 +146,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private ChromeSwitchPreference mDeAmpPref;
     private ChromeSwitchPreference mDebouncePref;
     private ChromeSwitchPreference mHttpsFirstModePref;
+    private BraveDialogPreference mHttpsUpgradePref;
     private BraveDialogPreference mFingerprintingProtectionPref;
     private ChromeSwitchPreference mBlockScriptsPref;
     private ChromeSwitchPreference mCloseTabsOnExitPref;
@@ -267,6 +270,9 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                 (ChromeSwitchPreference) findPreference(PREF_FINGERPRINT_LANGUAGE);
         mFingerprntLanguagePref.setOnPreferenceChangeListener(this);
 
+        mHttpsUpgradePref = (BraveDialogPreference) findPreference(PREF_HTTPS_UPGRADE);
+        mHttpsUpgradePref.setOnPreferenceChangeListener(this);
+
         mCloseTabsOnExitPref = (ChromeSwitchPreference) findPreference(PREF_CLOSE_TABS_ON_EXIT);
         mCloseTabsOnExitPref.setOnPreferenceChangeListener(this);
 
@@ -289,23 +295,28 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                 (ChromeSwitchPreference) findPreference(PREF_SHOW_AUTOCOMPLETE_IN_ADDRESS_BAR);
         mShowAutocompleteInAddressBar.setOnPreferenceChangeListener(this);
 
-        mAutocompleteTopSites = (ChromeSwitchPreference) findPreference(PREF_AUTOCOMPLETE_TOP_SITES);
+        mAutocompleteTopSites =
+                (ChromeSwitchPreference) findPreference(PREF_AUTOCOMPLETE_TOP_SITES);
         mAutocompleteTopSites.setOnPreferenceChangeListener(this);
 
         mSocialBlockingCategory =
                 (PreferenceCategory) findPreference(PREF_BRAVE_SOCIAL_BLOCKING_SECTION);
         mSocialBlockingCategory.setOnPreferenceChangeListener(this);
 
-        mSocialBlockingGoogle = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_GOOGLE);
+        mSocialBlockingGoogle =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_GOOGLE);
         mSocialBlockingGoogle.setOnPreferenceChangeListener(this);
 
-        mSocialBlockingFacebook = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_FACEBOOK);
+        mSocialBlockingFacebook =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_FACEBOOK);
         mSocialBlockingFacebook.setOnPreferenceChangeListener(this);
 
-        mSocialBlockingTwitter = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_TWITTER);
+        mSocialBlockingTwitter =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_TWITTER);
         mSocialBlockingTwitter.setOnPreferenceChangeListener(this);
 
-        mSocialBlockingLinkedin = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_LINKEDIN);
+        mSocialBlockingLinkedin =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_LINKEDIN);
         mSocialBlockingLinkedin.setOnPreferenceChangeListener(this);
 
         mWebrtcPolicy = (ChromeBasePreference) findPreference(PREF_WEBRTC_POLICY);
@@ -314,6 +325,14 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         removePreferenceIfPresent(PREF_SYNC_AND_SERVICES_LINK);
         removePreferenceIfPresent(PREF_NETWORK_PREDICTIONS);
         removePreferenceIfPresent(PREF_PRIVACY_SANDBOX);
+
+        if (ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT)) {
+            removePreferenceIfPresent(PREF_HTTPS_FIRST_MODE);
+            removePreferenceIfPresent(PREF_HTTPSE);
+        } else {
+            removePreferenceIfPresent(PREF_HTTPS_UPGRADE);
+        }
+
         if (!ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_ANDROID_SAFE_BROWSING)) {
             removePreferenceIfPresent(PREF_SAFE_BROWSING);
         } else {
@@ -388,6 +407,26 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         } else if (PREF_HTTPS_FIRST_MODE.equals(key)) {
             UserPrefs.get(Profile.getLastUsedRegularProfile())
                     .setBoolean(Pref.HTTPS_ONLY_MODE_ENABLED, (boolean) newValue);
+        } else if (PREF_HTTPS_UPGRADE.equals(key)) {
+            if ((int) newValue == 0) {
+                BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
+                        BraveShieldsContentSettings.BLOCK_RESOURCE);
+                mHttpsUpgradePref.setSummary(
+                        getActivity().getResources().getString(R.string.https_upgrade_option_1));
+                mHttpsUpgradePref.setCheckedIndex(0);
+            } else if ((int) newValue == 1) {
+                BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
+                        BraveShieldsContentSettings.BLOCK_THIRDPARTY_RESOURCE);
+                mHttpsUpgradePref.setSummary(
+                        getActivity().getResources().getString(R.string.https_upgrade_option_2));
+                mHttpsUpgradePref.setCheckedIndex(1);
+            } else {
+                BravePrefServiceBridge.getInstance().setHttpsUpgradeControlType(
+                        BraveShieldsContentSettings.ALLOW_RESOURCE);
+                mHttpsUpgradePref.setSummary(
+                        getActivity().getResources().getString(R.string.https_upgrade_option_3));
+                mHttpsUpgradePref.setCheckedIndex(2);
+            }
         } else if (PREF_DE_AMP.equals(key)) {
             UserPrefs.get(Profile.getLastUsedRegularProfile())
                     .setBoolean(BravePref.DE_AMP_PREF_ENABLED, (boolean) newValue);
@@ -543,6 +582,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         String blockAdTrackersPref = BraveShieldsContentSettings.getTrackersPref();
         int cookiesBlockPref = sharedPreferences.getInt(PREF_BLOCK_CROSS_SITE_COOKIES, 1);
         String fingerprintingPref = BraveShieldsContentSettings.getFingerprintingPref();
+        String httpsUpgradePref = BravePrefServiceBridge.getInstance().getHttpsUpgradeControlType();
 
         mBlockScriptsPref.setChecked(BraveShieldsContentSettings.getJavascriptPref());
 
@@ -600,6 +640,20 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
             mFingerprintingProtectionPref.setCheckedIndex(2);
             mFingerprintingProtectionPref.setSummary(
                     getActivity().getResources().getString(R.string.block_fingerprinting_option_3));
+        }
+
+        if (httpsUpgradePref.equals(BraveShieldsContentSettings.BLOCK_RESOURCE)) {
+            mHttpsUpgradePref.setCheckedIndex(0);
+            mHttpsUpgradePref.setSummary(
+                    getActivity().getResources().getString(R.string.https_upgrade_option_1));
+        } else if (httpsUpgradePref.equals(BraveShieldsContentSettings.BLOCK_THIRDPARTY_RESOURCE)) {
+            mHttpsUpgradePref.setCheckedIndex(1);
+            mHttpsUpgradePref.setSummary(
+                    getActivity().getResources().getString(R.string.https_upgrade_option_2));
+        } else if (httpsUpgradePref.equals(BraveShieldsContentSettings.ALLOW_RESOURCE)) {
+            mHttpsUpgradePref.setCheckedIndex(2);
+            mHttpsUpgradePref.setSummary(
+                    getActivity().getResources().getString(R.string.https_upgrade_option_3));
         }
 
         mSearchSuggestions.setChecked(mPrefServiceBridge.getBoolean(Pref.SEARCH_SUGGEST_ENABLED));

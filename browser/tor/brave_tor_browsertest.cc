@@ -413,9 +413,11 @@ class BraveTorTest_EnableTorHttpsOnlyFlag
           net::features::kBraveTorWindowsHttpsOnly};
       std::vector<base::test::FeatureRef> disabled_features;
       if (IsBraveHttpsByDefaultEnabled()) {
-        enabled_features.push_back(net::features::kBraveHttpsByDefault);
+        enabled_features.push_back(
+            https_upgrade_exceptions::features::kBraveHttpsByDefault);
       } else {
-        disabled_features.push_back(net::features::kBraveHttpsByDefault);
+        disabled_features.push_back(
+            https_upgrade_exceptions::features::kBraveHttpsByDefault);
       }
       scoped_feature_list_.InitWithFeatures(enabled_features,
                                             disabled_features);

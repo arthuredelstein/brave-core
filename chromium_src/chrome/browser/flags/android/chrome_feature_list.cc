@@ -12,7 +12,6 @@
 #include "brave/components/brave_vpn/common/features.h"
 #include "brave/components/brave_wallet/common/features.h"
 #include "brave/components/debounce/common/features.h"
-#include "brave/components/https_upgrade_exceptions/common/features.h"
 #include "brave/components/playlist/common/features.h"
 #include "third_party/blink/public/common/features.h"
 
@@ -29,8 +28,7 @@
     &playlist::features::kPlaylist,                          \
     &preferences::features::kBraveBackgroundVideoPlayback,   \
     &safe_browsing::features::kBraveAndroidSafeBrowsing,     \
-    &debounce::features::kBraveDebounce,                     \
-    &https_upgrade_exceptions::features::kBraveHttpsByDefault
+    &debounce::features::kBraveDebounce
 // clang-format on
 
 #include "src/chrome/browser/flags/android/chrome_feature_list.cc"

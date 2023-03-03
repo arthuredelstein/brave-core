@@ -16,7 +16,6 @@
 #include "brave/components/brave_wallet/common/features.h"
 #include "brave/components/constants/url_constants.h"
 #include "brave/components/constants/webui_url_constants.h"
-#include "brave/components/https_upgrade_exceptions/common/features.h"
 #include "brave/components/ipfs/ipfs_constants.h"
 #include "brave/components/ipfs/pref_names.h"
 #include "brave/components/l10n/common/localization_util.h"
@@ -763,8 +762,7 @@ void BraveAddLocalizedStrings(content::WebUIDataSource* html_source,
 
   html_source->AddBoolean(
       "isHttpsByDefaultEnabled",
-      base::FeatureList::IsEnabled(
-          https_upgrade_exceptions::features::kBraveHttpsByDefault));
+      base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault));
 
   if (base::FeatureList::IsEnabled(
           net::features::kBraveFirstPartyEphemeralStorage)) {

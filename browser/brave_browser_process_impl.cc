@@ -36,7 +36,6 @@
 #include "brave/components/debounce/browser/debounce_component_installer.h"
 #include "brave/components/debounce/common/features.h"
 #include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
-#include "brave/components/https_upgrade_exceptions/common/features.h"
 #include "brave/components/misc_metrics/menu_metrics.h"
 #include "brave/components/ntp_background_images/browser/ntp_background_images_service.h"
 #include "brave/components/p3a/brave_p3a_service.h"
@@ -55,6 +54,7 @@
 #include "components/component_updater/timer_update_scheduler.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
+#include "net/base/features.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "url/gurl.h"
@@ -202,8 +202,7 @@ void BraveBrowserProcessImpl::StartBraveServices() {
   https_everywhere_service()->Start();
   resource_component();
 
-  if (base::FeatureList::IsEnabled(
-          https_upgrade_exceptions::features::kBraveHttpsByDefault)) {
+  if (base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault)) {
     https_upgrade_exceptions_service();
   }
 

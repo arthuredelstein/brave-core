@@ -24,7 +24,6 @@
 #include "brave/components/de_amp/common/features.h"
 #include "brave/components/debounce/common/features.h"
 #include "brave/components/google_sign_in_permission/features.h"
-#include "brave/components/https_upgrade_exceptions/common/features.h"
 #include "brave/components/ipfs/buildflags/buildflags.h"
 #include "brave/components/ntp_background_images/browser/features.h"
 #include "brave/components/playlist/common/buildflags/buildflags.h"
@@ -689,8 +688,7 @@
           "Attempt to connect to all websites using HTTPS before falling "     \
           "back to HTTP.",                                                     \
           kOsAll,                                                              \
-          FEATURE_VALUE_TYPE(                                                  \
-              https_upgrade_exceptions::features::kBraveHttpsByDefault),       \
+          FEATURE_VALUE_TYPE(net::features::kBraveHttpsByDefault),             \
       })                                                                       \
   BRAVE_IPFS_FEATURE_ENTRIES                                                   \
   BRAVE_NATIVE_WALLET_FEATURE_ENTRIES                                          \

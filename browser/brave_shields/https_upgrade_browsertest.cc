@@ -33,7 +33,7 @@
 #endif
 
 using brave_shields::ControlType;
-using https_upgrade_exceptions::features::kBraveHttpsByDefault;
+using net::features::kBraveHttpsByDefault;
 
 namespace {
 

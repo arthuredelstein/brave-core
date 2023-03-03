@@ -21,7 +21,6 @@
 #include "brave/components/content_settings/core/common/content_settings_util.h"
 #include "brave/components/debounce/common/features.h"
 #include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
-#include "brave/components/https_upgrade_exceptions/common/features.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -626,8 +625,7 @@ bool GetHTTPSEverywhereEnabled(HostContentSettingsMap* map, const GURL& url) {
 }
 
 bool IsHttpsByDefaultFeatureEnabled() {
-  return base::FeatureList::IsEnabled(
-      https_upgrade_exceptions::features::kBraveHttpsByDefault);
+  return base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault);
 }
 
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,

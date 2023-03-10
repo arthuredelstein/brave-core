@@ -105,10 +105,12 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final String PREF_BLOCK_CROSS_SITE_COOKIES = "block_cross_site_cookies";
     private static final String PREF_SHIELDS_SUMMARY = "shields_summary";
     private static final String PREF_CLEAR_ON_EXIT = "clear_on_exit";
+    private static final String PREF_HTTPS_UPGRADE = "https_upgrade";
 
     private static final String[] NEW_PRIVACY_PREFERENCE_ORDER = {
             PREF_BRAVE_SHIELDS_GLOBALS_SECTION, //  shields globals  section
-            PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_DEBOUNCE, PREF_HTTPSE,
+            PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_DEBOUNCE,
+            PREF_HTTPS_UPGRADE, PREF_HTTPSE,
             PREF_HTTPS_FIRST_MODE, PREF_BLOCK_SCRIPTS, PREF_BLOCK_CROSS_SITE_COOKIES,
             PREF_FINGERPRINTING_PROTECTION, PREF_FINGERPRINT_LANGUAGE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section

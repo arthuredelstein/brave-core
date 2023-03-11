@@ -13,6 +13,7 @@
 #include "brave/components/brave_wallet/common/features.h"
 #include "brave/components/debounce/common/features.h"
 #include "brave/components/playlist/common/features.h"
+#include "net/base/features.h"
 #include "third_party/blink/public/common/features.h"
 
 // clang-format off
@@ -28,7 +29,8 @@
     &playlist::features::kPlaylist,                          \
     &preferences::features::kBraveBackgroundVideoPlayback,   \
     &safe_browsing::features::kBraveAndroidSafeBrowsing,     \
-    &debounce::features::kBraveDebounce
+    &debounce::features::kBraveDebounce,                     \
+    &net::features::kBraveHttpsByDefault
 // clang-format on
 
 #include "src/chrome/browser/flags/android/chrome_feature_list.cc"

@@ -239,7 +239,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
 
         boolean httpsByDefaultIsEnabled = ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT);
         mHttpsePref.setVisible(!httpsByDefaultIsEnabled);
-        mHttpsFirstModePref.setVisible(false);//(!httpsByDefaultIsEnabled && mHttpsePref.isChecked());
+        mHttpsFirstModePref.setVisible(!httpsByDefaultIsEnabled && mHttpsePref.isChecked());
         mHttpsUpgradePref.setVisible(httpsByDefaultIsEnabled);
 
         mCanMakePayment = (ChromeSwitchPreference) findPreference(PREF_CAN_MAKE_PAYMENT);
@@ -585,13 +585,10 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         // HTTPSE and HTTPS only mode
         final boolean httpseEnabled = BraveShieldsContentSettings.getHTTPSEverywherePref();
         mHttpsePref.setChecked(httpseEnabled);
-        if (httpseEnabled) {
-            mHttpsFirstModePref.setVisible(httpseEnabled);
-            mHttpsFirstModePref.setChecked(UserPrefs.get(Profile.getLastUsedRegularProfile())
-                                                   .getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED));
-        } else {
-            mHttpsFirstModePref.setChecked(httpseEnabled);
-        }
+        boolean httpsByDefaultIsEnabled = ChromeFeatureList.isEnabled(BraveFeatureList.HTTPS_BY_DEFAULT);
+        mHttpsFirstModePref.setVisible(!httpsByDefaultIsEnabled && httpseEnabled);
+        mHttpsFirstModePref.setChecked(httpseEnabled ?
+          UserPrefs.get(Profile.getLastUsedRegularProfile()).getBoolean(Pref.HTTPS_ONLY_MODE_ENABLED) : false);
 
         // IPFS Gateway
         mIpfsGatewayPref.setChecked(BravePrivacySettingsIPFSUtils.getIPFSGatewayPref());

@@ -71,7 +71,8 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
   ~HttpsUpgradeBrowserTest() override = default;
 
   void SetUp() override {
-    feature_list_.InitAndEnableFeature(kBraveHttpsByDefault);
+    feature_list_.InitWithFeatures(
+        {features::kHttpsFirstModeV2, kBraveHttpsByDefault}, {});
     PlatformBrowserTest::SetUp();
   }
 

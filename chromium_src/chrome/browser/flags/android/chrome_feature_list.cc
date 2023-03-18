@@ -15,7 +15,6 @@
 #include "brave/components/google_sign_in_permission/features.h"
 #include "brave/components/playlist/common/features.h"
 #include "brave/components/speedreader/common/features.h"
-#include "net/base/features.h"
 #include "third_party/blink/public/common/features.h"
 
 // clang-format off
@@ -33,7 +32,7 @@
     &safe_browsing::features::kBraveAndroidSafeBrowsing,     \
     &speedreader::kSpeedreaderFeature,                       \
     &debounce::features::kBraveDebounce,                     \
-    &net::features::kBraveHttpsByDefault,                    \
+    &features::kBraveHttpsByDefault,                         \
     &google_sign_in_permission::features::kBraveGoogleSignInPermission
 
 // clang-format on

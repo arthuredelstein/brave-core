@@ -48,13 +48,13 @@
 #include "chrome/browser/obsolete_system/obsolete_system.h"
 #include "chrome/common/buildflags.h"
 #include "chrome/common/channel_info.h"
+#include "chrome/common/chrome_features.h"
 #include "chrome/common/chrome_paths.h"
 #include "chrome/common/pref_names.h"
 #include "components/component_updater/component_updater_service.h"
 #include "components/component_updater/timer_update_scheduler.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
-#include "net/base/features.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "url/gurl.h"
@@ -202,7 +202,7 @@ void BraveBrowserProcessImpl::StartBraveServices() {
   https_everywhere_service()->Start();
   resource_component();
 
-  if (base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault)) {
+  if (base::FeatureList::IsEnabled(features::kBraveHttpsByDefault)) {
     https_upgrade_exceptions_service();
   }
 

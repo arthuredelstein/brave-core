@@ -13,6 +13,7 @@
 #include "chrome/browser/interstitials/security_interstitial_page_test_utils.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ssl/https_only_mode_upgrade_interceptor.h"
+#include "chrome/common/chrome_features.h"
 #include "chrome/common/pref_names.h"
 #include "chrome/test/base/chrome_test_utils.h"
 #include "components/prefs/pref_service.h"
@@ -21,7 +22,6 @@
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/content_mock_cert_verifier.h"
 #include "content/public/test/test_navigation_observer.h"
-#include "net/base/features.h"
 #include "net/cert/x509_certificate.h"
 #include "net/dns/mock_host_resolver.h"
 #include "url/gurl.h"
@@ -33,7 +33,7 @@
 #endif
 
 using brave_shields::ControlType;
-using net::features::kBraveHttpsByDefault;
+using features::kBraveHttpsByDefault;
 
 namespace {
 
@@ -71,7 +71,8 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
   ~HttpsUpgradeBrowserTest() override = default;
 
   void SetUp() override {
-    feature_list_.InitAndEnableFeature(kBraveHttpsByDefault);
+    feature_list_.InitWithFeatures(
+        {features::kHttpsFirstModeV2, kBraveHttpsByDefault}, {});
     PlatformBrowserTest::SetUp();
   }
 

@@ -33,4 +33,9 @@ OVERRIDE_FEATURE_DEFAULT_STATES({{
 const base::FeatureParam<bool> kDnsOverHttpsShowUiParam{&kDnsOverHttps,
                                                         "ShowUi", true};
 
+// Enabled HTTPS by Default.
+BASE_FEATURE(kBraveHttpsByDefault,
+             "HttpsByDefault",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
 }  // namespace features

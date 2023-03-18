@@ -33,6 +33,7 @@
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
+#include "chrome/common/chrome_features.h"
 #include "chrome/common/chrome_paths.h"
 #include "chrome/common/chrome_switches.h"
 #include "chrome/common/pref_names.h"
@@ -43,7 +44,6 @@
 #include "content/public/test/browser_test.h"
 #include "content/public/test/test_utils.h"
 #include "gmock/gmock.h"
-#include "net/base/features.h"
 #include "url/gurl.h"
 
 namespace {
@@ -413,9 +413,9 @@ class BraveTorTest_EnableTorHttpsOnlyFlag
           net::features::kBraveTorWindowsHttpsOnly};
       std::vector<base::test::FeatureRef> disabled_features;
       if (IsBraveHttpsByDefaultEnabled()) {
-        enabled_features.push_back(net::features::kBraveHttpsByDefault);
+        enabled_features.push_back(features::kBraveHttpsByDefault);
       } else {
-        disabled_features.push_back(net::features::kBraveHttpsByDefault);
+        disabled_features.push_back(features::kBraveHttpsByDefault);
       }
       scoped_feature_list_.InitWithFeatures(enabled_features,
                                             disabled_features);

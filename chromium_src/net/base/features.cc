@@ -58,11 +58,6 @@ BASE_FEATURE(kBraveTorWindowsHttpsOnly,
              "BraveTorWindowsHttpsOnly",
              base::FEATURE_ENABLED_BY_DEFAULT);
 
-// Enabled HTTPS by Default.
-BASE_FEATURE(kBraveHttpsByDefault,
-             "HttpsByDefault",
-             base::FEATURE_DISABLED_BY_DEFAULT);
-
 // Add "Forget by default" cookie blocking mode which cleanups storage after a
 // website is closed.
 BASE_FEATURE(kBraveForgetFirstPartyStorage,

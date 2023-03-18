@@ -31,6 +31,7 @@
 #include "brave/components/skus/common/features.h"
 #include "brave/components/speedreader/common/buildflags/buildflags.h"
 #include "build/build_config.h"
+#include "chrome/common/chrome_features.h"
 #include "components/content_settings/core/common/features.h"
 #include "components/flags_ui/feature_entry.h"
 #include "components/flags_ui/feature_entry_macros.h"
@@ -727,7 +728,7 @@
           "Attempt to connect to all websites using HTTPS before falling "     \
           "back to HTTP.",                                                     \
           kOsAll,                                                              \
-          FEATURE_VALUE_TYPE(net::features::kBraveHttpsByDefault),             \
+          FEATURE_VALUE_TYPE(features::kBraveHttpsByDefault),                  \
       })                                                                       \
   BRAVE_IPFS_FEATURE_ENTRIES                                                   \
   BRAVE_NATIVE_WALLET_FEATURE_ENTRIES                                          \

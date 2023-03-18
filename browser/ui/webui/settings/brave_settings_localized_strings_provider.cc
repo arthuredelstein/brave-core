@@ -24,6 +24,7 @@
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/media/router/media_router_feature.h"
 #include "chrome/browser/profiles/profile.h"
+#include "chrome/common/chrome_features.h"
 #include "chrome/common/pref_names.h"
 #include "chrome/common/webui_url_constants.h"
 #include "chrome/grit/chromium_strings.h"
@@ -773,7 +774,7 @@ void BraveAddLocalizedStrings(content::WebUIDataSource* html_source,
 
   html_source->AddBoolean(
       "isHttpsByDefaultEnabled",
-      base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault));
+      base::FeatureList::IsEnabled(features::kBraveHttpsByDefault));
 
   if (base::FeatureList::IsEnabled(
           net::features::kBraveFirstPartyEphemeralStorage)) {

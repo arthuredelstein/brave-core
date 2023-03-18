@@ -14,7 +14,7 @@
 namespace features {
 
 OVERRIDE_FEATURE_DEFAULT_STATES({{
-    {kHttpsFirstModeV2, base::FEATURE_DISABLED_BY_DEFAULT},
+    {kHttpsFirstModeV2, base::FEATURE_ENABLED_BY_DEFAULT},
     {kKAnonymityService, base::FEATURE_DISABLED_BY_DEFAULT},
     {kOmniboxTriggerForNoStatePrefetch, base::FEATURE_DISABLED_BY_DEFAULT},
     {kSCTAuditing, base::FEATURE_DISABLED_BY_DEFAULT},
@@ -33,5 +33,10 @@ OVERRIDE_FEATURE_DEFAULT_STATES({{
 // Enable the DoH settings UI in chrome://settings/security on all platforms.
 const base::FeatureParam<bool> kDnsOverHttpsShowUiParam{&kDnsOverHttps,
                                                         "ShowUi", true};
+
+// Enabled HTTPS by Default.
+BASE_FEATURE(kBraveHttpsByDefault,
+             "HttpsByDefault",
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 }  // namespace features

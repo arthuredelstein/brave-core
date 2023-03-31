@@ -39,13 +39,11 @@ bool ShouldUpgradeToHttps(content::BrowserContext* context, const GURL& url) {
   IsEnabled(FLAG.name == features::kHttpsUpgrades.name \
                 ? net::features::kBraveHttpsByDefault  \
                 : FLAG)
-#define is_navigation_fallback() will_fallback_to(resource_request.url)
 
 #include "src/chrome/browser/ssl/https_upgrades_interceptor.cc"
 
 #undef MaybeCreateLoader
 #undef IsEnabled
-#undef is_navigation_fallback
 
 void HttpsUpgradesInterceptor::MaybeCreateLoader(
     const network::ResourceRequest& tentative_resource_request,

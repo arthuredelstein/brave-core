@@ -10,10 +10,10 @@
 #include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/common/chrome_features.h"
+#include "chrome/browser/ssl/https_upgrades_interceptor.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/interstitials/security_interstitial_page_test_utils.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/browser/ssl/https_only_mode_upgrade_interceptor.h"
 #include "chrome/common/pref_names.h"
 #include "chrome/test/base/chrome_test_utils.h"
 #include "components/prefs/pref_service.h"
@@ -104,9 +104,9 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
     ASSERT_TRUE(http_server_.Start());
     ASSERT_TRUE(https_server_.Start());
 
-    HttpsOnlyModeUpgradeInterceptor::SetHttpsPortForTesting(
+    HttpsUpgradesInterceptor::SetHttpsPortForTesting(
         https_server()->port());
-    HttpsOnlyModeUpgradeInterceptor::SetHttpPortForTesting(
+    HttpsUpgradesInterceptor::SetHttpPortForTesting(
         http_server()->port());
   }
 

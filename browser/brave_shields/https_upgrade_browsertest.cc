@@ -43,22 +43,39 @@ enum class PageResult { kHttp, kHttps, kInterstitial };
 struct TestCase {
   bool init_secure;
   const char* domain;
+  const char* path;
   ControlType control_type;
   PageResult expected_result;
 };
 
+constexpr char simple[] = "/simple.html";
+constexpr char page404[] = "/page404.html";
+
 constexpr TestCase kTestCases[] = {
-    {false, "insecure1.test", ControlType::ALLOW, PageResult::kHttp},
-    {false, "insecure2.test", ControlType::BLOCK_THIRD_PARTY,
+    {false, "insecure1.test", simple, ControlType::ALLOW,
      PageResult::kHttp},
-    {false, "insecure3.test", ControlType::BLOCK, PageResult::kInterstitial},
-    {false, "upgradable1.test", ControlType::ALLOW, PageResult::kHttp},
-    {false, "upgradable2.test", ControlType::BLOCK_THIRD_PARTY,
+    {false, "insecure2.test", simple, ControlType::BLOCK_THIRD_PARTY,
+     PageResult::kHttp},
+    {false, "insecure3.test", simple, ControlType::BLOCK,
+     PageResult::kInterstitial},
+    {false, "broken1.test", page404, ControlType::ALLOW,
+     PageResult::kHttp},
+    {false, "broken2.test", page404, ControlType::BLOCK_THIRD_PARTY,
+     PageResult::kHttp},
+    {false, "broken3.test", page404, ControlType::BLOCK,
+     PageResult::kInterstitial},
+    {false, "upgradable1.test", simple, ControlType::ALLOW,
+     PageResult::kHttp},
+    {false, "upgradable2.test", simple, ControlType::BLOCK_THIRD_PARTY,
      PageResult::kHttps},
-    {false, "upgradable3.test", ControlType::BLOCK, PageResult::kHttps},
-    {true, "secure1.test", ControlType::ALLOW, PageResult::kHttps},
-    {true, "secure2.test", ControlType::BLOCK_THIRD_PARTY, PageResult::kHttps},
-    {true, "secure3.test", ControlType::BLOCK, PageResult::kHttps}};
+    {false, "upgradable3.test", simple, ControlType::BLOCK,
+     PageResult::kHttps},
+    {true, "secure1.test", simple, ControlType::ALLOW,
+     PageResult::kHttps},
+    {true, "secure2.test", simple, ControlType::BLOCK_THIRD_PARTY,
+     PageResult::kHttps},
+    {true, "secure3.test", simple, ControlType::BLOCK,
+     PageResult::kHttps}};
 
 base::FilePath GetTestDataDir() {
   return base::FilePath(FILE_PATH_LITERAL("net/data/url_request_unittest"));
@@ -138,8 +155,8 @@ class HttpsUpgradeBrowserTest : public PlatformBrowserTest {
                  << "test_case.control_type: " << test_case.control_type);
     GURL initial_url =
         test_case.init_secure
-            ? https_server()->GetURL(test_case.domain, "/simple.html")
-            : http_server()->GetURL(test_case.domain, "/simple.html");
+            ? https_server()->GetURL(test_case.domain, test_case.path)
+            : http_server()->GetURL(test_case.domain, test_case.path);
     brave_shields::SetBraveShieldsEnabled(ContentSettings(), shields_enabled,
                                           initial_url, nullptr);
     brave_shields::SetHttpsUpgradeControlType(
@@ -199,7 +216,7 @@ IN_PROC_BROWSER_TEST_F(HttpsUpgradeBrowserTest, CheckUpgrades) {
         GURL final_url =
             (test_case.expected_result == PageResult::kHttp ? http_server()
                                                             : https_server())
-                ->GetURL(test_case.domain, "/simple.html");
+                ->GetURL(test_case.domain, test_case.path);
         EXPECT_EQ(final_url, Contents()->GetLastCommittedURL());
       }
     }

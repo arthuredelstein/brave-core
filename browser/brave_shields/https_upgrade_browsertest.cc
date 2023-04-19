@@ -48,7 +48,7 @@ struct TestCase {
   PageResult expected_result;
 };
 
-constexpr char simple[] = "/simple.html";
+constexpr char simple[] = "/simple_page.html";
 constexpr char page404[] = "/page404.html";
 
 constexpr TestCase kTestCases[] = {
@@ -78,7 +78,7 @@ constexpr TestCase kTestCases[] = {
      PageResult::kHttps}};
 
 base::FilePath GetTestDataDir() {
-  return base::FilePath(FILE_PATH_LITERAL("net/data/url_request_unittest"));
+  return base::FilePath(FILE_PATH_LITERAL("content/test/data"));
 }
 
 }  // namespace

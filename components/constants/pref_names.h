@@ -38,6 +38,7 @@ extern const char kReferralAttemptCount[];
 extern const char kReferralHeaders[];
 extern const char kReferralAndroidFirstRunTimestamp[];
 extern const char kNoScriptControlType[];
+extern const char kFingerprintingControlType[];
 extern const char kShieldsAdvancedViewEnabled[];
 extern const char kShieldsStatsBadgeVisible[];
 extern const char kAdControlType[];

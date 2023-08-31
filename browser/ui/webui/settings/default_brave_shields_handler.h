@@ -43,6 +43,8 @@ class DefaultBraveShieldsHandler : public settings::SettingsPageUIHandler,
   void GetCookieControlType(const base::Value::List& args);
   void SetFingerprintingControlType(const base::Value::List& args);
   void GetFingerprintingControlType(const base::Value::List& args);
+  void SetFingerprintingBlockEnabled(const base::Value::List& args);
+  void GetFingerprintingBlockEnabled(const base::Value::List& args);
   void SetHTTPSEverywhereEnabled(const base::Value::List& args);
   void GetHTTPSEverywhereEnabled(const base::Value::List& args);
   void SetHttpsUpgradeControlType(const base::Value::List& args);

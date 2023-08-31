@@ -109,6 +109,10 @@ class BraveShieldsPage extends BraveShieldsPageBase {
         type: Boolean,
         value: loadTimeData.getBoolean('isHttpsByDefaultEnabled')
       },
+      showStrictFingerprintingMode_: {
+        type: Boolean,
+        value: loadTimeData.getBoolean('showStrictFingerprintingMode')
+      },
       isForgetFirstPartyStorageFeatureEnabled_: {
         type: Boolean,
         value: loadTimeData.getBoolean('isForgetFirstPartyStorageFeatureEnabled')
@@ -193,9 +197,14 @@ class BraveShieldsPage extends BraveShieldsPageBase {
     this.browserProxy_.setCookieControlType(this.$.cookieControlType.value)
   }
 
-  onFingerprintingControlChange_ () {
-    this.browserProxy_.setFingerprintingControlType(this.$.fingerprintingControlType.value)
+  onFingerprintingSelectControlChange_ () {
+    this.browserProxy_.setFingerprintingControlType(this.$.fingerprintingSelectControlType.value)
   }
+
+  onFingerprintingToggleControlChange_ () {
+    this.browserProxy_.setFingerprintingBlockEnabled(this.$.fingerprintingToggleControlType.checked)
+  }
+
 
   onHTTPSEverywhereControlChange_ () {
     this.browserProxy_.setHTTPSEverywhereEnabled(this.$.httpsEverywhereControlType.checked)

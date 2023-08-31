@@ -637,6 +637,11 @@ bool IsHttpsByDefaultFeatureEnabled() {
   return base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault);
 }
 
+bool IsShowStrictFingerprintingModeEnabled() {
+  return base::FeatureList::IsEnabled(
+      features::kBraveShowStrictFingerprintingMode);
+}
+
 void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 ControlType type,
                                 const GURL& url,

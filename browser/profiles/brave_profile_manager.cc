@@ -95,6 +95,7 @@ void BraveProfileManager::InitProfileUserPrefs(Profile* profile) {
   brave::SetDefaultThirdPartyCookieBlockValue(profile);
   perf::MaybeEnableBraveFeatureForPerfTesting(profile);
   brave::MigrateHttpsUpgradeSettings(profile);
+  brave::MigrateFingerprintingSettings(profile);
 #if BUILDFLAG(ENABLE_IPFS)
   ipfs::IpfsService::MigrateProfilePrefs(profile->GetPrefs());
 #endif

@@ -132,6 +132,8 @@ bool ShouldUpgradeToHttps(
         https_upgrade_exceptions_service);
 bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url);
 
+bool IsShowStrictFingerprintingModeEnabled();
+
 void SetNoScriptControlType(HostContentSettingsMap* map,
                             ControlType type,
                             const GURL& url,

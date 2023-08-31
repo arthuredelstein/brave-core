@@ -46,6 +46,7 @@ const char kReferralHeaders[] = "brave.referral.headers";
 const char kReferralAndroidFirstRunTimestamp[] =
     "brave.referral_android_first_run_timestamp";
 const char kNoScriptControlType[] = "brave.no_script_default";
+const char kFingerprintingControlType[] = "brave.fingerprinting";
 const char kShieldsAdvancedViewEnabled[] =
     "brave.shields.advanced_view_enabled";
 const char kShieldsStatsBadgeVisible[] = "brave.shields.stats_badge_visible";

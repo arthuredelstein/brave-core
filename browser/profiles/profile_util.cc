@@ -129,4 +129,17 @@ void MigrateHttpsUpgradeSettings(Profile* profile) {
   }
 }
 
+void MigrateFingerprintingSettings(Profile* profile) {
+  auto* prefs = profile->GetPrefs();
+  auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
+  if (!map || !prefs) {
+    return;
+  }
+  bool fingerprintingProtectionEnabled =
+      brave_shields::GetFingerprintingControlType(map, GURL()) !=
+      ControlType::ALLOW;
+  prefs->SetBoolean(kFingerprintingControlType,
+                    fingerprintingProtectionEnabled);
+}
+
 }  // namespace brave

@@ -80,6 +80,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final String PREF_AD_BLOCK = "ad_block";
     private static final String PREF_BLOCK_SCRIPTS = "scripts_block";
     public static final String PREF_FINGERPRINTING_PROTECTION = "fingerprinting_protection";
+    public static final String PREF_FINGERPRINTING_PROTECTION2 = "fingerprinting_protection2";
     private static final String PREF_CLOSE_TABS_ON_EXIT = "close_tabs_on_exit";
     private static final String PREF_SEND_P3A = "send_p3a_analytics";
     private static final String PREF_SEND_CRASH_REPORTS = "send_crash_reports";
@@ -120,7 +121,8 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
             PREF_SHIELDS_SUMMARY, PREF_BLOCK_TRACKERS_ADS, PREF_DE_AMP, PREF_DEBOUNCE,
             PREF_HTTPS_UPGRADE, PREF_HTTPSE, PREF_HTTPS_FIRST_MODE, PREF_BLOCK_SCRIPTS,
             PREF_BLOCK_CROSS_SITE_COOKIES, PREF_FINGERPRINTING_PROTECTION,
-            PREF_FINGERPRINT_LANGUAGE, PREF_CONTENT_FILTERING, PREF_FORGET_FIRST_PARTY_STORAGE,
+            PREF_FINGERPRINTING_PROTECTION2, PREF_FINGERPRINT_LANGUAGE, PREF_CONTENT_FILTERING,
+            PREF_FORGET_FIRST_PARTY_STORAGE,
             PREF_CLEAR_DATA_SECTION, //  clear data automatically  section
             PREF_CLEAR_ON_EXIT, PREF_CLEAR_BROWSING_DATA,
             PREF_BRAVE_SOCIAL_BLOCKING_SECTION, // social blocking section
@@ -142,7 +144,8 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private static final int STANDARD = 1;
     private static final int ALLOW = 2;
 
-    private final PrefService mPrefServiceBridge = UserPrefs.get(Profile.getLastUsedRegularProfile());
+    private final PrefService mPrefServiceBridge =
+            UserPrefs.get(Profile.getLastUsedRegularProfile());
     private final PrivacyPreferencesManagerImpl mPrivacyPrefManager =
             PrivacyPreferencesManagerImpl.getInstance();
     private final ChromeManagedPreferenceDelegate mManagedPreferenceDelegate =
@@ -317,7 +320,8 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                 (ChromeSwitchPreference) findPreference(PREF_SHOW_AUTOCOMPLETE_IN_ADDRESS_BAR);
         mShowAutocompleteInAddressBar.setOnPreferenceChangeListener(this);
 
-        mAutocompleteTopSites = (ChromeSwitchPreference) findPreference(PREF_AUTOCOMPLETE_TOP_SITES);
+        mAutocompleteTopSites =
+                (ChromeSwitchPreference) findPreference(PREF_AUTOCOMPLETE_TOP_SITES);
         mAutocompleteTopSites.setOnPreferenceChangeListener(this);
 
         mSocialBlockingCategory =
@@ -336,13 +340,16 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
             }
         }
 
-        mSocialBlockingFacebook = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_FACEBOOK);
+        mSocialBlockingFacebook =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_FACEBOOK);
         mSocialBlockingFacebook.setOnPreferenceChangeListener(this);
 
-        mSocialBlockingTwitter = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_TWITTER);
+        mSocialBlockingTwitter =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_TWITTER);
         mSocialBlockingTwitter.setOnPreferenceChangeListener(this);
 
-        mSocialBlockingLinkedin = (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_LINKEDIN);
+        mSocialBlockingLinkedin =
+                (ChromeSwitchPreference) findPreference(PREF_SOCIAL_BLOCKING_LINKEDIN);
         mSocialBlockingLinkedin.setOnPreferenceChangeListener(this);
 
         mAppLinks = (ChromeSwitchPreference) findPreference(PREF_APP_LINKS);

@@ -162,6 +162,7 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
     private ChromeSwitchPreference mHttpsFirstModePref;
     private BraveDialogPreference mHttpsUpgradePref;
     private BraveDialogPreference mFingerprintingProtectionPref;
+    private ChromeSwitchPreference mFingerprintingProtection2Pref;
     private BraveDialogPreference mRequestOtrPref;
     private ChromeSwitchPreference mBlockScriptsPref;
     private ChromeSwitchPreference mForgetFirstPartyStoragePref;
@@ -283,6 +284,16 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
         mFingerprintingProtectionPref =
                 (BraveDialogPreference) findPreference(PREF_FINGERPRINTING_PROTECTION);
         mFingerprintingProtectionPref.setOnPreferenceChangeListener(this);
+
+        mFingerprintingProtection2Pref =
+                (ChromeSwitchPreference) findPreference(PREF_FINGERPRINTING_PROTECTION2);
+        mFingerprintingProtection2Pref.setOnPreferenceChangeListener(this);
+
+        boolean showStrictFingerprintingMode =
+                ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_SHOW_STRICT_FINGERPRINTING_MODE);
+
+        mFingerprintingProtectionPref.setVisible(showStrictFingerprintingMode);
+        mFingerprintingProtection2Pref.setVisible(!showStrictFingerprintingMode);
 
         mRequestOtrPref = (BraveDialogPreference) findPreference(PREF_REQUEST_OTR);
         mRequestOtrPref.setOnPreferenceChangeListener(this);
@@ -524,6 +535,11 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
                         break;
                 }
             }
+        } else if (PREF_FINGERPRINTING_PROTECTION2.equals(key)) {
+            boolean protect = (boolean) newValue;
+            BraveShieldsContentSettings.setFingerprintingPref(protect
+                            ? BraveShieldsContentSettings.DEFAULT
+                            : BraveShieldsContentSettings.ALLOW_RESOURCE);
         } else if (PREF_REQUEST_OTR.equals(key)) {
             UserPrefs.get(Profile.getLastUsedRegularProfile())
                     .setInteger(BravePref.REQUEST_OTR_ACTION_OPTION, (int) newValue);
@@ -693,14 +709,17 @@ public class BravePrivacySettings extends PrivacySettings implements ConnectionE
             mFingerprintingProtectionPref.setCheckedIndex(0);
             mFingerprintingProtectionPref.setSummary(
                     getActivity().getResources().getString(R.string.block_fingerprinting_option_1));
+            mFingerprintingProtection2Pref.setChecked(true);
         } else if (fingerprintingPref.equals(BraveShieldsContentSettings.DEFAULT)) {
             mFingerprintingProtectionPref.setCheckedIndex(1);
             mFingerprintingProtectionPref.setSummary(
                     getActivity().getResources().getString(R.string.block_fingerprinting_option_2));
+            mFingerprintingProtection2Pref.setChecked(true);
         } else if (fingerprintingPref.equals(BraveShieldsContentSettings.ALLOW_RESOURCE)) {
             mFingerprintingProtectionPref.setCheckedIndex(2);
             mFingerprintingProtectionPref.setSummary(
                     getActivity().getResources().getString(R.string.block_fingerprinting_option_3));
+            mFingerprintingProtection2Pref.setChecked(false);
         }
 
         if (httpsUpgradePref.equals(BraveShieldsContentSettings.BLOCK_RESOURCE)) {

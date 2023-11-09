@@ -22,6 +22,10 @@ bool g_simulate_empty_font_whitelist_for_testing = false;
 const auto g_distro = base::GetLinuxDistro();
 #endif
 
+const char* kUbuntu2204Prefix = "Ubuntu 22.04";
+const char* kUbuntu2004Prefix = "Ubuntu 20.04";
+const char* kFedora32Prefix = "Fedora";
+
 constexpr auto kEmptyFontSet = base::span<std::string_view>({});
 
 constexpr auto kFontFarblingSet = base::MakeFixedFlatSet<std::string_view>({
@@ -1940,11 +1944,11 @@ constexpr auto kFontWhitelistML = kEmptyFontSet;
 
 base::span<const std::string_view> GetMainFontWhitelist() {
 #if BUILDFLAG(IS_LINUX)
-  if (g_distro.starts_with("Ubuntu 22.04")) {
+  if (g_distro.starts_with(kUbuntu2204Prefix)) {
     return base::make_span(kFontWhitelistUbuntu2204.begin(), kFontWhitelistUbuntu2204.end());
-  } else if (g_distro.starts_with("Ubuntu 20.04")) {
+  } else if (g_distro.starts_with(kUbuntu2004Prefix)) {
     return base::make_span(kFontWhitelistUbuntu2004.begin(), kFontWhitelistUbuntu2004.end());    
-  } else if (g_distro.starts_with("Fedora")) {
+  } else if (g_distro.starts_with(kFedora32Prefix)) {
     return base::make_span(kFontWhitelistFedora32.begin(), kFontWhitelistFedora32.end());    
   } else {
     return base::make_span(kFontWhitelist.begin(), kFontWhitelist.end());
@@ -1989,17 +1993,17 @@ bool IsFontAllowedForFarbling(const AtomicString& family_name) {
 
 base::span<const std::string_view> GetAdditionalFontWhitelistByLocale(
     WTF::String locale_language) {
-  #if BUILDFLAG(IS_LINUX)
+#if BUILDFLAG(IS_LINUX)
   if (locale_language != "en") {
-    if (g_distro.starts_with("Ubuntu 22.04")) {
+    if (g_distro.starts_with(kUbuntu2204Prefix)) {
       return base::make_span(kFontWhitelistUbuntu2204Languages.begin(), kFontWhitelistUbuntu2204Languages.end());
-    } else if (g_distro.starts_with("Ubuntu 20.04")) {
+    } else if (g_distro.starts_with(kUbuntu2004Prefix)) {
       return base::make_span(kFontWhitelistUbuntu2004Languages.begin(), kFontWhitelistUbuntu2004Languages.end());    
-    } else if (g_distro.starts_with("Fedora")) {
+    } else if (g_distro.starts_with(kFedora32Prefix)) {
       return base::make_span(kFontWhitelistFedora32.begin(), kFontWhitelistFedora32.end());    
     } 
   }
-  #else
+#else
   if (locale_language == "ar" || locale_language == "fa" ||
       locale_language == "ur")
     return base::make_span(kFontWhitelistAR.begin(), kFontWhitelistAR.end());
@@ -2031,7 +2035,7 @@ base::span<const std::string_view> GetAdditionalFontWhitelistByLocale(
     return base::make_span(kFontWhitelistLO.begin(), kFontWhitelistLO.end());
   if (locale_language == "ml")
     return base::make_span(kFontWhitelistML.begin(), kFontWhitelistML.end());
-  #endif
+#endif
   return kEmptyFontSet;
 }
 

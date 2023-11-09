@@ -734,7 +734,7 @@ constexpr auto kFontWhitelist = base::MakeFixedFlatSet<std::string_view>({
 #elif BUILDFLAG(IS_LINUX)
 // If ubuntu 22_04:
 const std::string distro = base::GetLinuxDistro();
-base::flat_set<std::string_view> kFontWhitelist =
+constexpr auto kFontWhitelist =
     base::MakeFlatSet<std::string_view>({
   "aakar",
   "abyssinica sil",

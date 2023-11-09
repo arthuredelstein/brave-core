@@ -22,9 +22,9 @@ bool g_simulate_empty_font_whitelist_for_testing = false;
 const auto g_distro = base::GetLinuxDistro();
 #endif
 
-const char* kUbuntu2204Prefix = "Ubuntu 22.04";
-const char* kUbuntu2004Prefix = "Ubuntu 20.04";
-const char* kFedora32Prefix = "Fedora";
+constexpr char kUbuntu2204Prefix[] = "Ubuntu 22.04";
+constexpr char kUbuntu2004Prefix[] = "Ubuntu 20.04";
+constexpr char kFedora32Prefix[] = "Fedora";
 
 constexpr auto kEmptyFontSet = base::span<std::string_view>({});
 
@@ -738,6 +738,8 @@ constexpr auto kFontWhitelist = base::MakeFixedFlatSet<std::string_view>({
     "verdana",
 });
 #elif BUILDFLAG(IS_LINUX)
+  // Distro-specific lists borrowed from
+  // https://searchfox.org/mozilla-central/rev/76b13c585e575cf273fd05ab3b48a1532c1d1faa/gfx/thebes/StandardFonts-linux.inc
   // If ubuntu 22_04:
   constexpr auto kFontWhitelistUbuntu2204 = base::MakeFixedFlatSet<std::string_view>({
     "aakar",

@@ -11,6 +11,7 @@
 
 #include "base/base_switches.h"
 #include "base/lazy_instance.h"
+#include "base/linux_util.h"
 #include "base/path_service.h"
 #include "base/time/time.h"
 #include "brave/app/brave_command_line_helper.h"
@@ -137,6 +138,12 @@ void BraveMainDelegate::PreSandboxStartup() {
   base::PathService::OverrideAndCreateIfNeeded(
       chrome::DIR_POLICY_FILES,
       base::FilePath(FILE_PATH_LITERAL("/etc/brave/policies")), true, false);
+#endif
+
+#if BUILDFLAG(IS_LINUX)
+  // Ensure we have read the Linux distro before the process is sandboxed.
+  // Required for choosing the appropriate anti-fingerprinting font allowlist.
+  base::GetLinuxDistro();
 #endif
 
   if (brave::SubprocessNeedsResourceBundle()) {

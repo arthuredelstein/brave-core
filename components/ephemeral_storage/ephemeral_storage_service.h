@@ -122,6 +122,7 @@ class EphemeralStorageService : public KeyedService {
       tld_ephemeral_areas_to_cleanup_;
   base::Value::List first_party_storage_areas_to_cleanup_on_startup_;
   base::OneShotTimer first_party_storage_areas_startup_cleanup_timer_;
+  std::map<std::string, int32_t> first_party_domain_storage_cleanup_count_;
 
   base::WeakPtrFactory<EphemeralStorageService> weak_ptr_factory_{this};
 };

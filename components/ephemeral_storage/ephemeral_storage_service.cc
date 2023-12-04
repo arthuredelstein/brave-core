@@ -262,6 +262,11 @@ void EphemeralStorageService::CleanupFirstPartyStorageArea(
     const std::string& ephemeral_domain) {
   DVLOG(1) << __func__ << " " << ephemeral_domain;
   delegate_->CleanupFirstPartyStorageArea(ephemeral_domain);
+  if (first_party_domain_storage_cleanup_count_.find(ephemeral_domain) == first_party_domain_storage_cleanup_count_.end()) {
+    first_party_domain_storage_cleanup_count_[ephemeral_domain] = 1;
+  } else {
+    first_party_domain_storage_cleanup_count_[ephemeral_domain]++;
+  }
   if (!context_->IsOffTheRecord()) {
     base::Value url_spec(GetFirstPartyStorageURL(ephemeral_domain).spec());
     ScopedListPrefUpdate pref_update(prefs_,

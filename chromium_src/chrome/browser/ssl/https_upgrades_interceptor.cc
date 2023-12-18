@@ -14,24 +14,22 @@
 // Prevent double-defining macro
 #include "chrome/browser/renderer_host/chrome_navigation_ui_data.h"
 
-#define MaybeCreateLoader(...)                                                \
-  MaybeCreateLoader(__VA_ARGS__) {                                            \
-    if (brave_shields::IsHttpsByDefaultFeatureEnabled()) {                    \
-      HostContentSettingsMap* map =                                           \
-          HostContentSettingsMapFactory::GetForProfile(browser_context);      \
-      if (!map ||                                                             \
-          !brave_shields::ShouldUpgradeToHttps(                               \
-              map, tentative_resource_request.url,                            \
-              g_brave_browser_process->https_upgrade_exceptions_service())) { \
-        std::move(callback).Run({});                                          \
-        return;                                                               \
-      }                                                                       \
-      http_interstitial_enabled_by_pref_ = brave_shields::ShouldForceHttps(   \
-          map, tentative_resource_request.url);                               \
-    }                                                                         \
-    MaybeCreateLoader_ChromiumImpl(tentative_resource_request,                \
-                                   browser_context, std::move(callback));     \
-  }                                                                           \
+#define MaybeCreateLoader(...)                                              \
+  MaybeCreateLoader(__VA_ARGS__) {                                          \
+    if (brave_shields::IsHttpsByDefaultFeatureEnabled()) {                  \
+      HostContentSettingsMap* map =                                         \
+          HostContentSettingsMapFactory::GetForProfile(browser_context);    \
+      if (!map || !brave_shields::ShouldUpgradeToHttps(                     \
+                      map, tentative_resource_request.url)) {               \
+        std::move(callback).Run({});                                        \
+        return;                                                             \
+      }                                                                     \
+      http_interstitial_enabled_by_pref_ = brave_shields::ShouldForceHttps( \
+          map, tentative_resource_request.url);                             \
+    }                                                                       \
+    MaybeCreateLoader_ChromiumImpl(tentative_resource_request,              \
+                                   browser_context, std::move(callback));   \
+  }                                                                         \
   void HttpsUpgradesInterceptor::MaybeCreateLoader_ChromiumImpl(__VA_ARGS__)
 
 // Force pages that have upgraded to HTTPS to fall back to HTTP if we receive

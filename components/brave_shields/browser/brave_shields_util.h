@@ -11,10 +11,6 @@
 
 #include "components/content_settings/core/common/content_settings_pattern.h"
 
-namespace https_upgrade_exceptions {
-class HttpsUpgradeExceptionsService;
-}
-
 namespace content {
 struct Referrer;
 }
@@ -118,11 +114,7 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                 PrefService* local_state = nullptr);
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                        const GURL& url);
-bool ShouldUpgradeToHttps(
-    HostContentSettingsMap* map,
-    const GURL& url,
-    https_upgrade_exceptions::HttpsUpgradeExceptionsService*
-        https_upgrade_exceptions_service);
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url);
 bool ShouldForceHttps(HostContentSettingsMap* map, const GURL& url);
 
 bool IsShowStrictFingerprintingModeEnabled();

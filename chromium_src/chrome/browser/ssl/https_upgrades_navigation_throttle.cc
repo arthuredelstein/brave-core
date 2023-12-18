@@ -90,9 +90,7 @@ HttpsUpgradesNavigationThrottle::MaybeCreateThrottleFor(
 
   bool https_upgrades_enabled =
       interstitial_state.enabled_by_pref ||
-      (map && brave_shields::ShouldUpgradeToHttps(
-                  map, request_url,
-                  g_brave_browser_process->https_upgrade_exceptions_service()));
+      (map && brave_shields::ShouldUpgradeToHttps(map, request_url));
   if (!https_upgrades_enabled) {
     return nullptr;
   }

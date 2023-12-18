@@ -6,11 +6,6 @@
 import("//brave/build/config.gni")
 
 static_library("browser") {
-  sources = [
-    "https_upgrade_exceptions_service.cc",
-    "https_upgrade_exceptions_service.h",
-  ]
-
   deps = [
     "//base",
     "//brave/components/brave_component_updater/browser",

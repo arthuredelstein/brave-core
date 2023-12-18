@@ -16,7 +16,6 @@
 #include "brave/components/brave_shields/common/pref_names.h"
 #include "brave/components/constants/url_constants.h"
 #include "brave/components/content_settings/core/common/content_settings_util.h"
-#include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -670,15 +669,7 @@ ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
   }
 }
 
-bool ShouldUpgradeToHttps(
-    HostContentSettingsMap* map,
-    const GURL& url,
-    https_upgrade_exceptions::HttpsUpgradeExceptionsService*
-        https_upgrade_exceptions_service) {
-  // Don't upgrade if we don't have an exceptions service.
-  if (!https_upgrade_exceptions_service) {
-    return false;
-  }
+bool ShouldUpgradeToHttps(HostContentSettingsMap* map, const GURL& url) {
   // Don't upgrade if feature is disabled.
   if (!IsHttpsByDefaultFeatureEnabled()) {
     return false;
@@ -691,13 +682,9 @@ bool ShouldUpgradeToHttps(
     return false;
   }
   const ControlType control_type = GetHttpsUpgradeControlType(map, url);
-  // Always upgrade for Strict HTTPS Upgrade.
-  if (control_type == ControlType::BLOCK) {
-    return true;
-  }
-  // Upgrade for Standard HTTPS upgrade if host is not on the exceptions list.
-  if (control_type == ControlType::BLOCK_THIRD_PARTY &&
-      https_upgrade_exceptions_service->CanUpgradeToHTTPS(url)) {
+  // Upgrade for Standard or Strict HTTPS Upgrade.
+  if (control_type == ControlType::BLOCK_THIRD_PARTY ||
+      control_type == ControlType::BLOCK) {
     return true;
   }
   return false;

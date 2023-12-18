@@ -38,7 +38,6 @@
 #include "brave/components/constants/pref_names.h"
 #include "brave/components/debounce/browser/debounce_component_installer.h"
 #include "brave/components/debounce/common/features.h"
-#include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
 #include "brave/components/localhost_permission/localhost_permission_component.h"
 #include "brave/components/ntp_background_images/browser/ntp_background_images_service.h"
 #include "brave/components/p3a/buildflags.h"
@@ -217,10 +216,6 @@ void BraveBrowserProcessImpl::StartBraveServices() {
 
   resource_component();
 
-  if (base::FeatureList::IsEnabled(net::features::kBraveHttpsByDefault)) {
-    https_upgrade_exceptions_service();
-  }
-
   if (base::FeatureList::IsEnabled(
           brave_shields::features::kBraveLocalhostAccessPermission)) {
     localhost_permission_component();
@@ -272,16 +267,6 @@ BraveBrowserProcessImpl::ntp_background_images_service() {
   }
 
   return ntp_background_images_service_.get();
-}
-
-https_upgrade_exceptions::HttpsUpgradeExceptionsService*
-BraveBrowserProcessImpl::https_upgrade_exceptions_service() {
-  if (!https_upgrade_exceptions_service_) {
-    https_upgrade_exceptions_service_ =
-        https_upgrade_exceptions::HttpsUpgradeExceptionsServiceFactory(
-            local_data_files_service());
-  }
-  return https_upgrade_exceptions_service_.get();
 }
 
 localhost_permission::LocalhostPermissionComponent*

@@ -19,6 +19,7 @@ NET_EXPORT extern const base::FeatureParam<int>
     kBraveEphemeralStorageKeepAliveTimeInSeconds;
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveFirstPartyEphemeralStorage);
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveHttpsByDefault);
+NET_EXPORT BASE_DECLARE_FEATURE(kBraveFallbackDoHProvider);
 NET_EXPORT BASE_DECLARE_FEATURE(kBravePartitionBlobStorage);
 NET_EXPORT BASE_DECLARE_FEATURE(kBravePartitionHSTS);
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveTorWindowsHttpsOnly);

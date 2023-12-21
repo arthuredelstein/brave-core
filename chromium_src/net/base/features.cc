@@ -67,6 +67,15 @@ BASE_FEATURE(kBraveHttpsByDefault,
              "HttpsByDefault",
              base::FEATURE_ENABLED_BY_DEFAULT);
 
+// When enabled, use a fallback DNS over HTTPS (DoH)
+// provider when the current DNS provider does not offer Secure DNS.
+BASE_FEATURE(kBraveFallbackDoHProvider,
+             "BraveFallbackDoHProvider",
+             base::FEATURE_DISABLED_BY_DEFAULT);
+
+const base::FeatureParam<int> kBraveFallbackDoHProviderEndpointIndex = {
+    &kBraveFallbackDoHProvider, "BraveFallbackDoHProviderEndpointIndex", 0};
+
 // Add "Forget by default" cookie blocking mode which cleanups storage after a
 // website is closed.
 BASE_FEATURE(kBraveForgetFirstPartyStorage,

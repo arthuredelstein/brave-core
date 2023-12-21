@@ -3,6 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "base/feature_list.h"
+#include "net/base/features.h"
 #include "net/dns/dns_util.h"
 #include "net/dns/public/dns_over_https_server_config.h"
 
@@ -13,7 +15,8 @@ namespace {
 
 std::vector<DnsOverHttpsServerConfig> MaybeAddFallbackDohServer(
     const std::vector<DnsOverHttpsServerConfig>& doh_servers) {
-  if (!doh_servers.empty()) {
+  if (!base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider) ||
+      !doh_servers.empty()) {
     return doh_servers;
   }
   std::vector<DnsOverHttpsServerConfig> fallback_doh_servers;

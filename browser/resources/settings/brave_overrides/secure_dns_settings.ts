@@ -7,7 +7,6 @@ import {RegisterPolymerTemplateModifications} from 'chrome://resources/brave/pol
 
 RegisterPolymerTemplateModifications({
   'settings-secure-dns': (templateContent) => {
-    console.log('hello from settings-secure-dns');
     // if DoH fallback is enabled
     const dohProviderMenu = templateContent.getElementById('resolverSelect');
     if (!dohProviderMenu) {

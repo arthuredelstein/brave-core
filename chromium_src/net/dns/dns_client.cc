@@ -13,22 +13,29 @@
 namespace net {
 namespace {
 
-constexpr char const* endpointAddresses[] = {
-    "",  // Not for use
-    "https://dns.quad9.net/dns-query", "https://wikimedia-dns.org/dns-query",
-    "https://cloudflare-dns.com/dns-query"};
+struct fallbackEndpoint {
+  const char* name;
+  const char* address;
+};
+
+constexpr fallbackEndpoint endpoints[] = {
+  {"", ""},
+  {"Quad9", "https://dns.quad9.net/dns-query"},
+  {"Wikimedia", "https://wikimedia-dns.org/dns-query"},
+  {"Cloudflare", "https://cloudflare-dns.com/dns-query"}
+};
 
 std::vector<DnsOverHttpsServerConfig> MaybeAddFallbackDohServer(
     const std::vector<DnsOverHttpsServerConfig>& doh_servers) {
   static const int endpointIndex =
       net::features::kBraveFallbackDoHProviderEndpointIndex.Get();
   if (!base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider) ||
-      endpointIndex <= 0 || endpointIndex >= (int)sizeof(endpointAddresses)) {
+      endpointIndex <= 0 || endpointIndex >= (int)sizeof(endpoints)) {
     return doh_servers;
   }
+  const char* endpointAddress = endpoints[endpointIndex].address;
+  auto fallbackDohServer = DnsOverHttpsServerConfig::FromString(endpointAddress);
   std::vector<DnsOverHttpsServerConfig> extended_doh_servers = doh_servers;
-  auto fallbackDohServer =
-      DnsOverHttpsServerConfig::FromString(endpointAddresses[endpointIndex]);
   if (fallbackDohServer.has_value()) {
     extended_doh_servers.push_back(fallbackDohServer.value());
   }

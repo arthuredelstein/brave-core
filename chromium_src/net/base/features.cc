@@ -73,6 +73,9 @@ BASE_FEATURE(kBraveFallbackDoHProvider,
              "kBraveFallbackDoHProvider",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
+const base::FeatureParam<int> kBraveFallbackDoHProviderEndpointIndex = {
+    &kBraveFallbackDoHProvider, "BraveFallbackDoHProviderEndpointIndex", 0};
+
 // Add "Forget by default" cookie blocking mode which cleanups storage after a
 // website is closed.
 BASE_FEATURE(kBraveForgetFirstPartyStorage,

@@ -15,17 +15,16 @@ namespace {
 
 std::vector<DnsOverHttpsServerConfig> MaybeAddFallbackDohServer(
     const std::vector<DnsOverHttpsServerConfig>& doh_servers) {
-  if (!base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider) ||
-      !doh_servers.empty()) {
+  if (!base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider)) {
     return doh_servers;
   }
-  std::vector<DnsOverHttpsServerConfig> fallback_doh_servers;
+  std::vector<DnsOverHttpsServerConfig> extended_doh_servers = doh_servers;
   auto fallbackDohServer = DnsOverHttpsServerConfig::FromString(
       "https://wikimedia-dns.org/dns-query");
   if (fallbackDohServer.has_value()) {
-    fallback_doh_servers.push_back(fallbackDohServer.value());
+    extended_doh_servers.push_back(fallbackDohServer.value());
   }
-  return fallback_doh_servers;
+  return extended_doh_servers;
 }
 
 }  // namespace

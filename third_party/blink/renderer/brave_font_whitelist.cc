@@ -741,7 +741,7 @@ constexpr auto kFontWhitelist =
                                                  "source-sans-pro-semi-bold",
                                                  "tahoma",
                                                  "times",
-                                                 "times new roman",
+                                                // "times new roman",
                                                  "verdana",
                                              });
 #elif BUILDFLAG(IS_LINUX)
@@ -1977,24 +1977,29 @@ base::span<const std::string_view> GetMainFontWhitelist() {
 
 bool AllowFontByFamilyName(const AtomicString& family_name,
                            WTF::String default_language) {
-  LOG(INFO) << "AllowFontByFamilyName called";
+  LOG(INFO) << "AllowFontByFamilyName called for " << family_name.Characters8();
   auto fontWhitelist = GetMainFontWhitelist();
   if (UNLIKELY(g_simulate_empty_font_whitelist_for_testing)) {
     return false;
   }
+  LOG(INFO) << "AAAAAAA";
   if (fontWhitelist.empty()) {
     return true;
   }
+  LOG(INFO) << "BBBBBBBB";
   std::string lower_ascii_name = family_name.LowerASCII().Ascii();
   if (base::ranges::binary_search(fontWhitelist, lower_ascii_name)) {
     return true;
   }
+  LOG(INFO) << "CCCCCCCC";
   if (base::ranges::binary_search(
           GetAdditionalFontWhitelistByLocale(default_language),
           lower_ascii_name)) {
     return true;
   }
+  LOG(INFO) << "DDDDDDDDD";
 #if BUILDFLAG(IS_ANDROID)
+  LOG(INFO) << "EEEEEEEEEE";
   // There are literally hundreds of region-specific Noto fonts.
   // To reduce memory and maintenance, we allow them by wildcard.
   if (family_name.StartsWithIgnoringASCIICase("noto sans ") ||

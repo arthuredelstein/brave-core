@@ -2207,13 +2207,13 @@
   <message name="IDS_SETTINGS_AUTOMATIC_MODE_DESCRIPTION" desc="Text of the select option that puts secure DNS in auto-upgrade mode">
     OS default (when available)
   </message>
-  <message name="IDS_SETTINGS_AUTOMATIC_MODE_WITH_WIKIMEDIA_DESCRIPTION" desc="Text of the select option that puts secure DNS in auto-upgrade mode that falls back to Quad9">
-    OS default or Wikimedia
-  </message>
   <message name="IDS_SETTINGS_AUTOMATIC_MODE_WITH_QUAD9_DESCRIPTION" desc="Text of the select option that puts secure DNS in auto-upgrade mode that falls back to Quad9">
     OS default or Quad9
   </message>
-  <message name="IDS_SETTINGS_AUTOMATIC_MODE_WITH_CLOUDFLARE_DESCRIPTION" desc="Text of the select option that puts secure DNS in auto-upgrade mode that falls back to Quad9">
+  <message name="IDS_SETTINGS_AUTOMATIC_MODE_WITH_WIKIMEDIA_DESCRIPTION" desc="Text of the select option that puts secure DNS in auto-upgrade mode that falls back to Wikimedia">
+    OS default or Wikimedia
+  </message>
+  <message name="IDS_SETTINGS_AUTOMATIC_MODE_WITH_CLOUDFLARE_DESCRIPTION" desc="Text of the select option that puts secure DNS in auto-upgrade mode that falls back to Cloudflare">
     OS default or Cloudflare
   </message>
   <message name="IDS_SETTINGS_SECURE_DNS_DROPDOWN_ACCESSIBILITY_LABEL" desc="Accessibility label for the dropdown menu containing secure resolvers">

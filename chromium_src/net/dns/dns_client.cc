@@ -29,7 +29,8 @@ std::vector<DnsOverHttpsServerConfig> MaybeAddFallbackDohServer(
   static const int endpointIndex =
       net::features::kBraveFallbackDoHProviderEndpointIndex.Get();
   if (!base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider) ||
-      endpointIndex <= 0 || endpointIndex >= (int)sizeof(endpoints)) {
+      endpointIndex <= 0 ||
+      endpointIndex >= static_cast<int>(sizeof(endpoints))) {
     return doh_servers;
   }
   const char* endpointAddress = endpoints[endpointIndex].address;

@@ -3,7 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "base/containers/fixed_flat_map.h"
 #include "brave/components/brave_vpn/common/buildflags/buildflags.h"
+#include "brave/net/dns/secure_dns_endpoints.h"
 #include "build/build_config.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/net/secure_dns_config.h"
@@ -14,7 +16,6 @@
 #include "components/grit/brave_components_strings.h"
 #include "components/prefs/pref_service.h"
 #include "net/base/features.h"
-#include "net/dns/public/secure_dns_mode.h"
 
 #if BUILDFLAG(ENABLE_BRAVE_VPN)
 #include "brave/components/brave_vpn/common/features.h"
@@ -46,21 +47,32 @@ bool ShouldReplaceSecureDNSDisabledDescription() {
 #undef AddSecureDnsStrings
 namespace settings {
 
+namespace {
+
+static constexpr auto kAlternateLocalizedStrings =
+    base::MakeFixedFlatMap<net::DohFallbackEndpointType,
+                           webui::LocalizedString>({
+        {net::DohFallbackEndpointType::kQuad9,
+         {"secureDnsAutomaticModeDescription",
+          IDS_SETTINGS_AUTOMATIC_MODE_WITH_QUAD9_DESCRIPTION}},
+        {net::DohFallbackEndpointType::kWikimedia,
+         {"secureDnsAutomaticModeDescription",
+          IDS_SETTINGS_AUTOMATIC_MODE_WITH_WIKIMEDIA_DESCRIPTION}},
+        {net::DohFallbackEndpointType::kCloudflare,
+         {"secureDnsAutomaticModeDescription",
+          IDS_SETTINGS_AUTOMATIC_MODE_WITH_CLOUDFLARE_DESCRIPTION}},
+    });
+
+}  // namespace
+
 void AddSecureDnsStrings(content::WebUIDataSource* html_source) {
   AddSecureDnsStrings_ChromiumImpl(html_source);
   if (base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider)) {
-    static constexpr webui::LocalizedString kAlternateLocalizedStrings[] = {
-        {"secureDnsAutomaticModeDescription",
-         IDS_SETTINGS_AUTOMATIC_MODE_WITH_QUAD9_DESCRIPTION},
-        {"secureDnsAutomaticModeDescription",
-         IDS_SETTINGS_AUTOMATIC_MODE_WITH_WIKIMEDIA_DESCRIPTION},
-        {"secureDnsAutomaticModeDescription",
-         IDS_SETTINGS_AUTOMATIC_MODE_WITH_CLOUDFLARE_DESCRIPTION}};
-    const int endpointIndex =
-        net::features::kBraveFallbackDoHProviderEndpointIndex.Get();
-    if (endpointIndex >= 1 && endpointIndex <= 3) {
+    static const net::DohFallbackEndpointType endpoint =
+        net::features::kBraveFallbackDoHProviderEndpoint.Get();
+    if (endpoint != net::DohFallbackEndpointType::kNone) {
       static webui::LocalizedString kLocalizedStrings[] = {
-          kAlternateLocalizedStrings[endpointIndex - 1]};
+          kAlternateLocalizedStrings.at(endpoint)};
       html_source->AddLocalizedStrings(kLocalizedStrings);
     }
   }

@@ -6,6 +6,7 @@
 #include "src/net/base/features.cc"
 
 #include "base/feature_override.h"
+#include "brave/net/dns/secure_dns_endpoints.h"
 
 namespace net {
 namespace features {
@@ -70,8 +71,17 @@ BASE_FEATURE(kBraveFallbackDoHProvider,
              "BraveFallbackDoHProvider",
              base::FEATURE_DISABLED_BY_DEFAULT);
 
-const base::FeatureParam<int> kBraveFallbackDoHProviderEndpointIndex = {
-    &kBraveFallbackDoHProvider, "BraveFallbackDoHProviderEndpointIndex", 0};
+constexpr base::FeatureParam<DohFallbackEndpointType>::Option
+    kBraveFallbackDoHProviderEndpointOptions[] = {
+        {DohFallbackEndpointType::kNone, "none"},
+        {DohFallbackEndpointType::kQuad9, "quad9"},
+        {DohFallbackEndpointType::kWikimedia, "wikimedia"},
+        {DohFallbackEndpointType::kCloudflare, "cloudflare"}};
+constexpr base::FeatureParam<DohFallbackEndpointType>
+    kBraveFallbackDoHProviderEndpoint{
+        &kBraveFallbackDoHProvider, "BraveFallbackDoHProviderEndpoint",
+        DohFallbackEndpointType::kNone,
+        &kBraveFallbackDoHProviderEndpointOptions};
 
 // Add "Forget by default" cookie blocking mode which cleanups storage after a
 // website is closed.

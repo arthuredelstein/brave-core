@@ -15,10 +15,6 @@ import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.privacy.secure_dns.SecureDnsProviderPreference;
 import org.chromium.components.browser_ui.widget.RadioButtonWithDescription;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 class BraveSecureDnsProviderPreference extends SecureDnsProviderPreference {
     private String mPrimaryText;
     private String mDescriptionText;

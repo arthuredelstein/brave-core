@@ -21,21 +21,25 @@ class BraveSecureDnsProviderPreference extends SecureDnsProviderPreference {
     public BraveSecureDnsProviderPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_FALLBACK_DOH_PROVIDER)) {
-            int index = ChromeFeatureList.getFieldTrialParamByFeatureAsInt(
-                    BraveFeatureList.BRAVE_FALLBACK_DOH_PROVIDER,
-                    "BraveFallbackDoHProviderEndpointIndex", 0);
+            int index =
+                    ChromeFeatureList.getFieldTrialParamByFeatureAsInt(
+                            BraveFeatureList.BRAVE_FALLBACK_DOH_PROVIDER,
+                            "BraveFallbackDoHProviderEndpointIndex",
+                            0);
             switch (index) {
                 case 1:
                     mPrimaryText =
                             context.getString(R.string.settings_automatic_mode_with_quad9_label);
                     break;
                 case 2:
-                    mPrimaryText = context.getString(
-                            R.string.settings_automatic_mode_with_wikimedia_label);
+                    mPrimaryText =
+                            context.getString(
+                                    R.string.settings_automatic_mode_with_wikimedia_label);
                     break;
                 case 3:
-                    mPrimaryText = context.getString(
-                            R.string.settings_automatic_mode_with_cloudflare_label);
+                    mPrimaryText =
+                            context.getString(
+                                    R.string.settings_automatic_mode_with_cloudflare_label);
                     break;
                 default:
                     mPrimaryText = context.getString(R.string.settings_automatic_mode_label);

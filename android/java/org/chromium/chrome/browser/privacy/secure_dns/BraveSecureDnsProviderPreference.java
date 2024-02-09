@@ -12,7 +12,6 @@ import androidx.preference.PreferenceViewHolder;
 
 import org.chromium.base.BraveFeatureList;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
-import org.chromium.chrome.browser.privacy.secure_dns.SecureDnsProviderPreference;
 import org.chromium.components.browser_ui.widget.RadioButtonWithDescription;
 
 class BraveSecureDnsProviderPreference extends SecureDnsProviderPreference {

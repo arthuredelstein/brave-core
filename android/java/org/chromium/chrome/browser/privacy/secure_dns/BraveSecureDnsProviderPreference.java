@@ -21,33 +21,34 @@ class BraveSecureDnsProviderPreference extends SecureDnsProviderPreference {
     public BraveSecureDnsProviderPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (ChromeFeatureList.isEnabled(BraveFeatureList.BRAVE_FALLBACK_DOH_PROVIDER)) {
-            int index =
-                    ChromeFeatureList.getFieldTrialParamByFeatureAsInt(
+            String endpoint =
+                    ChromeFeatureList.getFieldTrialParamByFeature(
                             BraveFeatureList.BRAVE_FALLBACK_DOH_PROVIDER,
-                            "BraveFallbackDoHProviderEndpointIndex",
-                            0);
-            switch (index) {
-                case 1:
+                            "BraveFallbackDoHProviderEndpoint");
+            String altDescriptionText =
+                    context.getString(R.string.settings_automatic_mode_description_fallback);
+            switch (endpoint) {
+                case "quad9":
                     mPrimaryText =
                             context.getString(R.string.settings_automatic_mode_with_quad9_label);
+                    mDescriptionText = altDescriptionText;
                     break;
-                case 2:
+                case "wikimedia":
                     mPrimaryText =
                             context.getString(
                                     R.string.settings_automatic_mode_with_wikimedia_label);
+                    mDescriptionText = altDescriptionText;
                     break;
-                case 3:
+                case "cloudflare":
                     mPrimaryText =
                             context.getString(
                                     R.string.settings_automatic_mode_with_cloudflare_label);
+                    mDescriptionText = altDescriptionText;
                     break;
+                case "none":
                 default:
                     mPrimaryText = context.getString(R.string.settings_automatic_mode_label);
                     break;
-            }
-            if (index >= 1 && index <= 3) {
-                mDescriptionText =
-                        context.getString(R.string.settings_automatic_mode_description_fallback);
             }
         }
     }

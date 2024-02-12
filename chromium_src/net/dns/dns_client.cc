@@ -15,23 +15,17 @@
 namespace net {
 namespace {
 
-struct DohFallbackEndpoint {
-  const char* name;
-  const char* address;
-};
-
-constexpr auto kDohFallbackEndpoints{
-    base::MakeFixedFlatMap<DohFallbackEndpointType, DohFallbackEndpoint>({
-        {DohFallbackEndpointType::kQuad9,
-         {"Quad9", "https://dns.quad9.net/dns-query"}},
+constexpr auto kDohFallbackEndpointAddresses{
+    base::MakeFixedFlatMap<DohFallbackEndpointType, const char*>({
+        {DohFallbackEndpointType::kQuad9, "https://dns.quad9.net/dns-query"},
         {DohFallbackEndpointType::kWikimedia,
-         {"Wikimedia", "https://wikimedia-dns.org/dns-query"}},
+         "https://wikimedia-dns.org/dns-query"},
         {DohFallbackEndpointType::kCloudflare,
-         {"Cloudflare", "https://cloudflare-dns.com/dns-query"}},
+         "https://cloudflare-dns.com/dns-query"},
     })};
 
 std::vector<DnsOverHttpsServerConfig> MaybeAddFallbackDohServer(
-    const std::vector<DnsOverHttpsServerConfig>& doh_servers) {
+    const std::vector<DnsOverHttpsServerConfig> doh_servers) {
   if (!base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider)) {
     return doh_servers;
   }
@@ -40,7 +34,7 @@ std::vector<DnsOverHttpsServerConfig> MaybeAddFallbackDohServer(
   if (endpoint == DohFallbackEndpointType::kNone) {
     return doh_servers;
   }
-  const char* endpointAddress = kDohFallbackEndpoints.at(endpoint).address;
+  const char* endpointAddress = kDohFallbackEndpointAddresses.at(endpoint);
   auto fallbackDohServer =
       DnsOverHttpsServerConfig::FromString(endpointAddress);
   std::vector<DnsOverHttpsServerConfig> extended_doh_servers = doh_servers;

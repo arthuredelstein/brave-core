@@ -47,33 +47,23 @@ bool ShouldReplaceSecureDNSDisabledDescription() {
 #undef AddSecureDnsStrings
 namespace settings {
 
-namespace {
-
-static constexpr auto kAlternateLocalizedStrings =
-    base::MakeFixedFlatMap<net::DohFallbackEndpointType,
-                           webui::LocalizedString>({
-        {net::DohFallbackEndpointType::kQuad9,
-         {"secureDnsAutomaticModeDescription",
-          IDS_SETTINGS_AUTOMATIC_MODE_WITH_QUAD9_DESCRIPTION}},
-        {net::DohFallbackEndpointType::kWikimedia,
-         {"secureDnsAutomaticModeDescription",
-          IDS_SETTINGS_AUTOMATIC_MODE_WITH_WIKIMEDIA_DESCRIPTION}},
-        {net::DohFallbackEndpointType::kCloudflare,
-         {"secureDnsAutomaticModeDescription",
-          IDS_SETTINGS_AUTOMATIC_MODE_WITH_CLOUDFLARE_DESCRIPTION}},
-    });
-
-}  // namespace
-
 void AddSecureDnsStrings(content::WebUIDataSource* html_source) {
   AddSecureDnsStrings_ChromiumImpl(html_source);
   if (base::FeatureList::IsEnabled(net::features::kBraveFallbackDoHProvider)) {
     static const net::DohFallbackEndpointType endpoint =
         net::features::kBraveFallbackDoHProviderEndpoint.Get();
     if (endpoint != net::DohFallbackEndpointType::kNone) {
-      static webui::LocalizedString kLocalizedStrings[] = {
-          kAlternateLocalizedStrings.at(endpoint)};
-      html_source->AddLocalizedStrings(kLocalizedStrings);
+      static constexpr auto kAlternateLocalizedStrings =
+          base::MakeFixedFlatMap<net::DohFallbackEndpointType, int>({
+              {net::DohFallbackEndpointType::kQuad9,
+               IDS_SETTINGS_AUTOMATIC_MODE_WITH_QUAD9_DESCRIPTION},
+              {net::DohFallbackEndpointType::kWikimedia,
+               IDS_SETTINGS_AUTOMATIC_MODE_WITH_WIKIMEDIA_DESCRIPTION},
+              {net::DohFallbackEndpointType::kCloudflare,
+               IDS_SETTINGS_AUTOMATIC_MODE_WITH_CLOUDFLARE_DESCRIPTION},
+          });
+      html_source->AddLocalizedString("secureDnsAutomaticModeDescription",
+                                      kAlternateLocalizedStrings.at(endpoint));
     }
   }
 #if BUILDFLAG(ENABLE_BRAVE_VPN) && BUILDFLAG(IS_WIN)

@@ -31,6 +31,8 @@
 #include "extensions/buildflags/buildflags.h"
 #include "mojo/public/cpp/bindings/associated_remote.h"
 #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
+#include "brave/browser/brave_browser_process.h"
+#include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
 
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/ui/brave_shields_data_controller.h"
@@ -214,6 +216,14 @@ void BraveShieldsWebContentsObserver::OnJavaScriptBlocked(
   }
   DispatchBlockedEventForWebContents(brave_shields::kJavaScript,
                                      base::UTF16ToUTF8(details), web_contents);
+}
+
+void BraveShieldsWebContentsObserver::GetWebcompatExceptions(
+    const GURL& url,
+    GetWebcompatExceptionsCallback reply) {
+  auto* webcompat_exceptions_service = g_brave_browser_process->webcompat_exceptions_service();
+  auto exceptions = webcompat_exceptions_service->GetFeatureExceptions(url);
+  std::move(reply).Run(exceptions);
 }
 
 // static

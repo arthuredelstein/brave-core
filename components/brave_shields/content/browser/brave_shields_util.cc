@@ -685,6 +685,17 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
   RecordShieldsSettingChanged(local_state);
 }
 
+bool IsFeatureDisabledForWebcompat(
+    HostContentSettingsMap* map,
+    const GURL& url,
+    webcompat_exceptions::BraveFarblingType farblingType) {
+  ContentSettingsType webcompatContentSettingsType =
+      GetContentSettingsTypeForBraveFarblingType(farblingType);
+  ContentSetting setting =
+      map->GetContentSetting(url, GURL(), webcompatContentSettingsType);
+  return setting == CONTENT_SETTING_ALLOW;
+}
+
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,
                                        const GURL& url) {
   if (!url.SchemeIsHTTPOrHTTPS() && !url.is_empty()) {

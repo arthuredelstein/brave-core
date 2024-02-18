@@ -8,12 +8,45 @@
 #include <set>
 #include <string>
 
+#include "base/containers/fixed_flat_map.h"
 #include "base/no_destructor.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
 #include "url/gurl.h"
 
 namespace brave_shields {
+
+namespace {
+using enum webcompat_exceptions::BraveFarblingType;
+using enum ContentSettingsType;
+
+static constexpr auto kFarblingTypeToContentSettings =
+    base::MakeFixedFlatMap<webcompat_exceptions::BraveFarblingType,
+                           ContentSettingsType>({
+        {kAudio, BRAVE_WEBCOMPAT_AUDIO},
+        {kCanvas, BRAVE_WEBCOMPAT_CANVAS},
+        {kDeviceMemory, BRAVE_WEBCOMPAT_DEVICEMEMORY},
+        {kEventSourcePool, BRAVE_WEBCOMPAT_EVENTSOURCEPOOL},
+        {kFont, BRAVE_WEBCOMPAT_FONT},
+        {kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARECONCURRENCY},
+        {kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
+        {kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
+        {kMediaDevices, BRAVE_WEBCOMPAT_MEDIADEVICES},
+        {kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
+        {kScreen, BRAVE_WEBCOMPAT_SCREEN},
+        {kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECHSYNTHESIS},
+        {kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER},
+        {kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
+        {kWebGL, BRAVE_WEBCOMPAT_WEBGL},
+        {kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
+        {kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETSPOOL},
+    });
+}  // namespace
+
+ContentSettingsType GetContentSettingsTypeForBraveFarblingType(
+    webcompat_exceptions::BraveFarblingType farbling_type) {
+  return kFarblingTypeToContentSettings.at(farbling_type);
+}
 
 ContentSetting GetBraveFPContentSettingFromRules(
     const ContentSettingsForOneType& fp_rules,
@@ -86,6 +119,25 @@ ShieldsSettingCounts GetAdsSettingCountFromRules(
   }
 
   return result;
+}
+
+ContentSetting GetWebcompatSettingFromRules(
+    const std::map<ContentSettingsType, ContentSettingsForOneType>&
+        webcompat_rules,
+    webcompat_exceptions::BraveFarblingType farbling_type,
+    const GURL& primary_url) {
+  const auto settings =
+      GetContentSettingsTypeForBraveFarblingType(farbling_type);
+  const auto item = webcompat_rules.find(settings);
+  if (item == webcompat_rules.end()) {
+    return CONTENT_SETTING_DEFAULT;
+  }
+  for (const auto& rule : item->second) {
+    if (rule.primary_pattern.Matches(primary_url)) {
+      return rule.GetContentSetting();
+    }
+  }
+  return CONTENT_SETTING_DEFAULT;
 }
 
 }  // namespace brave_shields

@@ -6,6 +6,7 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 
+#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
 #include "components/content_settings/core/common/content_settings.h"
 
 class GURL;
@@ -22,10 +23,20 @@ ContentSetting GetBraveFPContentSettingFromRules(
     const ContentSettingsForOneType& fp_rules,
     const GURL& primary_url);
 
+ContentSetting GetWebcompatSettingFromRules(
+    const std::map<ContentSettingsType, ContentSettingsForOneType>&
+        webcompat_rules,
+    webcompat_exceptions::BraveFarblingType farbling_type,
+    const GURL& primary_url);
+
 ShieldsSettingCounts GetFPSettingCountFromRules(
     const ContentSettingsForOneType& fp_rules);
 ShieldsSettingCounts GetAdsSettingCountFromRules(
     const ContentSettingsForOneType& ads_rules);
+
+ContentSettingsType GetContentSettingsTypeForBraveFarblingType(
+    webcompat_exceptions::BraveFarblingType farbling_type);
+
 }  // namespace brave_shields
 
 #endif  // BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_

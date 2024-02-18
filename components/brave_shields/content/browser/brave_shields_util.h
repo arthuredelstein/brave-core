@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <string>
 
+#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
 
 namespace https_upgrade_exceptions {
@@ -148,6 +149,11 @@ bool MaybeChangeReferrer(bool allow_referrers,
                          const GURL& current_referrer,
                          const GURL& target_url,
                          content::Referrer* output_referrer);
+
+bool IsFeatureDisabledForWebcompat(
+    HostContentSettingsMap* map,
+    const GURL& url,
+    webcompat_exceptions::BraveFarblingType farblingType);
 
 ShieldsSettingCounts GetFPSettingCount(HostContentSettingsMap* map);
 ShieldsSettingCounts GetAdsSettingCount(HostContentSettingsMap* map);

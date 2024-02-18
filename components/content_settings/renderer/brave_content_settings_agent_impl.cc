@@ -325,26 +325,39 @@ void BraveContentSettingsAgentImpl::DidCommitProvisionalLoad(
   cached_ephemeral_storage_origins_.clear();
 }
 
-BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel() {
+BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
+    webcompat_exceptions::BraveFarblingType farbling_type) {
   blink::WebLocalFrame* frame = render_frame()->GetWebFrame();
 
   ContentSetting setting = CONTENT_SETTING_DEFAULT;
+  ContentSetting webcompat_setting = CONTENT_SETTING_DEFAULT;
+
+  const GURL url = url::Origin(frame->GetSecurityOrigin()).GetURL();
   if (content_setting_rules_) {
-    if (IsBraveShieldsDown(frame,
-                           url::Origin(frame->GetSecurityOrigin()).GetURL())) {
+    if (IsBraveShieldsDown(frame, url)) {
       setting = CONTENT_SETTING_ALLOW;
     } else {
       setting = brave_shields::GetBraveFPContentSettingFromRules(
           content_setting_rules_->fingerprinting_rules, GetOriginOrURL(frame));
+    }
+
+    if (setting == CONTENT_SETTING_ALLOW) {
+      DVLOG(1) << "farbling level OFF";
+      return BraveFarblingLevel::OFF;
+    }
+
+    webcompat_setting = brave_shields::GetWebcompatSettingFromRules(
+        content_setting_rules_->webcompat_rules, farbling_type,
+        GetOriginOrURL(frame));
+
+    if (webcompat_setting == CONTENT_SETTING_ALLOW) {
+      return BraveFarblingLevel::OFF;
     }
   }
 
   if (setting == CONTENT_SETTING_BLOCK) {
     DVLOG(1) << "farbling level MAXIMUM";
     return BraveFarblingLevel::MAXIMUM;
-  } else if (setting == CONTENT_SETTING_ALLOW) {
-    DVLOG(1) << "farbling level OFF";
-    return BraveFarblingLevel::OFF;
   } else {
     DVLOG(1) << "farbling level BALANCED";
     return BraveFarblingLevel::BALANCED;

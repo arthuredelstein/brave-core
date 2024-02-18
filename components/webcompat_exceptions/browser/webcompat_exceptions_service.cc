@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
+#include "brave/components/webcompat_exceptions/browser/webcompat_exceptions_service.h"
 
 #include <memory>
 #include <set>
@@ -18,32 +18,32 @@
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 
-#define HTTPS_UPGRADE_EXCEPTIONS_TXT_FILE "https-upgrade-exceptions-list.txt"
-#define HTTPS_UPGRADE_EXCEPTIONS_TXT_FILE_VERSION "1"
+#define WEBCOMPAT_EXCEPTIONS_JSON_FILE "webcompat-exceptions.json"
+#define WEBCOMPAT_EXCEPTIONS_JSON_FILE_VERSION "1"
 
-namespace https_upgrade_exceptions {
+namespace webcompat_exceptions {
 
 using brave_component_updater::LocalDataFilesObserver;
 using brave_component_updater::LocalDataFilesService;
 
-HttpsUpgradeExceptionsService::HttpsUpgradeExceptionsService(
+WebcompatExceptionsService::WebcompatExceptionsService(
     LocalDataFilesService* local_data_files_service)
     : LocalDataFilesObserver(local_data_files_service) {}
 
-void HttpsUpgradeExceptionsService::LoadHTTPSUpgradeExceptions(
+void WebcompatExceptionsService::LoadWebcompatExceptions(
     const base::FilePath& install_dir) {
   base::FilePath txt_file_path =
-      install_dir.AppendASCII(HTTPS_UPGRADE_EXCEPTIONS_TXT_FILE_VERSION)
-          .AppendASCII(HTTPS_UPGRADE_EXCEPTIONS_TXT_FILE);
+      install_dir.AppendASCII(WEBCOMPAT_EXCEPTIONS_JSON_FILE_VERSION)
+          .AppendASCII(WEBCOMPAT_EXCEPTIONS_JSON_FILE);
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
       base::BindOnce(&brave_component_updater::GetDATFileAsString,
                      txt_file_path),
-      base::BindOnce(&HttpsUpgradeExceptionsService::OnDATFileDataReady,
+      base::BindOnce(&WebcompatExceptionsService::OnDATFileDataReady,
                      weak_factory_.GetWeakPtr()));
 }
 
-void HttpsUpgradeExceptionsService::OnDATFileDataReady(
+void WebcompatExceptionsService::OnDATFileDataReady(
     const std::string& contents) {
   if (contents.empty()) {
     // We don't have the file yet.
@@ -58,7 +58,7 @@ void HttpsUpgradeExceptionsService::OnDATFileDataReady(
   return;
 }
 
-bool HttpsUpgradeExceptionsService::CanUpgradeToHTTPS(const GURL& url) {
+bool WebcompatExceptionsService::FeatureDisabled(const GURL& url, const& std::string feature) {
   if (!is_ready_) {
     // We don't have the exceptions list loaded yet. To avoid breakage,
     // don't upgrade any websites yet.
@@ -69,22 +69,22 @@ bool HttpsUpgradeExceptionsService::CanUpgradeToHTTPS(const GURL& url) {
 }
 
 // implementation of LocalDataFilesObserver
-void HttpsUpgradeExceptionsService::OnComponentReady(
+void WebcompatExceptionsService::OnComponentReady(
     const std::string& component_id,
     const base::FilePath& install_dir,
     const std::string& manifest) {
-  LoadHTTPSUpgradeExceptions(install_dir);
+  LoadWebcompatExceptions(install_dir);
 }
 
-HttpsUpgradeExceptionsService::~HttpsUpgradeExceptionsService() {
+WebcompatExceptionsService::~WebcompatExceptionsService() {
   exceptional_domains_.clear();
 }
 
-std::unique_ptr<HttpsUpgradeExceptionsService>
-HttpsUpgradeExceptionsServiceFactory(
+std::unique_ptr<WebcompatExceptionsService>
+WebcompatExceptionsServiceFactory(
     LocalDataFilesService* local_data_files_service) {
-  return std::make_unique<HttpsUpgradeExceptionsService>(
+  return std::make_unique<WebcompatExceptionsService>(
       local_data_files_service);
 }
 
-}  // namespace https_upgrade_exceptions
+}  // namespace webcompat_exceptions

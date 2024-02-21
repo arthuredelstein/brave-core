@@ -1,4 +1,4 @@
-/* Copyright (c) 2022 The Brave Authors. All rights reserved.
+/* Copyright (c) 2024 The Brave Authors. All rights reserved.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
@@ -13,6 +13,7 @@
 
 #include "base/containers/contains.h"
 #include "base/files/file_path.h"
+#include "base/json/json_reader.h"
 #include "base/strings/string_split.h"
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
@@ -39,16 +40,18 @@ void WebcompatExceptionsService::LoadWebcompatExceptions(
       FROM_HERE, {base::MayBlock()},
       base::BindOnce(&brave_component_updater::GetDATFileAsString,
                      txt_file_path),
-      base::BindOnce(&WebcompatExceptionsService::OnDATFileDataReady,
+      base::BindOnce(&WebcompatExceptionsService::OnJsonFileDataReady,
                      weak_factory_.GetWeakPtr()));
 }
 
-void WebcompatExceptionsService::OnDATFileDataReady(
+void WebcompatExceptionsService::OnJsonFileDataReady(
     const std::string& contents) {
   if (contents.empty()) {
     // We don't have the file yet.
     return;
   }
+  // VLOG(ERROR) << contents;
+  /*
   std::vector<std::string> lines = base::SplitString(
       contents, "\n", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
   for (const auto& line : lines) {
@@ -56,12 +59,13 @@ void WebcompatExceptionsService::OnDATFileDataReady(
   }
   is_ready_ = true;
   return;
+  */
 }
 
-bool WebcompatExceptionsService::FeatureDisabled(const GURL& url, const& std::string feature) {
+bool WebcompatExceptionsService::FeatureDisabled(const GURL& url,
+                                                 const std::string& feature) {
   if (!is_ready_) {
-    // We don't have the exceptions list loaded yet. To avoid breakage,
-    // don't upgrade any websites yet.
+    // We don't have the exceptions list loaded yet.
     return false;
   }
   // Allow upgrade only if the domain is not on the exceptions list.
@@ -80,11 +84,9 @@ WebcompatExceptionsService::~WebcompatExceptionsService() {
   exceptional_domains_.clear();
 }
 
-std::unique_ptr<WebcompatExceptionsService>
-WebcompatExceptionsServiceFactory(
+std::unique_ptr<WebcompatExceptionsService> WebcompatExceptionsServiceFactory(
     LocalDataFilesService* local_data_files_service) {
-  return std::make_unique<WebcompatExceptionsService>(
-      local_data_files_service);
+  return std::make_unique<WebcompatExceptionsService>(local_data_files_service);
 }
 
 }  // namespace webcompat_exceptions

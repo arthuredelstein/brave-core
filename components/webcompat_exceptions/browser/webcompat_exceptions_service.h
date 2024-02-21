@@ -30,7 +30,7 @@ class WebcompatExceptionsService
   bool FeatureDisabled(const GURL& url, const std::string& feature);
   ~WebcompatExceptionsService() override;
   void SetIsReadyForTesting() { is_ready_ = true; }
-  void OnDATFileDataReady(const std::string& contents);
+  void OnJsonFileDataReady(const std::string& contents);
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
@@ -40,8 +40,7 @@ class WebcompatExceptionsService
 };
 
 // Creates the WebcompatExceptionsService
-std::unique_ptr<WebcompatExceptionsService>
-WebcompatExceptionsServiceFactory(
+std::unique_ptr<WebcompatExceptionsService> WebcompatExceptionsServiceFactory(
     brave_component_updater::LocalDataFilesService* local_data_files_service);
 
 }  // namespace webcompat_exceptions

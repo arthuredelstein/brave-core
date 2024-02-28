@@ -19,6 +19,8 @@
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 
+#include "base/logging.h"
+
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE "webcompat-exceptions.json"
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE_VERSION "1"
 
@@ -50,7 +52,7 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
     // We don't have the file yet.
     return;
   }
-  // VLOG(ERROR) << contents;
+  DLOG(ERROR) << WEBCOMPAT_EXCEPTIONS_JSON_FILE << ":\n" << contents;
   /*
   std::vector<std::string> lines = base::SplitString(
       contents, "\n", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);

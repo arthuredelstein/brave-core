@@ -21,7 +21,8 @@ class GURL;
   virtual bool IsFirstPartyCosmeticFilteringEnabled(const GURL& url) { \
     return false;                                                      \
   }                                                                    \
-  virtual BraveFarblingLevel GetBraveFarblingLevel() {                 \
+  virtual BraveFarblingLevel GetBraveFarblingLevel(                    \
+      BraveFarblingType farblingType) {                                \
     return BraveFarblingLevel::OFF;                                    \
   }                                                                    \
   virtual bool IsReduceLanguageEnabled() {                             \

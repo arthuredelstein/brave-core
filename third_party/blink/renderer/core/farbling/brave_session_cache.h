@@ -48,8 +48,10 @@ CORE_EXPORT blink::WebContentSettingsClient* GetContentSettingsClientFor(
     bool require_filled_content_settings_rules = false);
 CORE_EXPORT BraveFarblingLevel
 GetBraveFarblingLevelFor(ExecutionContext* context,
+                         BraveFarblingType farblingType,
                          BraveFarblingLevel default_value);
-CORE_EXPORT bool AllowFingerprinting(ExecutionContext* context);
+CORE_EXPORT bool AllowFingerprinting(ExecutionContext* context,
+                                     BraveFarblingType farblingType);
 CORE_EXPORT bool AllowFontFamily(ExecutionContext* context,
                                  const AtomicString& family_name);
 CORE_EXPORT int FarbleInteger(ExecutionContext* context,
@@ -75,7 +77,9 @@ class CORE_EXPORT BraveSessionCache final
   static BraveSessionCache& From(ExecutionContext&);
   static void Init();
 
-  BraveFarblingLevel GetBraveFarblingLevel() { return farbling_level_; }
+  BraveFarblingLevel GetBraveFarblingLevel(BraveFarblingType farblingType) {
+    return farbling_level_;
+  }
   void FarbleAudioChannel(float* dst, size_t count);
   void PerturbPixels(const unsigned char* data, size_t size);
   WTF::String GenerateRandomString(std::string seed, wtf_size_t length);

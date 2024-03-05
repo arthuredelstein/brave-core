@@ -16,8 +16,8 @@ namespace brave {
 float FarbleDeviceMemory(blink::ExecutionContext* context) {
   float true_value =
       blink::ApproximatedDeviceMemory::GetApproximatedDeviceMemory();
-  BraveFarblingLevel farbling_level =
-      brave::GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF);
+  BraveFarblingLevel farbling_level = brave::GetBraveFarblingLevelFor(
+      context, BraveFarblingType::kNone, BraveFarblingLevel::OFF);
   // If Brave Shields are down or anti-fingerprinting is off for this site,
   // return the true value.
   if (farbling_level == BraveFarblingLevel::OFF)

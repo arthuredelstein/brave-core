@@ -64,7 +64,8 @@ class BraveContentSettingsAgentImpl
   void BraveSpecificDidAllowJavaScriptOnce(const GURL& details);
   bool AllowAutoplay(bool play_requested) override;
 
-  BraveFarblingLevel GetBraveFarblingLevel() override;
+  BraveFarblingLevel GetBraveFarblingLevel(
+      BraveFarblingType farblingType) override;
 
   bool IsReduceLanguageEnabled() override;
 

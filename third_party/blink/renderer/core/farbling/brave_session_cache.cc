@@ -100,15 +100,19 @@ blink::WebContentSettingsClient* GetContentSettingsClientFor(
 }
 
 BraveFarblingLevel GetBraveFarblingLevelFor(ExecutionContext* context,
+                                            BraveFarblingType farblingType,
                                             BraveFarblingLevel default_value) {
   BraveFarblingLevel value = default_value;
   if (context)
-    value = brave::BraveSessionCache::From(*context).GetBraveFarblingLevel();
+    value = brave::BraveSessionCache::From(*context).GetBraveFarblingLevel(
+        farblingType);
   return value;
 }
 
-bool AllowFingerprinting(ExecutionContext* context) {
-  return (GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF) !=
+bool AllowFingerprinting(ExecutionContext* context,
+                         BraveFarblingType farblingType) {
+  return (GetBraveFarblingLevelFor(context, farblingType,
+                                   BraveFarblingLevel::OFF) !=
           BraveFarblingLevel::MAXIMUM);
 }
 
@@ -142,8 +146,8 @@ bool BlockScreenFingerprinting(ExecutionContext* context) {
           blink::features::kBraveBlockScreenFingerprinting)) {
     return false;
   }
-  BraveFarblingLevel level =
-      GetBraveFarblingLevelFor(context, BraveFarblingLevel::OFF);
+  BraveFarblingLevel level = GetBraveFarblingLevelFor(
+      context, BraveFarblingType::kNone, BraveFarblingLevel::OFF);
   return level != BraveFarblingLevel::OFF;
 }
 
@@ -213,7 +217,8 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
   uint64_t seed = *reinterpret_cast<uint64_t*>(domain_key_);
   if (blink::WebContentSettingsClient* settings =
           GetContentSettingsClientFor(&context, true)) {
-    auto raw_farbling_level = settings->GetBraveFarblingLevel();
+    auto raw_farbling_level =
+        settings->GetBraveFarblingLevel(BraveFarblingType::kNone);
     farbling_level_ =
         base::FeatureList::IsEnabled(
             brave_shields::features::kBraveShowStrictFingerprintingMode)

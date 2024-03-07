@@ -19,7 +19,7 @@ void SpeechSynthesis::OnSetVoiceList(
     Vector<mojom::blink::SpeechSynthesisVoicePtr> mojom_voices) {
   voice_list_.clear();
   BraveFarblingLevel farbling_level = brave::GetBraveFarblingLevelFor(
-      GetExecutionContext(), BraveFarblingType::kNone, BraveFarblingLevel::OFF);
+      GetExecutionContext(), BraveFarblingType::kSpeechSynthesis, BraveFarblingLevel::OFF);
   if (farbling_level == BraveFarblingLevel::OFF) {
     // farbling off -> call upstream function
     OnSetVoiceList_ChromiumImpl(std::move(mojom_voices));

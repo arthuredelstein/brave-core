@@ -17,7 +17,7 @@ void FarbleMediaDevices(ExecutionContext* context,
   // |media_devices| is guaranteed not to be null here.
   if (media_devices->size() <= 2)
     return;
-  if (GetBraveFarblingLevelFor(context, BraveFarblingType::kNone,
+  if (GetBraveFarblingLevelFor(context, BraveFarblingType::kMediaDevices,
                                BraveFarblingLevel::OFF) ==
       BraveFarblingLevel::OFF) {
     return;

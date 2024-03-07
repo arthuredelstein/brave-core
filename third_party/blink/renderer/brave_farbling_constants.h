@@ -12,9 +12,21 @@ enum BraveFarblingLevel { BALANCED = 0, OFF, MAXIMUM };
 
 enum class BraveFarblingType {
   kNone,
-  kNavigator,
+  kCanvas,
+  kDeviceMemory,
+  kEventSourcePool,
+  kHardwareConcurrency,
+  kKeyboard,
+  kLanguage,
+  kMediaDevices,
+  kPlugins,
+  kScreen,
+  kSpeechSynthesis,
+  kUsbDeviceSerialNumber,
   kUserAgent,
-  kWebGl,
+  kWebGL,
+  kWebGL2,
+  kWebSocketsPool,
 };
 
 #endif  // BRAVE_THIRD_PARTY_BLINK_RENDERER_BRAVE_FARBLING_CONSTANTS_H_

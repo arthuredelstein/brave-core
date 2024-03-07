@@ -17,7 +17,7 @@ String USBDevice::serialNumber() const {
   String realSerialNumber = serialNumber_ChromiumImpl();
   if (realSerialNumber.length() > 0) {
     if (ExecutionContext* context = GetExecutionContext()) {
-      if (brave::GetBraveFarblingLevelFor(context, BraveFarblingType::kNone,
+      if (brave::GetBraveFarblingLevelFor(context, BraveFarblingType::kUsbDeviceSerialNumber,
                                           BraveFarblingLevel::BALANCED) !=
           BraveFarblingLevel::OFF) {
         WTF::StringBuilder result;

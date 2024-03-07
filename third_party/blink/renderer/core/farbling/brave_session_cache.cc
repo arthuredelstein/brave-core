@@ -147,7 +147,7 @@ bool BlockScreenFingerprinting(ExecutionContext* context) {
     return false;
   }
   BraveFarblingLevel level = GetBraveFarblingLevelFor(
-      context, BraveFarblingType::kNone, BraveFarblingLevel::OFF);
+      context, BraveFarblingType::kScreen, BraveFarblingLevel::OFF);
   return level != BraveFarblingLevel::OFF;
 }
 

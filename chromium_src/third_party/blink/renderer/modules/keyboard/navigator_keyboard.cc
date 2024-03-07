@@ -19,7 +19,7 @@ namespace blink {
 Keyboard* NavigatorKeyboard::keyboard(Navigator& navigator) {
   if (ExecutionContext* context = navigator.GetExecutionContext()) {
     if (brave::BraveSessionCache::From(*context).GetBraveFarblingLevel(
-            BraveFarblingType::kNone) != BraveFarblingLevel::OFF) {
+            BraveFarblingType::kKeyboard) != BraveFarblingLevel::OFF) {
       return nullptr;
     }
   }

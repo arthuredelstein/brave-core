@@ -19,7 +19,7 @@ bool AllowFingerprintingForHost(blink::CanvasRenderingContextHost* host) {
   if (!host)
     return true;
   return brave::AllowFingerprinting(host->GetTopExecutionContext(),
-                                    BraveFarblingType::kNone);
+                                    BraveFarblingType::kWebGL);
 }
 
 }  // namespace

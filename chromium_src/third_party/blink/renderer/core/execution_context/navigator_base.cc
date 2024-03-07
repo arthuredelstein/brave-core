@@ -29,7 +29,7 @@ void ApplyBraveHardwareConcurrencyOverride(blink::ExecutionContext* context,
     return;
   }
   unsigned farbled_value = true_value;
-  switch (brave::GetBraveFarblingLevelFor(context, BraveFarblingType::kNone,
+  switch (brave::GetBraveFarblingLevelFor(context, BraveFarblingType::kHardwareConcurrency,
                                           BraveFarblingLevel::OFF)) {
     case BraveFarblingLevel::OFF: {
       break;
@@ -70,7 +70,7 @@ namespace blink {
 
 String NavigatorBase::userAgent() const {
   if (ExecutionContext* context = GetExecutionContext()) {
-    if (!brave::AllowFingerprinting(context, BraveFarblingType::kNone)) {
+    if (!brave::AllowFingerprinting(context, BraveFarblingType::kUserAgent)) {
       return brave::BraveSessionCache::From(*context).FarbledUserAgent(
           context->UserAgent());
     }

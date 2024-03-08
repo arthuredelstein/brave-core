@@ -1,10 +1,10 @@
 diff --git a/components/content_settings/core/common/content_settings_types.mojom b/components/content_settings/core/common/content_settings_types.mojom
-index 5e704d5151311dad1550ce63487a9a7f4ea823e1..c2765f06bc2d3337f8b2ad687be9510092119734 100644
+index e10315f57a5bb04daabce937baaceea56744b046..77226e0f0ce64dedab4c99878e0fe89ec7678d43 100644
 --- a/components/content_settings/core/common/content_settings_types.mojom
 +++ b/components/content_settings/core/common/content_settings_types.mojom
-@@ -398,6 +398,21 @@ enum ContentSettingsType {
-   // Whether an application can enumerate audio output device.
-   SPEAKER_SELECTION,
+@@ -387,6 +387,42 @@ enum ContentSettingsType {
+   // Content settings for access to printers for the Web Printing API.
+   WEB_PRINTING,
  
 -
 +  BRAVE_START,

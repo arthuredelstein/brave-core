@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 
+#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/platform/brave_audio_farbling_helper.h"
 #include "third_party/abseil-cpp/absl/random/random.h"
@@ -29,6 +30,7 @@ using blink::ExecutionContext;
 using blink::GarbageCollected;
 using blink::MakeGarbageCollected;
 using blink::Supplement;
+using webcompat_exceptions::BraveFarblingType;
 
 enum FarbleKey : uint64_t {
   kNone,
@@ -77,9 +79,7 @@ class CORE_EXPORT BraveSessionCache final
   static BraveSessionCache& From(ExecutionContext&);
   static void Init();
 
-  BraveFarblingLevel GetBraveFarblingLevel(BraveFarblingType farblingType) {
-    return farbling_level_;
-  }
+  BraveFarblingLevel GetBraveFarblingLevel(BraveFarblingType farbling_type);
   void FarbleAudioChannel(float* dst, size_t count);
   void PerturbPixels(const unsigned char* data, size_t size);
   WTF::String GenerateRandomString(std::string seed, wtf_size_t length);
@@ -102,6 +102,7 @@ class CORE_EXPORT BraveSessionCache final
   WTF::HashMap<FarbleKey, int> farbled_integers_;
   BraveFarblingLevel farbling_level_;
   std::optional<blink::BraveAudioFarblingHelper> audio_farbling_helper_;
+  WTF::HashMap<BraveFarblingType, BraveFarblingLevel> farbling_levels_;
 
   void PerturbPixelsInternal(const unsigned char* data, size_t size);
 };

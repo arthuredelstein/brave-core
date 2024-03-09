@@ -12,7 +12,7 @@
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
 
 BraveFarblingLevel WorkerContentSettingsClient::GetBraveFarblingLevel(
-    BraveFarblingType farblingType) {
+    webcompat_exceptions::BraveFarblingType farblingType) {
   ContentSetting setting = CONTENT_SETTING_DEFAULT;
   if (content_setting_rules_) {
     const GURL& primary_url = top_frame_origin_.GetURL();

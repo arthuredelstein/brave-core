@@ -17,6 +17,7 @@
 #include "brave/components/constants/url_constants.h"
 #include "brave/components/content_settings/core/common/content_settings_util.h"
 #include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
+#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -683,6 +684,14 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
   }
 
   RecordShieldsSettingChanged(local_state);
+}
+
+bool IsFeatureDisabledForWebcompat(
+    HostContentSettingsMap*,
+    const GURL* url,
+    webcompat_exceptions::BraveFarblingType farblingType) {
+  return true;  // TODO fix this!
+  //  ContentSetting setting = map->GetContentSetting(url, GURL(), )
 }
 
 ControlType GetHttpsUpgradeControlType(HostContentSettingsMap* map,

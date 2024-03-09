@@ -12,6 +12,7 @@
 #include "base/numerics/safe_conversions.h"
 #include "base/strings/string_number_conversions.h"
 #include "brave/components/brave_shields/core/common/features.h"
+#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/brave_font_whitelist.h"
 #include "build/build_config.h"
@@ -380,6 +381,15 @@ FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator(FarbleKey key) {
   uint64_t seed =
       *reinterpret_cast<uint64_t*>(domain_key_) ^ static_cast<uint64_t>(key);
   return FarblingPRNG(seed);
+}
+
+BraveFarblingLevel BraveSessionCache::GetBraveFarblingLevel(
+    BraveFarblingType farbling_type) {
+  auto item = farbling_levels_.find(farbling_type);
+  if (item == farbling_levels_.end()) {
+    return BraveFarblingLevel::BALANCED;
+  }
+  return item->value;
 }
 
 }  // namespace brave

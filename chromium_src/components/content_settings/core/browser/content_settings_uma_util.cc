@@ -44,6 +44,7 @@ static_assert(static_cast<int>(ContentSettingsType::NUM_TYPES) <
   {ContentSettingsType::BRAVE_HTTPS_UPGRADE, brave_value(12)},                 \
   {ContentSettingsType::BRAVE_REMEMBER_1P_STORAGE, brave_value(13)},           \
   {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, brave_value(14)},              \
+                                                                               \
   {ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO, brave_value(30)},               \
   {ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS, brave_value(31)},              \
   {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICEMEMORY, brave_value(32)},        \

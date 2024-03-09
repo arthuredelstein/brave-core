@@ -34,7 +34,26 @@
   {ContentSettingsType::BRAVE_GOOGLE_SIGN_IN, nullptr},            \
   {ContentSettingsType::BRAVE_HTTPS_UPGRADE, nullptr},             \
   {ContentSettingsType::BRAVE_REMEMBER_1P_STORAGE, nullptr},       \
-  {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, nullptr},
+  {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, nullptr},          \
+  \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICEMEMORY, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_EVENTSOURCEPOOL, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_FONT, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_HARDWARECONCURRENCY, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_KEYBOARD, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_LANGUAGE, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIADEVICES, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECHSYNTHESIS, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_USERAGENT, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, nullptr},\
+  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBSOCKETSPOOL, nullptr},
+
 // clang-format on
 
 #define BRAVE_SITE_SETTINGS_HELPER_CONTENT_SETTINGS_TYPE_FROM_GROUP_NAME \

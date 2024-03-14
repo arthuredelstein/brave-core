@@ -7,7 +7,7 @@
 #define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_
 
 namespace webcompat_exceptions {
- 
+
 enum class BraveFarblingType {
   kNone,
   kAudio,
@@ -29,6 +29,6 @@ enum class BraveFarblingType {
   kWebSocketsPool,
 };
 
-}  // webcompat_exceptions
+}  // namespace webcompat_exceptions
 
 #endif  // BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_

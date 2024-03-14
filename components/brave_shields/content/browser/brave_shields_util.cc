@@ -44,25 +44,27 @@ namespace {
 using enum webcompat_exceptions::BraveFarblingType;
 using enum ContentSettingsType;
 
-static constexpr auto kFarblingTypeToContentSettings = base::MakeFixedFlatMap<webcompat_exceptions::BraveFarblingType, ContentSettingsType>({
-  {kAudio, BRAVE_WEBCOMPAT_AUDIO},
-  {kCanvas, BRAVE_WEBCOMPAT_CANVAS},
-  {kDeviceMemory, BRAVE_WEBCOMPAT_DEVICEMEMORY},
-  {kEventSourcePool, BRAVE_WEBCOMPAT_EVENTSOURCEPOOL},
-  {kFont, BRAVE_WEBCOMPAT_FONT},
-  {kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARECONCURRENCY},
-  {kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
-  {kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
-  {kMediaDevices, BRAVE_WEBCOMPAT_MEDIADEVICES},
-  {kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
-  {kScreen, BRAVE_WEBCOMPAT_SCREEN},
-  {kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECHSYNTHESIS},
-  {kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER},
-  {kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
-  {kWebGL, BRAVE_WEBCOMPAT_WEBGL},
-  {kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
-  {kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETSPOOL},
-});
+static constexpr auto kFarblingTypeToContentSettings =
+    base::MakeFixedFlatMap<webcompat_exceptions::BraveFarblingType,
+                           ContentSettingsType>({
+        {kAudio, BRAVE_WEBCOMPAT_AUDIO},
+        {kCanvas, BRAVE_WEBCOMPAT_CANVAS},
+        {kDeviceMemory, BRAVE_WEBCOMPAT_DEVICEMEMORY},
+        {kEventSourcePool, BRAVE_WEBCOMPAT_EVENTSOURCEPOOL},
+        {kFont, BRAVE_WEBCOMPAT_FONT},
+        {kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARECONCURRENCY},
+        {kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
+        {kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
+        {kMediaDevices, BRAVE_WEBCOMPAT_MEDIADEVICES},
+        {kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
+        {kScreen, BRAVE_WEBCOMPAT_SCREEN},
+        {kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECHSYNTHESIS},
+        {kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER},
+        {kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
+        {kWebGL, BRAVE_WEBCOMPAT_WEBGL},
+        {kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
+        {kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETSPOOL},
+    });
 
 void RecordShieldsToggled(PrefService* local_state) {
   ::brave_shields::MaybeRecordShieldsUsageP3A(::brave_shields::kShutOffShields,
@@ -719,7 +721,8 @@ bool IsFeatureDisabledForWebcompat(
     return false;
   }
   ContentSettingsType webcompatContentSetting = item->second;
-  ContentSetting setting = map->GetContentSetting(url, GURL(), webcompatContentSetting);
+  ContentSetting setting =
+      map->GetContentSetting(url, GURL(), webcompatContentSetting);
   return setting == CONTENT_SETTING_ALLOW;
 }
 

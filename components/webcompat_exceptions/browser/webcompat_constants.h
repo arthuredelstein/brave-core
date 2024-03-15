@@ -8,7 +8,7 @@
 
 namespace webcompat_exceptions {
 
-enum class BraveFarblingType {
+enum BraveFarblingType {
   kNone,
   kAudio,
   kCanvas,
@@ -27,6 +27,7 @@ enum class BraveFarblingType {
   kWebGL,
   kWebGL2,
   kWebSocketsPool,
+  kAll,
 };
 
 }  // namespace webcompat_exceptions

@@ -227,6 +227,12 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
             : (raw_farbling_level == BraveFarblingLevel::OFF
                    ? BraveFarblingLevel::OFF
                    : BraveFarblingLevel::BALANCED);
+    for (auto farbling_type = BraveFarblingType::kNone;
+         farbling_type != BraveFarblingType::kAll;
+         farbling_type = BraveFarblingType(farbling_type + 1)) {
+      auto farbling_level = settings->GetBraveFarblingLevel(farbling_type);
+      farbling_levels_.insert(farbling_type, farbling_level);
+    }
   }
   if (farbling_level_ != BraveFarblingLevel::OFF) {
     audio_farbling_helper_.emplace(
@@ -386,10 +392,10 @@ FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator(FarbleKey key) {
 BraveFarblingLevel BraveSessionCache::GetBraveFarblingLevel(
     BraveFarblingType farbling_type) {
   auto item = farbling_levels_.find(farbling_type);
-  if (item == farbling_levels_.end()) {
-    return BraveFarblingLevel::BALANCED;
+  if (item != farbling_levels_.end()) {
+    return item->value;
   }
-  return item->value;
+  return BraveFarblingLevel::BALANCED;
 }
 
 }  // namespace brave

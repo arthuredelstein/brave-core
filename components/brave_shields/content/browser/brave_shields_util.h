@@ -9,8 +9,8 @@
 #include <stdint.h>
 #include <string>
 
-#include "components/content_settings/core/common/content_settings_pattern.h"
 #include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
+#include "components/content_settings/core/common/content_settings_pattern.h"
 
 namespace https_upgrade_exceptions {
 class HttpsUpgradeExceptionsService;

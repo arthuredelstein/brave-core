@@ -128,12 +128,15 @@ ContentSetting GetWebcompatSettingFromRules(
     const GURL& primary_url) {
   const auto settings =
       GetContentSettingsTypeForBraveFarblingType(farbling_type);
-  for (const auto& rule : webcompat_rules.at(settings)) {
+  const auto item = webcompat_rules.find(settings);
+  if (item == webcompat_rules.end()) {
+    return CONTENT_SETTING_DEFAULT;
+  }
+  for (const auto& rule : item->second) {
     if (rule.primary_pattern.Matches(primary_url)) {
       return rule.GetContentSetting();
     }
   }
-
   return CONTENT_SETTING_DEFAULT;
 }
 

@@ -66,7 +66,7 @@ class BraveContentSettingsAgentImpl
   bool AllowAutoplay(bool play_requested) override;
 
   BraveFarblingLevel GetBraveFarblingLevel(
-      webcompat_exceptions::BraveFarblingType farblingType) override;
+      webcompat_exceptions::BraveFarblingType farbling_type) override;
 
   bool IsReduceLanguageEnabled() override;
 

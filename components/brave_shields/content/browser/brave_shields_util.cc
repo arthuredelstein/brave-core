@@ -623,6 +623,22 @@ ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                              : ControlType::BLOCK;
 }
 
+void DisableFeatureForWebcompat(HostContentSettingsMap* map,
+                                webcompat_exceptions::BraveFarblingType farbling_type,
+                                bool disable,
+                                const GURL& url) {
+  auto primary_pattern = GetPatternFromURL(url);
+  if (!primary_pattern.IsValid()) {
+    return;
+  }
+  ContentSetting content_setting = disable ? CONTENT_SETTING_ALLOW : CONTENT_SETTING_DEFAULT;
+  const auto content_settings_type =
+      GetContentSettingsTypeForBraveFarblingType(farbling_type);
+  map->SetContentSettingCustomScope(primary_pattern,
+                                    ContentSettingsPattern::Wildcard(),
+                                    content_settings_type, content_setting);
+}
+
 bool IsBraveShieldsManaged(PrefService* prefs,
                            HostContentSettingsMap* map,
                            GURL url) {
@@ -688,9 +704,9 @@ void SetHttpsUpgradeControlType(HostContentSettingsMap* map,
 bool IsFeatureDisabledForWebcompat(
     HostContentSettingsMap* map,
     const GURL& url,
-    webcompat_exceptions::BraveFarblingType farblingType) {
+    webcompat_exceptions::BraveFarblingType farbling_type) {
   ContentSettingsType webcompatContentSettingsType =
-      GetContentSettingsTypeForBraveFarblingType(farblingType);
+      GetContentSettingsTypeForBraveFarblingType(farbling_type);
   ContentSetting setting =
       map->GetContentSetting(url, GURL(), webcompatContentSettingsType);
   return setting == CONTENT_SETTING_ALLOW;

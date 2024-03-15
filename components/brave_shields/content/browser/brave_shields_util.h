@@ -108,6 +108,12 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
                                   PrefService* profile_state = nullptr);
 ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                          const GURL& url);
+
+void DisableFeatureForWebcompat(HostContentSettingsMap* map,
+                                webcompat_exceptions::BraveFarblingType farbling_type,
+                                bool disable,
+                                const GURL& url);
+
 bool IsBraveShieldsManaged(PrefService* prefs,
                            HostContentSettingsMap* map,
                            GURL url);
@@ -153,7 +159,7 @@ bool MaybeChangeReferrer(bool allow_referrers,
 bool IsFeatureDisabledForWebcompat(
     HostContentSettingsMap* map,
     const GURL& url,
-    webcompat_exceptions::BraveFarblingType farblingType);
+    webcompat_exceptions::BraveFarblingType farbling_type);
 
 ShieldsSettingCounts GetFPSettingCount(HostContentSettingsMap* map);
 ShieldsSettingCounts GetAdsSettingCount(HostContentSettingsMap* map);

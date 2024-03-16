@@ -5,6 +5,7 @@
 
 #include "brave/components/brave_shields/core/common/brave_shield_utils.h"
 
+#include <iostream>
 #include <set>
 #include <string>
 
@@ -126,6 +127,9 @@ ContentSetting GetWebcompatSettingFromRules(
         webcompat_rules,
     webcompat_exceptions::BraveFarblingType farbling_type,
     const GURL& primary_url) {
+  if (farbling_type == webcompat_exceptions::BraveFarblingType::kNone) {
+    return CONTENT_SETTING_DEFAULT;
+  }
   const auto settings =
       GetContentSettingsTypeForBraveFarblingType(farbling_type);
   const auto item = webcompat_rules.find(settings);

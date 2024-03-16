@@ -18,6 +18,7 @@
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
+#include "components/content_settings/core/browser/host_content_settings_map.h"
 
 #include "base/logging.h"
 
@@ -53,6 +54,8 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
     return;
   }
   DLOG(ERROR) << WEBCOMPAT_EXCEPTIONS_JSON_FILE << ":\n" << contents;
+
+  // brave_shield_utils::DisableFeatureForWebcompat(map, BraveFarblingType::kHardwareConcurrency, true, "https://browserleaks.com");
   /*
   std::vector<std::string> lines = base::SplitString(
       contents, "\n", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
@@ -64,8 +67,9 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
   */
 }
 
-bool WebcompatExceptionsService::FeatureDisabled(const GURL& url,
-                                                 const std::string& feature) {
+bool WebcompatExceptionsService::IsFeatureDisabled(
+    const GURL& url,
+    BraveFarblingType farbling_type) {
   if (!is_ready_) {
     // We don't have the exceptions list loaded yet.
     return false;

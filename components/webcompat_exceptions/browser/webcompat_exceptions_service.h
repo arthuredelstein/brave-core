@@ -13,6 +13,7 @@
 #include "base/files/file_path.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
+#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
 
 namespace webcompat_exceptions {
 
@@ -27,7 +28,7 @@ class WebcompatExceptionsService
                         const base::FilePath& install_dir,
                         const std::string& manifest) override;
 
-  bool FeatureDisabled(const GURL& url, const std::string& feature);
+  bool IsFeatureDisabled(const GURL& url, BraveFarblingType farbling_type);
   ~WebcompatExceptionsService() override;
   void SetIsReadyForTesting() { is_ready_ = true; }
   void OnJsonFileDataReady(const std::string& contents);

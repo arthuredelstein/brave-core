@@ -109,10 +109,11 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
 ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                          const GURL& url);
 
-void DisableFeatureForWebcompat(HostContentSettingsMap* map,
-                                webcompat_exceptions::BraveFarblingType farbling_type,
-                                bool disable,
-                                const GURL& url);
+void DisableFeatureForWebcompat(
+    HostContentSettingsMap* map,
+    webcompat_exceptions::BraveFarblingType farbling_type,
+    bool disable,
+    const GURL& url);
 
 bool IsBraveShieldsManaged(PrefService* prefs,
                            HostContentSettingsMap* map,

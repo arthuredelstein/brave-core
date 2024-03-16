@@ -15,6 +15,7 @@
 #include "base/feature_list.h"
 #include "base/functional/callback_helpers.h"
 #include "base/strings/utf_string_conversions.h"
+#include "brave/browser/brave_browser_process.h"
 #include "brave/components/brave_shields/core/common/brave_shield_utils.h"
 #include "brave/components/brave_shields/core/common/features.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
@@ -353,6 +354,13 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
     if (webcompat_setting == CONTENT_SETTING_ALLOW) {
       return BraveFarblingLevel::OFF;
     }
+
+    DLOG(ERROR) << "g_brave_browser_process=" << g_brave_browser_process;
+    /*
+        if (g_brave_browser_process->webcompat_exceptions_service()
+                ->IsFeatureDisabled(GetOriginOrURL(frame), farbling_type)) {
+          return BraveFarblingLevel::OFF;
+        }*/
   }
 
   if (setting == CONTENT_SETTING_BLOCK) {

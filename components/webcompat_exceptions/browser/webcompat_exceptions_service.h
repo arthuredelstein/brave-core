@@ -14,6 +14,7 @@
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
+#include "brave/components/webcompat_exceptions/browser/webcompat_exceptions.mojom.h"
 
 namespace webcompat_exceptions {
 

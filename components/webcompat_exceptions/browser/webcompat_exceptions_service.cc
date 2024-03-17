@@ -18,7 +18,6 @@
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
-#include "components/content_settings/core/browser/host_content_settings_map.h"
 
 #include "base/logging.h"
 

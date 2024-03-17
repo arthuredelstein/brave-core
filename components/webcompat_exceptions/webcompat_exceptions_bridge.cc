@@ -6,6 +6,8 @@
 #include "brave/components/webcompat_exceptions/webcompat_exceptions_bridge.h"
 #include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
 
+#include <vector>
+
 namespace webcompat_exceptions {
 
 WebcompatExceptionsImpl::WebcompatExceptionsImpl(mojo::PendingReceiver<webcompat_exceptions::mojom::WebcompatExceptions> receiver)

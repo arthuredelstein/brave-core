@@ -15,7 +15,7 @@
 #include "base/containers/flat_set.h"
 #include "base/gtest_prod_util.h"
 #include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
-#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_types.h"

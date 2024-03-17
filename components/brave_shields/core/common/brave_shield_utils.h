@@ -6,7 +6,7 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 
-#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "components/content_settings/core/common/content_settings.h"
 
 class GURL;

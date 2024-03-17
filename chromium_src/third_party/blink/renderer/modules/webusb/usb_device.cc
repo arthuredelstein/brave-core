@@ -5,7 +5,7 @@
 
 #include "third_party/blink/renderer/modules/webusb/usb_device.h"
 
-#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 #include "third_party/blink/renderer/platform/wtf/text/string_builder.h"
 

@@ -9,7 +9,7 @@
 #include <optional>
 #include <string>
 
-#include "brave/components/webcompat_exceptions/browser/webcompat_constants.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/platform/brave_audio_farbling_helper.h"
 #include "third_party/abseil-cpp/absl/random/random.h"

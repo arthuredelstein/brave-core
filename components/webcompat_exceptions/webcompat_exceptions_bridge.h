@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/webcompat_exceptions/browser/webcompat_exceptions.mojom.h"
+#include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
 #include "mojo/public/cpp/bindings/receiver.h"
 
 namespace webcompat_exceptions {

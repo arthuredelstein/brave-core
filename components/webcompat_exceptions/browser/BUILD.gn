@@ -10,6 +10,8 @@ static_library("browser") {
   sources = [
     "webcompat_exceptions_service.cc",
     "webcompat_exceptions_service.h",
+    "webcompat_exceptions_bridge.cc",
+    "webcompat_exceptions_bridge.h",
   ]
 
   deps = [

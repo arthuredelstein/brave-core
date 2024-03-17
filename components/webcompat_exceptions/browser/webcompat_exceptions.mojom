@@ -29,7 +29,7 @@ enum WebcompatFeature {
   kAll,
 };
 
-interface WebcompatException {
+interface WebcompatExceptions {
 
   GetWebcompatExceptions(url.mojom.Url url) => (array<WebcompatFeature> webcompat_exceptions);
 

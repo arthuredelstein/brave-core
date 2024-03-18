@@ -93,11 +93,6 @@ BraveContentSettingsAgentImpl::BraveContentSettingsAgentImpl(
       ->AddInterface<brave_shields::mojom::BraveShields>(base::BindRepeating(
           &BraveContentSettingsAgentImpl::BindBraveShieldsReceiver,
           base::Unretained(this)));
-  render_frame->GetAssociatedInterfaceRegistry()
-      ->AddInterface<webcompat_exceptions::mojom::WebcompatExceptions>(
-          base::BindRepeating(
-              &BraveContentSettingsAgentImpl::BindWebcompatExceptionsReceiver,
-              base::Unretained(this)));
 }
 
 BraveContentSettingsAgentImpl::~BraveContentSettingsAgentImpl() = default;
@@ -427,16 +422,6 @@ void BraveContentSettingsAgentImpl::BindBraveShieldsReceiver(
   brave_shields_receivers_.Add(this, std::move(pending_receiver));
 }
 
-void BraveContentSettingsAgentImpl::BindWebcompatExceptionsReceiver(
-    mojo::PendingAssociatedReceiver<
-        webcompat_exceptions::mojom::WebcompatExceptions> pending_receiver) {
-  webcompat_exceptions_receivers_.Add(this, std::move(pending_receiver));
-}
-
-void BraveContentSettingsAgentImpl::GetWebcompatExceptions(
-    const GURL& url,
-    GetWebcompatExceptionsCallback callback) {}
-
 mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>&
 BraveContentSettingsAgentImpl::GetOrCreateBraveShieldsRemote() {
   if (!brave_shields_remote_) {
@@ -446,6 +431,17 @@ BraveContentSettingsAgentImpl::GetOrCreateBraveShieldsRemote() {
 
   DCHECK(brave_shields_remote_.is_bound());
   return brave_shields_remote_;
+}
+
+mojo::AssociatedRemote<webcompat_exceptions::mojom::WebcompatExceptions>&
+BraveContentSettingsAgentImpl::GetOrCreateWebcompatExceptionsRemote() {
+  if (!webcompat_exceptions_remote_) {
+    render_frame()->GetRemoteAssociatedInterfaces()->GetInterface(
+        &webcompat_exceptions_remote_);
+  }
+
+  DCHECK(webcompat_exceptions_remote_.is_bound());
+  return webcompat_exceptions_remote_;
 }
 
 }  // namespace content_settings

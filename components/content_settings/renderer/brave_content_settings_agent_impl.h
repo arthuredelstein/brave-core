@@ -35,8 +35,7 @@ namespace content_settings {
 // Handles blocking content per content settings for each RenderFrame.
 class BraveContentSettingsAgentImpl
     : public ContentSettingsAgentImpl,
-      public brave_shields::mojom::BraveShields,
-      public webcompat_exceptions::mojom::WebcompatExceptions {
+      public brave_shields::mojom::BraveShields {
  public:
   BraveContentSettingsAgentImpl(content::RenderFrame* render_frame,
                                 bool should_whitelist,
@@ -95,13 +94,13 @@ class BraveContentSettingsAgentImpl
       mojo::PendingAssociatedReceiver<
           webcompat_exceptions::mojom::WebcompatExceptions> pending_receiver);
 
-  void GetWebcompatExceptions(const GURL& url,
-                              GetWebcompatExceptionsCallback callback) override;
-
   // Returns the associated remote used to send messages to the browser process,
   // lazily initializing it the first time it's used.
   mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>&
   GetOrCreateBraveShieldsRemote();
+
+  mojo::AssociatedRemote<webcompat_exceptions::mojom::WebcompatExceptions>&
+  GetOrCreateWebcompatExceptionsRemote();
 
   // Origins of scripts which are temporary allowed for this frame in the
   // current load
@@ -118,6 +117,9 @@ class BraveContentSettingsAgentImpl
 
   mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>
       brave_shields_remote_;
+
+  mojo::AssociatedRemote<webcompat_exceptions::mojom::WebcompatExceptions>
+      webcompat_exceptions_remote_;
 
   mojo::AssociatedReceiverSet<brave_shields::mojom::BraveShields>
       brave_shields_receivers_;

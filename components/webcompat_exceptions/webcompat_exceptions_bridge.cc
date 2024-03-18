@@ -10,10 +10,14 @@
 
 namespace webcompat_exceptions {
 
-WebcompatExceptionsImpl::WebcompatExceptionsImpl(mojo::PendingReceiver<webcompat_exceptions::mojom::WebcompatExceptions> receiver)
-      : receiver_(this, std::move(receiver)) {}
+WebcompatExceptionsImpl::WebcompatExceptionsImpl(
+    mojo::PendingReceiver<webcompat_exceptions::mojom::WebcompatExceptions>
+        receiver)
+    : receiver_(this, std::move(receiver)) {}
 
-void WebcompatExceptionsImpl::GetWebcompatExceptions(const GURL& url, GetWebcompatExceptionsCallback reply) {
+void WebcompatExceptionsImpl::GetWebcompatExceptions(
+    const GURL& url,
+    GetWebcompatExceptionsCallback reply) {
   std::vector<mojom::WebcompatFeature> features;
   features.push_back(mojom::WebcompatFeature::kHardwareConcurrency);
   std::move(reply).Run(features);

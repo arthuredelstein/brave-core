@@ -15,6 +15,7 @@
 #include "base/containers/flat_set.h"
 #include "base/gtest_prod_util.h"
 #include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
+#include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -23,7 +24,6 @@
 #include "mojo/public/cpp/bindings/associated_receiver_set.h"
 #include "mojo/public/cpp/bindings/associated_remote.h"
 #include "mojo/public/cpp/bindings/pending_associated_receiver.h"
-
 #include "url/gurl.h"
 
 namespace blink {
@@ -35,7 +35,8 @@ namespace content_settings {
 // Handles blocking content per content settings for each RenderFrame.
 class BraveContentSettingsAgentImpl
     : public ContentSettingsAgentImpl,
-      public brave_shields::mojom::BraveShields {
+      public brave_shields::mojom::BraveShields,
+      public webcompat_exceptions::mojom::WebcompatExceptions {
  public:
   BraveContentSettingsAgentImpl(content::RenderFrame* render_frame,
                                 bool should_whitelist,
@@ -90,6 +91,13 @@ class BraveContentSettingsAgentImpl
       mojo::PendingAssociatedReceiver<brave_shields::mojom::BraveShields>
           pending_receiver);
 
+  void BindWebcompatExceptionsReceiver(
+      mojo::PendingAssociatedReceiver<
+          webcompat_exceptions::mojom::WebcompatExceptions> pending_receiver);
+
+  void GetWebcompatExceptions(const GURL& url,
+                              GetWebcompatExceptionsCallback callback) override;
+
   // Returns the associated remote used to send messages to the browser process,
   // lazily initializing it the first time it's used.
   mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>&
@@ -113,6 +121,9 @@ class BraveContentSettingsAgentImpl
 
   mojo::AssociatedReceiverSet<brave_shields::mojom::BraveShields>
       brave_shields_receivers_;
+
+  mojo::AssociatedReceiverSet<webcompat_exceptions::mojom::WebcompatExceptions>
+      webcompat_exceptions_receivers_;
 };
 
 }  // namespace content_settings

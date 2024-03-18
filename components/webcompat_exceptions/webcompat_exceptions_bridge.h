@@ -8,12 +8,16 @@
 
 namespace webcompat_exceptions {
 
-class WebcompatExceptionsImpl : public webcompat_exceptions::mojom::WebcompatExceptions {
+class WebcompatExceptionsImpl
+    : public webcompat_exceptions::mojom::WebcompatExceptions {
  public:
-  explicit WebcompatExceptionsImpl(mojo::PendingReceiver<webcompat_exceptions::mojom::WebcompatExceptions> receiver);
+  explicit WebcompatExceptionsImpl(
+      mojo::PendingReceiver<webcompat_exceptions::mojom::WebcompatExceptions>
+          receiver);
   ~WebcompatExceptionsImpl() override;
 
-  void GetWebcompatExceptions(const GURL& url, GetWebcompatExceptionsCallback reply) override;
+  void GetWebcompatExceptions(const GURL& url,
+                              GetWebcompatExceptionsCallback reply) override;
 
  private:
   mojo::Receiver<webcompat_exceptions::mojom::WebcompatExceptions> receiver_;

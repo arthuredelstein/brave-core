@@ -54,7 +54,8 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
   }
   DLOG(ERROR) << WEBCOMPAT_EXCEPTIONS_JSON_FILE << ":\n" << contents;
 
-  // brave_shield_utils::DisableFeatureForWebcompat(map, BraveFarblingType::kHardwareConcurrency, true, "https://browserleaks.com");
+  // brave_shield_utils::DisableFeatureForWebcompat(map,
+  // BraveFarblingType::kHardwareConcurrency, true, "https://browserleaks.com");
   /*
   std::vector<std::string> lines = base::SplitString(
       contents, "\n", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);

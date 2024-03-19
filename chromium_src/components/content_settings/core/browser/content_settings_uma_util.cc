@@ -47,22 +47,22 @@ static_assert(static_cast<int>(ContentSettingsType::NUM_TYPES) <
                                                                                \
   {ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO, brave_value(30)},               \
   {ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS, brave_value(31)},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICEMEMORY, brave_value(32)},        \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_EVENTSOURCEPOOL, brave_value(33)},     \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY, brave_value(32)},        \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL, brave_value(33)},     \
   {ContentSettingsType::BRAVE_WEBCOMPAT_FONT, brave_value(34)},                \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_HARDWARECONCURRENCY, brave_value(35)}, \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY, brave_value(35)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_KEYBOARD, brave_value(36)},            \
   {ContentSettingsType::BRAVE_WEBCOMPAT_LANGUAGE, brave_value(37)},            \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIADEVICES, brave_value(38)},        \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIA_DEVICES, brave_value(38)},        \
   {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, brave_value(39)},             \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, brave_value(40)},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECHSYNTHESIS, brave_value(41)},     \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER,                 \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, brave_value(41)},     \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIALNUMBER,                 \
     brave_value(42)},                                                          \
   {ContentSettingsType::BRAVE_WEBCOMPAT_USERAGENT, brave_value(43)},           \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, brave_value(44)},               \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, brave_value(45)},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBSOCKETSPOOL, brave_value(46)},
+  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBSOCKETS_POOL, brave_value(46)},
 // clang-format on
 
 #include "src/components/content_settings/core/browser/content_settings_uma_util.cc"

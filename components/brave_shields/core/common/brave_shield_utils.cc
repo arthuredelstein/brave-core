@@ -26,21 +26,21 @@ static constexpr auto kFarblingTypeToContentSettings =
                            ContentSettingsType>({
         {BraveFarblingType::kAudio, BRAVE_WEBCOMPAT_AUDIO},
         {BraveFarblingType::kCanvas, BRAVE_WEBCOMPAT_CANVAS},
-        {BraveFarblingType::kDeviceMemory, BRAVE_WEBCOMPAT_DEVICEMEMORY},
-        {BraveFarblingType::kEventSourcePool, BRAVE_WEBCOMPAT_EVENTSOURCEPOOL},
+        {BraveFarblingType::kDeviceMemory, BRAVE_WEBCOMPAT_DEVICE_MEMORY},
+        {BraveFarblingType::kEventSourcePool, BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL},
         {BraveFarblingType::kFont, BRAVE_WEBCOMPAT_FONT},
-        {BraveFarblingType::kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARECONCURRENCY},
+        {BraveFarblingType::kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY},
         {BraveFarblingType::kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
         {BraveFarblingType::kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
-        {BraveFarblingType::kMediaDevices, BRAVE_WEBCOMPAT_MEDIADEVICES},
+        {BraveFarblingType::kMediaDevices, BRAVE_WEBCOMPAT_MEDIA_DEVICES},
         {BraveFarblingType::kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
         {BraveFarblingType::kScreen, BRAVE_WEBCOMPAT_SCREEN},
-        {BraveFarblingType::kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECHSYNTHESIS},
-        {BraveFarblingType::kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER},
+        {BraveFarblingType::kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS},
+        {BraveFarblingType::kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USB_DEVICE_SERIALNUMBER},
         {BraveFarblingType::kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
         {BraveFarblingType::kWebGL, BRAVE_WEBCOMPAT_WEBGL},
         {BraveFarblingType::kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
-        {BraveFarblingType::kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETSPOOL},
+        {BraveFarblingType::kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETS_POOL},
     });
 }  // namespace
 

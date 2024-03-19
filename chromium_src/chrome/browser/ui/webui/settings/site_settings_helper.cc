@@ -38,21 +38,21 @@
                                                                          \
   {ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO, nullptr},                 \
   {ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS, nullptr},                \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICEMEMORY, nullptr},          \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_EVENTSOURCEPOOL, nullptr},       \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY, nullptr},          \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL, nullptr},       \
   {ContentSettingsType::BRAVE_WEBCOMPAT_FONT, nullptr},                  \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_HARDWARECONCURRENCY, nullptr},   \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY, nullptr},   \
   {ContentSettingsType::BRAVE_WEBCOMPAT_KEYBOARD, nullptr},              \
   {ContentSettingsType::BRAVE_WEBCOMPAT_LANGUAGE, nullptr},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIADEVICES, nullptr},          \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIA_DEVICES, nullptr},          \
   {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, nullptr},               \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, nullptr},                \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECHSYNTHESIS, nullptr},       \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER, nullptr}, \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, nullptr},       \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIALNUMBER, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_USERAGENT, nullptr},             \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, nullptr},                 \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, nullptr},                \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBSOCKETSPOOL, nullptr},
+  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBSOCKETS_POOL, nullptr},
 
 // clang-format on
 

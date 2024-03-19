@@ -31,6 +31,8 @@
 #include "extensions/buildflags/buildflags.h"
 #include "mojo/public/cpp/bindings/associated_remote.h"
 #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
+#include "brave/browser/brave_browser_process.h"
+#include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
 
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/ui/brave_shields_data_controller.h"
@@ -58,12 +60,12 @@ BraveShieldsWebContentsObserver::BraveShieldsWebContentsObserver(
           *web_contents),
       receivers_(web_contents, this) {}
 
-void BraveShieldsWebContentsObserver::RenderFrameCreated(RenderFrameHost* rfh) {
-  if (rfh && allowed_scripts_.size()) {
-    GetBraveShieldsRemote(rfh)->SetAllowScriptsFromOriginsOnce(
-        allowed_scripts_);
-  }
+void BraveShieldsWebContentsObserver::PrepareRenderFrame(RenderFrameHost* rfh) {
   if (rfh) {
+    if (allowed_scripts_.size()) {
+      GetBraveShieldsRemote(rfh)->SetAllowScriptsFromOriginsOnce(
+          allowed_scripts_);
+    }
     if (content::BrowserContext* context = rfh->GetBrowserContext()) {
       if (PrefService* pref_service = user_prefs::UserPrefs::Get(context)) {
         GetBraveShieldsRemote(rfh)->SetReduceLanguageEnabled(
@@ -71,6 +73,14 @@ void BraveShieldsWebContentsObserver::RenderFrameCreated(RenderFrameHost* rfh) {
       }
     }
   }
+}
+
+void BraveShieldsWebContentsObserver::RenderFrameCreated(RenderFrameHost* rfh) {
+  PrepareRenderFrame(rfh);
+  DLOG(ERROR) << "CAn I see this thing?";
+  const GURL url = rfh->GetMainFrame()->GetLastCommittedURL();
+  DLOG(ERROR) << "ready to send the webcompat data: " << url;
+
 }
 
 void BraveShieldsWebContentsObserver::RenderFrameDeleted(RenderFrameHost* rfh) {
@@ -216,6 +226,15 @@ void BraveShieldsWebContentsObserver::OnJavaScriptBlocked(
                                      base::UTF16ToUTF8(details), web_contents);
 }
 
+void BraveShieldsWebContentsObserver::GetWebcompatExceptions(
+    const GURL& url,
+    GetWebcompatExceptionsCallback reply) {
+  DLOG(ERROR) << "here is the bridge!";
+  auto* webcompat_exceptions_service = g_brave_browser_process->webcompat_exceptions_service();
+  auto exceptions = webcompat_exceptions_service->GetFeatureExceptions(url);
+  std::move(reply).Run(exceptions);
+}
+
 // static
 void BraveShieldsWebContentsObserver::RegisterProfilePrefs(
     PrefRegistrySimple* registry) {
@@ -246,14 +265,9 @@ void BraveShieldsWebContentsObserver::ReadyToCommitNavigation(
 
   navigation_handle->GetWebContents()->ForEachRenderFrameHost(
       [this](content::RenderFrameHost* rfh) {
-        GetBraveShieldsRemote(rfh)->SetAllowScriptsFromOriginsOnce(
-            allowed_scripts_);
-        if (content::BrowserContext* context = rfh->GetBrowserContext()) {
-          if (PrefService* pref_service = user_prefs::UserPrefs::Get(context)) {
-            GetBraveShieldsRemote(rfh)->SetReduceLanguageEnabled(
-                brave_shields::IsReduceLanguageEnabledForProfile(pref_service));
-          }
-        }
+        PrepareRenderFrame(rfh);
+        const GURL url = rfh->GetMainFrame()->GetLastCommittedURL();
+        DLOG(ERROR) << "ready to send the webcompat data: " << url;
       });
 }
 

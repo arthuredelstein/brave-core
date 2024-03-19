@@ -18,6 +18,7 @@ WebcompatExceptionsImpl::WebcompatExceptionsImpl(
 void WebcompatExceptionsImpl::GetWebcompatExceptions(
     const GURL& url,
     GetWebcompatExceptionsCallback reply) {
+  DLOG(ERROR) << "here is the bridge!";
   std::vector<mojom::WebcompatFeature> features;
   features.push_back(mojom::WebcompatFeature::kHardwareConcurrency);
   std::move(reply).Run(features);

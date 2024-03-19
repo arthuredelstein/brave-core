@@ -6,29 +6,11 @@
 #ifndef BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_
 #define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_
 
+#include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
+
 namespace webcompat_exceptions {
 
-enum BraveFarblingType {
-  kNone,
-  kAudio,
-  kCanvas,
-  kDeviceMemory,
-  kEventSourcePool,
-  kFont,
-  kHardwareConcurrency,
-  kKeyboard,
-  kLanguage,
-  kMediaDevices,
-  kPlugins,
-  kScreen,
-  kSpeechSynthesis,
-  kUsbDeviceSerialNumber,
-  kUserAgent,
-  kWebGL,
-  kWebGL2,
-  kWebSocketsPool,
-  kAll,
-};
+using BraveFarblingType = brave_shields::mojom::WebcompatFeature;
 
 }  // namespace webcompat_exceptions
 

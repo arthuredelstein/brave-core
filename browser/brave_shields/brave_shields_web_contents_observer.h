@@ -73,6 +73,8 @@ class BraveShieldsWebContentsObserver
   // brave_shields::mojom::BraveShieldsHost.
   void OnJavaScriptBlocked(const std::u16string& details) override;
   void OnJavaScriptAllowedOnce(const std::u16string& details) override;
+  void GetWebcompatExceptions(const GURL& url,
+                              GetWebcompatExceptionsCallback reply) override;
 
  private:
   friend class content::WebContentsUserData<BraveShieldsWebContentsObserver>;
@@ -109,6 +111,8 @@ class BraveShieldsWebContentsObserver
   // Map of remote endpoints for the brave_shields::mojom::BraveShields mojo
   // interface, to prevent binding a new remote each time it's used.
   BraveShieldsRemotesMap brave_shields_remotes_;
+
+  void PrepareRenderFrame(content::RenderFrameHost* rfh);
 
   WEB_CONTENTS_USER_DATA_KEY_DECL();
 };

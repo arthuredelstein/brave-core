@@ -67,15 +67,18 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
   */
 }
 
-bool WebcompatExceptionsService::IsFeatureDisabled(
-    const GURL& url,
-    BraveFarblingType farbling_type) {
+std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(const GURL& url) {
+  /*
   if (!is_ready_) {
     // We don't have the exceptions list loaded yet.
     return false;
   }
+  */
+  std::vector<BraveFarblingType> exceptions;
+  exceptions.push_back(webcompat_exceptions::BraveFarblingType::kHardwareConcurrency);
+  exceptions.push_back(webcompat_exceptions::BraveFarblingType::kUsbDeviceSerialNumber);
   // Allow upgrade only if the domain is not on the exceptions list.
-  return !base::Contains(exceptional_domains_, url.host());
+  return exceptions;
 }
 
 // implementation of LocalDataFilesObserver

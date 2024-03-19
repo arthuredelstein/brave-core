@@ -18,29 +18,29 @@
 namespace brave_shields {
 
 namespace {
-using enum webcompat_exceptions::BraveFarblingType;
+using webcompat_exceptions::BraveFarblingType;
 using enum ContentSettingsType;
 
 static constexpr auto kFarblingTypeToContentSettings =
     base::MakeFixedFlatMap<webcompat_exceptions::BraveFarblingType,
                            ContentSettingsType>({
-        {kAudio, BRAVE_WEBCOMPAT_AUDIO},
-        {kCanvas, BRAVE_WEBCOMPAT_CANVAS},
-        {kDeviceMemory, BRAVE_WEBCOMPAT_DEVICEMEMORY},
-        {kEventSourcePool, BRAVE_WEBCOMPAT_EVENTSOURCEPOOL},
-        {kFont, BRAVE_WEBCOMPAT_FONT},
-        {kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARECONCURRENCY},
-        {kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
-        {kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
-        {kMediaDevices, BRAVE_WEBCOMPAT_MEDIADEVICES},
-        {kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
-        {kScreen, BRAVE_WEBCOMPAT_SCREEN},
-        {kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECHSYNTHESIS},
-        {kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER},
-        {kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
-        {kWebGL, BRAVE_WEBCOMPAT_WEBGL},
-        {kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
-        {kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETSPOOL},
+        {BraveFarblingType::kAudio, BRAVE_WEBCOMPAT_AUDIO},
+        {BraveFarblingType::kCanvas, BRAVE_WEBCOMPAT_CANVAS},
+        {BraveFarblingType::kDeviceMemory, BRAVE_WEBCOMPAT_DEVICEMEMORY},
+        {BraveFarblingType::kEventSourcePool, BRAVE_WEBCOMPAT_EVENTSOURCEPOOL},
+        {BraveFarblingType::kFont, BRAVE_WEBCOMPAT_FONT},
+        {BraveFarblingType::kHardwareConcurrency, BRAVE_WEBCOMPAT_HARDWARECONCURRENCY},
+        {BraveFarblingType::kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
+        {BraveFarblingType::kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
+        {BraveFarblingType::kMediaDevices, BRAVE_WEBCOMPAT_MEDIADEVICES},
+        {BraveFarblingType::kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
+        {BraveFarblingType::kScreen, BRAVE_WEBCOMPAT_SCREEN},
+        {BraveFarblingType::kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECHSYNTHESIS},
+        {BraveFarblingType::kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USBDEVICESERIALNUMBER},
+        {BraveFarblingType::kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
+        {BraveFarblingType::kWebGL, BRAVE_WEBCOMPAT_WEBGL},
+        {BraveFarblingType::kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
+        {BraveFarblingType::kWebSocketsPool, BRAVE_WEBCOMPAT_WEBSOCKETSPOOL},
     });
 }  // namespace
 

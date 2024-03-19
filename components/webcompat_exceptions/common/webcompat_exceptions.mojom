@@ -30,7 +30,6 @@ enum WebcompatFeature {
 };
 
 interface WebcompatExceptions {
-
+  [Sync]
   GetWebcompatExceptions(url.mojom.Url url) => (array<WebcompatFeature> webcompat_exceptions);
-
 };

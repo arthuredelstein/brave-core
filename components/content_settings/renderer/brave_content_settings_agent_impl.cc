@@ -333,12 +333,14 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
   ContentSetting webcompat_setting = CONTENT_SETTING_DEFAULT;
 
   const GURL url = url::Origin(frame->GetSecurityOrigin()).GetURL();
+  const GURL originOrUrl = GetOriginOrURL(frame);
+
   if (content_setting_rules_) {
     if (IsBraveShieldsDown(frame, url)) {
       setting = CONTENT_SETTING_ALLOW;
     } else {
       setting = brave_shields::GetBraveFPContentSettingFromRules(
-          content_setting_rules_->fingerprinting_rules, GetOriginOrURL(frame));
+          content_setting_rules_->fingerprinting_rules, originOrUrl);
     }
 
     if (setting == CONTENT_SETTING_ALLOW) {
@@ -348,17 +350,15 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
 
     webcompat_setting = brave_shields::GetWebcompatSettingFromRules(
         content_setting_rules_->webcompat_rules, farbling_type,
-        GetOriginOrURL(frame));
+        originOrUrl);
 
     if (webcompat_setting == CONTENT_SETTING_ALLOW) {
       return BraveFarblingLevel::OFF;
     }
 
-    /*
-        if (g_brave_browser_process->webcompat_exceptions_service()
-                ->IsFeatureDisabled(GetOriginOrURL(frame), farbling_type)) {
-          return BraveFarblingLevel::OFF;
-        }*/
+    std::vector<brave_shields::mojom::WebcompatFeature> features;
+    bool success = GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(originOrUrl, &features);
+    DLOG(ERROR) << "success: " << success << ", features length: " << features.size();
   }
 
   if (setting == CONTENT_SETTING_BLOCK) {

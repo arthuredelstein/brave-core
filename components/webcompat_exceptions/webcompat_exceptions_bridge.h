@@ -15,7 +15,6 @@ class WebcompatExceptionsImpl
       mojo::PendingReceiver<webcompat_exceptions::mojom::WebcompatExceptions>
           receiver);
   ~WebcompatExceptionsImpl() override;
-
   void GetWebcompatExceptions(const GURL& url,
                               GetWebcompatExceptionsCallback reply) override;
 

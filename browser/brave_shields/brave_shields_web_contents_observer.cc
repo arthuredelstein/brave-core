@@ -60,12 +60,12 @@ BraveShieldsWebContentsObserver::BraveShieldsWebContentsObserver(
           *web_contents),
       receivers_(web_contents, this) {}
 
-void BraveShieldsWebContentsObserver::PrepareRenderFrame(RenderFrameHost* rfh) {
+void BraveShieldsWebContentsObserver::RenderFrameCreated(RenderFrameHost* rfh) {
+  if (rfh && allowed_scripts_.size()) {
+    GetBraveShieldsRemote(rfh)->SetAllowScriptsFromOriginsOnce(
+        allowed_scripts_);
+  }
   if (rfh) {
-    if (allowed_scripts_.size()) {
-      GetBraveShieldsRemote(rfh)->SetAllowScriptsFromOriginsOnce(
-          allowed_scripts_);
-    }
     if (content::BrowserContext* context = rfh->GetBrowserContext()) {
       if (PrefService* pref_service = user_prefs::UserPrefs::Get(context)) {
         GetBraveShieldsRemote(rfh)->SetReduceLanguageEnabled(
@@ -73,11 +73,6 @@ void BraveShieldsWebContentsObserver::PrepareRenderFrame(RenderFrameHost* rfh) {
       }
     }
   }
-}
-
-void BraveShieldsWebContentsObserver::RenderFrameCreated(RenderFrameHost* rfh) {
-  PrepareRenderFrame(rfh);
-  const GURL url = rfh->GetMainFrame()->GetLastCommittedURL();
 }
 
 void BraveShieldsWebContentsObserver::RenderFrameDeleted(RenderFrameHost* rfh) {
@@ -261,7 +256,14 @@ void BraveShieldsWebContentsObserver::ReadyToCommitNavigation(
 
   navigation_handle->GetWebContents()->ForEachRenderFrameHost(
       [this](content::RenderFrameHost* rfh) {
-        PrepareRenderFrame(rfh);
+        GetBraveShieldsRemote(rfh)->SetAllowScriptsFromOriginsOnce(
+            allowed_scripts_);
+        if (content::BrowserContext* context = rfh->GetBrowserContext()) {
+          if (PrefService* pref_service = user_prefs::UserPrefs::Get(context)) {
+            GetBraveShieldsRemote(rfh)->SetReduceLanguageEnabled(
+                brave_shields::IsReduceLanguageEnabledForProfile(pref_service));
+          }
+        }
       });
 }
 

@@ -112,8 +112,6 @@ class BraveShieldsWebContentsObserver
   // interface, to prevent binding a new remote each time it's used.
   BraveShieldsRemotesMap brave_shields_remotes_;
 
-  void PrepareRenderFrame(content::RenderFrameHost* rfh);
-
   WEB_CONTENTS_USER_DATA_KEY_DECL();
 };
 

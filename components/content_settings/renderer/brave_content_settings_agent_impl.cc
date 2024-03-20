@@ -5,6 +5,7 @@
 
 #include "brave/components/content_settings/renderer/brave_content_settings_agent_impl.h"
 
+#include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>
@@ -355,10 +356,12 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
     if (webcompat_setting == CONTENT_SETTING_ALLOW) {
       return BraveFarblingLevel::OFF;
     }
+  }
 
-    std::vector<brave_shields::mojom::WebcompatFeature> features;
-    bool success = GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(originOrUrl, &features);
-    DLOG(ERROR) << "success: " << success << ", features length: " << features.size();
+  std::vector<brave_shields::mojom::WebcompatFeature> features;
+  bool success = GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(originOrUrl, &features);
+  if (std::find(features.begin(), features.end(), farbling_type) != features.end()) {
+    return BraveFarblingLevel::OFF;
   }
 
   if (setting == CONTENT_SETTING_BLOCK) {

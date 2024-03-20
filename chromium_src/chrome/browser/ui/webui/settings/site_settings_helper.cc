@@ -48,7 +48,7 @@
   {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, nullptr},               \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, nullptr},                \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, nullptr},       \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIALNUMBER, nullptr}, \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_USERAGENT, nullptr},             \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, nullptr},                 \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, nullptr},                \

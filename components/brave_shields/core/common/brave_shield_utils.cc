@@ -36,7 +36,7 @@ static constexpr auto kFarblingTypeToContentSettings =
         {BraveFarblingType::kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
         {BraveFarblingType::kScreen, BRAVE_WEBCOMPAT_SCREEN},
         {BraveFarblingType::kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS},
-        {BraveFarblingType::kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USB_DEVICE_SERIALNUMBER},
+        {BraveFarblingType::kUsbDeviceSerialNumber, BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER},
         {BraveFarblingType::kUserAgent, BRAVE_WEBCOMPAT_USERAGENT},
         {BraveFarblingType::kWebGL, BRAVE_WEBCOMPAT_WEBGL},
         {BraveFarblingType::kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},

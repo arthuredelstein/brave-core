@@ -57,7 +57,7 @@ static_assert(static_cast<int>(ContentSettingsType::NUM_TYPES) <
   {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, brave_value(39)},             \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, brave_value(40)},              \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, brave_value(41)},     \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIALNUMBER,                 \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER,                 \
     brave_value(42)},                                                          \
   {ContentSettingsType::BRAVE_WEBCOMPAT_USERAGENT, brave_value(43)},           \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, brave_value(44)},               \

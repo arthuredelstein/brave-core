@@ -229,7 +229,6 @@ void BraveShieldsWebContentsObserver::OnJavaScriptBlocked(
 void BraveShieldsWebContentsObserver::GetWebcompatExceptions(
     const GURL& url,
     GetWebcompatExceptionsCallback reply) {
-  DLOG(ERROR) << "here is the bridge!";
   auto* webcompat_exceptions_service = g_brave_browser_process->webcompat_exceptions_service();
   auto exceptions = webcompat_exceptions_service->GetFeatureExceptions(url);
   std::move(reply).Run(exceptions);

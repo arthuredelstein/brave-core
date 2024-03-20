@@ -359,7 +359,7 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
   }
 
   std::vector<brave_shields::mojom::WebcompatFeature> features;
-  bool success = GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(originOrUrl, &features);
+  GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(originOrUrl, &features);
   if (std::find(features.begin(), features.end(), farbling_type) != features.end()) {
     return BraveFarblingLevel::OFF;
   }

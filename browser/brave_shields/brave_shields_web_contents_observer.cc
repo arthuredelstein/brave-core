@@ -77,10 +77,7 @@ void BraveShieldsWebContentsObserver::PrepareRenderFrame(RenderFrameHost* rfh) {
 
 void BraveShieldsWebContentsObserver::RenderFrameCreated(RenderFrameHost* rfh) {
   PrepareRenderFrame(rfh);
-  DLOG(ERROR) << "CAn I see this thing?";
   const GURL url = rfh->GetMainFrame()->GetLastCommittedURL();
-  DLOG(ERROR) << "ready to send the webcompat data: " << url;
-
 }
 
 void BraveShieldsWebContentsObserver::RenderFrameDeleted(RenderFrameHost* rfh) {
@@ -265,8 +262,6 @@ void BraveShieldsWebContentsObserver::ReadyToCommitNavigation(
   navigation_handle->GetWebContents()->ForEachRenderFrameHost(
       [this](content::RenderFrameHost* rfh) {
         PrepareRenderFrame(rfh);
-        const GURL url = rfh->GetMainFrame()->GetLastCommittedURL();
-        DLOG(ERROR) << "ready to send the webcompat data: " << url;
       });
 }
 

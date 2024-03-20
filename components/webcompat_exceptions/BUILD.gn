@@ -7,8 +7,6 @@ import("//brave/build/config.gni")
 
 static_library("webcompat_exceptions") {
   sources = [
-    "webcompat_exceptions_bridge.cc",
-    "webcompat_exceptions_bridge.h",
     "webcompat_exceptions_service.cc",
     "webcompat_exceptions_service.h",
   ]
@@ -16,8 +14,5 @@ static_library("webcompat_exceptions") {
   deps = [
     "//base",
     "//brave/components/brave_component_updater/browser",
-
-    #    "//brave/components/webcompat_exceptions/common",
-    "//brave/components/webcompat_exceptions/common:mojom",
   ]
 }

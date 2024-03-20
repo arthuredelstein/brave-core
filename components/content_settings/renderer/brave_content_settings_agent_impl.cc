@@ -436,15 +436,4 @@ BraveContentSettingsAgentImpl::GetOrCreateBraveShieldsRemote() {
   return brave_shields_remote_;
 }
 
-mojo::AssociatedRemote<webcompat_exceptions::mojom::WebcompatExceptions>&
-BraveContentSettingsAgentImpl::GetOrCreateWebcompatExceptionsRemote() {
-  if (!webcompat_exceptions_remote_) {
-    render_frame()->GetRemoteAssociatedInterfaces()->GetInterface(
-        &webcompat_exceptions_remote_);
-  }
-
-  DCHECK(webcompat_exceptions_remote_.is_bound());
-  return webcompat_exceptions_remote_;
-}
-
 }  // namespace content_settings

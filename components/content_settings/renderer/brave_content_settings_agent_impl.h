@@ -15,8 +15,6 @@
 #include "base/containers/flat_set.h"
 #include "base/gtest_prod_util.h"
 #include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
-#include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_types.h"
@@ -90,17 +88,10 @@ class BraveContentSettingsAgentImpl
       mojo::PendingAssociatedReceiver<brave_shields::mojom::BraveShields>
           pending_receiver);
 
-  void BindWebcompatExceptionsReceiver(
-      mojo::PendingAssociatedReceiver<
-          webcompat_exceptions::mojom::WebcompatExceptions> pending_receiver);
-
   // Returns the associated remote used to send messages to the browser process,
   // lazily initializing it the first time it's used.
   mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>&
   GetOrCreateBraveShieldsRemote();
-
-  mojo::AssociatedRemote<webcompat_exceptions::mojom::WebcompatExceptions>&
-  GetOrCreateWebcompatExceptionsRemote();
 
   // Origins of scripts which are temporary allowed for this frame in the
   // current load
@@ -118,14 +109,8 @@ class BraveContentSettingsAgentImpl
   mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>
       brave_shields_remote_;
 
-  mojo::AssociatedRemote<webcompat_exceptions::mojom::WebcompatExceptions>
-      webcompat_exceptions_remote_;
-
   mojo::AssociatedReceiverSet<brave_shields::mojom::BraveShields>
       brave_shields_receivers_;
-
-  mojo::AssociatedReceiverSet<webcompat_exceptions::mojom::WebcompatExceptions>
-      webcompat_exceptions_receivers_;
 };
 
 }  // namespace content_settings

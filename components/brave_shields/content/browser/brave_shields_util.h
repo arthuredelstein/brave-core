@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <string>
 
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
 
 namespace https_upgrade_exceptions {
@@ -108,13 +107,6 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
                                   PrefService* profile_state = nullptr);
 ControlType GetFingerprintingControlType(HostContentSettingsMap* map,
                                          const GURL& url);
-
-void DisableFeatureForWebcompat(
-    HostContentSettingsMap* map,
-    webcompat_exceptions::BraveFarblingType farbling_type,
-    bool disable,
-    const GURL& url);
-
 bool IsBraveShieldsManaged(PrefService* prefs,
                            HostContentSettingsMap* map,
                            GURL url);
@@ -156,11 +148,6 @@ bool MaybeChangeReferrer(bool allow_referrers,
                          const GURL& current_referrer,
                          const GURL& target_url,
                          content::Referrer* output_referrer);
-
-bool IsFeatureDisabledForWebcompat(
-    HostContentSettingsMap* map,
-    const GURL& url,
-    webcompat_exceptions::BraveFarblingType farbling_type);
 
 ShieldsSettingCounts GetFPSettingCount(HostContentSettingsMap* map);
 ShieldsSettingCounts GetAdsSettingCount(HostContentSettingsMap* map);

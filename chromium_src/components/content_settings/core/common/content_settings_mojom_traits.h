@@ -40,11 +40,6 @@ struct StructTraits<
   cosmetic_filtering_rules(const RendererContentSettingRules& r) {
     return r.cosmetic_filtering_rules;
   }
-  static const std::map<ContentSettingsType,
-                        std::vector<ContentSettingPatternSource>>&
-  webcompat_rules(const RendererContentSettingRules& r) {
-    return r.webcompat_rules;
-  }
 
   static bool Read(
       content_settings::mojom::RendererContentSettingRulesDataView data,

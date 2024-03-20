@@ -1,11 +1,12 @@
 diff --git a/components/content_settings/core/common/content_settings_types.mojom b/components/content_settings/core/common/content_settings_types.mojom
-index 5e704d5151311dad1550ce63487a9a7f4ea823e1..ad859bc2d66d059c647db7104f50954359304db2 100644
+index 5e704d5151311dad1550ce63487a9a7f4ea823e1..c2765f06bc2d3337f8b2ad687be9510092119734 100644
 --- a/components/content_settings/core/common/content_settings_types.mojom
 +++ b/components/content_settings/core/common/content_settings_types.mojom
-@@ -398,6 +398,41 @@ enum ContentSettingsType {
+@@ -398,6 +398,21 @@ enum ContentSettingsType {
    // Whether an application can enumerate audio output device.
    SPEAKER_SELECTION,
  
+-
 +  BRAVE_START,
 +  BRAVE_ADS = BRAVE_START,
 +  BRAVE_COSMETIC_FILTERING,
@@ -22,25 +23,5 @@ index 5e704d5151311dad1550ce63487a9a7f4ea823e1..ad859bc2d66d059c647db7104f509543
 +  BRAVE_HTTPS_UPGRADE,
 +  BRAVE_REMEMBER_1P_STORAGE,
 +  BRAVE_LOCALHOST_ACCESS,
-+
-+  // Content settings for individual webcompat toggles
-+  BRAVE_WEBCOMPAT_AUDIO,
-+  BRAVE_WEBCOMPAT_CANVAS,
-+  BRAVE_WEBCOMPAT_DEVICE_MEMORY,
-+  BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL,
-+  BRAVE_WEBCOMPAT_FONT,
-+  BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY,
-+  BRAVE_WEBCOMPAT_KEYBOARD,
-+  BRAVE_WEBCOMPAT_LANGUAGE,
-+  BRAVE_WEBCOMPAT_MEDIA_DEVICES,
-+  BRAVE_WEBCOMPAT_PLUGINS,
-+  BRAVE_WEBCOMPAT_SCREEN,
-+  BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS,
-+  BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER,
-+  BRAVE_WEBCOMPAT_USERAGENT,
-+  BRAVE_WEBCOMPAT_WEBGL,
-+  BRAVE_WEBCOMPAT_WEBGL2,
-+  BRAVE_WEBCOMPAT_WEBSOCKETS_POOL,
- 
    NUM_TYPES,
  };

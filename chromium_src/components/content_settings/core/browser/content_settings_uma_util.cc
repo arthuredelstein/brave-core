@@ -28,41 +28,22 @@ static_assert(static_cast<int>(ContentSettingsType::NUM_TYPES) <
               "the ones used by Brave.");
 
 // clang-format off
-#define BRAVE_HISTOGRAM_VALUE_LIST                                             \
-  {ContentSettingsType::BRAVE_ADS, brave_value(0)},                            \
-  {ContentSettingsType::BRAVE_COSMETIC_FILTERING, brave_value(1)},             \
-  {ContentSettingsType::BRAVE_TRACKERS, brave_value(2)},                       \
-  {ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES, brave_value(3)},      \
-  {ContentSettingsType::BRAVE_FINGERPRINTING_V2, brave_value(4)},              \
-  {ContentSettingsType::BRAVE_SHIELDS, brave_value(5)},                        \
-  {ContentSettingsType::BRAVE_REFERRERS, brave_value(6)},                      \
-  {ContentSettingsType::BRAVE_COOKIES, brave_value(7)},                        \
-  {ContentSettingsType::BRAVE_SPEEDREADER, brave_value(8)},                    \
-  {ContentSettingsType::BRAVE_ETHEREUM, brave_value(9)},                       \
-  {ContentSettingsType::BRAVE_SOLANA, brave_value(10)},                        \
-  {ContentSettingsType::BRAVE_GOOGLE_SIGN_IN, brave_value(11)},                \
-  {ContentSettingsType::BRAVE_HTTPS_UPGRADE, brave_value(12)},                 \
-  {ContentSettingsType::BRAVE_REMEMBER_1P_STORAGE, brave_value(13)},           \
-  {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, brave_value(14)},              \
-                                                                               \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO, brave_value(30)},               \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS, brave_value(31)},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY, brave_value(32)},        \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL, brave_value(33)},     \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_FONT, brave_value(34)},                \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY, brave_value(35)}, \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_KEYBOARD, brave_value(36)},            \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_LANGUAGE, brave_value(37)},            \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIA_DEVICES, brave_value(38)},        \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, brave_value(39)},             \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, brave_value(40)},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, brave_value(41)},     \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER,                 \
-    brave_value(42)},                                                          \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_USERAGENT, brave_value(43)},           \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, brave_value(44)},               \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, brave_value(45)},              \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_WEBSOCKETS_POOL, brave_value(46)},
+#define BRAVE_HISTOGRAM_VALUE_LIST                                        \
+  {ContentSettingsType::BRAVE_ADS, brave_value(0)},                       \
+  {ContentSettingsType::BRAVE_COSMETIC_FILTERING, brave_value(1)},        \
+  {ContentSettingsType::BRAVE_TRACKERS, brave_value(2)},                  \
+  {ContentSettingsType::BRAVE_HTTP_UPGRADABLE_RESOURCES, brave_value(3)}, \
+  {ContentSettingsType::BRAVE_FINGERPRINTING_V2, brave_value(4)},         \
+  {ContentSettingsType::BRAVE_SHIELDS, brave_value(5)},                   \
+  {ContentSettingsType::BRAVE_REFERRERS, brave_value(6)},                 \
+  {ContentSettingsType::BRAVE_COOKIES, brave_value(7)},                   \
+  {ContentSettingsType::BRAVE_SPEEDREADER, brave_value(8)},               \
+  {ContentSettingsType::BRAVE_ETHEREUM, brave_value(9)},                  \
+  {ContentSettingsType::BRAVE_SOLANA, brave_value(10)},                   \
+  {ContentSettingsType::BRAVE_GOOGLE_SIGN_IN, brave_value(11)},           \
+  {ContentSettingsType::BRAVE_HTTPS_UPGRADE, brave_value(12)},            \
+  {ContentSettingsType::BRAVE_REMEMBER_1P_STORAGE, brave_value(13)},      \
+  {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, brave_value(14)}
 // clang-format on
 
 #include "src/components/content_settings/core/browser/content_settings_uma_util.cc"

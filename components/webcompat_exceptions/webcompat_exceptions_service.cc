@@ -67,7 +67,8 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
   */
 }
 
-std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(const GURL& url) {
+std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(
+    const GURL& url) {
   /*
   if (!is_ready_) {
     // We don't have the exceptions list loaded yet.
@@ -75,8 +76,10 @@ std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(
   }
   */
   std::vector<BraveFarblingType> exceptions;
-  exceptions.push_back(webcompat_exceptions::BraveFarblingType::kHardwareConcurrency);
-  exceptions.push_back(webcompat_exceptions::BraveFarblingType::kUsbDeviceSerialNumber);
+  exceptions.push_back(
+      webcompat_exceptions::BraveFarblingType::kHardwareConcurrency);
+  exceptions.push_back(
+      webcompat_exceptions::BraveFarblingType::kUsbDeviceSerialNumber);
   // Allow upgrade only if the domain is not on the exceptions list.
   return exceptions;
 }

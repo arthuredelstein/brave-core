@@ -229,7 +229,8 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
                    : BraveFarblingLevel::BALANCED);
     for (auto farbling_type = BraveFarblingType::kNone;
          farbling_type != BraveFarblingType::kAll;
-         farbling_type = static_cast<BraveFarblingType>(static_cast<int32_t>(farbling_type) + 1)) {
+         farbling_type = static_cast<BraveFarblingType>(
+             static_cast<int32_t>(farbling_type) + 1)) {
       auto farbling_level = settings->GetBraveFarblingLevel(farbling_type);
       farbling_levels_.insert(farbling_type, farbling_level);
     }

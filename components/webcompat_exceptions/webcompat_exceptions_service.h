@@ -12,11 +12,11 @@
 #include <vector>
 
 #include "base/files/file_path.h"
+#include "brave/browser/brave_shields/brave_shields_web_contents_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
-#include "brave/browser/brave_shields/brave_shields_web_contents_observer.h"
 
 namespace webcompat_exceptions {
 

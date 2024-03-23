@@ -11,13 +11,21 @@
 #include <string>
 #include <vector>
 
+#include "base/containers/enum_set.h"
 #include "base/files/file_path.h"
+#include "base/values.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
+#include "extensions/common/url_pattern_set.h"
 
 namespace webcompat_exceptions {
+
+struct WebcompatRule {
+  extensions::URLPatternSet pattern_set;
+  base::EnumSet<BraveFarblingType, BraveFarblingType::kNone, BraveFarblingType::kAll> features;
+};
 
 class WebcompatExceptionsService
     : public brave_component_updater::LocalDataFilesObserver {
@@ -37,8 +45,11 @@ class WebcompatExceptionsService
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
+  void AddRule(const base::Value::List& include_strings,
+               const base::Value::Dict& rule_dict);
   std::set<std::string> exceptional_domains_;
   bool is_ready_ = false;
+  std::vector<WebcompatRule> webcompat_rules_;
   base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
 };
 

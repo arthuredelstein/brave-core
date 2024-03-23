@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "base/containers/contains.h"
+#include "base/containers/fixed_flat_map.h"
 #include "base/files/file_path.h"
 #include "base/json/json_reader.h"
 #include "base/strings/string_split.h"
@@ -25,6 +26,32 @@
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE_VERSION "1"
 
 namespace webcompat_exceptions {
+
+namespace {
+using enum BraveFarblingType;
+
+constexpr auto kWebcompatNamesToType =
+    base::MakeFixedFlatMap<base::StringPiece, BraveFarblingType>({
+        {"audio", kAudio},
+        {"canvas", kCanvas},
+        {"device-memory", kDeviceMemory},
+        {"eventsource-pool", kEventSourcePool},
+        {"font", kFont},
+        {"hardware-concurrency", kHardwareConcurrency},
+        {"keyboard", kKeyboard},
+        {"language", kLanguage},
+        {"media-devices", kMediaDevices},
+        {"plugins", kPlugins},
+        {"screen", kScreen},
+        {"speech-synthesis", kSpeechSynthesis},
+        {"usb-device-serial-number", kUsbDeviceSerialNumber},
+        {"user-agent", kUserAgent},
+        {"webgl", kWebGL},
+        {"webgl2", kWebGL2},
+        {"websockets-pool", kWebSocketsPool},
+    });
+
+}  // namespace
 
 using brave_component_updater::LocalDataFilesObserver;
 using brave_component_updater::LocalDataFilesService;
@@ -46,25 +73,63 @@ void WebcompatExceptionsService::LoadWebcompatExceptions(
                      weak_factory_.GetWeakPtr()));
 }
 
+void WebcompatExceptionsService::AddRule(
+    const base::Value::List& include_strings,
+    const base::Value::Dict& rule_dict) {
+  extensions::URLPatternSet url_pattern_set;
+  std::string error;
+  bool valid = url_pattern_set.Populate(include_strings, URLPattern::SCHEME_HTTP | URLPattern::SCHEME_HTTPS, false, &error);
+  if (!valid) {
+    VLOG(1) << error;
+  }
+  const base::Value* exceptions = rule_dict.Find("exceptions");
+  if (exceptions->is_list()) {
+    std::vector<BraveFarblingType> webcompat_types;
+    for (const base::Value& exception : exceptions->GetList()) {
+      const auto it = kWebcompatNamesToType.find(exception.GetString());
+      if (it != kWebcompatNamesToType.end()) {
+        webcompat_types.push_back(it->second);
+      }
+    }
+  } else {
+    DLOG(ERROR) << "Malformed exceptions list in "
+                << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
+  }
+}
+
 void WebcompatExceptionsService::OnJsonFileDataReady(
     const std::string& contents) {
   if (contents.empty()) {
     // We don't have the file yet.
     return;
   }
-  DLOG(ERROR) << WEBCOMPAT_EXCEPTIONS_JSON_FILE << ":\n" << contents;
-
-  // brave_shield_utils::DisableFeatureForWebcompat(map,
-  // BraveFarblingType::kHardwareConcurrency, true, "https://browserleaks.com");
-  /*
-  std::vector<std::string> lines = base::SplitString(
-      contents, "\n", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
-  for (const auto& line : lines) {
-    exceptional_domains_.insert(std::move(line));
+  const auto json_root = base::JSONReader::Read(contents);
+  if (json_root == absl::nullopt) {
+    DLOG(ERROR) << "Failed to parse " << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
+    return;
   }
-  is_ready_ = true;
-  return;
-  */
+  if (!json_root->is_list()) {
+    DLOG(ERROR) << "Didn't find expected list in "
+                << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
+    return;
+  }
+  for (const auto& rule : json_root->GetList()) {
+    if (!rule.is_dict()) {
+      // Something is wrong with the rule definition; skip it.
+      DLOG(ERROR) << "Found a malformed rule in "
+                  << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
+      continue;
+    }
+    const auto& rule_dict = rule.GetDict();
+    const auto* include = rule_dict.Find("include");
+    if (include->is_list()) {
+      AddRule(include->GetList(), rule_dict);
+    } else if (include->is_string()) {
+      DLOG(ERROR) << "Not implemented yet";
+    } else {
+      DLOG(ERROR) << "Malformed include attribute in " << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
+    }
+  }
 }
 
 std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(
@@ -76,6 +141,7 @@ std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(
   }
   */
   std::vector<BraveFarblingType> exceptions;
+  
   exceptions.push_back(
       webcompat_exceptions::BraveFarblingType::kHardwareConcurrency);
   exceptions.push_back(

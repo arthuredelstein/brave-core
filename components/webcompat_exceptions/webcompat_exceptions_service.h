@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 
-#include "base/containers/enum_set.h"
 #include "base/files/file_path.h"
 #include "base/values.h"
+#include "base/containers/flat_set.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
@@ -23,8 +23,12 @@
 namespace webcompat_exceptions {
 
 struct WebcompatRule {
-  extensions::URLPatternSet pattern_set;
-  base::EnumSet<BraveFarblingType, BraveFarblingType::kNone, BraveFarblingType::kAll> features;
+  public:
+    extensions::URLPatternSet url_pattern_set;
+    WebcompatFeatureSet feature_set;
+    WebcompatRule();
+    explicit WebcompatRule(const WebcompatRule& other);
+    ~WebcompatRule();
 };
 
 class WebcompatExceptionsService
@@ -38,7 +42,7 @@ class WebcompatExceptionsService
                         const base::FilePath& install_dir,
                         const std::string& manifest) override;
 
-  std::vector<BraveFarblingType> GetFeatureExceptions(const GURL& url);
+  const WebcompatFeatureSet GetFeatureExceptions(const GURL& url);
   ~WebcompatExceptionsService() override;
   void SetIsReadyForTesting() { is_ready_ = true; }
   void OnJsonFileDataReady(const std::string& contents);

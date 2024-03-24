@@ -7,10 +7,13 @@
 #define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_
 
 #include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
+#include "base/containers/flat_set.h"
 
 namespace webcompat_exceptions {
 
 using BraveFarblingType = brave_shields::mojom::WebcompatFeature;
+
+using WebcompatFeatureSet = std::vector<BraveFarblingType>;
 
 }  // namespace webcompat_exceptions
 

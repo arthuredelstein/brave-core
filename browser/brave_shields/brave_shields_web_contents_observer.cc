@@ -223,8 +223,8 @@ void BraveShieldsWebContentsObserver::GetWebcompatExceptions(
     GetWebcompatExceptionsCallback reply) {
   auto* webcompat_exceptions_service =
       g_brave_browser_process->webcompat_exceptions_service();
-  auto exceptions = webcompat_exceptions_service->GetFeatureExceptions(url);
-  std::move(reply).Run(exceptions);
+  webcompat_exceptions::WebcompatFeatureSet feature_exceptions = webcompat_exceptions_service->GetFeatureExceptions(url);
+  std::move(reply).Run(feature_exceptions);
 }
 
 // static

@@ -53,6 +53,11 @@ constexpr auto kWebcompatNamesToType =
 
 }  // namespace
 
+WebcompatRule::WebcompatRule() = default;
+WebcompatRule::WebcompatRule(const WebcompatRule& other) : 
+  url_pattern_set(other.url_pattern_set.Clone()), feature_set(other.feature_set) { }
+WebcompatRule::~WebcompatRule() = default;
+
 using brave_component_updater::LocalDataFilesObserver;
 using brave_component_updater::LocalDataFilesService;
 
@@ -76,9 +81,10 @@ void WebcompatExceptionsService::LoadWebcompatExceptions(
 void WebcompatExceptionsService::AddRule(
     const base::Value::List& include_strings,
     const base::Value::Dict& rule_dict) {
-  extensions::URLPatternSet url_pattern_set;
+  WebcompatRule rule;
+  webcompat_rules_.push_back(rule);
   std::string error;
-  bool valid = url_pattern_set.Populate(include_strings, URLPattern::SCHEME_HTTP | URLPattern::SCHEME_HTTPS, false, &error);
+  bool valid = rule.url_pattern_set.Populate(include_strings, URLPattern::SCHEME_HTTP | URLPattern::SCHEME_HTTPS, false, &error);
   if (!valid) {
     VLOG(1) << error;
   }
@@ -88,13 +94,14 @@ void WebcompatExceptionsService::AddRule(
     for (const base::Value& exception : exceptions->GetList()) {
       const auto it = kWebcompatNamesToType.find(exception.GetString());
       if (it != kWebcompatNamesToType.end()) {
-        webcompat_types.push_back(it->second);
+        rule.feature_set.push_back(it->second);
       }
     }
   } else {
     DLOG(ERROR) << "Malformed exceptions list in "
                 << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
   }
+  webcompat_rules_.push_back(rule);
 }
 
 void WebcompatExceptionsService::OnJsonFileDataReady(
@@ -132,22 +139,23 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
   }
 }
 
-std::vector<BraveFarblingType> WebcompatExceptionsService::GetFeatureExceptions(
+const WebcompatFeatureSet WebcompatExceptionsService::GetFeatureExceptions(
     const GURL& url) {
-  /*
+  static const WebcompatFeatureSet empty;
+
   if (!is_ready_) {
-    // We don't have the exceptions list loaded yet.
-    return false;
+    // We don't have the exceptions list loaded yet; return no exceptions.
+    return empty;
   }
-  */
-  std::vector<BraveFarblingType> exceptions;
   
-  exceptions.push_back(
-      webcompat_exceptions::BraveFarblingType::kHardwareConcurrency);
-  exceptions.push_back(
-      webcompat_exceptions::BraveFarblingType::kUsbDeviceSerialNumber);
-  // Allow upgrade only if the domain is not on the exceptions list.
-  return exceptions;
+  for (const auto& rule : webcompat_rules_) {
+    if (rule.url_pattern_set.MatchesURL(url)) {
+      return rule.feature_set;
+    }
+  }
+
+  // No exceptions found
+  return empty;
 }
 
 // implementation of LocalDataFilesObserver

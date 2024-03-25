@@ -9,11 +9,11 @@
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "third_party/blink/public/platform/web_content_settings_client.h"
 
-#define AllowStorageAccessSync                                        \
-  UnusedFunction() {                                                  \
-    return false;                                                     \
-  }                                                                   \
-  BraveFarblingLevel GetBraveFarblingLevel(                           \
+#define AllowStorageAccessSync                                       \
+  UnusedFunction() {                                                 \
+    return false;                                                    \
+  }                                                                  \
+  BraveFarblingLevel GetBraveFarblingLevel(                          \
       webcompat_exceptions::WebcompatFeature farblingType) override; \
   bool AllowStorageAccessSync
 

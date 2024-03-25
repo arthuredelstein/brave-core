@@ -6,8 +6,8 @@
 #ifndef BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_
 #define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_CONSTANTS_H_
 
-#include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
 #include "base/containers/flat_set.h"
+#include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
 
 namespace webcompat_exceptions {
 

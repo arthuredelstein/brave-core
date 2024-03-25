@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 
+#include "base/containers/flat_set.h"
 #include "base/files/file_path.h"
 #include "base/values.h"
-#include "base/containers/flat_set.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/webcompat_exceptions/common/webcompat_exceptions.mojom.h"
@@ -23,12 +23,12 @@
 namespace webcompat_exceptions {
 
 struct WebcompatRule {
-  public:
-    extensions::URLPatternSet url_pattern_set;
-    WebcompatFeatureSet feature_set;
-    WebcompatRule();
-    explicit WebcompatRule(const WebcompatRule& other);
-    ~WebcompatRule();
+ public:
+  extensions::URLPatternSet url_pattern_set;
+  WebcompatFeatureSet feature_set;
+  WebcompatRule();
+  explicit WebcompatRule(const WebcompatRule& other);
+  ~WebcompatRule();
 };
 
 class WebcompatExceptionsService

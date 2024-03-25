@@ -18,9 +18,9 @@
         image_data_pixmap.computeByteSize());                                 \
   }
 
-#define BRAVE_BASE_RENDERING_CONTEXT_2D_MEASURE_TEXT         \
-  if (!brave::AllowFingerprinting(                           \
-          GetTopExecutionContext(),                          \
+#define BRAVE_BASE_RENDERING_CONTEXT_2D_MEASURE_TEXT        \
+  if (!brave::AllowFingerprinting(                          \
+          GetTopExecutionContext(),                         \
           webcompat_exceptions::WebcompatFeature::kCanvas)) \
     return MakeGarbageCollected<TextMetrics>();
 

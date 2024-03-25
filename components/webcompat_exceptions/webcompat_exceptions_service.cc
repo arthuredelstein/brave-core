@@ -58,8 +58,9 @@ constexpr auto kWebcompatNamesToType =
 }  // namespace
 
 WebcompatRule::WebcompatRule() = default;
-WebcompatRule::WebcompatRule(const WebcompatRule& other) : 
-  url_pattern_set(other.url_pattern_set.Clone()), feature_set(other.feature_set) { }
+WebcompatRule::WebcompatRule(const WebcompatRule& other)
+    : url_pattern_set(other.url_pattern_set.Clone()),
+      feature_set(other.feature_set) {}
 WebcompatRule::~WebcompatRule() = default;
 
 using brave_component_updater::LocalDataFilesObserver;
@@ -88,7 +89,9 @@ void WebcompatExceptionsService::AddRule(
   WebcompatRule rule;
   webcompat_rules_.push_back(rule);
   std::string error;
-  bool valid = rule.url_pattern_set.Populate(include_strings, URLPattern::SCHEME_HTTP | URLPattern::SCHEME_HTTPS, false, &error);
+  bool valid = rule.url_pattern_set.Populate(
+      include_strings, URLPattern::SCHEME_HTTP | URLPattern::SCHEME_HTTPS,
+      false, &error);
   if (!valid) {
     VLOG(1) << error;
   }
@@ -138,7 +141,8 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
     } else if (include->is_string()) {
       DLOG(ERROR) << "Not implemented yet";
     } else {
-      DLOG(ERROR) << "Malformed include attribute in " << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
+      DLOG(ERROR) << "Malformed include attribute in "
+                  << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
     }
   }
   is_ready_ = true;

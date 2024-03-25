@@ -141,23 +141,22 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
       DLOG(ERROR) << "Malformed include attribute in " << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
     }
   }
+  is_ready_ = true;
 }
 
 const WebcompatFeatureSet WebcompatExceptionsService::GetFeatureExceptions(
     const GURL& url) {
   static const WebcompatFeatureSet empty;
-
   if (!is_ready_) {
     // We don't have the exceptions list loaded yet; return no exceptions.
     return empty;
   }
-  
+  // Find out if any rules apply.
   for (const auto& rule : webcompat_rules_) {
     if (rule.url_pattern_set.MatchesURL(url)) {
       return rule.feature_set;
     }
   }
-
   // No exceptions found
   return empty;
 }

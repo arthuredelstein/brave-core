@@ -30,6 +30,10 @@ namespace webcompat_exceptions {
 namespace {
 using enum BraveFarblingType;
 
+// WebcompatExceptionService keys
+const char kInclude[] = "include";
+const char kExceptions[] = "exceptions";
+
 constexpr auto kWebcompatNamesToType =
     base::MakeFixedFlatMap<base::StringPiece, BraveFarblingType>({
         {"audio", kAudio},
@@ -88,7 +92,7 @@ void WebcompatExceptionsService::AddRule(
   if (!valid) {
     VLOG(1) << error;
   }
-  const base::Value* exceptions = rule_dict.Find("exceptions");
+  const base::Value* exceptions = rule_dict.Find(kExceptions);
   if (exceptions->is_list()) {
     std::vector<BraveFarblingType> webcompat_types;
     for (const base::Value& exception : exceptions->GetList()) {
@@ -128,7 +132,7 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
       continue;
     }
     const auto& rule_dict = rule.GetDict();
-    const auto* include = rule_dict.Find("include");
+    const auto* include = rule_dict.Find(kInclude);
     if (include->is_list()) {
       AddRule(include->GetList(), rule_dict);
     } else if (include->is_string()) {

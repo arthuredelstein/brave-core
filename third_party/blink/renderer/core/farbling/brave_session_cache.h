@@ -30,7 +30,7 @@ using blink::ExecutionContext;
 using blink::GarbageCollected;
 using blink::MakeGarbageCollected;
 using blink::Supplement;
-using webcompat_exceptions::BraveFarblingType;
+using webcompat_exceptions::WebcompatFeature;
 
 enum FarbleKey : uint64_t {
   kNone,
@@ -50,10 +50,10 @@ CORE_EXPORT blink::WebContentSettingsClient* GetContentSettingsClientFor(
     bool require_filled_content_settings_rules = false);
 CORE_EXPORT BraveFarblingLevel
 GetBraveFarblingLevelFor(ExecutionContext* context,
-                         BraveFarblingType farblingType,
+                         WebcompatFeature farblingType,
                          BraveFarblingLevel default_value);
 CORE_EXPORT bool AllowFingerprinting(ExecutionContext* context,
-                                     BraveFarblingType farblingType);
+                                     WebcompatFeature farblingType);
 CORE_EXPORT bool AllowFontFamily(ExecutionContext* context,
                                  const AtomicString& family_name);
 CORE_EXPORT int FarbleInteger(ExecutionContext* context,
@@ -79,7 +79,7 @@ class CORE_EXPORT BraveSessionCache final
   static BraveSessionCache& From(ExecutionContext&);
   static void Init();
 
-  BraveFarblingLevel GetBraveFarblingLevel(BraveFarblingType farbling_type);
+  BraveFarblingLevel GetBraveFarblingLevel(WebcompatFeature farbling_type);
   void FarbleAudioChannel(float* dst, size_t count);
   void PerturbPixels(const unsigned char* data, size_t size);
   WTF::String GenerateRandomString(std::string seed, wtf_size_t length);
@@ -102,7 +102,7 @@ class CORE_EXPORT BraveSessionCache final
   WTF::HashMap<FarbleKey, int> farbled_integers_;
   BraveFarblingLevel farbling_level_;
   std::optional<blink::BraveAudioFarblingHelper> audio_farbling_helper_;
-  WTF::HashMap<BraveFarblingType, BraveFarblingLevel> farbling_levels_;
+  WTF::HashMap<WebcompatFeature, BraveFarblingLevel> farbling_levels_;
 
   void PerturbPixelsInternal(const unsigned char* data, size_t size);
 };

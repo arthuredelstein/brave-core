@@ -19,7 +19,7 @@ NavigatorLanguage::NavigatorLanguage(ExecutionContext* execution_context)
 void NavigatorLanguage::EnsureUpdatedLanguage() {
   NavigatorLanguage_ChromiumImpl::EnsureUpdatedLanguage();
   BraveFarblingLevel farbling_level = brave::GetBraveFarblingLevelFor(
-      execution_context_, webcompat_exceptions::BraveFarblingType::kLanguage,
+      execution_context_, webcompat_exceptions::WebcompatFeature::kLanguage,
       BraveFarblingLevel::OFF);
   // If Brave Shields are down or anti-fingerprinting is off for this site,
   // do nothing.

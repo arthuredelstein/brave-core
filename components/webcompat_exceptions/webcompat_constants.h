@@ -11,9 +11,9 @@
 
 namespace webcompat_exceptions {
 
-using BraveFarblingType = brave_shields::mojom::WebcompatFeature;
+using WebcompatFeature = brave_shields::mojom::WebcompatFeature;
 
-using WebcompatFeatureSet = std::vector<BraveFarblingType>;
+using WebcompatFeatureSet = std::vector<WebcompatFeature>;
 
 }  // namespace webcompat_exceptions
 

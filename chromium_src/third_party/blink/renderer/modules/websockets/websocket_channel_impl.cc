@@ -45,7 +45,7 @@ bool WebSocketChannelImpl::ShouldDisallowConnection(const KURL& url) {
           execution_context_->GetSecurityOrigin()->Protocol().Ascii());
       if (!is_extension &&
           settings->GetBraveFarblingLevel(
-              webcompat_exceptions::BraveFarblingType::kWebSocketsPool) !=
+              webcompat_exceptions::WebcompatFeature::kWebSocketsPool) !=
               BraveFarblingLevel::OFF) {
         websocket_in_use_tracker_ =
             ResourcePoolLimiter::GetInstance().IssueResourceInUseTracker(

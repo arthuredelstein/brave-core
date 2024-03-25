@@ -21,7 +21,7 @@
 #define BRAVE_BASE_RENDERING_CONTEXT_2D_MEASURE_TEXT         \
   if (!brave::AllowFingerprinting(                           \
           GetTopExecutionContext(),                          \
-          webcompat_exceptions::BraveFarblingType::kCanvas)) \
+          webcompat_exceptions::WebcompatFeature::kCanvas)) \
     return MakeGarbageCollected<TextMetrics>();
 
 #define BRAVE_GET_IMAGE_DATA_PARAMS ScriptState *script_state,
@@ -37,7 +37,7 @@ namespace {
 bool AllowFingerprintingFromScriptState(blink::ScriptState* script_state) {
   return brave::AllowFingerprinting(
       blink::ExecutionContext::From(script_state),
-      webcompat_exceptions::BraveFarblingType::kCanvas);
+      webcompat_exceptions::WebcompatFeature::kCanvas);
 }
 
 }  // namespace

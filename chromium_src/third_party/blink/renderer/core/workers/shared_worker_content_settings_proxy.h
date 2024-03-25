@@ -14,7 +14,7 @@
     return false;                                                     \
   }                                                                   \
   BraveFarblingLevel GetBraveFarblingLevel(                           \
-      webcompat_exceptions::BraveFarblingType farblingType) override; \
+      webcompat_exceptions::WebcompatFeature farblingType) override; \
   bool AllowStorageAccessSync
 
 #include "src/third_party/blink/renderer/core/workers/shared_worker_content_settings_proxy.h"  // IWYU pragma: export

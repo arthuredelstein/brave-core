@@ -8,7 +8,7 @@
 
 #define BRAVE_WORKER_CONTENT_SETTINGS_CLIENT_H                        \
   BraveFarblingLevel GetBraveFarblingLevel(                           \
-      webcompat_exceptions::BraveFarblingType farblingType) override; \
+      webcompat_exceptions::WebcompatFeature farblingType) override; \
   blink::WebSecurityOrigin GetEphemeralStorageOriginSync() override;  \
   bool HasContentSettingsRules() const override;
 

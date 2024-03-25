@@ -101,7 +101,7 @@ blink::WebContentSettingsClient* GetContentSettingsClientFor(
 }
 
 BraveFarblingLevel GetBraveFarblingLevelFor(ExecutionContext* context,
-                                            BraveFarblingType farblingType,
+                                            WebcompatFeature farblingType,
                                             BraveFarblingLevel default_value) {
   BraveFarblingLevel value = default_value;
   if (context)
@@ -111,7 +111,7 @@ BraveFarblingLevel GetBraveFarblingLevelFor(ExecutionContext* context,
 }
 
 bool AllowFingerprinting(ExecutionContext* context,
-                         BraveFarblingType farblingType) {
+                         WebcompatFeature farblingType) {
   return (GetBraveFarblingLevelFor(context, farblingType,
                                    BraveFarblingLevel::OFF) !=
           BraveFarblingLevel::MAXIMUM);
@@ -148,7 +148,7 @@ bool BlockScreenFingerprinting(ExecutionContext* context) {
     return false;
   }
   BraveFarblingLevel level = GetBraveFarblingLevelFor(
-      context, BraveFarblingType::kScreen, BraveFarblingLevel::OFF);
+      context, WebcompatFeature::kScreen, BraveFarblingLevel::OFF);
   return level != BraveFarblingLevel::OFF;
 }
 
@@ -219,7 +219,7 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
   if (blink::WebContentSettingsClient* settings =
           GetContentSettingsClientFor(&context, true)) {
     auto raw_farbling_level =
-        settings->GetBraveFarblingLevel(BraveFarblingType::kNone);
+        settings->GetBraveFarblingLevel(WebcompatFeature::kNone);
     farbling_level_ =
         base::FeatureList::IsEnabled(
             brave_shields::features::kBraveShowStrictFingerprintingMode)
@@ -227,9 +227,9 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
             : (raw_farbling_level == BraveFarblingLevel::OFF
                    ? BraveFarblingLevel::OFF
                    : BraveFarblingLevel::BALANCED);
-    for (auto farbling_type = BraveFarblingType::kNone;
-         farbling_type != BraveFarblingType::kAll;
-         farbling_type = static_cast<BraveFarblingType>(
+    for (auto farbling_type = WebcompatFeature::kNone;
+         farbling_type != WebcompatFeature::kAll;
+         farbling_type = static_cast<WebcompatFeature>(
              static_cast<int32_t>(farbling_type) + 1)) {
       auto farbling_level = settings->GetBraveFarblingLevel(farbling_type);
       farbling_levels_.insert(farbling_type, farbling_level);
@@ -391,7 +391,7 @@ FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator(FarbleKey key) {
 }
 
 BraveFarblingLevel BraveSessionCache::GetBraveFarblingLevel(
-    BraveFarblingType farbling_type) {
+    WebcompatFeature farbling_type) {
   auto item = farbling_levels_.find(farbling_type);
   if (item != farbling_levels_.end()) {
     return item->value;

@@ -113,6 +113,9 @@ class BraveContentSettingsAgentImpl
 
   mojo::AssociatedReceiverSet<brave_shields::mojom::BraveShields>
       brave_shields_receivers_;
+
+  std::vector<brave_shields::mojom::WebcompatFeature> webcompat_features_;
+  bool webcompat_features_read_ = false;
 };
 
 }  // namespace content_settings

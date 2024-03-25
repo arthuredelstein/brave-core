@@ -341,11 +341,13 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
     }
   }
 
-  std::vector<brave_shields::mojom::WebcompatFeature> features;
-  GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(GetOriginOrURL(frame),
-                                                          &features);
-  if (std::find(features.begin(), features.end(), webcompat_feature) !=
-      features.end()) {
+  if (!webcompat_features_read_) {
+    GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(GetOriginOrURL(frame),
+                                                            &webcompat_features_);
+    webcompat_features_read_ = true;
+  }
+  if (std::find(webcompat_features_.begin(), webcompat_features_.end(), webcompat_feature) !=
+      webcompat_features_.end()) {
     return BraveFarblingLevel::OFF;
   }
 

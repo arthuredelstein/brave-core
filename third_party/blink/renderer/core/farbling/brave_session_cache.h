@@ -79,7 +79,7 @@ class CORE_EXPORT BraveSessionCache final
   static BraveSessionCache& From(ExecutionContext&);
   static void Init();
 
-  BraveFarblingLevel GetBraveFarblingLevel(WebcompatFeature farbling_type);
+  BraveFarblingLevel GetBraveFarblingLevel(WebcompatFeature webcompat_feature);
   void FarbleAudioChannel(float* dst, size_t count);
   void PerturbPixels(const unsigned char* data, size_t size);
   WTF::String GenerateRandomString(std::string seed, wtf_size_t length);

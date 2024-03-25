@@ -227,12 +227,12 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
             : (raw_farbling_level == BraveFarblingLevel::OFF
                    ? BraveFarblingLevel::OFF
                    : BraveFarblingLevel::BALANCED);
-    for (auto farbling_type = WebcompatFeature::kNone;
-         farbling_type != WebcompatFeature::kAll;
-         farbling_type = static_cast<WebcompatFeature>(
-             static_cast<int32_t>(farbling_type) + 1)) {
-      auto farbling_level = settings->GetBraveFarblingLevel(farbling_type);
-      farbling_levels_.insert(farbling_type, farbling_level);
+    for (auto webcompat_feature = WebcompatFeature::kNone;
+         webcompat_feature != WebcompatFeature::kAll;
+         webcompat_feature = static_cast<WebcompatFeature>(
+             static_cast<int32_t>(webcompat_feature) + 1)) {
+      auto farbling_level = settings->GetBraveFarblingLevel(webcompat_feature);
+      farbling_levels_.insert(webcompat_feature, farbling_level);
     }
   }
   if (farbling_level_ != BraveFarblingLevel::OFF) {
@@ -391,8 +391,8 @@ FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator(FarbleKey key) {
 }
 
 BraveFarblingLevel BraveSessionCache::GetBraveFarblingLevel(
-    WebcompatFeature farbling_type) {
-  auto item = farbling_levels_.find(farbling_type);
+    WebcompatFeature webcompat_feature) {
+  auto item = farbling_levels_.find(webcompat_feature);
   if (item != farbling_levels_.end()) {
     return item->value;
   }

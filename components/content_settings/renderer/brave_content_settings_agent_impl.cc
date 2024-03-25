@@ -327,7 +327,7 @@ void BraveContentSettingsAgentImpl::DidCommitProvisionalLoad(
 }
 
 BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
-    webcompat_exceptions::WebcompatFeature farbling_type) {
+    webcompat_exceptions::WebcompatFeature webcompat_feature) {
   blink::WebLocalFrame* frame = render_frame()->GetWebFrame();
 
   ContentSetting setting = CONTENT_SETTING_DEFAULT;
@@ -344,7 +344,7 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
   std::vector<brave_shields::mojom::WebcompatFeature> features;
   GetOrCreateBraveShieldsRemote()->GetWebcompatExceptions(GetOriginOrURL(frame),
                                                           &features);
-  if (std::find(features.begin(), features.end(), farbling_type) !=
+  if (std::find(features.begin(), features.end(), webcompat_feature) !=
       features.end()) {
     return BraveFarblingLevel::OFF;
   }

@@ -40,7 +40,8 @@ interface BraveShieldsHost {
   // As the browser process whether a particular website should be has a
   // webcompat exception
   [Sync]
-  GetWebcompatExceptions(url.mojom.Url url) => (array<WebcompatFeature> webcompat_exceptions);
+  GetWebcompatExceptions(url.mojom.Url url)
+    => (array<WebcompatFeature> webcompat_exceptions);
 };
 
 interface BraveShields {

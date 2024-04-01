@@ -264,8 +264,10 @@ void BraveSessionCache::FarbleAudioChannel(float* dst, size_t count) {
 
 void BraveSessionCache::PerturbPixels(const unsigned char* data, size_t size) {
   if (!farbling_enabled_ || farbling_level_ == BraveFarblingLevel::OFF ||
-      GetBraveFarblingLevel(WebcompatFeature::kCanvas) == BraveFarblingLevel::OFF)
+      GetBraveFarblingLevel(WebcompatFeature::kCanvas) ==
+          BraveFarblingLevel::OFF) {
     return;
+  }
   PerturbPixelsInternal(data, size);
 }
 
@@ -361,9 +363,12 @@ int BraveSessionCache::FarbledInteger(FarbleKey key,
 bool BraveSessionCache::AllowFontFamily(
     blink::WebContentSettingsClient* settings,
     const AtomicString& family_name) {
-  if (!farbling_enabled_ || !settings || GetBraveFarblingLevel(WebcompatFeature::kFont) == BraveFarblingLevel::OFF ||
-      !settings->IsReduceLanguageEnabled())
+  if (!farbling_enabled_ || !settings ||
+      GetBraveFarblingLevel(WebcompatFeature::kFont) ==
+          BraveFarblingLevel::OFF ||
+      !settings->IsReduceLanguageEnabled()) {
     return true;
+  }
   switch (farbling_level_) {
     case BraveFarblingLevel::OFF:
       break;

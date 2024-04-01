@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_EXCEPTIONS_SERVICE_H_
-#define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_EXCEPTIONS_SERVICE_H_
+#ifndef BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_WEBCOMPAT_EXCEPTIONS_SERVICE_H_
+#define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_WEBCOMPAT_EXCEPTIONS_SERVICE_H_
 
 #include <memory>
 #include <set>
@@ -63,4 +63,4 @@ std::unique_ptr<WebcompatExceptionsService> WebcompatExceptionsServiceFactory(
 
 }  // namespace webcompat_exceptions
 
-#endif  // BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_BROWSER_WEBCOMPAT_EXCEPTIONS_SERVICE_H_
+#endif  // BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_WEBCOMPAT_EXCEPTIONS_SERVICE_H_

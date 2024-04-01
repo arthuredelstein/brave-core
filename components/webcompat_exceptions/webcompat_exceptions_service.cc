@@ -35,7 +35,7 @@ const char kInclude[] = "include";
 const char kExceptions[] = "exceptions";
 
 constexpr auto kWebcompatNamesToType =
-    base::MakeFixedFlatMap<base::StringPiece, WebcompatFeature>({
+    base::MakeFixedFlatMap<std::string_view, WebcompatFeature>({
         {"audio", kAudio},
         {"canvas", kCanvas},
         {"device-memory", kDeviceMemory},
@@ -118,7 +118,7 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
     return;
   }
   const auto json_root = base::JSONReader::Read(contents);
-  if (json_root == absl::nullopt) {
+  if (json_root == std::nullopt) {
     DLOG(ERROR) << "Failed to parse " << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
     return;
   }

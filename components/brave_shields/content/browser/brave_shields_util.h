@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <string>
 
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
 
 namespace https_upgrade_exceptions {
@@ -140,6 +141,12 @@ void SetForgetFirstPartyStorageEnabled(HostContentSettingsMap* map,
                                        PrefService* local_state = nullptr);
 bool GetForgetFirstPartyStorageEnabled(HostContentSettingsMap* map,
                                        const GURL& url);
+
+void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
+                                webcompat_exceptions::WebcompatFeature feature,
+                                ControlType type,
+                                const GURL& url,
+                                PrefService* local_state);
 
 bool IsSameOriginNavigation(const GURL& referrer, const GURL& target_url);
 

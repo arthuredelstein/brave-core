@@ -61,6 +61,7 @@ struct SiteBlockInfo {
   array<url.mojom.Url> blocked_js_list;
   array<url.mojom.Url> allowed_js_list;
   array<url.mojom.Url> fingerprints_list;
+  map<string, bool> fingerprints_map;
 };
 
 struct SiteSettings {

@@ -127,6 +127,14 @@
     "message": "Allowed scripts",
     "description": "Message for the script resources allowed"
   },
+  "blockedFingerprints": {
+    "message": "Blocked scripts",
+    "description": "Message for the fingerprinting call blocked"
+  },
+  "allowedFingerprints": {
+    "message": "Allowed scripts",
+    "description": "Message for the fingerprinting call allowed"
+  },
   "blockAll": {
     "message": "Block all",
     "description": "Message for the resources blocked *block all* option"

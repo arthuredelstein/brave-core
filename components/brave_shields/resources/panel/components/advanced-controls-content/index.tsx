@@ -111,6 +111,7 @@ function AdvancedControlsContent () {
 
   const adsListCount = siteBlockInfo?.adsList.length ?? 0
   const jsListCount = siteBlockInfo?.blockedJsList.length ?? 0
+  const fingerprintsListCount = siteBlockInfo?.fingerprintsList.length ?? 0
   const isHttpsByDefaultEnabled = loadTimeData.getBoolean('isHttpsByDefaultEnabled')
   const showStrictFingerprintingMode = loadTimeData.getBoolean('showStrictFingerprintingMode')
   const isTorProfile = loadTimeData.getBoolean('isTorProfile')
@@ -186,30 +187,36 @@ function AdvancedControlsContent () {
           </S.CountButton>
         </S.ControlGroup>
         <S.ControlGroup>
-          <div className="col-2">
-            {showStrictFingerprintingMode ? <Select
-              value={siteSettings?.fingerprintMode}
-              ariaLabel={getLocale('braveShieldsFingerprintingBlocked')}
-              onChange={handleFingerprintModeSelectionChange}
-              disabled={siteBlockInfo?.isBraveShieldsManaged}
-            >
-            {fingerprintModeOptions.map(entry => {
-                return (
-                  <option key={entry.value} value={entry.value}>{entry.text}</option>
-                )
-              })}
-            </Select> :
-            <label>
-            <span>{getLocale('braveShieldsFingerprintingBlockedStd')}</span>
-            <Toggle
-              onChange={handleFingerprintModeToggleChange}
-              isOn={siteSettings?.fingerprintMode !== FingerprintMode.ALLOW}
-              size='sm'
-              accessibleLabel={getLocale('braveShieldsFingerprintingBlockedStd')}
-              disabled={siteBlockInfo?.isBraveShieldsManaged}
-            />
-            </label>}
-          </div>
+          {showStrictFingerprintingMode ? <Select
+            value={siteSettings?.fingerprintMode}
+            ariaLabel={getLocale('braveShieldsFingerprintingBlocked')}
+            onChange={handleFingerprintModeSelectionChange}
+            disabled={siteBlockInfo?.isBraveShieldsManaged}
+          >
+          {fingerprintModeOptions.map(entry => {
+              return (
+                <option key={entry.value} value={entry.value}>{entry.text}</option>
+              )
+            })}
+          </Select> :
+          <label>
+          <span>{getLocale('braveShieldsFingerprintingBlockedStd')}</span>
+          <Toggle
+            onChange={handleFingerprintModeToggleChange}
+            isOn={siteSettings?.fingerprintMode !== FingerprintMode.ALLOW}
+            size='sm'
+            accessibleLabel={getLocale('braveShieldsFingerprintingBlockedStd')}
+            disabled={siteBlockInfo?.isBraveShieldsManaged}
+          />
+          </label>}
+          <S.CountButton
+            title={fingerprintsListCount.toString()}
+            aria-label={getLocale('braveShieldsFingerprintingBlockedStd')}
+            onClick={() => setViewType?.(ViewType.FingerprintList)}
+            disabled={false /*fingerprintsListCount <= 0*/}
+          >
+            {fingerprintsListCount > 99 ? '99+' : fingerprintsListCount}
+          </S.CountButton>
         </S.ControlGroup>
         <S.ControlGroup>
           <div className="col-2">

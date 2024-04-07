@@ -9,6 +9,7 @@
 #define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
 
 #include "src/components/content_settings/core/common/content_settings.h"  // IWYU pragma: export
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 
 #undef RendererContentSettingRules
 
@@ -30,12 +31,15 @@ struct RendererContentSettingRules
   ContentSettingsForOneType fingerprinting_rules;
   ContentSettingsForOneType brave_shields_rules;
   ContentSettingsForOneType cosmetic_filtering_rules;
+  std::map<ContentSettingsType, ContentSettingsForOneType> webcompat_rules;
 };
 
 namespace content_settings {
 
 bool IsExplicitSetting(const ContentSettingPatternSource& setting);
 bool IsExplicitSetting(const SettingInfo& setting);
+
+ContentSettingsType GetContentSettingsTypeForWebcompatFeature(webcompat_exceptions::WebcompatFeature webcompat_feature);
 
 }  // namespace content_settings
 

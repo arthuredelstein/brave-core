@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "base/containers/fixed_flat_map.h"
 #include "base/feature_list.h"
 #include "base/logging.h"
 #include "base/notreached.h"
@@ -845,6 +846,38 @@ ShieldsSettingCounts GetAdsSettingCount(HostContentSettingsMap* map) {
   ContentSettingsForOneType cosmetic_rules =
       map->GetSettingsForOneType(ContentSettingsType::BRAVE_COSMETIC_FILTERING);
   return GetAdsSettingCountFromRules(cosmetic_rules);
+}
+
+void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
+                                WebcompatFeature feature,
+                                ControlType type,
+                                const GURL& url,
+                                PrefService* local_state) {
+  if (!url.SchemeIsHTTPOrHTTPS() && !url.is_empty()) {
+    return;
+  }
+
+  auto primary_pattern = GetPatternFromURL(url);
+  if (!primary_pattern.IsValid()) {
+    return;
+  }
+
+  ContentSetting setting;
+  if (type == ControlType::ALLOW) {
+    // Unprotect feature
+    setting = CONTENT_SETTING_ALLOW;
+  } else if (type == ControlType::BLOCK) {
+    // Protect feature
+    setting = CONTENT_SETTING_BLOCK;
+  } else {
+    // Fall back to default
+    setting = CONTENT_SETTING_DEFAULT;
+  }
+  const auto& settings_type = content_settings::GetContentSettingsTypeForWebcompatFeature(feature);
+  map->SetContentSettingCustomScope(primary_pattern,
+                                    ContentSettingsPattern::Wildcard(),
+                                    settings_type, setting);
+  RecordShieldsSettingChanged(local_state);
 }
 
 }  // namespace brave_shields

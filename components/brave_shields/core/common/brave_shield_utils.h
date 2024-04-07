@@ -7,10 +7,13 @@
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 
 #include "components/content_settings/core/common/content_settings.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 
 class GURL;
 
 namespace brave_shields {
+
+using webcompat_exceptions::WebcompatFeature;
 
 struct ShieldsSettingCounts {
   int allow;
@@ -21,6 +24,11 @@ struct ShieldsSettingCounts {
 ContentSetting GetBraveFPContentSettingFromRules(
     const ContentSettingsForOneType& fp_rules,
     const GURL& primary_url);
+
+ContentSetting GetBraveWebcompatContentSettingFromRules(
+    const std::map<ContentSettingsType, ContentSettingsForOneType>& webcompat_rules,
+    const GURL& primary_url,
+    const ContentSettingsType content_settings_type);
 
 ShieldsSettingCounts GetFPSettingCountFromRules(
     const ContentSettingsForOneType& fp_rules);

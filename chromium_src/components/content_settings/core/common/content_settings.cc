@@ -7,6 +7,9 @@
 
 #include <vector>
 
+#include "base/check.h"
+#include "base/containers/fixed_flat_map.h"
+
 #define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
 
 #include "src/components/content_settings/core/common/content_settings.cc"
@@ -78,6 +81,42 @@ bool IsExplicitSetting(const ContentSettingPatternSource& setting) {
 
 bool IsExplicitSetting(const SettingInfo& setting) {
   return IsExplicitSetting(setting.primary_pattern, setting.secondary_pattern);
+}
+
+namespace {
+
+using webcompat_exceptions::WebcompatFeature;
+using enum ContentSettingsType;
+
+constexpr auto kFeatureToSettingsType =
+    base::MakeFixedFlatMap<WebcompatFeature, ContentSettingsType>({
+        {WebcompatFeature::kAudio, BRAVE_WEBCOMPAT_AUDIO},
+        {WebcompatFeature::kCanvas, BRAVE_WEBCOMPAT_CANVAS},
+        {WebcompatFeature::kDeviceMemory, BRAVE_WEBCOMPAT_DEVICE_MEMORY},
+        {WebcompatFeature::kEventSourcePool, BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL},
+        {WebcompatFeature::kFont, BRAVE_WEBCOMPAT_FONT},
+        {WebcompatFeature::kHardwareConcurrency,
+         BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY},
+        {WebcompatFeature::kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
+        {WebcompatFeature::kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
+        {WebcompatFeature::kMediaDevices, BRAVE_WEBCOMPAT_MEDIA_DEVICES},
+        {WebcompatFeature::kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
+        {WebcompatFeature::kScreen, BRAVE_WEBCOMPAT_SCREEN},
+        {WebcompatFeature::kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS},
+        {WebcompatFeature::kUsbDeviceSerialNumber,
+         BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER},
+        {WebcompatFeature::kUserAgent, BRAVE_WEBCOMPAT_USER_AGENT},
+        {WebcompatFeature::kWebGL, BRAVE_WEBCOMPAT_WEBGL},
+        {WebcompatFeature::kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
+        {WebcompatFeature::kWebSocketsPool, BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL},
+    });
+
+}  // namespace
+
+ContentSettingsType GetContentSettingsTypeForWebcompatFeature(WebcompatFeature webcompat_feature) {
+  const auto& it = kFeatureToSettingsType.find(webcompat_feature);
+  CHECK(it != kFeatureToSettingsType.end());
+  return it->second;
 }
 
 }  // namespace content_settings

@@ -14,7 +14,7 @@ import {
 import { Url } from 'gen/url/mojom/url.mojom.m.js'
 import Button from '$web-components/button'
 import getPanelBrowserAPI from '../../api/panel_browser_api'
-import { ScriptsInfo, Footer, ScriptsList } from './style'
+import { ToggleListContainer, ScriptsInfo, Footer, ScriptsList } from './style'
 import { WebcompatFeature } from 'gen/brave/components/brave_shields/core/common/brave_shields.mojom.m';
 import Toggle from '../../../../../web-components/toggle'
 
@@ -23,6 +23,13 @@ interface Props {
   allowedList?: Url[]
   totalAllowedTitle?: string
   totalBlockedTitle: string
+}
+
+function generateWebcompatNames () : string[] {
+  const keys = Object.keys(WebcompatFeature);
+  const filteredKeys = keys.filter(item => !["kNone", "kAll", "MIN_VALUE", "MAX_VALUE"].includes(item));
+  return filteredKeys.map(
+    item => item.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`).replace(/^k-/,""));
 }
 
 function groupByOrigin (data: Url[]) {
@@ -160,34 +167,30 @@ function TreeList (props: Props) {
 }
 
 export function ToggleList (props: {fingerprintsMap: Map<string, boolean>, totalBlockedTitle: string}) {
- const names = Object.keys(WebcompatFeature).map(
-  item => item.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`).replace(/^k-/,""));
- // props.fingerprintsMap = { "audio": true, "canvas": false, "device-memory": true, "useragent": false, "webgl": false };
+ const handleWebcompatToggle = (name: string, isEnabled: boolean) => {
+  getPanelBrowserAPI().dataHandler.setWebcompat(name, isEnabled);
+ };
+  const names = generateWebcompatNames();
   return (<SidePanel>
     <ScriptsInfo>
       <span>{props.fingerprintsMap.size ?? 0}</span>
       <span>{props.totalBlockedTitle}</span>
-    </ScriptsInfo>);
-    <ScriptsList>
-{names.map((name) => {
-   return (
+    </ScriptsInfo>
+      <ToggleListContainer>
+{names.map((name) => (
      <label>
-       <span>{name}</span>
+       <span>{`Protect ${name}`}</span>
        <Toggle
-         onChange={undefined}
+         onChange={(isEnabled: boolean) => handleWebcompatToggle(name, isEnabled)}
          isOn={true}
          size='sm'
          accessibleLabel={name}
          disabled={false}
        />
      </label>
-   );
- })}
-</ScriptsList>
-  </SidePanel>);
+   ))}
+ </ToggleListContainer>
+  </SidePanel>)
 }
-/*
-
-*/
 
 export default TreeList

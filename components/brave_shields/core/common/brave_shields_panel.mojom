@@ -5,6 +5,7 @@
 
 module brave_shields.mojom;
 
+import "brave/components/brave_shields/core/common/brave_shields.mojom";
 import "url/mojom/url.mojom";
 import "ui/gfx/geometry/mojom/geometry.mojom";
 
@@ -48,6 +49,7 @@ interface DataHandler {
   UpdateFavicon();
   AllowScriptsOnce(array<string> origins);
   BlockAllowedScripts(array<string> origins);
+  SetWebcompat(WebcompatFeature feature, bool disable);
 };
 
 struct SiteBlockInfo {

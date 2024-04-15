@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "base/containers/fixed_flat_map.h"
 #include "base/feature_list.h"
 #include "base/logging.h"
 #include "base/notreached.h"
@@ -38,6 +39,36 @@ using content::Referrer;
 namespace brave_shields {
 
 namespace {
+
+namespace {
+
+using webcompat_exceptions::WebcompatFeature;
+using enum ContentSettingsType;
+
+constexpr auto featureToSettingsType =
+    base::MakeFixedFlatMap<WebcompatFeature, ContentSettingsType>({
+        {WebcompatFeature::kAudio, BRAVE_WEBCOMPAT_AUDIO},
+        {WebcompatFeature::kCanvas, BRAVE_WEBCOMPAT_CANVAS},
+        {WebcompatFeature::kDeviceMemory, BRAVE_WEBCOMPAT_DEVICE_MEMORY},
+        {WebcompatFeature::kEventSourcePool, BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL},
+        {WebcompatFeature::kFont, BRAVE_WEBCOMPAT_FONT},
+        {WebcompatFeature::kHardwareConcurrency,
+         BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY},
+        {WebcompatFeature::kKeyboard, BRAVE_WEBCOMPAT_KEYBOARD},
+        {WebcompatFeature::kLanguage, BRAVE_WEBCOMPAT_LANGUAGE},
+        {WebcompatFeature::kMediaDevices, BRAVE_WEBCOMPAT_MEDIA_DEVICES},
+        {WebcompatFeature::kPlugins, BRAVE_WEBCOMPAT_PLUGINS},
+        {WebcompatFeature::kScreen, BRAVE_WEBCOMPAT_SCREEN},
+        {WebcompatFeature::kSpeechSynthesis, BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS},
+        {WebcompatFeature::kUsbDeviceSerialNumber,
+         BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER},
+        {WebcompatFeature::kUserAgent, BRAVE_WEBCOMPAT_USER_AGENT},
+        {WebcompatFeature::kWebGL, BRAVE_WEBCOMPAT_WEBGL},
+        {WebcompatFeature::kWebGL2, BRAVE_WEBCOMPAT_WEBGL2},
+        {WebcompatFeature::kWebSocketsPool, BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL},
+    });
+
+}  // namespace
 
 void RecordShieldsToggled(PrefService* local_state) {
   ::brave_shields::MaybeRecordShieldsUsageP3A(::brave_shields::kShutOffShields,
@@ -845,6 +876,40 @@ ShieldsSettingCounts GetAdsSettingCount(HostContentSettingsMap* map) {
   ContentSettingsForOneType cosmetic_rules =
       map->GetSettingsForOneType(ContentSettingsType::BRAVE_COSMETIC_FILTERING);
   return GetAdsSettingCountFromRules(cosmetic_rules);
+}
+
+void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
+                                WebcompatFeature feature,
+                                ControlType type,
+                                const GURL& url,
+                                PrefService* local_state) {
+  if (!url.SchemeIsHTTPOrHTTPS() && !url.is_empty()) {
+    return;
+  }
+
+  auto primary_pattern = GetPatternFromURL(url);
+  if (!primary_pattern.IsValid()) {
+    return;
+  }
+
+  ContentSetting setting;
+  if (type == ControlType::ALLOW) {
+    // Unprotect feature
+    setting = CONTENT_SETTING_ALLOW;
+  } else if (type == ControlType::BLOCK) {
+    // Protect feature
+    setting = CONTENT_SETTING_BLOCK;
+  } else {
+    // Fall back to default
+    setting = CONTENT_SETTING_DEFAULT;
+  }
+  if (auto it = featureToSettingsType.find(feature);
+      it != featureToSettingsType.end()) {
+    map->SetContentSettingCustomScope(primary_pattern,
+                                      ContentSettingsPattern::Wildcard(),
+                                      it->second, setting);
+  }
+  RecordShieldsSettingChanged(local_state);
 }
 
 }  // namespace brave_shields

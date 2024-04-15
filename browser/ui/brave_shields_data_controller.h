@@ -14,6 +14,7 @@
 #include "base/observer_list_types.h"
 #include "base/scoped_observation.h"
 #include "brave/components/brave_shields/core/common/brave_shields_panel.mojom.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "components/content_settings/core/browser/content_settings_observer.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/favicon/core/favicon_driver_observer.h"
@@ -80,6 +81,8 @@ class BraveShieldsDataController
   void SetForgetFirstPartyStorageEnabled(bool is_enabled);
   void AllowScriptsOnce(const std::vector<std::string>& origins);
   void BlockAllowedScripts(const std::vector<std::string>& origins);
+  void SetWebcompat(webcompat_exceptions::WebcompatFeature feature,
+                    bool disabled);
 
   void AddObserver(Observer* obs);
   void RemoveObserver(Observer* obs);

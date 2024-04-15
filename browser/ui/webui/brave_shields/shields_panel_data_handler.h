@@ -54,6 +54,8 @@ class ShieldsPanelDataHandler
   void UpdateFavicon() override;
   void AllowScriptsOnce(const std::vector<std::string>& origins) override;
   void BlockAllowedScripts(const std::vector<std::string>& origins) override;
+  void SetWebcompat(brave_shields::mojom::WebcompatFeature feature,
+                    bool disable) override;
 
  private:
   void UpdateSiteBlockInfo();

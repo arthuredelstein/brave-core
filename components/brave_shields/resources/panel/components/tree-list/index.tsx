@@ -25,11 +25,11 @@ interface Props {
   totalBlockedTitle: string
 }
 
-function generateWebcompatNames () : string[] {
-  const keys = Object.keys(WebcompatFeature);
-  const filteredKeys = keys.filter(item => !["kNone", "kAll", "MIN_VALUE", "MAX_VALUE"].includes(item));
+function generateWebcompatEntries () : [string, Number][] {
+  const entries = Object.entries(WebcompatFeature);
+  const filteredKeys = entries.filter(([key, value]) => !["kNone", "kAll", "MIN_VALUE", "MAX_VALUE"].includes(key));
   return filteredKeys.map(
-    item => item.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`).replace(/^k-/,""));
+    ([key, value]) => [key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`).replace(/^k-/,""), value]);
 }
 
 function groupByOrigin (data: Url[]) {
@@ -167,21 +167,21 @@ function TreeList (props: Props) {
 }
 
 export function ToggleList (props: {fingerprintsMap: Map<string, boolean>, totalBlockedTitle: string}) {
- const handleWebcompatToggle = (name: string, isEnabled: boolean) => {
-  getPanelBrowserAPI().dataHandler.setWebcompat(name, isEnabled);
+ const handleWebcompatToggle = (feature: WebcompatFeature, isEnabled: boolean) => {
+  getPanelBrowserAPI().dataHandler.setWebcompat(feature, isEnabled);
  };
-  const names = generateWebcompatNames();
+  const entries = generateWebcompatEntries();
   return (<SidePanel>
     <ScriptsInfo>
       <span>{props.fingerprintsMap.size ?? 0}</span>
       <span>{props.totalBlockedTitle}</span>
     </ScriptsInfo>
       <ToggleListContainer>
-{names.map((name) => (
+{entries.map(([name, value] : [string, number]) => (
      <label>
        <span>{`Protect ${name}`}</span>
        <Toggle
-         onChange={(isEnabled: boolean) => handleWebcompatToggle(name, isEnabled)}
+         onChange={(isEnabled: boolean) => handleWebcompatToggle(value, isEnabled)}
          isOn={true}
          size='sm'
          accessibleLabel={name}

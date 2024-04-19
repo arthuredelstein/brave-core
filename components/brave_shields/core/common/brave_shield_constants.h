@@ -23,6 +23,7 @@ const char kCookies[] = "shieldsCookiesV3";
 const char kFacebookEmbeds[] = "fb-embeds";
 const char kTwitterEmbeds[] = "twitter-embeds";
 const char kLinkedInEmbeds[] = "linked-in-embeds";
+const char kWebcompat[] = "webcompat";
 
 // Values used before the migration away from ResourceIdentifier, kept around
 // for migration purposes only.

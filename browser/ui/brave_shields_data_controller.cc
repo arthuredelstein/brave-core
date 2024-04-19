@@ -477,8 +477,8 @@ void BraveShieldsDataController::HandleItemAllowedOnce(
 void BraveShieldsDataController::SetWebcompat(
     webcompat_exceptions::WebcompatFeature feature,
     bool disabled) {
-  DLOG(INFO) << “BraveShieldsDataController::SetWebcompat ” << feature << ", " << disabled;
-  ControlType control_type = disable ? ControlType::ALLOW : ControlType::BLOCK;
+  DLOG(INFO) << "BraveShieldsDataController::SetWebcompat " << feature << ", " << disabled;
+  ControlType control_type = disabled ? ControlType::ALLOW : ControlType::BLOCK;
   brave_shields::SetWebcompatFeatureSetting(
       GetHostContentSettingsMap(web_contents()), feature, control_type,
       GetCurrentSiteURL(), g_browser_process->local_state());

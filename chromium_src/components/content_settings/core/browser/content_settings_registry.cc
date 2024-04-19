@@ -9,6 +9,7 @@
 
 #include "brave/components/brave_shields/core/common/brave_shield_constants.h"
 #include "components/content_settings/core/common/content_settings.h"
+#include "components/content_settings/core/common/content_settings.mojom.h"
 #include "net/base/features.h"
 
 namespace content_settings {
@@ -272,6 +273,21 @@ void ContentSettingsRegistry::BraveInit() {
       WebsiteSettingsRegistry::DESKTOP |
           WebsiteSettingsRegistry::PLATFORM_ANDROID,
       WebsiteSettingsInfo::DONT_INHERIT_IN_INCOGNITO);
+
+  for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO;
+       settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
+       settings_type = static_cast<ContentSettingsType>(static_cast<int32_t>(settings_type) + 1)) {
+    Register(settings_type,
+        brave_shields::kWebcompat, CONTENT_SETTING_BLOCK,
+        WebsiteSettingsInfo::SYNCABLE, /*allowlisted_schemes=*/{},
+        /*valid_settings=*/
+        {CONTENT_SETTING_ALLOW, CONTENT_SETTING_BLOCK},
+        WebsiteSettingsInfo::TOP_ORIGIN_ONLY_SCOPE,
+        WebsiteSettingsRegistry::DESKTOP |
+            WebsiteSettingsRegistry::PLATFORM_ANDROID,
+        ContentSettingsInfo::INHERIT_IN_INCOGNITO,
+        ContentSettingsInfo::EXCEPTIONS_ON_SECURE_AND_INSECURE_ORIGINS);
+  }
 }
 
 }  // namespace content_settings

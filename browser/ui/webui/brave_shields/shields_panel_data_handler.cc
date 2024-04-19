@@ -152,7 +152,13 @@ void ShieldsPanelDataHandler::SetForgetFirstPartyStorageEnabled(
 
 void ShieldsPanelDataHandler::SetWebcompat(
     brave_shields::mojom::WebcompatFeature feature,
-    bool disable) {}
+    bool disable) {
+  if (!active_shields_data_controller_) {
+    return;
+  }
+
+  active_shields_data_controller_->SetWebcompat(feature, disable);
+}
 
 void ShieldsPanelDataHandler::OpenWebCompatWindow() {
   if (!active_shields_data_controller_)

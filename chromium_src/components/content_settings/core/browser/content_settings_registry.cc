@@ -305,7 +305,7 @@ void ContentSettingsRegistry::BraveInit() {
     if (match != kSettingsNames.end()) {
         Register(settings_type,
             match->second, CONTENT_SETTING_BLOCK,
-            WebsiteSettingsInfo::SYNCABLE, /*allowlisted_schemes=*/{},
+            WebsiteSettingsInfo::UNSYNCABLE, /*allowlisted_schemes=*/{},
             /*valid_settings=*/
             {CONTENT_SETTING_ALLOW, CONTENT_SETTING_BLOCK},
             WebsiteSettingsInfo::TOP_ORIGIN_ONLY_SCOPE,

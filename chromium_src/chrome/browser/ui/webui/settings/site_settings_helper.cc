@@ -33,7 +33,8 @@
   {ContentSettingsType::BRAVE_GOOGLE_SIGN_IN, nullptr},            \
   {ContentSettingsType::BRAVE_HTTPS_UPGRADE, nullptr},             \
   {ContentSettingsType::BRAVE_REMEMBER_1P_STORAGE, nullptr},       \
-  {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, nullptr},
+  {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, nullptr},          \
+  {ContentSettingsType::BRAVE_WEBCOMPAT, nullptr},
 // clang-format on
 
 #define BRAVE_SITE_SETTINGS_HELPER_CONTENT_SETTINGS_TYPE_FROM_GROUP_NAME \

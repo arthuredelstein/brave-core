@@ -7,12 +7,9 @@
 
 namespace webcompat_exceptions {
 
-WebcompatExceptionsKeyedService::WebcompatExceptionsKeyedService() {
+WebcompatExceptionsKeyedService::WebcompatExceptionsKeyedService() {}
 
-}
-
-WebcompatExceptionsKeyedService::~WebcompatExceptionsKeyedService() {
-
-}
+WebcompatExceptionsKeyedService::~WebcompatExceptionsKeyedService() {}
 
 }  // namespace webcompat_exceptions
+                                    

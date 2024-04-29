@@ -8,10 +8,9 @@
 namespace webcompat_exceptions {
 
 class WebcompatExceptionsKeyedService : public KeyedService {
-  public:
+ public:
   WebcompatExceptionsKeyedService();
   ~WebcompatExceptionsKeyedService() override;
 };
 
 }  // namespace webcompat_exceptions
-                                    

@@ -6,11 +6,15 @@
 #ifndef BRAVE_CHROMIUM_SRC_CHROME_RENDERER_WORKER_CONTENT_SETTINGS_CLIENT_H_
 #define BRAVE_CHROMIUM_SRC_CHROME_RENDERER_WORKER_CONTENT_SETTINGS_CLIENT_H_
 
+#include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
+#include "brave/components/webcompat_exceptions/webcompat_constants.h"
+
 #define BRAVE_WORKER_CONTENT_SETTINGS_CLIENT_H                       \
   BraveFarblingLevel GetBraveFarblingLevel(                          \
       webcompat_exceptions::WebcompatFeature farblingType) override; \
   blink::WebSecurityOrigin GetEphemeralStorageOriginSync() override; \
-  bool HasContentSettingsRules() const override;
+  bool HasContentSettingsRules() const override;                     \
+  std::vector<brave_shields::mojom::WebcompatFeature> webcompat_features_;
 
 #include "src/chrome/renderer/worker_content_settings_client.h"  // IWYU pragma: export
 

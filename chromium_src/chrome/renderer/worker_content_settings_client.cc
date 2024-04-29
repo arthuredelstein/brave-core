@@ -8,8 +8,11 @@
 #include "brave/components/brave_shields/core/common/brave_shield_utils.h"
 #include "chrome/renderer/worker_content_settings_client.h"
 #include "components/content_settings/renderer/content_settings_agent_impl.h"
+#include "content/public/renderer/render_frame.h"
 #include "net/base/features.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+#include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
+#include "third_party/blink/public/web/web_local_frame.h"
 
 BraveFarblingLevel WorkerContentSettingsClient::GetBraveFarblingLevel(
     webcompat_exceptions::WebcompatFeature farblingType) {
@@ -30,6 +33,10 @@ BraveFarblingLevel WorkerContentSettingsClient::GetBraveFarblingLevel(
       setting = brave_shields::GetBraveFPContentSettingFromRules(
           content_setting_rules_->fingerprinting_rules, primary_url);
     }
+  }
+  if (std::find(webcompat_features_.begin(), webcompat_features_.end(),
+                farblingType) != webcompat_features_.end()) {
+    return BraveFarblingLevel::OFF;
   }
   if (setting == CONTENT_SETTING_BLOCK) {
     return BraveFarblingLevel::MAXIMUM;
@@ -76,4 +83,35 @@ bool WorkerContentSettingsClient::HasContentSettingsRules() const {
   return content_setting_rules_.get();
 }
 
+GURL GetOriginOrURL(const blink::WebFrame* frame) {
+  url::Origin top_origin = url::Origin(frame->Top()->GetSecurityOrigin());
+  // The |top_origin| is unique ("null") e.g., for file:// URLs. Use the
+  // document URL as the primary URL in those cases.
+  // TODO(alexmos): This is broken for --site-per-process, since top() can be a
+  // WebRemoteFrame which does not have a document(), and the WebRemoteFrame's
+  // URL is not replicated.  See https://crbug.com/628759.
+  if (top_origin.opaque() && frame->Top()->IsWebLocalFrame()) {
+    return frame->Top()->ToWebLocalFrame()->GetDocument().Url();
+  }
+  return top_origin.GetURL();
+}
+
+void GetWebcompatFeatures(content::RenderFrame* render_frame,
+                          std::vector<brave_shields::mojom::WebcompatFeature>*
+                              webcompat_features_out) {
+  blink::WebLocalFrame* frame = render_frame->GetWebFrame();
+  mojo::AssociatedRemote<brave_shields::mojom::BraveShieldsHost>
+      brave_shields_remote;
+  render_frame->GetRemoteAssociatedInterfaces()->GetInterface(
+      &brave_shields_remote);
+  brave_shields_remote->GetWebcompatExceptions(GetOriginOrURL(frame),
+                                               webcompat_features_out);
+}
+
+#define TopFrameOrigin() \
+  TopFrameOrigin();      \
+  GetWebcompatFeatures(render_frame, &webcompat_features_)
+
 #include "src/chrome/renderer/worker_content_settings_client.cc"
+
+#undef TopFrameOrigin

@@ -6,6 +6,7 @@ include_rules = [
   "+brave/components/content_settings/renderer",
   "+brave/components/tor/buildflags",
   "+brave/components/tor/renderer",
+  "+brave/components/webcompat_exceptions/webcompat_constants.h",
   "+brave/renderer",
   "+media/base/key_system_info.h",
   "+services/network/public/cpp",

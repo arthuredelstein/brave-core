@@ -274,8 +274,9 @@ void ContentSettingsRegistry::BraveInit() {
       WebsiteSettingsInfo::DONT_INHERIT_IN_INCOGNITO);
 
   website_settings_registry_->Register(
-      ContentSettingsType::BRAVE_WEBCOMPAT, brave_shields::kWebcompat, base::Value(),
-      WebsiteSettingsInfo::UNSYNCABLE, WebsiteSettingsInfo::NOT_LOSSY,
+      ContentSettingsType::BRAVE_WEBCOMPAT, brave_shields::kWebcompat,
+      base::Value(), WebsiteSettingsInfo::UNSYNCABLE,
+      WebsiteSettingsInfo::NOT_LOSSY,
       WebsiteSettingsInfo::TOP_ORIGIN_ONLY_SCOPE,
       WebsiteSettingsRegistry::DESKTOP |
           WebsiteSettingsRegistry::PLATFORM_ANDROID,

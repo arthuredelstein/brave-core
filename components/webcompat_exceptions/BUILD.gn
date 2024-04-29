@@ -9,6 +9,8 @@ source_set("core") {
   sources = [
     "webcompat_exceptions_keyed_service.cc",
     "webcompat_exceptions_keyed_service.h",
+    "webcompat_exceptions_keyed_service_factory.cc",
+    "webcompat_exceptions_keyed_service_factory.h",
     "webcompat_exceptions_service.cc",
     "webcompat_exceptions_service.h",
   ]

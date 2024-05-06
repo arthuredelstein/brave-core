@@ -8,8 +8,12 @@
 
 #define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
 
+#define SETTING_SOURCE_INSTALLED_WEBAPP \
+  SETTING_SOURCE_INSTALLED_WEBAPP, SETTING_SOURCE_REMOTE_LIST
+
 #include "src/components/content_settings/core/common/content_settings.h"  // IWYU pragma: export
 
+#undef SETTING_SOURCE_INSTALLED_WEBAPP
 #undef RendererContentSettingRules
 
 struct RendererContentSettingRules
@@ -30,6 +34,7 @@ struct RendererContentSettingRules
   ContentSettingsForOneType fingerprinting_rules;
   ContentSettingsForOneType brave_shields_rules;
   ContentSettingsForOneType cosmetic_filtering_rules;
+  std::map<ContentSettingsType, ContentSettingsForOneType> webcompat_rules;
 };
 
 namespace content_settings {

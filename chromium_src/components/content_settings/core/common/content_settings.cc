@@ -7,6 +7,9 @@
 
 #include <vector>
 
+#include "base/check.h"
+#include "base/containers/fixed_flat_map.h"
+
 #define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
 
 #include "src/components/content_settings/core/common/content_settings.cc"

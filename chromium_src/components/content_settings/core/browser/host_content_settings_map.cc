@@ -3,7 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include "components/content_settings/core/browser/host_content_settings_map.h"
+
 #include "base/containers/contains.h"
+#include "brave/components/content_settings/core/browser/remote_list_provider.h"
 #include "build/build_config.h"
 #include "components/content_settings/core/browser/content_settings_utils.h"
 #include "components/content_settings/core/common/content_settings_types.h"
@@ -50,9 +53,20 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 
 #define IsMorePermissive(a, b) IsMorePermissive_BraveImpl(content_type, a, b)
 
+#define BRAVE_REMOTE_LIST_PROVIDER_SOURCE_MAP_ENTRY \
+  {"remote_list", content_settings::SETTING_SOURCE_REMOTE_LIST},
+
+#define BRAVE_CREATE_REMOTE_LIST_PROVIDER                       \
+  auto remote_list_provider_ptr =                               \
+      std::make_unique<content_settings::RemoteListProvider>(); \
+  content_settings_providers_[REMOTE_LIST_PROVIDER] =           \
+      std::move(remote_list_provider_ptr);
+
 #include "src/components/content_settings/core/browser/host_content_settings_map.cc"
 
 #undef IsMorePermissive
+#undef BRAVE_REMOTE_LIST_PROVIDER_SOURCE_MAP_ENTRY
+#undef BRAVE_CREATE_REMOTE_LIST_PROVIDER
 
 #if !BUILDFLAG(IS_IOS)
 #undef PrefProvider

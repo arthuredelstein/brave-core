@@ -1,0 +1,21 @@
+diff --git a/components/content_settings/core/browser/host_content_settings_map.cc b/components/content_settings/core/browser/host_content_settings_map.cc
+index 5208133e35fa805c2796b65550bab3c755e4dac4..739e37cfafd3b6d46385ed66f6ee9e4f7c8783bf 100644
+--- a/components/content_settings/core/browser/host_content_settings_map.cc
++++ b/components/content_settings/core/browser/host_content_settings_map.cc
+@@ -88,6 +88,7 @@ constexpr ProviderNamesSourceMapEntry kProviderNamesSourceMap[] = {
+     {"notification_android", content_settings::SETTING_SOURCE_USER},
+     {"one_time", content_settings::SETTING_SOURCE_USER},
+     {"preference", content_settings::SETTING_SOURCE_USER},
++    BRAVE_REMOTE_LIST_PROVIDER_SOURCE_MAP_ENTRY
+     {"default", content_settings::SETTING_SOURCE_USER},
+     {"tests", content_settings::SETTING_SOURCE_USER},
+     {"tests_other", content_settings::SETTING_SOURCE_USER},
+@@ -315,6 +316,8 @@ HostContentSettingsMap::HostContentSettingsMap(PrefService* prefs,
+   default_provider->AddObserver(this);
+   content_settings_providers_[DEFAULT_PROVIDER] = std::move(default_provider);
+ 
++  BRAVE_CREATE_REMOTE_LIST_PROVIDER
++
+   MigrateSettingsPrecedingPermissionDelegationActivation();
+   if (should_record_metrics) {
+     RecordExceptionMetrics();

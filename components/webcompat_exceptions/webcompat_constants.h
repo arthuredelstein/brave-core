@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "base/containers/flat_set.h"
-#include "brave/components/brave_shields/core/common/brave_shields.mojom.h"
+#include "brave/components/brave_shields/core/common/brave_shields.mojom-shared.h"
 
 namespace webcompat_exceptions {
 

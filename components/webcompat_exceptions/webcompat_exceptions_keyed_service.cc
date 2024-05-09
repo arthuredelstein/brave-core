@@ -13,9 +13,13 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/time/time.h"
 #include "base/timer/timer.h"
+#include "brave/components/brave_shields/content/browser/brave_shields_util.h"
 #include "brave/components/ephemeral_storage/ephemeral_storage_pref_names.h"
 #include "brave/components/ephemeral_storage/url_storage_checker.h"
+#include "chrome/browser/browser_process.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+#include "chrome/browser/profiles/profile.h"
+#include "components/content_settings/core/browser/content_settings_observable_provider.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_types.h"
@@ -36,6 +40,11 @@ WebcompatExceptionsKeyedService::WebcompatExceptionsKeyedService(
     content::BrowserContext* context)
     : context_(context) {
   DCHECK(context_);
+  auto* map = HostContentSettingsMapFactory::GetForProfile(context);
+  brave_shields::SetFingerprintingControlType(
+      map, brave_shields::ControlType::ALLOW, GURL("https://brave.com"),
+      g_browser_process->local_state(),
+      Profile::FromBrowserContext(context)->GetPrefs());
 }
 
 WebcompatExceptionsKeyedService::~WebcompatExceptionsKeyedService() = default;

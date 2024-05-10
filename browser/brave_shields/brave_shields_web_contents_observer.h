@@ -73,8 +73,6 @@ class BraveShieldsWebContentsObserver
   // brave_shields::mojom::BraveShieldsHost.
   void OnJavaScriptBlocked(const std::u16string& details) override;
   void OnJavaScriptAllowedOnce(const std::u16string& details) override;
-  void GetWebcompatExceptions(const GURL& url,
-                              GetWebcompatExceptionsCallback reply) override;
 
  private:
   friend class content::WebContentsUserData<BraveShieldsWebContentsObserver>;

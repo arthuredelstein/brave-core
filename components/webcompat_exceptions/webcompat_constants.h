@@ -9,11 +9,30 @@
 #include <vector>
 
 #include "base/containers/flat_set.h"
-#include "brave/components/brave_shields/core/common/brave_shields.mojom-shared.h"
 
 namespace webcompat_exceptions {
 
-using WebcompatFeature = brave_shields::mojom::WebcompatFeature;
+enum WebcompatFeature {
+  kNone,
+  kAudio,
+  kCanvas,
+  kDeviceMemory,
+  kEventSourcePool,
+  kFont,
+  kHardwareConcurrency,
+  kKeyboard,
+  kLanguage,
+  kMediaDevices,
+  kPlugins,
+  kScreen,
+  kSpeechSynthesis,
+  kUsbDeviceSerialNumber,
+  kUserAgent,
+  kWebGL,
+  kWebGL2,
+  kWebSocketsPool,
+  kAll,
+};
 
 using WebcompatFeatureSet = std::vector<WebcompatFeature>;
 

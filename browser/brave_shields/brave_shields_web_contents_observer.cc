@@ -217,16 +217,6 @@ void BraveShieldsWebContentsObserver::OnJavaScriptBlocked(
                                      base::UTF16ToUTF8(details), web_contents);
 }
 
-void BraveShieldsWebContentsObserver::GetWebcompatExceptions(
-    const GURL& url,
-    GetWebcompatExceptionsCallback reply) {
-  auto* webcompat_exceptions_service =
-      g_brave_browser_process->webcompat_exceptions_service();
-  webcompat_exceptions::WebcompatFeatureSet feature_exceptions =
-      webcompat_exceptions_service->GetFeatureExceptions(url);
-  std::move(reply).Run(feature_exceptions);
-}
-
 // static
 void BraveShieldsWebContentsObserver::RegisterProfilePrefs(
     PrefRegistrySimple* registry) {

@@ -5,6 +5,7 @@
 
 #include "base/containers/contains.h"
 #include "build/build_config.h"
+#include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/browser/content_settings_utils.h"
 #include "components/content_settings/core/common/content_settings_types.h"
 #include "components/content_settings/core/common/features.h"
@@ -50,9 +51,12 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 
 #define IsMorePermissive(a, b) IsMorePermissive_BraveImpl(content_type, a, b)
 
+#define BRAVE_CREATE_REMOTE_LIST_PROVIDER \
+
 #include "src/components/content_settings/core/browser/host_content_settings_map.cc"
 
 #undef IsMorePermissive
+#undef BRAVE_CREATE_REMOTE_LIST_PROVIDER
 
 #if !BUILDFLAG(IS_IOS)
 #undef PrefProvider

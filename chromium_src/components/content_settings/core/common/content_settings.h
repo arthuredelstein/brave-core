@@ -6,11 +6,17 @@
 #ifndef BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_CONTENT_SETTINGS_H_
 #define BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_CONTENT_SETTINGS_H_
 
-#define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
-
-#include "src/components/content_settings/core/common/content_settings.h"  // IWYU pragma: export
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
 
+#define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
+
+#define SETTING_SOURCE_INSTALLED_WEBAPP \
+  SETTING_SOURCE_INSTALLED_WEBAPP, \
+  SETTING_SOURCE_REMOTE_LIST
+
+#include "src/components/content_settings/core/common/content_settings.h"  // IWYU pragma: export
+
+#undef SETTING_SOURCE_INSTALLED_WEBAPP
 #undef RendererContentSettingRules
 
 struct RendererContentSettingRules

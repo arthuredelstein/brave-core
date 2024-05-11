@@ -115,7 +115,9 @@ constexpr auto kFeatureToSettingsType =
 
 ContentSettingsType GetContentSettingsTypeForWebcompatFeature(WebcompatFeature webcompat_feature) {
   const auto& it = kFeatureToSettingsType.find(webcompat_feature);
-  CHECK(it != kFeatureToSettingsType.end());
+  if (it == kFeatureToSettingsType.end()) {
+    DLOG(INFO) << "webcompat_feature: " << webcompat_feature;
+  }
   return it->second;
 }
 

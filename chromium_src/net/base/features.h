@@ -8,7 +8,6 @@
 
 #include "base/feature_list.h"
 #include "base/metrics/field_trial_params.h"
-#include "brave/net/dns/secure_dns_endpoints.h"
 #include "net/base/net_export.h"
 
 namespace net {
@@ -20,9 +19,7 @@ NET_EXPORT extern const base::FeatureParam<int>
     kBraveEphemeralStorageKeepAliveTimeInSeconds;
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveFirstPartyEphemeralStorage);
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveHttpsByDefault);
-NET_EXPORT BASE_DECLARE_FEATURE(kBraveFallbackDoHProvider);
-NET_EXPORT extern const base::FeatureParam<DohFallbackEndpointType>
-    kBraveFallbackDoHProviderEndpoint;
+NET_EXPORT BASE_DECLARE_FEATURE(kBravePartitionBlobStorage);
 NET_EXPORT BASE_DECLARE_FEATURE(kBravePartitionHSTS);
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveTorWindowsHttpsOnly);
 NET_EXPORT BASE_DECLARE_FEATURE(kBraveForgetFirstPartyStorage);

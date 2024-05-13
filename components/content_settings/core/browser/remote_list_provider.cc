@@ -5,7 +5,30 @@
 
 #include "brave/components/content_settings/core/browser/remote_list_provider.h"
 
+#include "components/content_settings/core/browser/content_settings_rule.h"
+
 namespace content_settings {
+
+namespace {
+
+class TinyIterator : public RuleIterator {
+ public:
+  TinyIterator() {}
+  ~TinyIterator() override {}
+  bool HasNext() const override { return !sent_; }
+  std::unique_ptr<Rule> Next() override {
+    sent_ = true;
+    return std::make_unique<Rule>(
+        ContentSettingsPattern::FromString("https://example.net/*"),
+        ContentSettingsPattern::Wildcard(), base::Value(CONTENT_SETTING_ALLOW),
+        RuleMetaData());
+  }
+
+ private:
+  bool sent_ = false;
+};
+
+}  // namespace
 
 RemoteListProvider::RemoteListProvider() {}
 
@@ -14,6 +37,11 @@ std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     bool off_the_record,
     const PartitionKey& partition_key) const {
   // TODO
+  if (content_type == ContentSettingsType::BRAVE_FINGERPRINTING_V2) {
+    DLOG(INFO)
+        << "GetRuleIterator: ContentSettingsType::BRAVE_FINGERPRINTING_V2";
+    return std::make_unique<TinyIterator>();
+  }
   return nullptr;
 }
 

@@ -15,12 +15,11 @@
 #include "base/containers/fixed_flat_map.h"
 #include "base/files/file_path.h"
 #include "base/json/json_reader.h"
+#include "base/logging.h"
 #include "base/strings/string_split.h"
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
-
-#include "base/logging.h"
 
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE "webcompat-exceptions.json"
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE_VERSION "1"

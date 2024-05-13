@@ -7,13 +7,13 @@
 
 namespace content_settings {
 
-RemoteListProvider::RemoteListProvider() { }
+RemoteListProvider::RemoteListProvider() {}
 
 std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     ContentSettingsType content_type,
     bool off_the_record,
     const PartitionKey& partition_key) const {
-      // TODO
+  // TODO
   return nullptr;
 }
 
@@ -23,7 +23,7 @@ std::unique_ptr<Rule> RemoteListProvider::GetRule(
     ContentSettingsType content_type,
     bool off_the_record,
     const PartitionKey& partition_key) const {
-      // TODO
+  // TODO
   return nullptr;
 }
 
@@ -42,11 +42,8 @@ void RemoteListProvider::ClearAllContentSettingsRules(
     ContentSettingsType content_type,
     const PartitionKey& partition_key) {
   // RemoteListProvider is read-only.
-  }
-
-void RemoteListProvider::ShutdownOnUIThread(){
-
 }
 
+void RemoteListProvider::ShutdownOnUIThread() {}
+
 }  // namespace content_settings
-                                

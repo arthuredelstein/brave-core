@@ -3,13 +3,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "third_party/abseil-cpp/absl/random/random.h"
+#include "third_party/blink/renderer/core/frame/navigator_device_memory.h"
 
 #include "base/ranges/algorithm.h"
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
+#include "third_party/abseil-cpp/absl/random/random.h"
 #include "third_party/blink/public/common/device_memory/approximated_device_memory.h"
-#include "third_party/blink/renderer/core/frame/navigator_device_memory.h"
 
 namespace brave {
 

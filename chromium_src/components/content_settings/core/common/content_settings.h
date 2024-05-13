@@ -11,8 +11,7 @@
 #define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
 
 #define SETTING_SOURCE_INSTALLED_WEBAPP \
-  SETTING_SOURCE_INSTALLED_WEBAPP, \
-  SETTING_SOURCE_REMOTE_LIST
+  SETTING_SOURCE_INSTALLED_WEBAPP, SETTING_SOURCE_REMOTE_LIST
 
 #include "src/components/content_settings/core/common/content_settings.h"  // IWYU pragma: export
 
@@ -45,7 +44,8 @@ namespace content_settings {
 bool IsExplicitSetting(const ContentSettingPatternSource& setting);
 bool IsExplicitSetting(const SettingInfo& setting);
 
-ContentSettingsType GetContentSettingsTypeForWebcompatFeature(webcompat_exceptions::WebcompatFeature webcompat_feature);
+ContentSettingsType GetContentSettingsTypeForWebcompatFeature(
+    webcompat_exceptions::WebcompatFeature webcompat_feature);
 
 }  // namespace content_settings
 

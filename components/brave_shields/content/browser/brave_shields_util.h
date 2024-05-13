@@ -7,6 +7,7 @@
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_CONTENT_BROWSER_BRAVE_SHIELDS_UTIL_H_
 
 #include <stdint.h>
+
 #include <string>
 
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"

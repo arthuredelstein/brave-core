@@ -113,7 +113,8 @@ constexpr auto kFeatureToSettingsType =
 
 }  // namespace
 
-ContentSettingsType GetContentSettingsTypeForWebcompatFeature(WebcompatFeature webcompat_feature) {
+ContentSettingsType GetContentSettingsTypeForWebcompatFeature(
+    WebcompatFeature webcompat_feature) {
   const auto& it = kFeatureToSettingsType.find(webcompat_feature);
   if (it == kFeatureToSettingsType.end()) {
     DLOG(INFO) << "webcompat_feature: " << webcompat_feature;

@@ -4,7 +4,8 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "components/content_settings/core/browser/content_settings_provider.h"
-//#include "components/content_settings/core/browser/content_settings_observable_provider.h"
+// #include
+// "components/content_settings/core/browser/content_settings_observable_provider.h"
 
 namespace content_settings {
 

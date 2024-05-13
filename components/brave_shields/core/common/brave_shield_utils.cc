@@ -34,7 +34,8 @@ ContentSetting GetBraveFPContentSettingFromRules(
 }
 
 ContentSetting GetBraveWebcompatContentSettingFromRules(
-    const std::map<ContentSettingsType, ContentSettingsForOneType>& webcompat_rules,
+    const std::map<ContentSettingsType, ContentSettingsForOneType>&
+        webcompat_rules,
     const GURL& primary_url,
     const ContentSettingsType content_settings_type) {
   const auto& item = webcompat_rules.find(content_settings_type);

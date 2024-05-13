@@ -873,7 +873,8 @@ void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
     // Fall back to default
     setting = CONTENT_SETTING_DEFAULT;
   }
-  const auto& settings_type = content_settings::GetContentSettingsTypeForWebcompatFeature(feature);
+  const auto& settings_type =
+      content_settings::GetContentSettingsTypeForWebcompatFeature(feature);
   map->SetContentSettingCustomScope(primary_pattern,
                                     ContentSettingsPattern::Wildcard(),
                                     settings_type, setting);

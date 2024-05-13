@@ -26,9 +26,9 @@
   PermissionsClient::Get()->GetUkmSourceId
 
 #define SETTING_SOURCE_INSTALLED_WEBAPP \
-  SETTING_SOURCE_REMOTE_LIST: \
-    source_suffix = "FromRemoteList"; \
-    break; \
+  SETTING_SOURCE_REMOTE_LIST:           \
+  source_suffix = "FromRemoteList";     \
+  break;                                \
   case content_settings::SETTING_SOURCE_INSTALLED_WEBAPP
 
 #include "src/components/permissions/permission_uma_util.cc"

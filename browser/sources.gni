@@ -45,7 +45,8 @@ import("//brave/browser/themes/sources.gni")
 import("//brave/browser/tor/sources.gni")
 import("//brave/browser/url_sanitizer/sources.gni")
 import("//brave/browser/web_discovery/sources.gni")
-import("//brave/browser/webcompat_exceptions/sources.gni")
+
+#import("//brave/browser/webcompat_exceptions/sources.gni")
 import("//brave/build/config.gni")
 import("//brave/chromium_src/chrome/browser/prefs/sources.gni")
 import("//brave/chromium_src/chrome/browser/sources.gni")
@@ -56,7 +57,6 @@ import("//brave/components/brave_webtorrent/browser/buildflags/buildflags.gni")
 import("//brave/components/commander/common/buildflags/buildflags.gni")
 import("//brave/components/tor/buildflags/buildflags.gni")
 import("//extensions/buildflags/buildflags.gni")
-
 brave_chrome_browser_visibility = [
   "//brave/browser/*",
   "//brave/test:*",
@@ -489,7 +489,8 @@ brave_chrome_browser_sources += brave_browser_themes_sources
 brave_chrome_browser_sources += brave_browser_tor_sources
 brave_chrome_browser_sources += brave_browser_url_sanitizer_sources
 brave_chrome_browser_sources += brave_browser_web_discovery_sources
-brave_chrome_browser_sources += brave_browser_webcompat_exceptions_sources
+
+#brave_chrome_browser_sources += brave_browser_webcompat_exceptions_sources
 
 brave_chrome_browser_deps += brave_browser_autocomplete_deps
 brave_chrome_browser_deps += brave_browser_brave_adaptive_captcha_deps

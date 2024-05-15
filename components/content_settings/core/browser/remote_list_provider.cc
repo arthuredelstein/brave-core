@@ -11,10 +11,10 @@ namespace content_settings {
 
 namespace {
 
-class TinyIterator : public RuleIterator {
+class RemoteListIterator : public RuleIterator {
  public:
-  TinyIterator() {}
-  ~TinyIterator() override {}
+  RemoteListIterator() {}
+  ~RemoteListIterator() override {}
   bool HasNext() const override { return !sent_; }
   std::unique_ptr<Rule> Next() override {
     sent_ = true;
@@ -40,7 +40,7 @@ std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
   if (content_type == ContentSettingsType::BRAVE_FINGERPRINTING_V2) {
     DLOG(INFO)
         << "GetRuleIterator: ContentSettingsType::BRAVE_FINGERPRINTING_V2";
-    return std::make_unique<TinyIterator>();
+    return std::make_unique<RemoteListIterator>();
   }
   return nullptr;
 }

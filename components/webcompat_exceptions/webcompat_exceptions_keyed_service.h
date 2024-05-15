@@ -46,7 +46,6 @@ class WebcompatExceptionsKeyedService : public KeyedService {
   void Shutdown() override;
 
   base::WeakPtr<WebcompatExceptionsKeyedService> GetWeakPtr();
-  GetServiceForContext
 
   //  void AddObserver(WebcompatExceptionsKeyedServiceObserver* observer);
   //  void RemoveObserver(WebcompatExceptionsKeyedServiceObserver* observer);

@@ -46,6 +46,9 @@ class WebcompatExceptionsService
   ~WebcompatExceptionsService() override;
   void SetIsReadyForTesting() { is_ready_ = true; }
   void OnJsonFileDataReady(const std::string& contents);
+  static WebcompatExceptionsService* CreateInstance(
+    brave_component_updater::LocalDataFilesService* local_data_files_service);
+  static WebcompatExceptionsService* GetInstance();
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
@@ -56,10 +59,6 @@ class WebcompatExceptionsService
   std::vector<WebcompatRule> webcompat_rules_;
   base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
 };
-
-// Creates the WebcompatExceptionsService
-std::unique_ptr<WebcompatExceptionsService> WebcompatExceptionsServiceFactory(
-    brave_component_updater::LocalDataFilesService* local_data_files_service);
 
 }  // namespace webcompat_exceptions
 

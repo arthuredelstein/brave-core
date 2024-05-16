@@ -282,14 +282,10 @@ BraveBrowserProcessImpl::https_upgrade_exceptions_service() {
   return https_upgrade_exceptions_service_.get();
 }
 
-webcompat_exceptions::WebcompatExceptionsService*
+void
 BraveBrowserProcessImpl::webcompat_exceptions_service() {
-  if (!webcompat_exceptions_service_) {
-    webcompat_exceptions_service_ =
-        webcompat_exceptions::WebcompatExceptionsServiceFactory(
+        webcompat_exceptions::WebcompatExceptionsService::CreateInstance(
             local_data_files_service());
-  }
-  return webcompat_exceptions_service_.get();
 }
 
 localhost_permission::LocalhostPermissionComponent*

@@ -54,6 +54,8 @@ constexpr auto kWebcompatNamesToType =
         {"websockets-pool", kWebSocketsPool},
     });
 
+WebcompatExceptionsService* singleton = nullptr;
+
 }  // namespace
 
 WebcompatRule::WebcompatRule() = default;
@@ -183,9 +185,16 @@ WebcompatExceptionsService::~WebcompatExceptionsService() {
   exceptional_domains_.clear();
 }
 
-std::unique_ptr<WebcompatExceptionsService> WebcompatExceptionsServiceFactory(
+// static
+WebcompatExceptionsService* WebcompatExceptionsService::CreateInstance(
     LocalDataFilesService* local_data_files_service) {
-  return std::make_unique<WebcompatExceptionsService>(local_data_files_service);
+  singleton = new WebcompatExceptionsService(local_data_files_service);
+  return singleton;
+}
+
+// static
+WebcompatExceptionsService* WebcompatExceptionsService::GetInstance() {
+  return singleton;
 }
 
 }  // namespace webcompat_exceptions

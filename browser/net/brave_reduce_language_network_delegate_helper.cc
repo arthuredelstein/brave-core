@@ -88,6 +88,7 @@ int OnBeforeStartTransaction_ReduceLanguageWork(
   if (origin_url.is_empty()) {
     return net::OK;
   }
+  /*
   auto* webcompat_exceptions_service =
       g_brave_browser_process->webcompat_exceptions_service();
   if (webcompat_exceptions_service &&
@@ -95,6 +96,7 @@ int OnBeforeStartTransaction_ReduceLanguageWork(
           origin_url, webcompat_exceptions::WebcompatFeature::kLanguage)) {
     return net::OK;
   }
+  */
   if (!brave_shields::ShouldDoReduceLanguage(content_settings, origin_url,
                                              profile->GetPrefs())) {
     return net::OK;

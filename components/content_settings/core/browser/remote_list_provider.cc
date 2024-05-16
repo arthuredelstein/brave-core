@@ -5,6 +5,9 @@
 
 #include "brave/components/content_settings/core/browser/remote_list_provider.h"
 
+#include <iostream>
+
+#include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/content_settings_rule.h"
 
 namespace content_settings {
@@ -30,13 +33,16 @@ class RemoteListIterator : public RuleIterator {
 
 }  // namespace
 
-RemoteListProvider::RemoteListProvider() {}
+RemoteListProvider::RemoteListProvider() {
+}
 
 std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     ContentSettingsType content_type,
     bool off_the_record,
     const PartitionKey& partition_key) const {
   // TODO
+  auto* svc = webcompat_exceptions::WebcompatExceptionsService::GetInstance();
+  std::cout << "svc: " << svc << std::endl;
   if (content_type == ContentSettingsType::BRAVE_FINGERPRINTING_V2) {
     DLOG(INFO)
         << "GetRuleIterator: ContentSettingsType::BRAVE_FINGERPRINTING_V2";

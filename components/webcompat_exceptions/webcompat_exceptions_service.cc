@@ -20,52 +20,54 @@
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
+#include "components/content_settings/core/browser/content_settings_rule.h"
+#include "components/content_settings/core/common/content_settings.h"
+#include "components/content_settings/core/common/content_settings_types.h"
 
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE "webcompat-exceptions.json"
 #define WEBCOMPAT_EXCEPTIONS_JSON_FILE_VERSION "1"
 
 namespace webcompat_exceptions {
 
+using brave_component_updater::LocalDataFilesObserver;
+using brave_component_updater::LocalDataFilesService;
+using content_settings::RuleMetaData;
+using content_settings::mojom::ContentSettingsType;
+
 namespace {
-using enum WebcompatFeature;
 
 // WebcompatExceptionService keys
 const char kInclude[] = "include";
 const char kExceptions[] = "exceptions";
 
+using enum ContentSettingsType;
+
+constexpr std::vector<ContentSettingsPattern> kEmptyRuleVector;
+
 constexpr auto kWebcompatNamesToType =
-    base::MakeFixedFlatMap<std::string_view, WebcompatFeature>({
-        {"audio", kAudio},
-        {"canvas", kCanvas},
-        {"device-memory", kDeviceMemory},
-        {"eventsource-pool", kEventSourcePool},
-        {"font", kFont},
-        {"hardware-concurrency", kHardwareConcurrency},
-        {"keyboard", kKeyboard},
-        {"language", kLanguage},
-        {"media-devices", kMediaDevices},
-        {"plugins", kPlugins},
-        {"screen", kScreen},
-        {"speech-synthesis", kSpeechSynthesis},
-        {"usb-device-serial-number", kUsbDeviceSerialNumber},
-        {"user-agent", kUserAgent},
-        {"webgl", kWebGL},
-        {"webgl2", kWebGL2},
-        {"websockets-pool", kWebSocketsPool},
+    base::MakeFixedFlatMap<std::string_view, ContentSettingsType>({
+        {"audio", BRAVE_WEBCOMPAT_AUDIO},
+        {"canvas", BRAVE_WEBCOMPAT_CANVAS},
+        {"device-memory", BRAVE_WEBCOMPAT_DEVICE_MEMORY},
+        {"eventsource-pool", BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL},
+        {"font", BRAVE_WEBCOMPAT_FONT},
+        {"hardware-concurrency", BRAVE_WEBCOMPAT_HARDWARE_CONCURRENCY},
+        {"keyboard", BRAVE_WEBCOMPAT_KEYBOARD},
+        {"language", BRAVE_WEBCOMPAT_LANGUAGE},
+        {"media-devices", BRAVE_WEBCOMPAT_MEDIA_DEVICES},
+        {"plugins", BRAVE_WEBCOMPAT_PLUGINS},
+        {"screen", BRAVE_WEBCOMPAT_SCREEN},
+        {"speech-synthesis", BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS},
+        {"usb-device-serial-number", BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER},
+        {"user-agent", BRAVE_WEBCOMPAT_USER_AGENT},
+        {"webgl", BRAVE_WEBCOMPAT_WEBGL},
+        {"webgl2", BRAVE_WEBCOMPAT_WEBGL2},
+        {"websockets-pool", BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL},
     });
 
 WebcompatExceptionsService* singleton = nullptr;
 
 }  // namespace
-
-WebcompatRule::WebcompatRule() = default;
-WebcompatRule::WebcompatRule(const WebcompatRule& other)
-    : url_pattern_set(other.url_pattern_set.Clone()),
-      feature_set(other.feature_set) {}
-WebcompatRule::~WebcompatRule() = default;
-
-using brave_component_updater::LocalDataFilesObserver;
-using brave_component_updater::LocalDataFilesService;
 
 WebcompatExceptionsService::WebcompatExceptionsService(
     LocalDataFilesService* local_data_files_service)
@@ -84,32 +86,38 @@ void WebcompatExceptionsService::LoadWebcompatExceptions(
                      weak_factory_.GetWeakPtr()));
 }
 
-void WebcompatExceptionsService::AddRule(
+void WebcompatExceptionsService::AddRules(
     const base::Value::List& include_strings,
     const base::Value::Dict& rule_dict) {
-  WebcompatRule rule;
-  webcompat_rules_.push_back(rule);
-  std::string error;
-  bool valid = rule.url_pattern_set.Populate(
-      include_strings, URLPattern::SCHEME_HTTP | URLPattern::SCHEME_HTTPS,
-      false, &error);
-  if (!valid) {
-    VLOG(1) << error;
-  }
   const base::Value* exceptions = rule_dict.Find(kExceptions);
   if (exceptions->is_list()) {
-    std::vector<WebcompatFeature> webcompat_types;
-    for (const base::Value& exception : exceptions->GetList()) {
-      const auto it = kWebcompatNamesToType.find(exception.GetString());
-      if (it != kWebcompatNamesToType.end()) {
-        rule.feature_set.push_back(it->second);
+    for (const base::Value& include_string : include_strings) {
+      auto pattern =
+          ContentSettingsPattern::FromString(include_string.GetString());
+      for (const base::Value& exception : exceptions->GetList()) {
+        const auto it = kWebcompatNamesToType.find(exception.GetString());
+        if (it != kWebcompatNamesToType.end()) {
+          const auto webcompat_type = it->second;
+          if (!patterns_by_webcompat_type_.contains(webcompat_type)) {
+            patterns_by_webcompat_type_[webcompat_type] = kEmptyRuleVector;
+          }
+          patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
+        }
       }
     }
   } else {
     DLOG(ERROR) << "Malformed exceptions list in "
                 << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
   }
-  webcompat_rules_.push_back(rule);
+}
+
+const std::vector<ContentSettingsPattern>&
+WebcompatExceptionsService::GetPatterns(ContentSettingsType webcompat_type) {
+  if (patterns_by_webcompat_type_.contains(webcompat_type)) {
+    return patterns_by_webcompat_type_[webcompat_type];
+  } else {
+    return kEmptyRuleVector;
+  }
 }
 
 void WebcompatExceptionsService::OnJsonFileDataReady(
@@ -138,7 +146,7 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
     const auto& rule_dict = rule.GetDict();
     const auto* include = rule_dict.Find(kInclude);
     if (include->is_list()) {
-      AddRule(include->GetList(), rule_dict);
+      AddRules(include->GetList(), rule_dict);
     } else if (include->is_string()) {
       DLOG(ERROR) << "Not implemented yet";
     } else {
@@ -147,30 +155,6 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
     }
   }
   is_ready_ = true;
-}
-
-const WebcompatFeatureSet WebcompatExceptionsService::GetFeatureExceptions(
-    const GURL& url) {
-  static const WebcompatFeatureSet empty;
-  if (!is_ready_) {
-    // We don't have the exceptions list loaded yet; return no exceptions.
-    return empty;
-  }
-  // Find out if any rules apply.
-  for (const auto& rule : webcompat_rules_) {
-    if (rule.url_pattern_set.MatchesURL(url)) {
-      return rule.feature_set;
-    }
-  }
-  // No exceptions found
-  return empty;
-}
-
-bool WebcompatExceptionsService::IsFeatureDisabled(const GURL& url,
-                                                   WebcompatFeature feature) {
-  WebcompatFeatureSet feature_set = GetFeatureExceptions(url);
-  return std::find(feature_set.begin(), feature_set.end(), feature) !=
-         feature_set.end();
 }
 
 // implementation of LocalDataFilesObserver

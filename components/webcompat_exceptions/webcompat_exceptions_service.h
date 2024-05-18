@@ -17,18 +17,13 @@
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "brave/components/webcompat_exceptions/webcompat_constants.h"
+#include "components/content_settings/core/common/content_settings_pattern.h"
+#include "components/content_settings/core/common/content_settings_types.h"
 #include "extensions/common/url_pattern_set.h"
 
 namespace webcompat_exceptions {
 
-struct WebcompatRule {
- public:
-  extensions::URLPatternSet url_pattern_set;
-  WebcompatFeatureSet feature_set;
-  WebcompatRule();
-  explicit WebcompatRule(const WebcompatRule& other);
-  ~WebcompatRule();
-};
+using content_settings::mojom::ContentSettingsType;
 
 class WebcompatExceptionsService
     : public brave_component_updater::LocalDataFilesObserver {
@@ -41,22 +36,23 @@ class WebcompatExceptionsService
                         const base::FilePath& install_dir,
                         const std::string& manifest) override;
 
-  const WebcompatFeatureSet GetFeatureExceptions(const GURL& url);
-  bool IsFeatureDisabled(const GURL& url, WebcompatFeature feature);
   ~WebcompatExceptionsService() override;
   void SetIsReadyForTesting() { is_ready_ = true; }
   void OnJsonFileDataReady(const std::string& contents);
   static WebcompatExceptionsService* CreateInstance(
-    brave_component_updater::LocalDataFilesService* local_data_files_service);
+      brave_component_updater::LocalDataFilesService* local_data_files_service);
   static WebcompatExceptionsService* GetInstance();
+  const std::vector<ContentSettingsPattern>& GetPatterns(
+      ContentSettingsType webcompat_type);
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
-  void AddRule(const base::Value::List& include_strings,
-               const base::Value::Dict& rule_dict);
+  void AddRules(const base::Value::List& include_strings,
+                const base::Value::Dict& rule_dict);
   std::set<std::string> exceptional_domains_;
   bool is_ready_ = false;
-  std::vector<WebcompatRule> webcompat_rules_;
+  std::map<ContentSettingsType, std::vector<ContentSettingsPattern>>
+      patterns_by_webcompat_type_;
   base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
 };
 

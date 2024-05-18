@@ -16,39 +16,35 @@ namespace {
 
 class RemoteListIterator : public RuleIterator {
  public:
-  RemoteListIterator() {}
+  RemoteListIterator(const std::vector<ContentSettingsPattern>& pattern_vector)
+      : pattern_vector_(pattern_vector), count_(pattern_vector.size()) {}
   ~RemoteListIterator() override {}
-  bool HasNext() const override { return !sent_; }
+  bool HasNext() const override { return pattern_index_ < count_; }
   std::unique_ptr<Rule> Next() override {
-    sent_ = true;
-    return std::make_unique<Rule>(
-        ContentSettingsPattern::FromString("https://example.net/*"),
-        ContentSettingsPattern::Wildcard(), base::Value(CONTENT_SETTING_ALLOW),
-        RuleMetaData());
+    auto pattern = pattern_vector_->at(pattern_index_);
+    ++pattern_index_;
+    return std::make_unique<Rule>(pattern, ContentSettingsPattern::Wildcard(),
+                                  base::Value(CONTENT_SETTING_ALLOW),
+                                  RuleMetaData());
   }
 
  private:
-  bool sent_ = false;
+  int pattern_index_ = 0;
+  const raw_ref<const std::vector<ContentSettingsPattern>> pattern_vector_;
+  int count_;
 };
 
 }  // namespace
 
-RemoteListProvider::RemoteListProvider() {
-}
+RemoteListProvider::RemoteListProvider() {}
 
 std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     ContentSettingsType content_type,
     bool off_the_record,
     const PartitionKey& partition_key) const {
-  // TODO
   auto* svc = webcompat_exceptions::WebcompatExceptionsService::GetInstance();
-  std::cout << "svc: " << svc << std::endl;
-  if (content_type == ContentSettingsType::BRAVE_FINGERPRINTING_V2) {
-    DLOG(INFO)
-        << "GetRuleIterator: ContentSettingsType::BRAVE_FINGERPRINTING_V2";
-    return std::make_unique<RemoteListIterator>();
-  }
-  return nullptr;
+  const auto& pattern_vector = svc->GetPatterns(content_type);
+  return std::make_unique<RemoteListIterator>(pattern_vector);
 }
 
 std::unique_ptr<Rule> RemoteListProvider::GetRule(

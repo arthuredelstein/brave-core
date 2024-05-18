@@ -282,10 +282,9 @@ BraveBrowserProcessImpl::https_upgrade_exceptions_service() {
   return https_upgrade_exceptions_service_.get();
 }
 
-void
-BraveBrowserProcessImpl::webcompat_exceptions_service() {
-        webcompat_exceptions::WebcompatExceptionsService::CreateInstance(
-            local_data_files_service());
+void BraveBrowserProcessImpl::webcompat_exceptions_service() {
+  webcompat_exceptions::WebcompatExceptionsService::CreateInstance(
+      local_data_files_service());
 }
 
 localhost_permission::LocalhostPermissionComponent*

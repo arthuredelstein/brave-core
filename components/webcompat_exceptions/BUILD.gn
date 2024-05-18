@@ -7,8 +7,6 @@ import("//brave/build/config.gni")
 
 source_set("core") {
   sources = [
-    "webcompat_exceptions_keyed_service.cc",
-    "webcompat_exceptions_keyed_service.h",
     "webcompat_exceptions_service.cc",
     "webcompat_exceptions_service.h",
   ]
@@ -17,8 +15,6 @@ source_set("core") {
     "//base",
     "//brave/components/brave_component_updater/browser",
     "//brave/components/webcompat_exceptions:common",
-    "//brave/extensions:common",
-    "//components/content_settings/core/browser",
     "//components/keyed_service/core",
     "//components/prefs",
     "//components/user_prefs",

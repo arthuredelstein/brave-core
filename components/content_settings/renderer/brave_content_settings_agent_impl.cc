@@ -343,11 +343,11 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
     } else {
       setting = brave_shields::GetBraveFPContentSettingFromRules(
           content_setting_rules_->fingerprinting_rules, GetOriginOrURL(frame));
-      if (setting != CONTENT_SETTING_ALLOW) {
-        setting = brave_shields::GetBraveWebcompatContentSettingFromRules(
-            content_setting_rules_->webcompat_rules, GetOriginOrURL(frame),
-            webcompat_settings_type);
-      }
+    }
+    if (setting != CONTENT_SETTING_ALLOW) {
+      setting = brave_shields::GetBraveWebcompatContentSettingFromRules(
+          content_setting_rules_->webcompat_rules, GetOriginOrURL(frame),
+          webcompat_settings_type);
     }
   }
 

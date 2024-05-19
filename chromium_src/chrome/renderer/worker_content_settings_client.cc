@@ -30,6 +30,11 @@ BraveFarblingLevel WorkerContentSettingsClient::GetBraveFarblingLevel(
       setting = brave_shields::GetBraveFPContentSettingFromRules(
           content_setting_rules_->fingerprinting_rules, primary_url);
     }
+    if (setting != CONTENT_SETTING_ALLOW) {
+      setting = brave_shields::GetBraveWebcompatContentSettingFromRules(
+          content_setting_rules_->webcompat_rules, GetOriginOrURL(frame),
+          webcompat_settings_type);
+    }
   }
   if (setting == CONTENT_SETTING_BLOCK) {
     return BraveFarblingLevel::MAXIMUM;

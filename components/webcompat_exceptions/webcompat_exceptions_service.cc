@@ -114,7 +114,7 @@ void WebcompatExceptionsService::AddRules(
 const std::vector<ContentSettingsPattern>&
 WebcompatExceptionsService::GetPatterns(ContentSettingsType webcompat_type) {
   if (patterns_by_webcompat_type_.contains(webcompat_type)) {
-    return patterns_by_webcompat_type_[webcompat_type];
+    return patterns_by_webcompat_type_.at(webcompat_type);
   } else {
     return kEmptyRuleVector;
   }

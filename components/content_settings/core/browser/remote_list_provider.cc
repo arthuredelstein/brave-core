@@ -43,6 +43,9 @@ std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     bool off_the_record,
     const PartitionKey& partition_key) const {
   auto* svc = webcompat_exceptions::WebcompatExceptionsService::GetInstance();
+  if (!svc) {
+    return nullptr;
+  }
   const auto& pattern_vector = svc->GetPatterns(content_type);
   return std::make_unique<RemoteListIterator>(pattern_vector);
 }

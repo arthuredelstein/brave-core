@@ -13,8 +13,6 @@ class GURL;
 
 namespace brave_shields {
 
-using webcompat_exceptions::WebcompatFeature;
-
 struct ShieldsSettingCounts {
   int allow;
   int standard;

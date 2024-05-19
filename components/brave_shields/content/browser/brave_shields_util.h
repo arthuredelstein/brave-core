@@ -144,7 +144,7 @@ bool GetForgetFirstPartyStorageEnabled(HostContentSettingsMap* map,
                                        const GURL& url);
 
 void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
-                                webcompat_exceptions::WebcompatFeature feature,
+                                ContentSettingsType webcompat_settings_type,
                                 ControlType type,
                                 const GURL& url,
                                 PrefService* local_state);

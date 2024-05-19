@@ -23,7 +23,7 @@ class GURL;
     return false;                                                       \
   }                                                                     \
   virtual BraveFarblingLevel GetBraveFarblingLevel(                     \
-      webcompat_exceptions::WebcompatFeature webcompat_feature) {       \
+      ContentSettingsType webcompat_settings_type) {       \
     return BraveFarblingLevel::OFF;                                     \
   }                                                                     \
   virtual bool IsReduceLanguageEnabled() {                              \

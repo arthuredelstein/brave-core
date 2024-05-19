@@ -60,13 +60,13 @@ ScriptValue FarbleGLInt64Parameter(WebGL2RenderingContextBase* owner,
 #define BRAVE_WEBGL2_RENDERING_CONTEXT_BASE                 \
   if (!brave::AllowFingerprinting(                          \
           ExecutionContext::From(script_state),             \
-          webcompat_exceptions::WebcompatFeature::kWebGL2)) \
+          BRAVE_WEBCOMPAT_WEBGL2)) \
     return ScriptValue::CreateNull(script_state->GetIsolate());
 
 #define BRAVE_WEBGL2_RENDERING_CONTEXT_BASE_GETPARAMETER                \
   switch (brave::GetBraveFarblingLevelFor(                              \
       ExecutionContext::From(script_state),                             \
-      webcompat_exceptions::WebcompatFeature::kWebGL2,                  \
+      BRAVE_WEBCOMPAT_WEBGL2,                  \
       BraveFarblingLevel::OFF)) {                                       \
     case BraveFarblingLevel::OFF: {                                     \
       break;                                                            \

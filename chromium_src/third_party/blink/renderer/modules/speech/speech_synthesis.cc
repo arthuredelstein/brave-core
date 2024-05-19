@@ -21,7 +21,7 @@ void SpeechSynthesis::OnSetVoiceList(
   voice_list_.clear();
   BraveFarblingLevel farbling_level = brave::GetBraveFarblingLevelFor(
       GetExecutionContext(),
-      webcompat_exceptions::WebcompatFeature::kSpeechSynthesis,
+      BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS,
       BraveFarblingLevel::OFF);
   if (farbling_level == BraveFarblingLevel::OFF) {
     // farbling off -> call upstream function

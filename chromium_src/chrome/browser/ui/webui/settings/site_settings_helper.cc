@@ -35,6 +35,7 @@
   {ContentSettingsType::BRAVE_REMEMBER_1P_STORAGE, nullptr},       \
   {ContentSettingsType::BRAVE_LOCALHOST_ACCESS, nullptr},          \
                                                                    \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_NONE, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY, nullptr}, \

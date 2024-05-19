@@ -849,7 +849,7 @@ ShieldsSettingCounts GetAdsSettingCount(HostContentSettingsMap* map) {
 }
 
 void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
-                                WebcompatFeature feature,
+                                ContentSettingsType webcompat_settings_type,
                                 ControlType type,
                                 const GURL& url,
                                 PrefService* local_state) {
@@ -873,11 +873,9 @@ void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
     // Fall back to default
     setting = CONTENT_SETTING_DEFAULT;
   }
-  const auto& settings_type =
-      content_settings::GetContentSettingsTypeForWebcompatFeature(feature);
   map->SetContentSettingCustomScope(primary_pattern,
                                     ContentSettingsPattern::Wildcard(),
-                                    settings_type, setting);
+                                    webcompat_settings_type, setting);
   RecordShieldsSettingChanged(local_state);
 }
 

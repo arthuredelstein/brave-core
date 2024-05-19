@@ -18,7 +18,7 @@ String USBDevice::serialNumber() const {
     if (ExecutionContext* context = GetExecutionContext()) {
       if (brave::GetBraveFarblingLevelFor(
               context,
-              webcompat_exceptions::WebcompatFeature::kUsbDeviceSerialNumber,
+              BRAVE_WEBCOMPAT_USB_DEVICE_SERIAL_NUMBER,
               BraveFarblingLevel::BALANCED) != BraveFarblingLevel::OFF) {
         WTF::StringBuilder result;
         result.Append(realSerialNumber);

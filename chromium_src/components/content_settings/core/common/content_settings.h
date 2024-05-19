@@ -44,9 +44,6 @@ namespace content_settings {
 bool IsExplicitSetting(const ContentSettingPatternSource& setting);
 bool IsExplicitSetting(const SettingInfo& setting);
 
-ContentSettingsType GetContentSettingsTypeForWebcompatFeature(
-    webcompat_exceptions::WebcompatFeature webcompat_feature);
-
 }  // namespace content_settings
 
 #endif  // BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_CONTENT_SETTINGS_H_

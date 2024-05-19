@@ -8,7 +8,7 @@
 namespace blink {
 
 BraveFarblingLevel SharedWorkerContentSettingsProxy::GetBraveFarblingLevel(
-    webcompat_exceptions::WebcompatFeature farblingType) {
+    ContentSettingsType webcompat_settings_type) {
   uint8_t result = BraveFarblingLevel::OFF;
   GetService()->GetBraveFarblingLevel(&result);
   if (result == 0)

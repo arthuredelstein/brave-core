@@ -8,6 +8,8 @@
 
 #include "components/content_settings/core/common/content_settings.h"
 
+#include <map>
+
 class GURL;
 
 namespace brave_shields {

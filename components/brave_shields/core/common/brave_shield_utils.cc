@@ -5,6 +5,7 @@
 
 #include "brave/components/brave_shields/core/common/brave_shield_utils.h"
 
+#include <map>
 #include <set>
 #include <string>
 

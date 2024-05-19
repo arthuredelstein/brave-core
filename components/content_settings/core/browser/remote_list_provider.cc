@@ -1,11 +1,13 @@
 /* Copyright (c) 2024 The Brave Authors. All rights reserved.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "brave/components/content_settings/core/browser/remote_list_provider.h"
 
 #include <iostream>
+#include <memory>
+#include <vector>
 
 #include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/content_settings_rule.h"
@@ -16,7 +18,7 @@ namespace {
 
 class RemoteListIterator : public RuleIterator {
  public:
-  RemoteListIterator(const std::vector<ContentSettingsPattern>& pattern_vector)
+  explicit RemoteListIterator(const std::vector<ContentSettingsPattern>& pattern_vector)
       : pattern_vector_(pattern_vector), count_(pattern_vector.size()) {}
   ~RemoteListIterator() override {}
   bool HasNext() const override { return pattern_index_ < count_; }

@@ -21,8 +21,6 @@
 #include "brave/browser/profiles/profile_util.h"
 #include "brave/browser/request_otr/request_otr_service_factory.h"
 #include "brave/browser/url_sanitizer/url_sanitizer_service_factory.h"
-// #include
-// "brave/browser/webcompat_exceptions/webcompat_exceptions_keyed_service_factory.h"
 #include "brave/components/constants/pref_names.h"
 #include "brave/components/content_settings/core/browser/brave_content_settings_pref_provider.h"
 #include "brave/components/ipfs/buildflags/buildflags.h"
@@ -128,7 +126,6 @@ void BraveProfileManager::DoFinalInitForServices(Profile* profile,
   brave_federated::BraveFederatedServiceFactory::GetForBrowserContext(profile);
   brave::URLSanitizerServiceFactory::GetForBrowserContext(profile);
   misc_metrics::ProfileMiscMetricsServiceFactory::GetServiceForContext(profile);
-  // webcompat_exceptions::WebcompatExceptionsKeyedServiceFactory::GetServiceForContext(profile);
 #if BUILDFLAG(ENABLE_REQUEST_OTR)
   request_otr::RequestOTRServiceFactory::GetForBrowserContext(profile);
 #endif

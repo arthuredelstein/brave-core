@@ -7,6 +7,7 @@
 #define BRAVE_COMPONENTS_WEBCOMPAT_EXCEPTIONS_WEBCOMPAT_EXCEPTIONS_SERVICE_H_
 
 #include <memory>
+#include <map>
 #include <set>
 #include <string>
 #include <vector>

@@ -93,7 +93,7 @@ int OnBeforeStartTransaction_ReduceLanguageWork(
       g_brave_browser_process->webcompat_exceptions_service();
   if (webcompat_exceptions_service &&
       webcompat_exceptions_service->IsFeatureDisabled(
-          origin_url, webcompat_exceptions::WebcompatFeature::kLanguage)) {
+          origin_url, BRAVE_WEBCOMPAT_LANGUAGE)) {
     return net::OK;
   }
   */

@@ -111,8 +111,8 @@ BraveFarblingLevel GetBraveFarblingLevelFor(ExecutionContext* context,
 }
 
 bool AllowFingerprinting(ExecutionContext* context,
-                         WebcompatFeature farblingType) {
-  return (GetBraveFarblingLevelFor(context, farblingType,
+                         ContentSettingsType webcompat_settings_type) {
+  return (GetBraveFarblingLevelFor(context, webcompat_settings_type,
                                    BraveFarblingLevel::OFF) !=
           BraveFarblingLevel::MAXIMUM);
 }
@@ -398,7 +398,7 @@ FarblingPRNG BraveSessionCache::MakePseudoRandomGenerator(FarbleKey key) {
 }
 
 BraveFarblingLevel BraveSessionCache::GetBraveFarblingLevel(
-    WebcompatFeature webcompat_content_settings) {
+    ContentSettingsType webcompat_content_settings) {
   if (!farbling_enabled_ || farbling_level_ == BraveFarblingLevel::OFF) {
     return BraveFarblingLevel::OFF;
   }

@@ -20,7 +20,6 @@
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_component_updater/browser/dat_file_util.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
-#include "components/content_settings/core/browser/content_settings_rule.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_types.h"
 
@@ -42,7 +41,7 @@ const char kExceptions[] = "exceptions";
 
 using enum ContentSettingsType;
 
-constexpr std::vector<ContentSettingsPattern> kEmptyRuleVector;
+constexpr std::vector<ContentSettingsPattern> kEmptyPatternVector;
 
 constexpr auto kWebcompatNamesToType =
     base::MakeFixedFlatMap<std::string_view, ContentSettingsType>({
@@ -99,7 +98,7 @@ void WebcompatExceptionsService::AddRules(
         if (it != kWebcompatNamesToType.end()) {
           const auto webcompat_type = it->second;
           if (!patterns_by_webcompat_type_.contains(webcompat_type)) {
-            patterns_by_webcompat_type_[webcompat_type] = kEmptyRuleVector;
+            patterns_by_webcompat_type_[webcompat_type] = kEmptyPatternVector;
           }
           patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
         }
@@ -116,7 +115,7 @@ WebcompatExceptionsService::GetPatterns(ContentSettingsType webcompat_type) {
   if (patterns_by_webcompat_type_.contains(webcompat_type)) {
     return patterns_by_webcompat_type_.at(webcompat_type);
   } else {
-    return kEmptyRuleVector;
+    return kEmptyPatternVector;
   }
 }
 

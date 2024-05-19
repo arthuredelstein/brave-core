@@ -18,7 +18,6 @@
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
 #include "components/content_settings/core/common/content_settings_types.h"
-#include "extensions/common/url_pattern_set.h"
 
 namespace webcompat_exceptions {
 

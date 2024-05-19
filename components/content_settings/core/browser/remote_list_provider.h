@@ -3,9 +3,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "components/content_settings/core/browser/content_settings_provider.h"
+#ifndef BRAVE_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_REMOTE_LIST_PROVIDER_H_
+#define BRAVE_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_REMOTE_LIST_PROVIDER_H_
 
 #include <memory>
+
+#include "components/content_settings/core/browser/content_settings_provider.h"
 
 namespace content_settings {
 
@@ -43,3 +46,5 @@ class RemoteListProvider : public ProviderInterface {
 };
 
 }  // namespace content_settings
+
+#undef BRAVE_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_REMOTE_LIST_PROVIDER_H_

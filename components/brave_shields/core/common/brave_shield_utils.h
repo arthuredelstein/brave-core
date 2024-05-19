@@ -6,9 +6,9 @@
 #ifndef BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 #define BRAVE_COMPONENTS_BRAVE_SHIELDS_CORE_COMMON_BRAVE_SHIELD_UTILS_H_
 
-#include "components/content_settings/core/common/content_settings.h"
-
 #include <map>
+
+#include "components/content_settings/core/common/content_settings.h"
 
 class GURL;
 

@@ -18,7 +18,8 @@ namespace {
 
 class RemoteListIterator : public RuleIterator {
  public:
-  explicit RemoteListIterator(const std::vector<ContentSettingsPattern>& pattern_vector)
+  explicit RemoteListIterator(
+      const std::vector<ContentSettingsPattern>& pattern_vector)
       : pattern_vector_(pattern_vector), count_(pattern_vector.size()) {}
   ~RemoteListIterator() override {}
   bool HasNext() const override { return pattern_index_ < count_; }

@@ -81,10 +81,6 @@ class BraveTorClientUpdater;
 class BraveTorPluggableTransportUpdater;
 }  // namespace tor
 
-namespace webcompat_exceptions {
-class WebcompatExceptionsService;
-}  // namespace webcompat_exceptions
-
 namespace ipfs {
 class BraveIpfsClientUpdater;
 }

@@ -12,7 +12,6 @@
 #include "base/numerics/safe_conversions.h"
 #include "base/strings/string_number_conversions.h"
 #include "brave/components/brave_shields/core/common/features.h"
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/brave_font_whitelist.h"
 #include "build/build_config.h"
@@ -100,9 +99,10 @@ blink::WebContentSettingsClient* GetContentSettingsClientFor(
   return settings;
 }
 
-BraveFarblingLevel GetBraveFarblingLevelFor(ExecutionContext* context,
-                                            ContentSettingsType webcompat_settings_type,
-                                            BraveFarblingLevel default_value) {
+BraveFarblingLevel GetBraveFarblingLevelFor(
+    ExecutionContext* context,
+    ContentSettingsType webcompat_settings_type,
+    BraveFarblingLevel default_value) {
   BraveFarblingLevel value = default_value;
   if (context)
     value = brave::BraveSessionCache::From(*context).GetBraveFarblingLevel(
@@ -148,7 +148,8 @@ bool BlockScreenFingerprinting(ExecutionContext* context) {
     return false;
   }
   BraveFarblingLevel level = GetBraveFarblingLevelFor(
-      context, BRAVE_WEBCOMPAT_SCREEN, BraveFarblingLevel::OFF);
+      context, ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN,
+      BraveFarblingLevel::OFF);
   return level != BraveFarblingLevel::OFF;
 }
 
@@ -218,8 +219,8 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
   uint64_t seed = *reinterpret_cast<uint64_t*>(domain_key_);
   if (blink::WebContentSettingsClient* settings =
           GetContentSettingsClientFor(&context, true)) {
-    auto raw_farbling_level =
-        settings->GetBraveFarblingLevel(BRAVE_WEBCOMPAT_NONE);
+    auto raw_farbling_level = settings->GetBraveFarblingLevel(
+        ContentSettingsType::BRAVE_WEBCOMPAT_NONE);
     farbling_level_ =
         base::FeatureList::IsEnabled(
             brave_shields::features::kBraveShowStrictFingerprintingMode)
@@ -227,20 +228,23 @@ BraveSessionCache::BraveSessionCache(ExecutionContext& context)
             : (raw_farbling_level == BraveFarblingLevel::OFF
                    ? BraveFarblingLevel::OFF
                    : BraveFarblingLevel::BALANCED);
-    for (auto webcompat_content_settings = BRAVE_WEBCOMPAT_NONE;
-         webcompat_content_settings != BRAVE_WEBCOMPAT_ALL;
+    for (auto webcompat_content_settings =
+             ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
+         webcompat_content_settings != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
          webcompat_content_settings = static_cast<ContentSettingsType>(
              static_cast<int32_t>(webcompat_content_settings) + 1)) {
-      auto farbling_level = settings->GetBraveFarblingLevel(webcompat_content_settings);
+      auto farbling_level =
+          settings->GetBraveFarblingLevel(webcompat_content_settings);
       farbling_levels_.insert(webcompat_content_settings, farbling_level);
+    }
+    if (settings->GetBraveFarblingLevel(
+            ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO) !=
+        BraveFarblingLevel::OFF) {
+      audio_farbling_helper_.emplace(
+          fudge_factor, seed, farbling_level_ == BraveFarblingLevel::MAXIMUM);
     }
   }
   farbling_enabled_ = true;
-  if (BRAVE_WEBCOMPAT_AUDIO) !=
-      BraveFarblingLevel::OFF) {
-    audio_farbling_helper_.emplace(
-        fudge_factor, seed, farbling_level_ == BraveFarblingLevel::MAXIMUM);
-  }
 }
 
 BraveSessionCache& BraveSessionCache::From(ExecutionContext& context) {
@@ -264,7 +268,7 @@ void BraveSessionCache::FarbleAudioChannel(float* dst, size_t count) {
 }
 
 void BraveSessionCache::PerturbPixels(const unsigned char* data, size_t size) {
-  if (GetBraveFarblingLevel(BRAVE_WEBCOMPAT_CANVAS) ==
+  if (GetBraveFarblingLevel(ContentSettingsType::BRAVE_WEBCOMPAT_CANVAS) ==
       BraveFarblingLevel::OFF) {
     return;
   }
@@ -364,7 +368,7 @@ bool BraveSessionCache::AllowFontFamily(
     blink::WebContentSettingsClient* settings,
     const AtomicString& family_name) {
   if (!farbling_enabled_ || !settings ||
-      GetBraveFarblingLevel(BRAVE_WEBCOMPAT_FONT) ==
+      GetBraveFarblingLevel(ContentSettingsType::BRAVE_WEBCOMPAT_FONT) ==
           BraveFarblingLevel::OFF ||
       !settings->IsReduceLanguageEnabled()) {
     return true;

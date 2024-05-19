@@ -6,7 +6,6 @@
 #include "third_party/blink/renderer/core/frame/navigator_device_memory.h"
 
 #include "base/ranges/algorithm.h"
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 #include "third_party/abseil-cpp/absl/random/random.h"
 #include "third_party/blink/public/common/device_memory/approximated_device_memory.h"
@@ -17,7 +16,8 @@ float FarbleDeviceMemory(blink::ExecutionContext* context) {
   float true_value =
       blink::ApproximatedDeviceMemory::GetApproximatedDeviceMemory();
   BraveFarblingLevel farbling_level = brave::GetBraveFarblingLevelFor(
-      context, BRAVE_WEBCOMPAT_DEVICE_MEMORY, BraveFarblingLevel::OFF);
+      context, ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY,
+      BraveFarblingLevel::OFF);
   // If Brave Shields are down or anti-fingerprinting is off for this site,
   // return the true value.
   if (farbling_level == BraveFarblingLevel::OFF)

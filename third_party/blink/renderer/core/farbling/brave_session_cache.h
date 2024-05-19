@@ -9,9 +9,9 @@
 #include <optional>
 #include <string>
 
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/platform/brave_audio_farbling_helper.h"
+#include "components/content_settings/core/common/content_settings_types.h"
 #include "third_party/abseil-cpp/absl/random/random.h"
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/core/execution_context/execution_context.h"
@@ -51,8 +51,9 @@ CORE_EXPORT BraveFarblingLevel
 GetBraveFarblingLevelFor(ExecutionContext* context,
                          ContentSettingsType webcompat_settings_type,
                          BraveFarblingLevel default_value);
-CORE_EXPORT bool AllowFingerprinting(ExecutionContext* context,
-                                     ContentSettingsType webcompat_settings_type);
+CORE_EXPORT bool AllowFingerprinting(
+    ExecutionContext* context,
+    ContentSettingsType webcompat_settings_type);
 CORE_EXPORT bool AllowFontFamily(ExecutionContext* context,
                                  const AtomicString& family_name);
 CORE_EXPORT int FarbleInteger(ExecutionContext* context,
@@ -78,7 +79,8 @@ class CORE_EXPORT BraveSessionCache final
   static BraveSessionCache& From(ExecutionContext&);
   static void Init();
 
-  BraveFarblingLevel GetBraveFarblingLevel(ContentSettingsType webcompat_settings_type);
+  BraveFarblingLevel GetBraveFarblingLevel(
+      ContentSettingsType webcompat_settings_type);
   void FarbleAudioChannel(float* dst, size_t count);
   void PerturbPixels(const unsigned char* data, size_t size);
   WTF::String GenerateRandomString(std::string seed, wtf_size_t length);

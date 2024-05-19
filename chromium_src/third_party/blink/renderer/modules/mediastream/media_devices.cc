@@ -17,9 +17,9 @@ void FarbleMediaDevices(ExecutionContext* context,
   // |media_devices| is guaranteed not to be null here.
   if (media_devices->size() <= 2)
     return;
-  if (GetBraveFarblingLevelFor(context, BRAVE_WEBCOMPAT_MEDIA_DEVICES,
-                               BraveFarblingLevel::OFF) ==
-      BraveFarblingLevel::OFF) {
+  if (GetBraveFarblingLevelFor(
+          context, ContentSettingsType::BRAVE_WEBCOMPAT_MEDIA_DEVICES,
+          BraveFarblingLevel::OFF) == BraveFarblingLevel::OFF) {
     return;
   }
   // Shuffle the list of devices pseudo-randomly, based on the

@@ -5,7 +5,6 @@
 
 #include "third_party/blink/renderer/modules/speech/speech_synthesis.h"
 
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 #include "third_party/abseil-cpp/absl/random/random.h"
 #include "third_party/blink/public/platform/web_content_settings_client.h"
@@ -21,7 +20,7 @@ void SpeechSynthesis::OnSetVoiceList(
   voice_list_.clear();
   BraveFarblingLevel farbling_level = brave::GetBraveFarblingLevelFor(
       GetExecutionContext(),
-      BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS,
+      ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS,
       BraveFarblingLevel::OFF);
   if (farbling_level == BraveFarblingLevel::OFF) {
     // farbling off -> call upstream function

@@ -16,7 +16,6 @@
 #include "base/values.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_observer.h"
 #include "brave/components/brave_component_updater/browser/local_data_files_service.h"
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
 #include "components/content_settings/core/common/content_settings_pattern.h"
 #include "components/content_settings/core/common/content_settings_types.h"
 #include "extensions/common/url_pattern_set.h"

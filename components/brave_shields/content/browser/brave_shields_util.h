@@ -10,8 +10,7 @@
 
 #include <string>
 
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
-#include "components/content_settings/core/common/content_settings_pattern.h"
+#include "components/content_settings/core/common/content_settings_types.h"
 
 namespace https_upgrade_exceptions {
 class HttpsUpgradeExceptionsService;
@@ -25,6 +24,7 @@ namespace content_settings {
 class CookieSettings;
 }
 
+class ContentSettingsPattern;
 class GURL;
 class HostContentSettingsMap;
 class PrefService;

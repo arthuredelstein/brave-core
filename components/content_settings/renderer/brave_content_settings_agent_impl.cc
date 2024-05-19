@@ -351,11 +351,6 @@ BraveFarblingLevel BraveContentSettingsAgentImpl::GetBraveFarblingLevel(
     }
   }
 
-  if (std::find(webcompat_features_.begin(), webcompat_features_.end(),
-                webcompat_feature) != webcompat_features_.end()) {
-    return BraveFarblingLevel::OFF;
-  }
-
   if (setting == CONTENT_SETTING_BLOCK) {
     DVLOG(1) << "farbling level MAXIMUM";
     return BraveFarblingLevel::MAXIMUM;

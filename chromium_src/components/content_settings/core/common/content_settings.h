@@ -6,8 +6,6 @@
 #ifndef BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_CONTENT_SETTINGS_H_
 #define BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_CONTENT_SETTINGS_H_
 
-#include "brave/components/webcompat_exceptions/webcompat_constants.h"
-
 #define RendererContentSettingRules RendererContentSettingRules_ChromiumImpl
 
 #define SETTING_SOURCE_INSTALLED_WEBAPP \

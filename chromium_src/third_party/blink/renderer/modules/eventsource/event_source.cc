@@ -41,7 +41,7 @@ void EventSource::BraveConnect() {
           execution_context->GetSecurityOrigin()->Protocol().Ascii());
       if (!is_extension &&
           settings->GetBraveFarblingLevel(
-              BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL) !=
+              ContentSettingsType::BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL) !=
               BraveFarblingLevel::OFF) {
         event_source_in_use_tracker_ =
             ResourcePoolLimiter::GetInstance().IssueResourceInUseTracker(

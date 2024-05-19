@@ -32,7 +32,7 @@ BraveFarblingLevel WorkerContentSettingsClient::GetBraveFarblingLevel(
     }
     if (setting != CONTENT_SETTING_ALLOW) {
       setting = brave_shields::GetBraveWebcompatContentSettingFromRules(
-          content_setting_rules_->webcompat_rules, GetOriginOrURL(frame),
+          content_setting_rules_->webcompat_rules, primary_url,
           webcompat_settings_type);
     }
   }

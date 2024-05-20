@@ -66,7 +66,7 @@ class TestingBraveBrowserProcess : public BraveBrowserProcess {
       override;
   https_upgrade_exceptions::HttpsUpgradeExceptionsService*
   https_upgrade_exceptions_service() override;
-  webcompat::WebcompatExceptionsService* webcompat_exceptions_service()
+  void webcompat_exceptions_service()
       override;
   localhost_permission::LocalhostPermissionComponent*
   localhost_permission_component() override;

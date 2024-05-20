@@ -47,4 +47,4 @@ class RemoteListProvider : public ProviderInterface {
 
 }  // namespace content_settings
 
-#undef BRAVE_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_REMOTE_LIST_PROVIDER_H_
+#endif BRAVE_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_REMOTE_LIST_PROVIDER_H_

@@ -6,6 +6,7 @@
 #ifndef BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_WORKERS_SHARED_WORKER_CONTENT_SETTINGS_PROXY_H_
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_WORKERS_SHARED_WORKER_CONTENT_SETTINGS_PROXY_H_
 
+#include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "third_party/blink/public/platform/web_content_settings_client.h"
 
 #define AllowStorageAccessSync                               \

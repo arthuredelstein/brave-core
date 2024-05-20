@@ -7,8 +7,9 @@
 
 #include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
-#include "src/third_party/blink/renderer/modules/webusb/usb_device.cc"
 #include "third_party/blink/renderer/platform/wtf/text/string_builder.h"
+
+#include "src/third_party/blink/renderer/modules/webusb/usb_device.cc"
 
 namespace blink {
 

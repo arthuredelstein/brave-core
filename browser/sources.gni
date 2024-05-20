@@ -487,8 +487,6 @@ brave_chrome_browser_sources += brave_browser_tor_sources
 brave_chrome_browser_sources += brave_browser_url_sanitizer_sources
 brave_chrome_browser_sources += brave_browser_web_discovery_sources
 
-#brave_chrome_browser_sources += brave_browser_webcompat_exceptions_sources
-
 brave_chrome_browser_deps += brave_browser_autocomplete_deps
 brave_chrome_browser_deps += brave_browser_brave_adaptive_captcha_deps
 brave_chrome_browser_deps += brave_browser_brave_ads_deps

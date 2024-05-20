@@ -55,6 +55,7 @@ import("//brave/components/brave_webtorrent/browser/buildflags/buildflags.gni")
 import("//brave/components/commander/common/buildflags/buildflags.gni")
 import("//brave/components/tor/buildflags/buildflags.gni")
 import("//extensions/buildflags/buildflags.gni")
+
 brave_chrome_browser_visibility = [
   "//brave/browser/*",
   "//brave/test:*",

@@ -53,7 +53,8 @@
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL, nullptr}, \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_ALL, nullptr},  // clang-format on
+  {ContentSettingsType::BRAVE_WEBCOMPAT_ALL, nullptr},
+// clang-format on
 
 #define BRAVE_SITE_SETTINGS_HELPER_CONTENT_SETTINGS_TYPE_FROM_GROUP_NAME \
   if (name == "autoplay")                                                \

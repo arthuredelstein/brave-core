@@ -95,8 +95,7 @@ TestingBraveBrowserProcess::https_upgrade_exceptions_service() {
   return nullptr;
 }
 
-void
-TestingBraveBrowserProcess::webcompat_exceptions_service() {
+void TestingBraveBrowserProcess::webcompat_exceptions_service() {
   NOTREACHED_NORETURN();
 }
 

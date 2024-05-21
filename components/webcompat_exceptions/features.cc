@@ -10,7 +10,9 @@
 namespace webcompat {
 namespace features {
 
-BASE_FEATURE(kBraveWebcompatExceptionsService, "BraveWebcompatExceptionsService", base::FEATURE_DISABLED_BY_DEFAULT);
+BASE_FEATURE(kBraveWebcompatExceptionsService,
+             "BraveWebcompatExceptionsService",
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 }  // namespace features
 }  // namespace webcompat

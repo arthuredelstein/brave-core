@@ -19,6 +19,7 @@ namespace {
 using enum ContentSettingsType;
 constexpr auto kSettingsNames =
     base::MakeFixedFlatMap<ContentSettingsType, const char*>({
+        {BRAVE_WEBCOMPAT_NONE, "brave-webcompat-none"},
         {BRAVE_WEBCOMPAT_AUDIO, "brave-webcompat-audio"},
         {BRAVE_WEBCOMPAT_CANVAS, "brave-webcompat-canvas"},
         {BRAVE_WEBCOMPAT_DEVICE_MEMORY, "brave-webcompat-device-memory"},
@@ -302,7 +303,7 @@ void ContentSettingsRegistry::BraveInit() {
           WebsiteSettingsRegistry::PLATFORM_ANDROID,
       WebsiteSettingsInfo::DONT_INHERIT_IN_INCOGNITO);
 
-  for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO;
+  for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
        settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
        settings_type = static_cast<ContentSettingsType>(
            static_cast<int32_t>(settings_type) + 1)) {

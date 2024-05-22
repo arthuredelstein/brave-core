@@ -18,6 +18,7 @@
 #include "brave/components/playlist/common/features.h"
 #include "brave/components/request_otr/common/features.h"
 #include "brave/components/speedreader/common/features.h"
+#include "brave/components/webcompat_exceptions/features.h"
 #include "net/base/features.h"
 #include "third_party/blink/public/common/features.h"
 

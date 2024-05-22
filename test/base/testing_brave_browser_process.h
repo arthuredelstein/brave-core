@@ -26,10 +26,6 @@ namespace brave_vpn {
 class BraveVPNConnectionManager;
 }
 
-namespace webcompat {
-class WebcompatExceptionsService;
-}  // namespace webcompat
-
 class TestingBraveBrowserProcess : public BraveBrowserProcess {
  public:
   // Initializes |g_brave_browser_process| with a new

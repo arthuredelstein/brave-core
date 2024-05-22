@@ -31,9 +31,10 @@ BraveFarblingLevel WorkerContentSettingsClient::GetBraveFarblingLevel(
           content_setting_rules_->fingerprinting_rules, primary_url);
     }
     if (setting != CONTENT_SETTING_ALLOW) {
-      auto webcompat_setting = brave_shields::GetBraveWebcompatContentSettingFromRules(
-          content_setting_rules_->webcompat_rules, primary_url,
-          webcompat_settings_type);
+      auto webcompat_setting =
+          brave_shields::GetBraveWebcompatContentSettingFromRules(
+              content_setting_rules_->webcompat_rules, primary_url,
+              webcompat_settings_type);
       if (webcompat_setting == CONTENT_SETTING_ALLOW) {
         setting = CONTENT_SETTING_ALLOW;
       }

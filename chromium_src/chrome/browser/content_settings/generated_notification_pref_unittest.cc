@@ -6,10 +6,10 @@
 #include "chrome/browser/content_settings/generated_notification_pref_unittest.h"
 
 #define BRAVE_SETTING_SOURCE_REMOTE_LIST                      \
-  case SETTING_SOURCE_TPCD_GRANT:                             \
-    provider_type = HostContentSettingsMap::DEFAULT_PROVIDER; \
+  case SETTING_SOURCE_REMOTE_LIST:                             \
+    provider_type = HostContentSettingsMap::REMOTE_LIST_PROVIDER; \
     break;
 
 #include "src/chrome/browser/content_settings/generated_notification_pref_unittest.cc"
 
-#undef SETTING_SOURCE_TPCD_GRANT
+#undef BRAVE_SETTING_SOURCE_REMOTE_LIST

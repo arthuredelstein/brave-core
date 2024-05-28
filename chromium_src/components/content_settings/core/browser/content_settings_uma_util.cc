@@ -66,12 +66,12 @@ static_assert(static_cast<int>(ContentSettingsType::kMaxValue) <
   {ContentSettingsType::BRAVE_WEBCOMPAT_ALL, brave_value(68)},
 // clang-format on
 
-#define DEFAULT_PROVIDER       \
-  REMOTE_LIST_PROVIDER:        \
+#define kDefaultProvider       \
+  kRemoteList:        \
   return "RemoteListProvider"; \
-  case HostContentSettingsMap::DEFAULT_PROVIDER
+  case ProviderType::kDefaultProvider
 
 #include "src/components/content_settings/core/browser/content_settings_uma_util.cc"
 
 #undef BRAVE_HISTOGRAM_VALUE_LIST
-#undef DEFAULT_PROVIDER
+#undef kDefaultProvider

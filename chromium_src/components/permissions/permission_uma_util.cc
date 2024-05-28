@@ -34,14 +34,14 @@
     return;                        \
   PermissionsClient::Get()->GetUkmSourceId
 
-#define SETTING_SOURCE_INSTALLED_WEBAPP \
-  SETTING_SOURCE_REMOTE_LIST:           \
+#define kTpcdGrant \
+  kRemoteList:           \
   source_suffix = "FromRemoteList";     \
   break;                                \
-  case content_settings::SETTING_SOURCE_INSTALLED_WEBAPP
+  case SettingSource::kTpcdGrant
 
 #include "src/components/permissions/permission_uma_util.cc"
 #undef BRAVE_GET_UMA_VALUE_FOR_REQUESTS
 #undef BRAVE_GET_UMA_VALUE_FOR_REQUEST_TYPE
 #undef GetUkmSourceId
-#undef SETTING_SOURCE_INSTALLED_WEBAPP
+#undef kTpcdGrant

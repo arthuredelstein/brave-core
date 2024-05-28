@@ -1,0 +1,12 @@
+diff --git a/components/content_settings/core/common/content_settings_enums.mojom b/components/content_settings/core/common/content_settings_enums.mojom
+index c16ae0c12b6271436183da8e5526fc039655198a..a1b12a2108ee4e92ea3a7c90b9e397d55bdecaec 100644
+--- a/components/content_settings/core/common/content_settings_enums.mojom
++++ b/components/content_settings/core/common/content_settings_enums.mojom
+@@ -70,6 +70,7 @@ enum SessionModel {
+     kNotificationAndroidProvider,
+     kOneTimePermissionProvider,
+     kPrefProvider,
++    kRemoteList,
+     kDefaultProvider,
+     kNone,
+ 

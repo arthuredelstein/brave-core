@@ -70,8 +70,20 @@
   if (name == brave_shields::kBraveShields)                              \
     return ContentSettingsType::BRAVE_SHIELDS;
 
+#define kInstalledWebappProvider \
+  kRemoteList: \
+    return SiteSettingSource::kRemoteList; \
+  case content_settings::ProviderType::kInstalledWebappProvider
+
+#define kNumSources \
+  kRemoteList: \
+    return "remote-list"; \
+  case SiteSettingSource::kNumSources
+
 #include "src/chrome/browser/ui/webui/settings/site_settings_helper.cc"
 
+#undef kNumSources
+#undef kInstalledWebappProvider
 #undef BRAVE_CONTENT_SETTINGS_TYPE_GROUP_NAMES_LIST
 #undef BRAVE_SITE_SETTINGS_HELPER_CONTENT_SETTINGS_TYPE_FROM_GROUP_NAME
 #undef GetVisiblePermissionCategories

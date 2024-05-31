@@ -5,7 +5,6 @@
 
 #include "brave/components/content_settings/renderer/brave_content_settings_agent_impl.h"
 
-#include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>

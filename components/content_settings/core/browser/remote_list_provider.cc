@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-#include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
+#include "brave/components/webcompat/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/content_settings_rule.h"
 
 namespace content_settings {

@@ -43,8 +43,8 @@
 #include "brave/components/p3a/histograms_braveizer.h"
 #include "brave/components/p3a/p3a_config.h"
 #include "brave/components/p3a/p3a_service.h"
-#include "brave/components/webcompat_exceptions/features.h"
-#include "brave/components/webcompat_exceptions/webcompat_exceptions_service.h"
+#include "brave/components/webcompat/features.h"
+#include "brave/components/webcompat/webcompat_exceptions_service.h"
 #include "brave/services/network/public/cpp/system_request_handler.h"
 #include "build/build_config.h"
 #include "chrome/browser/component_updater/component_updater_utils.h"
@@ -225,7 +225,8 @@ void BraveBrowserProcessImpl::StartBraveServices() {
 
   if (base::FeatureList::IsEnabled(
           webcompat::features::kBraveWebcompatExceptionsService)) {
-    webcompat_exceptions_service();
+    webcompat::WebcompatExceptionsService::CreateInstance(
+        local_data_files_service());
   }
 
 #if BUILDFLAG(ENABLE_GREASELION)
@@ -284,11 +285,6 @@ BraveBrowserProcessImpl::https_upgrade_exceptions_service() {
             local_data_files_service());
   }
   return https_upgrade_exceptions_service_.get();
-}
-
-void BraveBrowserProcessImpl::webcompat_exceptions_service() {
-  webcompat::WebcompatExceptionsService::CreateInstance(
-      local_data_files_service());
 }
 
 localhost_permission::LocalhostPermissionComponent*

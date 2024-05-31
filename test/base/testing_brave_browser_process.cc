@@ -95,10 +95,6 @@ TestingBraveBrowserProcess::https_upgrade_exceptions_service() {
   return nullptr;
 }
 
-void TestingBraveBrowserProcess::webcompat_exceptions_service() {
-  NOTREACHED_NORETURN();
-}
-
 localhost_permission::LocalhostPermissionComponent*
 TestingBraveBrowserProcess::localhost_permission_component() {
   return nullptr;

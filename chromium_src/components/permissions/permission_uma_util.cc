@@ -34,10 +34,10 @@
     return;                        \
   PermissionsClient::Get()->GetUkmSourceId
 
-#define kTpcdGrant \
-  kRemoteList:           \
-  source_suffix = "FromRemoteList";     \
-  break;                                \
+#define kTpcdGrant                  \
+  kRemoteList:                      \
+  source_suffix = "FromRemoteList"; \
+  break;                            \
   case SettingSource::kTpcdGrant
 
 #include "src/components/permissions/permission_uma_util.cc"

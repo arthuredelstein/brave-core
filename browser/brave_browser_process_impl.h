@@ -113,7 +113,6 @@ class BraveBrowserProcessImpl : public BraveBrowserProcess,
   brave_shields::AdBlockService* ad_block_service() override;
   https_upgrade_exceptions::HttpsUpgradeExceptionsService*
   https_upgrade_exceptions_service() override;
-  void webcompat_exceptions_service() override;
   localhost_permission::LocalhostPermissionComponent*
   localhost_permission_component() override;
 #if BUILDFLAG(ENABLE_GREASELION)

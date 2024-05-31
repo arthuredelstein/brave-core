@@ -9,8 +9,7 @@
 
 #include "components/content_settings/core/common/content_settings.h"
 
-#define kAdsFilterBlocklist \
-  kAdsFilterBlocklist, kRemoteList
+#define kAdsFilterBlocklist kAdsFilterBlocklist, kRemoteList
 
 #include "src/chrome/browser/ui/webui/settings/site_settings_helper.h"
 

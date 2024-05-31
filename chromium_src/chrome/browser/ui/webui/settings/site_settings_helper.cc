@@ -69,14 +69,14 @@
   if (name == brave_shields::kBraveShields)                              \
     return ContentSettingsType::BRAVE_SHIELDS;
 
-#define kInstalledWebappProvider \
-  kRemoteList: \
-    return SiteSettingSource::kRemoteList; \
+#define kInstalledWebappProvider         \
+  kRemoteList:                           \
+  return SiteSettingSource::kRemoteList; \
   case content_settings::ProviderType::kInstalledWebappProvider
 
-#define kNumSources \
-  kRemoteList: \
-    return "remote-list"; \
+#define kNumSources     \
+  kRemoteList:          \
+  return "remote-list"; \
   case SiteSettingSource::kNumSources
 
 #include "src/chrome/browser/ui/webui/settings/site_settings_helper.cc"

@@ -67,7 +67,7 @@ static_assert(static_cast<int>(ContentSettingsType::kMaxValue) <
 // clang-format on
 
 #define kDefaultProvider       \
-  kRemoteList:        \
+  kRemoteList:                 \
   return "RemoteListProvider"; \
   case ProviderType::kDefaultProvider
 

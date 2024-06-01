@@ -806,6 +806,7 @@ test("brave_browser_tests") {
     "//brave/components/brave_rewards/browser/test/rewards_state_browsertest.cc",
     "//brave/components/content_settings/renderer/brave_content_settings_agent_impl_autoplay_browsertest.cc",
     "//brave/components/content_settings/renderer/brave_content_settings_agent_impl_browsertest.cc",
+    "//brave/components/webcompat/webcompat_exceptions_browsertest.cc",
     "//brave/third_party/blink/renderer/modules/brave/navigator_browsertest.cc",
     "//chrome/browser/extensions/browsertest_util.cc",
     "//chrome/browser/extensions/browsertest_util.h",

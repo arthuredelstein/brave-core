@@ -5,8 +5,8 @@
 
 #include "chrome/browser/content_settings/generated_notification_pref.h"
 
-#define kTpcdGrant                                                   \
-  kRemoteList:                                                       \
+#define kTpcdGrant \
+  kRemoteList:     \
   case SettingSource::kTpcdGrant
 
 #include "src/chrome/browser/content_settings/generated_notification_pref_unittest.cc"

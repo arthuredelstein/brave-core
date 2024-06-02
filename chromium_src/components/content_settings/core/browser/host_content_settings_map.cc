@@ -53,11 +53,16 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 
 #define IsMorePermissive(a, b) IsMorePermissive_BraveImpl(content_type, a, b)
 
+#if !BUILDFLAG(IS_IOS)
 #define BRAVE_CREATE_REMOTE_LIST_PROVIDER                       \
   auto remote_list_provider_ptr =                               \
       std::make_unique<content_settings::RemoteListProvider>(); \
   content_settings_providers_[ProviderType::kRemoteList] =      \
       std::move(remote_list_provider_ptr);
+
+#else
+#define BRAVE_CREATE_REMOTE_LIST_PROVIDER
+#endif
 
 #include "src/components/content_settings/core/browser/host_content_settings_map.cc"
 

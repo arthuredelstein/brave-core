@@ -85,12 +85,19 @@ void WebcompatExceptionsService::LoadWebcompatExceptions(
                      weak_factory_.GetWeakPtr()));
 }
 
-void WebcompatExceptionsService::AddRule(ContentSettingsType webcompat_type,
-                                         ContentSettingsPattern pattern) {
-  if (!patterns_by_webcompat_type_.contains(webcompat_type)) {
-    patterns_by_webcompat_type_[webcompat_type] = kEmptyPatternVector;
+bool WebcompatExceptionsService::AddRule(const ContentSettingsPattern& pattern,
+                                         const std::string& exception_string) {
+  const auto it = kWebcompatNamesToType.find(exception_string);
+  if (it != kWebcompatNamesToType.end()) {
+    const auto webcompat_type = it->second;
+    if (!patterns_by_webcompat_type_.contains(webcompat_type)) {
+      patterns_by_webcompat_type_[webcompat_type] = kEmptyPatternVector;
+    }
+    patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
+    return true;
+  } else {
+    return false;
   }
-  patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
 }
 
 void WebcompatExceptionsService::AddRules(
@@ -99,13 +106,13 @@ void WebcompatExceptionsService::AddRules(
   const base::Value* exceptions = rule_dict.Find(kExceptions);
   if (exceptions->is_list()) {
     for (const base::Value& include_string : include_strings) {
-      auto pattern =
+      const auto pattern =
           ContentSettingsPattern::FromString(include_string.GetString());
       for (const base::Value& exception : exceptions->GetList()) {
-        const auto it = kWebcompatNamesToType.find(exception.GetString());
-        if (it != kWebcompatNamesToType.end()) {
-          const auto webcompat_type = it->second;
-          AddRule(webcompat_type, pattern);
+        const bool success = AddRule(pattern, exception.GetString());
+        if (!success) {
+          DLOG(ERROR) << "Unrecognized webcompat exception "
+                      << exception.GetString();
         }
       }
     }

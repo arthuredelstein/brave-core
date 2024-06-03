@@ -37,7 +37,6 @@
 #else
 #include "chrome/browser/ui/browser_navigator_params.h"
 #include "chrome/test/base/in_process_browser_test.h"
-#include "chrome/test/base/ui_test_utils.h"
 #endif
 
 using brave_shields::ControlType;
@@ -112,15 +111,18 @@ class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
   const net::EmbeddedTestServer& https_server() { return https_server_; }
   const GURL& url() { return url_; }
 
+  content::WebContents* GetActiveWebContents() {
+    return chrome_test_utils::GetActiveWebContents(this);
+  }
+
   HostContentSettingsMap* content_settings() {
     return HostContentSettingsMapFactory::GetForProfile(
         chrome_test_utils::GetProfile(this));
   }
 
-  void NavigateToURLUntilLoadStop(const std::string& origin,
-                                  const std::string& path) {
-    ASSERT_TRUE(ui_test_utils::NavigateToURL(
-        browser(), https_server().GetURL(origin, path)));
+  void NavigateToURL(const std::string& origin, const std::string& path) {
+    ASSERT_TRUE(content::NavigateToURL(GetActiveWebContents(),
+                                       https_server().GetURL(origin, path)));
   }
 
  protected:
@@ -132,7 +134,7 @@ class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
 };
 
 IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
-  NavigateToURLUntilLoadStop("a.test", "/simple.html");
+  NavigateToURL("a.test", "/simple.html");
   const auto pattern = ContentSettingsPattern::FromString("*://a.test/*");
   auto* webcompat_exceptions_service =
       webcompat::WebcompatExceptionsService::CreateInstance(

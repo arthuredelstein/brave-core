@@ -87,7 +87,7 @@ class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
     base::PathService::Get(brave::DIR_TEST_DATA, &test_data_dir);
     https_server_.SetSSLConfig(net::EmbeddedTestServer::CERT_TEST_NAMES);
     https_server_.ServeFilesFromDirectory(test_data_dir);
-    https_server_.AddDefaultHandlers(GetChromeTestDataDir());
+    https_server_.AddDefaultHandlers(GetTestDataDir());
 
     ASSERT_TRUE(https_server_.Start());
 
@@ -103,6 +103,10 @@ class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
     // The production code only allows known ports (80 for http and 443 for
     // https), but the test server runs on a random port.
     command_line->AppendSwitch(switches::kIgnoreGooglePortNumbers);
+  }
+
+  base::FilePath GetTestDataDir() {
+    return base::FilePath(FILE_PATH_LITERAL("net/data/url_request_unittest"));
   }
 
   const net::EmbeddedTestServer& https_server() { return https_server_; }

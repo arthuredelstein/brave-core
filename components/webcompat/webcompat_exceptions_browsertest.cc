@@ -17,7 +17,7 @@
 #include "brave/components/webcompat/webcompat_exceptions_service.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/browser/ui/browser.h"
+#include "chrome/test/base/chrome_test_utils.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/content_settings/core/common/content_settings_types.h"
@@ -107,11 +107,8 @@ class WebcompatExceptionsBrowserTest : public InProcessBrowserTest {
   const GURL& url() { return url_; }
 
   HostContentSettingsMap* content_settings() {
-    return HostContentSettingsMapFactory::GetForProfile(browser()->profile());
-  }
-
-  content::WebContents* contents() {
-    return browser()->tab_strip_model()->GetActiveWebContents();
+    return HostContentSettingsMapFactory::GetForProfile(
+        chrome_test_utils::GetProfile(this));
   }
 
   void NavigateToURLUntilLoadStop(const std::string& origin,

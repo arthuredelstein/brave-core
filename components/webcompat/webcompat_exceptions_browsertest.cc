@@ -68,7 +68,7 @@ constexpr TestCase kTestCases[] = {
     {"websockets-pool", BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL},
 };
 
-class WebcompatExceptionsBrowserTest : public InProcessBrowserTest {
+class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
  public:
   WebcompatExceptionsBrowserTest()
       : https_server_(net::EmbeddedTestServer::TYPE_HTTPS) {
@@ -77,7 +77,7 @@ class WebcompatExceptionsBrowserTest : public InProcessBrowserTest {
   }
 
   void SetUpOnMainThread() override {
-    InProcessBrowserTest::SetUpOnMainThread();
+    PlatformBrowserTest::SetUpOnMainThread();
 
     host_resolver()->AddRule("*", "127.0.0.1");
 
@@ -94,6 +94,7 @@ class WebcompatExceptionsBrowserTest : public InProcessBrowserTest {
   }
 
   void SetUpCommandLine(base::CommandLine* command_line) override {
+    PlatformBrowserTest::SetUpCommandLine(command_line);
     // Since the HTTPS server only serves a valid cert for localhost,
     // this is needed to load pages from "www.google.*" without an interstitial.
     command_line->AppendSwitch(switches::kIgnoreCertificateErrors);

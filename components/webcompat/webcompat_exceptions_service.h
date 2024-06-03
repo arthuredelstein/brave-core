@@ -36,20 +36,19 @@ class WebcompatExceptionsService
                         const std::string& manifest) override;
 
   ~WebcompatExceptionsService() override;
-  void SetIsReadyForTesting() { is_ready_ = true; }
   void OnJsonFileDataReady(const std::string& contents);
   static WebcompatExceptionsService* CreateInstance(
       brave_component_updater::LocalDataFilesService* local_data_files_service);
   static WebcompatExceptionsService* GetInstance();
   const std::vector<ContentSettingsPattern>& GetPatterns(
       ContentSettingsType webcompat_type);
+  void AddRule(ContentSettingsType webcompat_type,
+               ContentSettingsPattern pattern);
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
   void AddRules(const base::Value::List& include_strings,
                 const base::Value::Dict& rule_dict);
-  std::set<std::string> exceptional_domains_;
-  bool is_ready_ = false;
   std::map<ContentSettingsType, std::vector<ContentSettingsPattern>>
       patterns_by_webcompat_type_;
   base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};

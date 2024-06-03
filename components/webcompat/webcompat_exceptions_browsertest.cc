@@ -8,6 +8,7 @@
 
 #include "base/feature_list.h"
 #include "base/path_service.h"
+#include "base/test/scoped_feature_list.h"
 #include "brave/browser/brave_browser_process.h"
 #include "brave/components/brave_shields/content/browser/brave_shields_util.h"
 #include "brave/components/brave_shields/core/common/brave_shield_constants.h"

@@ -126,14 +126,14 @@ IN_PROC_BROWSER_TEST_F(BraveDeviceMemoryFarblingBrowserTest,
   // Farbling level: default, but webcompat exception enabled
   SetFingerprintingDefault(domain1);
   brave_shields::SetWebcompatFeatureSetting(
-    content_settings(), ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY,
-    ControlType::ALLOW, url1, nullptr);
+      content_settings(), ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY,
+      ControlType::ALLOW, url1, nullptr);
   ASSERT_TRUE(ui_test_utils::NavigateToURL(browser(), url1));
   EXPECT_EQ(true_value, EvalJs(contents(), kDeviceMemoryScript));
   SetFingerprintingDefault(domain2);
   brave_shields::SetWebcompatFeatureSetting(
-    content_settings(), ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY,
-    ControlType::ALLOW, url2, nullptr);
+      content_settings(), ContentSettingsType::BRAVE_WEBCOMPAT_DEVICE_MEMORY,
+      ControlType::ALLOW, url2, nullptr);
   ASSERT_TRUE(ui_test_utils::NavigateToURL(browser(), url2));
   EXPECT_EQ(true_value, EvalJs(contents(), kDeviceMemoryScript));
 }

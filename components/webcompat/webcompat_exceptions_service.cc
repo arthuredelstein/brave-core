@@ -85,6 +85,14 @@ void WebcompatExceptionsService::LoadWebcompatExceptions(
                      weak_factory_.GetWeakPtr()));
 }
 
+void WebcompatExceptionsService::AddRule(ContentSettingsType webcompat_type,
+                                         ContentSettingsPattern pattern) {
+  if (!patterns_by_webcompat_type_.contains(webcompat_type)) {
+    patterns_by_webcompat_type_[webcompat_type] = kEmptyPatternVector;
+  }
+  patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
+}
+
 void WebcompatExceptionsService::AddRules(
     const base::Value::List& include_strings,
     const base::Value::Dict& rule_dict) {
@@ -97,10 +105,7 @@ void WebcompatExceptionsService::AddRules(
         const auto it = kWebcompatNamesToType.find(exception.GetString());
         if (it != kWebcompatNamesToType.end()) {
           const auto webcompat_type = it->second;
-          if (!patterns_by_webcompat_type_.contains(webcompat_type)) {
-            patterns_by_webcompat_type_[webcompat_type] = kEmptyPatternVector;
-          }
-          patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
+          AddRule(webcompat_type, pattern);
         }
       }
     }
@@ -153,7 +158,6 @@ void WebcompatExceptionsService::OnJsonFileDataReady(
                   << WEBCOMPAT_EXCEPTIONS_JSON_FILE;
     }
   }
-  is_ready_ = true;
 }
 
 // implementation of LocalDataFilesObserver
@@ -164,9 +168,7 @@ void WebcompatExceptionsService::OnComponentReady(
   LoadWebcompatExceptions(install_dir);
 }
 
-WebcompatExceptionsService::~WebcompatExceptionsService() {
-  exceptional_domains_.clear();
-}
+WebcompatExceptionsService::~WebcompatExceptionsService() {}
 
 // static
 WebcompatExceptionsService* WebcompatExceptionsService::CreateInstance(

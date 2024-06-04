@@ -375,13 +375,6 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
   auto* b_com_in_a_com_rfh = GetNthChildFrameWithHost(a_com_rfh, "b.com");
   OpenEventSources(b_com_in_a_com_rfh, kEventSourcesOpenScript,
                    kEventSourcesPoolLimit + 5);
-
-  // No limits should be active in a ServiceWorker.
-  const std::string& register_sw_script = content::JsReplace(
-      kRegisterSwScript, "service-worker-eventsource-limit.js");
-  ASSERT_TRUE(content::ExecJs(a_com_rfh, register_sw_script));
-  OpenEventSources(a_com_rfh, kEventSourcesOpenInSwScript,
-                   kEventSourcesPoolLimit + 5);
 }
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)

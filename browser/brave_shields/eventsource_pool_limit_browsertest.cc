@@ -351,6 +351,8 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
 
 IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
                        PoolIsNotLimitedWithWebcompatException) {
+  const GURL url(https_server_.GetURL("a.com", "/ephemeral_storage.html"));
+
   // Enable shields.
   brave_shields::SetBraveShieldsEnabled(content_settings(), true, url);
 
@@ -360,8 +362,6 @@ IN_PROC_BROWSER_TEST_F(EventSourcePoolLimitBrowserTest,
       ContentSettingsType::BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL,
       brave_shields::ControlType::ALLOW, https_server_.GetURL("a.com", "/"),
       nullptr);
-
-  const GURL url(https_server_.GetURL("a.com", "/ephemeral_storage.html"));
 
   auto* a_com_rfh = ui_test_utils::NavigateToURLWithDisposition(
       browser(), url, WindowOpenDisposition::NEW_FOREGROUND_TAB,

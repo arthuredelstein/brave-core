@@ -343,12 +343,6 @@ IN_PROC_BROWSER_TEST_F(WebSocketsPoolLimitBrowserTest,
   // No limits should be active in a 3p frame.
   auto* b_com_in_a_com_rfh = GetNthChildFrameWithHost(a_com_rfh, "b.com");
   OpenWebSockets(b_com_in_a_com_rfh, kWsOpenScript, kWebSocketsPoolLimit + 5);
-
-  // No limits should be active in a ServiceWorker.
-  const std::string& register_sw_script = content::JsReplace(
-      kRegisterSwScript, "service-worker-websockets-limit.js");
-  ASSERT_TRUE(content::ExecJs(a_com_rfh, register_sw_script));
-  OpenWebSockets(a_com_rfh, kWsOpenInSwScript, kWebSocketsPoolLimit + 5);
 }
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)

@@ -5,6 +5,7 @@
 
 module brave_shields.mojom;
 
+import "components/content_settings/core/common/content_settings_types.mojom";
 import "url/mojom/url.mojom";
 import "ui/gfx/geometry/mojom/geometry.mojom";
 
@@ -48,6 +49,7 @@ interface DataHandler {
   UpdateFavicon();
   AllowScriptsOnce(array<string> origins);
   BlockAllowedScripts(array<string> origins);
+  SetWebcompat(content_settings.mojom.ContentSettingsType webcompat_settings_type, bool disable);
 };
 
 struct SiteBlockInfo {

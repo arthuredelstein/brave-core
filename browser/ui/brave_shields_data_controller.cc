@@ -474,6 +474,17 @@ void BraveShieldsDataController::HandleItemAllowedOnce(
   }
 }
 
+void BraveShieldsDataController::SetWebcompat(
+    ContentSettingsType webcompat_settings_type,
+    bool disabled) {
+  DLOG(INFO) << "BraveShieldsDataController::SetWebcompat " << webcompat_settings_type << ", " << disabled;
+  ControlType control_type = disabled ? ControlType::ALLOW : ControlType::BLOCK;
+  brave_shields::SetWebcompatFeatureSetting(
+      GetHostContentSettingsMap(web_contents()), webcompat_settings_type, control_type,
+      GetCurrentSiteURL(), g_browser_process->local_state());
+  ReloadWebContents();
+}
+
 WEB_CONTENTS_USER_DATA_KEY_IMPL(BraveShieldsDataController);
 
 }  // namespace brave_shields

@@ -150,6 +150,16 @@ void ShieldsPanelDataHandler::SetForgetFirstPartyStorageEnabled(
       is_enabled);
 }
 
+void ShieldsPanelDataHandler::SetWebcompat(
+    ContentSettingsType webcompat_settings_type,
+    bool disable) {
+  if (!active_shields_data_controller_) {
+    return;
+  }
+
+  active_shields_data_controller_->SetWebcompat(webcompat_settings_type, disable);
+}
+
 void ShieldsPanelDataHandler::OpenWebCompatWindow() {
   if (!active_shields_data_controller_)
     return;

@@ -5,7 +5,7 @@
 import * as React from 'react'
 
 import MainPanel from './components/main-panel'
-import TreeList from './components/tree-list'
+import TreeList, { ToggleList } from './components/tree-list'
 import {
   ViewType
 } from './state/component_types'
@@ -44,6 +44,13 @@ function Container () {
           totalAllowedTitle={getLocale('braveShieldsAllowedScriptsLabel')}
           totalBlockedTitle={getLocale('braveShieldsBlockedScriptsLabel')}
         />
+    }
+
+    if (viewType === ViewType.FingerprintList) {
+      treeListElement = <ToggleList
+          fingerprintsMap={ new Map<string, boolean>() /*siteBlockInfo?.fingerprintsList*/ }
+          totalBlockedTitle={'Fingerprinting protections'}
+      />
     }
   }
 

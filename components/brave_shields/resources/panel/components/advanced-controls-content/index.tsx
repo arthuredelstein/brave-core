@@ -111,6 +111,7 @@ function AdvancedControlsContent () {
 
   const adsListCount = siteBlockInfo?.adsList.length ?? 0
   const jsListCount = siteBlockInfo?.blockedJsList.length ?? 0
+  const fingerprintsListCount = siteBlockInfo?.fingerprintsList.length ?? 0
   const isHttpsByDefaultEnabled = loadTimeData.getBoolean('isHttpsByDefaultEnabled')
   const showStrictFingerprintingMode = loadTimeData.getBoolean('showStrictFingerprintingMode')
   const isTorProfile = loadTimeData.getBoolean('isTorProfile')
@@ -209,6 +210,14 @@ function AdvancedControlsContent () {
               disabled={siteBlockInfo?.isBraveShieldsManaged}
             />
             </label>}
+            <S.CountButton
+              title={fingerprintsListCount.toString()}
+              aria-label={getLocale('braveShieldsFingerprintingBlockedStd')}
+              onClick={() => setViewType?.(ViewType.FingerprintList)}
+              disabled={false /*fingerprintsListCount <= 0*/}
+            >
+              {fingerprintsListCount > 99 ? '99+' : fingerprintsListCount}
+            </S.CountButton>
           </div>
         </S.ControlGroup>
         <S.ControlGroup>

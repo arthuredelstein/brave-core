@@ -80,6 +80,8 @@ class BraveShieldsDataController
   void SetForgetFirstPartyStorageEnabled(bool is_enabled);
   void AllowScriptsOnce(const std::vector<std::string>& origins);
   void BlockAllowedScripts(const std::vector<std::string>& origins);
+  void SetWebcompat(ContentSettingsType webcompat_settings_type,
+                    bool disabled);
 
   void AddObserver(Observer* obs);
   void RemoveObserver(Observer* obs);

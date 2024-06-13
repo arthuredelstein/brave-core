@@ -5,6 +5,10 @@
 
 #include "components/content_settings/core/browser/content_settings_utils.h"
 
+#include <iostream>
+
+#include "url/gurl.h"
+
 #define GetRendererContentSettingRules \
   GetRendererContentSettingRules_ChromiumImpl
 

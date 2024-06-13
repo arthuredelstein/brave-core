@@ -70,7 +70,7 @@
     return ContentSettingsType::BRAVE_SHIELDS;
 
 #define kInstalledWebappProvider         \
-  kRemoteList:                           \
+  kRemoteListProvider:                   \
   return SiteSettingSource::kRemoteList; \
   case content_settings::ProviderType::kInstalledWebappProvider
 

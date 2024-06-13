@@ -10,6 +10,9 @@
 namespace webcompat {
 namespace features {
 
+// This flag enables the webcompat exceptions service, which allows
+// a remote list to control site-specific exceptions to Brave features
+// when required for web compatibility.
 BASE_FEATURE(kBraveWebcompatExceptionsService,
              "BraveWebcompatExceptionsService",
              base::FEATURE_DISABLED_BY_DEFAULT);

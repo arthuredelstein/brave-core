@@ -853,6 +853,8 @@ void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
                                 ControlType type,
                                 const GURL& url,
                                 PrefService* local_state) {
+  DCHECK(map);
+
   if (!url.SchemeIsHTTPOrHTTPS() && !url.is_empty()) {
     return;
   }

@@ -81,9 +81,8 @@ class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
 
     host_resolver()->AddRule("*", "127.0.0.1");
 
-    brave::RegisterPathProvider();
-    base::FilePath test_data_dir;
-    base::PathService::Get(brave::DIR_TEST_DATA, &test_data_dir);
+    base::FilePath test_data_dir =
+        base::PathService::CheckedGet(brave::DIR_TEST_DATA);
     https_server_.SetSSLConfig(net::EmbeddedTestServer::CERT_TEST_NAMES);
     https_server_.ServeFilesFromDirectory(test_data_dir);
     https_server_.AddDefaultHandlers(GetTestDataDir());
@@ -142,12 +141,17 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
   auto* map = content_settings();
   for (const auto& test_case : kTestCases) {
     // Check the default setting
+    std::cout << "Calling GetContentSetting..." << std::endl;
     const auto observed_setting_default =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting_default, CONTENT_SETTING_ASK);
+
+    // Add a rule and then reload the page.
     webcompat_exceptions_service->AddRule(pattern, test_case.name);
+    NavigateToURL("a.test", "/simple.html");
 
     // Check the remote setting gets used
+    std::cout << "Calling GetContentSetting..." << std::endl;
     const auto observed_setting_remote =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting_remote, CONTENT_SETTING_ALLOW);

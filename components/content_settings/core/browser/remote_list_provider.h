@@ -12,6 +12,9 @@
 
 namespace content_settings {
 
+// RemoteListProvider provides webcompat exceptions rules from the remote list
+// to the HostContentSettingsMap. This allows remote rules to be overridden
+// by user-defined rules.
 class RemoteListProvider : public ProviderInterface {
  public:
   RemoteListProvider();

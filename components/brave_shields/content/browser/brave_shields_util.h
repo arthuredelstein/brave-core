@@ -143,6 +143,7 @@ void SetForgetFirstPartyStorageEnabled(HostContentSettingsMap* map,
 bool GetForgetFirstPartyStorageEnabled(HostContentSettingsMap* map,
                                        const GURL& url);
 
+// Enables a webcompat exception for a specific URL.
 void SetWebcompatFeatureSetting(HostContentSettingsMap* map,
                                 ContentSettingsType webcompat_settings_type,
                                 ControlType type,

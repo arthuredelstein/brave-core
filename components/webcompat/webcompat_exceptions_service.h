@@ -43,11 +43,11 @@ class WebcompatExceptionsService
   static WebcompatExceptionsService* GetInstance();
   const std::vector<ContentSettingsPattern>& GetPatterns(
       ContentSettingsType webcompat_type);
-  bool AddRule(const ContentSettingsPattern& pattern,
-               const std::string& exception_string);
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
+  bool AddRule(const ContentSettingsPattern& pattern,
+               const std::string& exception_string);
   void AddRules(const base::Value::List& include_strings,
                 const base::Value::Dict& rule_dict);
   std::map<ContentSettingsType, std::vector<ContentSettingsPattern>>

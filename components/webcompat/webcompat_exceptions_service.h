@@ -24,6 +24,9 @@ namespace webcompat {
 
 using content_settings::mojom::ContentSettingsType;
 
+// The WebcompatExceptionsService loads a list of site-specific webcompat
+// exceptions from the Brave Local Data component and provides these exceptions
+// as needed.
 class WebcompatExceptionsService
     : public brave_component_updater::LocalDataFilesObserver {
  public:

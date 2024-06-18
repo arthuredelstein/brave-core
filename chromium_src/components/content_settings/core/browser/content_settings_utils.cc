@@ -5,6 +5,10 @@
 
 #include "components/content_settings/core/browser/content_settings_utils.h"
 
+#include <iostream>
+
+#include "url/gurl.h"
+
 #define GetRendererContentSettingRules \
   GetRendererContentSettingRules_ChromiumImpl
 
@@ -51,6 +55,11 @@ void GetRendererContentSettingRules(const HostContentSettingsMap* map,
            static_cast<int32_t>(webcompat_settings_type) + 1)) {
     rules->webcompat_rules[webcompat_settings_type] =
         map->GetSettingsForOneType(webcompat_settings_type);
+  }
+  std::cout << "rules->webcompat_rules[ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO].size(): " << rules->webcompat_rules[ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO].size() << std::endl;
+  for (unsigned long i = 0; i < rules->webcompat_rules[ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO].size(); ++i) {
+    std::cout << "content setting: " << rules->webcompat_rules[ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO][i].setting_value << std::endl;
+    std::cout << "pattern string: " << rules->webcompat_rules[ContentSettingsType::BRAVE_WEBCOMPAT_AUDIO][i].primary_pattern.ToString() << std::endl;
   }
 }
 

@@ -81,9 +81,8 @@ class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
 
     host_resolver()->AddRule("*", "127.0.0.1");
 
-    brave::RegisterPathProvider();
-    base::FilePath test_data_dir;
-    base::PathService::Get(brave::DIR_TEST_DATA, &test_data_dir);
+    base::FilePath test_data_dir =
+        base::PathService::CheckedGet(brave::DIR_TEST_DATA);
     https_server_.SetSSLConfig(net::EmbeddedTestServer::CERT_TEST_NAMES);
     https_server_.ServeFilesFromDirectory(test_data_dir);
     https_server_.AddDefaultHandlers(GetTestDataDir());

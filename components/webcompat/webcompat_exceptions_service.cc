@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include <iostream>
+
 #include "base/containers/contains.h"
 #include "base/containers/fixed_flat_map.h"
 #include "base/files/file_path.h"
@@ -94,6 +96,8 @@ bool WebcompatExceptionsService::AddRule(const ContentSettingsPattern& pattern,
       patterns_by_webcompat_type_[webcompat_type] = kEmptyPatternVector;
     }
     patterns_by_webcompat_type_[webcompat_type].push_back(pattern);
+    std::cout << "Rule added: " << exception_string << std::endl;
+    std::cout << "patterns_by_webcompat_type_.size(): " << patterns_by_webcompat_type_.size() << std::endl;
     return true;
   } else {
     return false;
@@ -124,7 +128,9 @@ void WebcompatExceptionsService::AddRules(
 
 const std::vector<ContentSettingsPattern>&
 WebcompatExceptionsService::GetPatterns(ContentSettingsType webcompat_type) {
+  //std::cout << "GetPatterns called: " << webcompat_type << std::endl;
   if (patterns_by_webcompat_type_.contains(webcompat_type)) {
+    std::cout << "yes, contains " << webcompat_type << ", size: " << patterns_by_webcompat_type_.at(webcompat_type).size() << std::endl;
     return patterns_by_webcompat_type_.at(webcompat_type);
   } else {
     return kEmptyPatternVector;

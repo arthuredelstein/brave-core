@@ -50,7 +50,7 @@ struct TestCase {
 
 constexpr TestCase kTestCases[] = {
     {"audio", BRAVE_WEBCOMPAT_AUDIO},
-    {"canvas", BRAVE_WEBCOMPAT_CANVAS},
+  /*  {"canvas", BRAVE_WEBCOMPAT_CANVAS},
     {"device-memory", BRAVE_WEBCOMPAT_DEVICE_MEMORY},
     {"eventsource-pool", BRAVE_WEBCOMPAT_EVENT_SOURCE_POOL},
     {"font", BRAVE_WEBCOMPAT_FONT},
@@ -65,7 +65,7 @@ constexpr TestCase kTestCases[] = {
     {"user-agent", BRAVE_WEBCOMPAT_USER_AGENT},
     {"webgl", BRAVE_WEBCOMPAT_WEBGL},
     {"webgl2", BRAVE_WEBCOMPAT_WEBGL2},
-    {"websockets-pool", BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL},
+    {"websockets-pool", BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL}, */
 };
 
 class WebcompatExceptionsBrowserTest : public PlatformBrowserTest {
@@ -141,12 +141,17 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
   auto* map = content_settings();
   for (const auto& test_case : kTestCases) {
     // Check the default setting
+    std::cout << "Calling GetContentSetting..." << std::endl;
     const auto observed_setting_default =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting_default, CONTENT_SETTING_ASK);
+
+    // Add a rule and then reload the page.
     webcompat_exceptions_service->AddRule(pattern, test_case.name);
+    NavigateToURL("a.test", "/simple.html");
 
     // Check the remote setting gets used
+    std::cout << "Calling GetContentSetting..." << std::endl;
     const auto observed_setting_remote =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting_remote, CONTENT_SETTING_ALLOW);

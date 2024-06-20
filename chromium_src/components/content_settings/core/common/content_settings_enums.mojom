@@ -8,5 +8,5 @@ module content_settings.mojom;
 
 [BraveExtend]
 enum ProviderType {
-  kRemoteList,
+  kRemoteListProvider,
 };

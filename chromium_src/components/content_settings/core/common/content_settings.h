@@ -13,7 +13,7 @@
 #define kTpcdGrant kTpcdGrant, kRemoteList
 
 #define kNotificationAndroidProvider \
-  kRemoteList:                       \
+  kRemoteListProvider:               \
   return SettingSource::kRemoteList; \
   case ProviderType::kNotificationAndroidProvider
 

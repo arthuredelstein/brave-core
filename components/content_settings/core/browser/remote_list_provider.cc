@@ -50,10 +50,6 @@ std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     return nullptr;
   }
   const auto& pattern_vector = svc->GetPatterns(content_type);
-  if (pattern_vector.size() > 0) {
-    DLOG(INFO) << "content_type: " << content_type << ", pattern vector size:" << pattern_vector.size() << std::endl;
-    DLOG(INFO) << "pattern_vector[0].Matches: " << pattern_vector[0].Matches(GURL("https://a.test/"));
-  }
   return std::make_unique<RemoteListIterator>(pattern_vector);
 }
 

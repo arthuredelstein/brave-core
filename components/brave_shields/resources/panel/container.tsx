@@ -18,7 +18,7 @@ const Box = styled.div`
 `
 
 function Container () {
-  const { siteBlockInfo, viewType } = React.useContext(DataContext)
+  const { siteBlockInfo, viewType, siteSettings } = React.useContext(DataContext)
   const shouldShowDetailView = viewType !== ViewType.Main && siteBlockInfo
 
   let treeListElement = null
@@ -48,7 +48,7 @@ function Container () {
 
     if (viewType === ViewType.FingerprintList) {
       treeListElement = <ToggleList
-          fingerprintsMap={ new Map<string, boolean>() /*siteBlockInfo?.fingerprintsList*/ }
+          webcompatSettings={ siteSettings?.webcompatSettings }
           totalBlockedTitle={'Fingerprinting protections'}
       />
     }

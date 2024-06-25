@@ -28,14 +28,15 @@ interface Props {
 
 function generateWebcompatEntries () : [string, Number][] {
   const names = Object.keys(ContentSettingsType)
-  let results : [string, Number][] = []
-    for (const name of names) {
+  let raw : [string, Number][] = []
+  for (const name of names) {
     const value = ContentSettingsType[name]
     if (value > ContentSettingsType["BRAVE_WEBCOMPAT_NONE"] && value < ContentSettingsType["BRAVE_WEBCOMPAT_ALL"]) {
-      results.push([name, value]);
+      const displayName = name.replace("BRAVE_WEBCOMPAT_", "").replaceAll("_", " ").toLowerCase();
+      raw.push([displayName, value]);
     }
   }
-  return results;
+  return raw;
   //const filteredKeys = entries.filter(([key, value]) => typeof value === 'ContentSettingsType' && value > ContentSettingsType.BRAVE_WEBCOMPAT_NONE && value < ContentSettingsType.BRAVE_WEBCOMPAT_ALL);
   //return filteredKeys;//.map(
     //([key, value]) => [key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`).replace(/^k-/,""), value]);
@@ -175,14 +176,14 @@ function TreeList (props: Props) {
   )
 }
 
-export function ToggleList (props: {fingerprintsMap: Map<string, boolean>, totalBlockedTitle: string}) {
+export function ToggleList (props: {webcompatSettings: Map<ContentSettingsType, boolean>, totalBlockedTitle: string}) {
  const handleWebcompatToggle = (feature: ContentSettingsType, isEnabled: boolean) => {
-  getPanelBrowserAPI().dataHandler.setWebcompat(feature, isEnabled);
+  getPanelBrowserAPI().dataHandler.setWebcompat(feature, !isEnabled);
  };
   const entries = generateWebcompatEntries();
   return (<SidePanel>
     <ScriptsInfo>
-      <span>{props.fingerprintsMap.size ?? 0}</span>
+      <span>{props.webcompatSettings.size ?? 0}</span>
       <span>{props.totalBlockedTitle}</span>
     </ScriptsInfo>
       <ToggleListContainer>
@@ -191,7 +192,7 @@ export function ToggleList (props: {fingerprintsMap: Map<string, boolean>, total
        <span>{`Protect ${name}`}</span>
        <Toggle
          onChange={(isEnabled: boolean) => handleWebcompatToggle(value, isEnabled)}
-         isOn={true}
+         isOn={props.webcompatSettings[value] !== true}
          size='sm'
          accessibleLabel={name}
          disabled={false}

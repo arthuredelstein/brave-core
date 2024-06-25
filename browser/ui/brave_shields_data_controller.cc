@@ -477,12 +477,29 @@ void BraveShieldsDataController::HandleItemAllowedOnce(
 void BraveShieldsDataController::SetWebcompat(
     ContentSettingsType webcompat_settings_type,
     bool disabled) {
-  DLOG(INFO) << "BraveShieldsDataController::SetWebcompat " << webcompat_settings_type << ", " << disabled;
+  DLOG(INFO) << "BraveShieldsDataController::SetWebcompat "
+             << webcompat_settings_type << ", " << disabled;
   ControlType control_type = disabled ? ControlType::ALLOW : ControlType::BLOCK;
   brave_shields::SetWebcompatFeatureSetting(
-      GetHostContentSettingsMap(web_contents()), webcompat_settings_type, control_type,
-      GetCurrentSiteURL(), g_browser_process->local_state());
+      GetHostContentSettingsMap(web_contents()), webcompat_settings_type,
+      control_type, GetCurrentSiteURL(), g_browser_process->local_state());
   ReloadWebContents();
+}
+
+base::flat_map<ContentSettingsType, bool>
+BraveShieldsDataController::GetWebcompatSettings() {
+  DLOG(INFO) << "BraveShieldsDataController::GetWebcompatSettings";
+  auto* map = GetHostContentSettingsMap(web_contents());
+  base::flat_map<ContentSettingsType, bool> result;
+  for (auto webcompat_settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
+       webcompat_settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
+       webcompat_settings_type = static_cast<ContentSettingsType>(
+           static_cast<int32_t>(webcompat_settings_type) + 1)) {
+    const auto setting = brave_shields::GetWebcompatFeatureSetting(
+        map, webcompat_settings_type, GetCurrentSiteURL());
+    result[webcompat_settings_type] = setting == ControlType::ALLOW;
+  }
+  return result;
 }
 
 WEB_CONTENTS_USER_DATA_KEY_IMPL(BraveShieldsDataController);

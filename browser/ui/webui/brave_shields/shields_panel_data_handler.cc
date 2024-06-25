@@ -75,6 +75,8 @@ void ShieldsPanelDataHandler::GetSiteSettings(
       active_shields_data_controller_->GetNoScriptEnabled();
   settings.is_forget_first_party_storage_enabled =
       active_shields_data_controller_->GetForgetFirstPartyStorageEnabled();
+  settings.webcompat_settings =
+      active_shields_data_controller_->GetWebcompatSettings();
 
   std::move(callback).Run(settings.Clone());
 }
@@ -157,7 +159,8 @@ void ShieldsPanelDataHandler::SetWebcompat(
     return;
   }
 
-  active_shields_data_controller_->SetWebcompat(webcompat_settings_type, disable);
+  active_shields_data_controller_->SetWebcompat(webcompat_settings_type,
+                                                disable);
 }
 
 void ShieldsPanelDataHandler::OpenWebCompatWindow() {

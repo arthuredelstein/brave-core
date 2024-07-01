@@ -183,7 +183,6 @@ export function ToggleList (props: {webcompatSettings: Map<ContentSettingsType, 
   const entries = generateWebcompatEntries();
   return (<SidePanel>
     <ScriptsInfo>
-      <span>{props.webcompatSettings.size ?? 0}</span>
       <span>{props.totalBlockedTitle}</span>
     </ScriptsInfo>
       <ToggleListContainer>

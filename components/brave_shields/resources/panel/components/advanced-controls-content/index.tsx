@@ -210,6 +210,7 @@ function AdvancedControlsContent () {
               disabled={siteBlockInfo?.isBraveShieldsManaged}
             />
             </label>}
+            </div>
             <S.CountButton
               title={fingerprintsListCount.toString()}
               aria-label={getLocale('braveShieldsFingerprintingBlockedStd')}
@@ -218,7 +219,6 @@ function AdvancedControlsContent () {
             >
               {fingerprintsListCount > 99 ? '99+' : fingerprintsListCount}
             </S.CountButton>
-          </div>
         </S.ControlGroup>
         <S.ControlGroup>
           <div className="col-2">

@@ -189,7 +189,7 @@ export function ToggleList (props: {webcompatSettings: Map<ContentSettingsType, 
       <ToggleListContainer>
 {entries.map(([name, value] : [string, number]) => (
      <label>
-       <span>{`Protect ${name}`}</span>
+       <span>{name}</span>
        <Toggle
          onChange={(isEnabled: boolean) => handleWebcompatToggle(value, isEnabled)}
          isOn={props.webcompatSettings[value] !== true}

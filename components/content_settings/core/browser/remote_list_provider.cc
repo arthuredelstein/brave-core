@@ -38,7 +38,16 @@ class RemoteListIterator : public RuleIterator {
 
 }  // namespace
 
-RemoteListProvider::RemoteListProvider() {}
+RemoteListProvider::RemoteListProvider() {
+  auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
+  if (svc) {
+    svc->AddObserver(this);
+  }
+}
+
+void RemoteListProvider::OnRulesUpdated() {
+  DLOG(INFO) << "OnRulesUpdated()!";
+}
 
 std::unique_ptr<RuleIterator> RemoteListProvider::GetRuleIterator(
     ContentSettingsType content_type,

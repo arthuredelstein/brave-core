@@ -26,6 +26,12 @@ using content_settings::mojom::ContentSettingsType;
 
 using PatternsByWebcompatTypeMap = base::flat_map<ContentSettingsType, std::vector<ContentSettingsPattern>>;
 
+class WebcompatExceptionsObserver {
+  public:
+    virtual void OnRulesUpdated() = 0;
+    virtual ~WebcompatExceptionsObserver() = default;
+};
+
 // The WebcompatExceptionsService loads a list of site-specific webcompat
 // exceptions from the Brave Local Data component and provides these exceptions
 // as needed. GetPatterns can be called by any thread, because
@@ -50,6 +56,7 @@ class WebcompatExceptionsService
   std::vector<ContentSettingsPattern> GetPatterns(
       ContentSettingsType webcompat_type);
   void SetRulesForTesting(PatternsByWebcompatTypeMap patterns_by_webcompat_type);
+  void AddObserver(WebcompatExceptionsObserver* observer);
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
@@ -58,9 +65,8 @@ class WebcompatExceptionsService
   void SetRules(PatternsByWebcompatTypeMap patterns_by_webcompat_type);
   base::Lock lock_;
   PatternsByWebcompatTypeMap patterns_by_webcompat_type_ GUARDED_BY(lock_);
-  base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
-};
-
+  std::vector<WebcompatExceptionsObserver*> observers_;
+  base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};};
 }  // namespace webcompat
 
 #endif  // BRAVE_COMPONENTS_WEBCOMPAT_CONTENT_BROWSER_WEBCOMPAT_EXCEPTIONS_SERVICE_H_

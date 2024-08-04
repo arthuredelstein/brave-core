@@ -186,6 +186,10 @@ void WebcompatExceptionsService::SetRules(
   PatternsByWebcompatTypeMap patterns_by_webcompat_type) {
   base::AutoLock lock(lock_);
   patterns_by_webcompat_type_ = std::move(patterns_by_webcompat_type);
+  DLOG(INFO) << "SetRules()";
+  for (const auto observer : observers_) {
+    observer->OnRulesUpdated();
+  }
 }
 
 void WebcompatExceptionsService::SetRulesForTesting(
@@ -199,6 +203,11 @@ void WebcompatExceptionsService::OnComponentReady(
     const base::FilePath& install_dir,
     const std::string& manifest) {
   LoadWebcompatExceptions(install_dir);
+}
+
+void WebcompatExceptionsService::AddObserver(
+  WebcompatExceptionsObserver* observer) {
+  observers_.push_back(observer);
 }
 
 WebcompatExceptionsService::~WebcompatExceptionsService() {}

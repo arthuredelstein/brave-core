@@ -57,6 +57,47 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 
 #undef IsMorePermissive
 
+void HostContentSettingsMap::RemoveRedundantWebcompatSettingsRules() {
+  const auto& remote_list_provider =
+      content_settings_providers_[ProviderType::kRemoteListProvider];
+  for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
+       settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
+       settings_type = static_cast<ContentSettingsType>(
+           static_cast<int32_t>(settings_type) + 1)) {
+    std::unique_ptr<content_settings::RuleIterator> rule_iterator =
+        remote_list_provider->GetRuleIterator(
+            settings_type, false,
+            content_settings::PartitionKey::WipGetDefault());
+    if (rule_iterator) {
+      while (rule_iterator->HasNext()) {
+        std::unique_ptr<content_settings::Rule> remoteRule =
+            rule_iterator->Next();
+        if (remoteRule) {
+          std::unique_ptr<content_settings::Rule> prefRule =
+              pref_provider_->GetRule(
+                  remoteRule->primary_pattern.ToRepresentativeUrl(),
+                  remoteRule->secondary_pattern.ToRepresentativeUrl(),
+                  settings_type, false,
+                  content_settings::PartitionKey::WipGetDefault());
+          if (prefRule &&
+              content_settings::ValueToContentSetting(prefRule->value) ==
+                  content_settings::ValueToContentSetting(remoteRule->value)) {
+            // Pref rule matches the remote rule. Delete the redundant pref rule.
+            pref_provider_->SetWebsiteSetting(
+                prefRule->primary_pattern, prefRule->secondary_pattern,
+                settings_type, base::Value(), {},
+                content_settings::PartitionKey::WipGetDefault());
+          }
+        }
+      }
+    }
+  }
+}
+
+void HostContentSettingsMap::OnRulesUpdated() {
+  RemoveRedundantWebcompatSettingsRules();
+}
+
 #if !BUILDFLAG(IS_IOS)
 #undef PrefProvider
 #undef PolicyProvider

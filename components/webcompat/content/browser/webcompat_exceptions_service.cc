@@ -206,7 +206,7 @@ void WebcompatExceptionsService::OnComponentReady(
 }
 
 void WebcompatExceptionsService::AddObserver(
-  WebcompatExceptionsObserver* observer) {
+    WebcompatExceptionsObserver* observer) {
   observers_.push_back(observer);
 }
 

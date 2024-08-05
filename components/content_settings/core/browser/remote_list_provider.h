@@ -8,15 +8,16 @@
 
 #include <memory>
 
-#include "components/content_settings/core/browser/content_settings_observable_provider.h"
 #include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
+#include "components/content_settings/core/browser/content_settings_observable_provider.h"
 
 namespace content_settings {
 
 // RemoteListProvider provides webcompat exceptions rules from the remote list
 // to the HostContentSettingsMap. This allows remote rules to be overridden
 // by user-defined rules.
-class RemoteListProvider : public ObservableProvider, webcompat::WebcompatExceptionsObserver {
+class RemoteListProvider : public ObservableProvider,
+                           webcompat::WebcompatExceptionsObserver {
  public:
   RemoteListProvider();
   ~RemoteListProvider() override = default;

@@ -25,12 +25,14 @@
 scoped_refptr<RefcountedKeyedService>
 HostContentSettingsMapFactory::BuildServiceInstanceFor(
     content::BrowserContext* context) const {
-  scoped_refptr<RefcountedKeyedService> settings_map =
+  scoped_refptr<RefcountedKeyedService> settings_map_keyed_service =
       BuildServiceInstanceFor_ChromiumImpl(context);
   auto remote_list_provider_ptr =
       std::make_unique<content_settings::RemoteListProvider>();
-  static_cast<HostContentSettingsMap*>(settings_map.get())
-      ->RegisterProvider(ProviderType::kRemoteListProvider,
-                         std::move(remote_list_provider_ptr));
-  return settings_map;
+  auto* settings_map =
+      static_cast<HostContentSettingsMap*>(settings_map_keyed_service.get());
+  settings_map->RegisterProvider(ProviderType::kRemoteListProvider,
+                                 std::move(remote_list_provider_ptr));
+  settings_map->RemoveRedundantWebcompatSettingsRules();
+  return settings_map_keyed_service;
 }

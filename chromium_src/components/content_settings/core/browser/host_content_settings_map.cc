@@ -57,6 +57,40 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 
 #undef IsMorePermissive
 
+void HostContentSettingsMap::RemoveRedundantWebcompatSettingsRules() {
+  const auto& remote_list_provider =
+      content_settings_providers_[ProviderType::kRemoteListProvider];
+  for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
+       settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
+       settings_type = static_cast<ContentSettingsType>(
+           static_cast<int32_t>(settings_type) + 1)) {
+    std::unique_ptr<content_settings::RuleIterator> rule_iterator =
+        pref_provider_->GetRuleIterator(
+            settings_type, false,
+            content_settings::PartitionKey::WipGetDefault());
+    if (rule_iterator) {
+      while (rule_iterator->HasNext()) {
+        std::unique_ptr<content_settings::Rule> prefRule =
+            rule_iterator->Next();
+        std::unique_ptr<content_settings::Rule> remoteRule =
+            remote_list_provider->GetRule(
+                prefRule->primary_pattern.ToRepresentativeUrl(),
+                prefRule->secondary_pattern.ToRepresentativeUrl(),
+                settings_type, false,
+                content_settings::PartitionKey::WipGetDefault());
+        if (prefRule && remoteRule &&
+            content_settings::ValueToContentSetting(prefRule->value) ==
+                content_settings::ValueToContentSetting(remoteRule->value)) {
+          pref_provider_->SetWebsiteSetting(
+              prefRule->primary_pattern, prefRule->secondary_pattern,
+              settings_type, base::Value(), {},
+              content_settings::PartitionKey::WipGetDefault());
+        }
+      }
+    }
+  }
+}
+
 #if !BUILDFLAG(IS_IOS)
 #undef PrefProvider
 #undef PolicyProvider

@@ -8,7 +8,13 @@
 
 #define PREF_PROVIDER PREF_PROVIDER, REMOTE_LIST_PROVIDER
 
+#define FlushLossyWebsiteSettings()        \
+  RemoveRedundantWebcompatSettingsRules(); \
+  void FlushLossyWebsiteSettings()
+
 #include "src/components/content_settings/core/browser/host_content_settings_map.h"  // IWYU pragma: export
+
+#undef FlushLossyWebsiteSettings
 
 #undef PREF_PROVIDER
 

@@ -27,9 +27,9 @@ using content_settings::mojom::ContentSettingsType;
 using PatternsByWebcompatTypeMap = base::flat_map<ContentSettingsType, std::vector<ContentSettingsPattern>>;
 
 class WebcompatExceptionsObserver {
-  public:
-    virtual void OnRulesUpdated() = 0;
-    virtual ~WebcompatExceptionsObserver() = default;
+ public:
+  virtual void OnRulesUpdated() = 0;
+  virtual ~WebcompatExceptionsObserver() = default;
 };
 
 // The WebcompatExceptionsService loads a list of site-specific webcompat
@@ -66,7 +66,8 @@ class WebcompatExceptionsService
   base::Lock lock_;
   PatternsByWebcompatTypeMap patterns_by_webcompat_type_ GUARDED_BY(lock_);
   std::vector<WebcompatExceptionsObserver*> observers_;
-  base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};};
+  base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
+};
 }  // namespace webcompat
 
 #endif  // BRAVE_COMPONENTS_WEBCOMPAT_CONTENT_BROWSER_WEBCOMPAT_EXCEPTIONS_SERVICE_H_

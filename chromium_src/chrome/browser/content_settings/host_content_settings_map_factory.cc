@@ -34,5 +34,6 @@ HostContentSettingsMapFactory::BuildServiceInstanceFor(
   settings_map->RegisterProvider(ProviderType::kRemoteListProvider,
                                  std::move(remote_list_provider_ptr));
   webcompat::WebcompatExceptionsService::AddObserver(settings_map);
+  settings_map->RemoveRedundantWebcompatSettingsRules();
   return settings_map_keyed_service;
 }

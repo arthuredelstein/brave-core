@@ -82,7 +82,8 @@ void HostContentSettingsMap::RemoveRedundantWebcompatSettingsRules() {
           if (prefRule &&
               content_settings::ValueToContentSetting(prefRule->value) ==
                   content_settings::ValueToContentSetting(remoteRule->value)) {
-            // Pref rule matches the remote rule. Delete the redundant pref rule.
+            // Pref rule matches the remote rule. Delete the redundant pref
+            // rule.
             pref_provider_->SetWebsiteSetting(
                 prefRule->primary_pattern, prefRule->secondary_pattern,
                 settings_type, base::Value(), {},

@@ -6,6 +6,7 @@
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 
 #include "brave/components/content_settings/core/browser/remote_list_provider.h"
+#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
 #include "build/buildflag.h"
 #include "chrome/browser/supervised_user/supervised_user_settings_service_factory.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"

@@ -8,8 +8,11 @@
 #include "base/containers/contains.h"
 #include "brave/components/content_settings/core/browser/remote_list_provider.h"
 #include "build/build_config.h"
+#include "components/content_settings/core/browser/content_settings_provider.h"
 #include "components/content_settings/core/browser/content_settings_utils.h"
+#include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings_types.h"
+#include "components/content_settings/core/common/content_settings_utils.h"
 #include "components/content_settings/core/common/features.h"
 
 #if !BUILDFLAG(IS_IOS)
@@ -48,6 +51,34 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
   return true;
 }
 
+void RemoveRedundantWebcompatSettingsRulesForSetting(
+    ProviderInterface* remote_list_provider,
+    ProviderInterface* pref_provider,
+    ContentSettingsType settings_type) {
+  std::unique_ptr<RuleIterator> rule_iterator =
+      remote_list_provider->GetRuleIterator(settings_type, false,
+                                            PartitionKey::WipGetDefault());
+  if (rule_iterator) {
+    while (rule_iterator->HasNext()) {
+      std::unique_ptr<Rule> remoteRule = rule_iterator->Next();
+      if (remoteRule) {
+        std::unique_ptr<Rule> prefRule = pref_provider->GetRule(
+            remoteRule->primary_pattern.ToRepresentativeUrl(),
+            remoteRule->secondary_pattern.ToRepresentativeUrl(), settings_type,
+            false, PartitionKey::WipGetDefault());
+        if (prefRule &&
+            content_settings::ValueToContentSetting(prefRule->value) ==
+                content_settings::ValueToContentSetting(remoteRule->value)) {
+          // Pref rule matches the remote rule. Delete the redundant pref rule.
+          pref_provider->SetWebsiteSetting(
+              prefRule->primary_pattern, prefRule->secondary_pattern,
+              settings_type, base::Value(), {}, PartitionKey::WipGetDefault());
+        }
+      }
+    }
+  }
+}
+
 }  // namespace
 }  // namespace content_settings
 
@@ -58,41 +89,18 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 #undef IsMorePermissive
 
 void HostContentSettingsMap::RemoveRedundantWebcompatSettingsRules() {
-  const auto& remote_list_provider =
-      content_settings_providers_[ProviderType::kRemoteListProvider];
+  content_settings::ProviderInterface* remote_list_provider =
+      content_settings_providers_[ProviderType::kRemoteListProvider].get();
   for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
        settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
        settings_type = static_cast<ContentSettingsType>(
            static_cast<int32_t>(settings_type) + 1)) {
-    std::unique_ptr<content_settings::RuleIterator> rule_iterator =
-        remote_list_provider->GetRuleIterator(
-            settings_type, false,
-            content_settings::PartitionKey::WipGetDefault());
-    if (rule_iterator) {
-      while (rule_iterator->HasNext()) {
-        std::unique_ptr<content_settings::Rule> remoteRule =
-            rule_iterator->Next();
-        if (remoteRule) {
-          std::unique_ptr<content_settings::Rule> prefRule =
-              pref_provider_->GetRule(
-                  remoteRule->primary_pattern.ToRepresentativeUrl(),
-                  remoteRule->secondary_pattern.ToRepresentativeUrl(),
-                  settings_type, false,
-                  content_settings::PartitionKey::WipGetDefault());
-          if (prefRule &&
-              content_settings::ValueToContentSetting(prefRule->value) ==
-                  content_settings::ValueToContentSetting(remoteRule->value)) {
-            // Pref rule matches the remote rule. Delete the redundant pref
-            // rule.
-            pref_provider_->SetWebsiteSetting(
-                prefRule->primary_pattern, prefRule->secondary_pattern,
-                settings_type, base::Value(), {},
-                content_settings::PartitionKey::WipGetDefault());
-          }
-        }
-      }
-    }
+    content_settings::RemoveRedundantWebcompatSettingsRulesForSetting(
+        remote_list_provider, pref_provider_, settings_type);
   }
+  content_settings::RemoveRedundantWebcompatSettingsRulesForSetting(
+      remote_list_provider, pref_provider_,
+      ContentSettingsType::BRAVE_FINGERPRINTING_V2);
 }
 
 void HostContentSettingsMap::OnRulesUpdated() {

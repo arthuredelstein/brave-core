@@ -189,7 +189,6 @@ void WebcompatExceptionsService::SetRules(
     base::AutoLock lock(lock_);
     patterns_by_webcompat_type_ = std::move(patterns_by_webcompat_type);
   }
-  DLOG(INFO) << "SetRules()";
   for (const auto observer : observers_) {
     observer->OnRulesUpdated();
   }
@@ -221,7 +220,6 @@ WebcompatExceptionsService* WebcompatExceptionsService::CreateInstance(
     LocalDataFilesService* local_data_files_service) {
   if (singleton == nullptr) {
     singleton = new WebcompatExceptionsService(local_data_files_service);
-    DLOG(INFO) << "WebcompatExceptionsService created";
   }
   return singleton;
 }

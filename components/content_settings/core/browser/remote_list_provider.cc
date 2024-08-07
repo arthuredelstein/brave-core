@@ -64,8 +64,6 @@ std::unique_ptr<Rule> RemoteListProvider::GetRule(
   }
   const auto& pattern_vector = svc->GetPatterns(content_type);
   for (auto pattern : pattern_vector) {
-    DLOG(INFO) << "GetRule: " << pattern.ToRepresentativeUrl() << ","
-               << primary_url;
     if (pattern.Matches(primary_url)) {
       return std::make_unique<Rule>(pattern, ContentSettingsPattern::Wildcard(),
                                     base::Value(CONTENT_SETTING_ALLOW),

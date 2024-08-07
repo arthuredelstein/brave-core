@@ -8,7 +8,6 @@
 
 #include <memory>
 
-#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/content_settings_observable_provider.h"
 
 namespace content_settings {

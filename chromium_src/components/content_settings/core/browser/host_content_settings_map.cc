@@ -88,6 +88,8 @@ void RemoveRedundantWebcompatSettingsRulesForSetting(
 
 #undef IsMorePermissive
 
+// Removes all webcompat settings set by user in Prefs that are the same as 
+// those provided by the remote webcompat exceptions list.
 void HostContentSettingsMap::RemoveRedundantWebcompatSettingsRules() {
   content_settings::ProviderInterface* remote_list_provider =
       content_settings_providers_[ProviderType::kRemoteListProvider].get();

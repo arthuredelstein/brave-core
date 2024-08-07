@@ -66,6 +66,7 @@ constexpr auto kWebcompatNamesToType =
     });
 
 WebcompatExceptionsService* singleton = nullptr;
+std::vector<WebcompatExceptionsObserver*> observers_;
 
 bool AddRule(
   const ContentSettingsPattern& pattern,
@@ -184,8 +185,10 @@ WebcompatExceptionsService::GetPatterns(ContentSettingsType webcompat_type) {
 
 void WebcompatExceptionsService::SetRules(
   PatternsByWebcompatTypeMap patterns_by_webcompat_type) {
-  base::AutoLock lock(lock_);
-  patterns_by_webcompat_type_ = std::move(patterns_by_webcompat_type);
+  {
+    base::AutoLock lock(lock_);
+    patterns_by_webcompat_type_ = std::move(patterns_by_webcompat_type);
+  }
   DLOG(INFO) << "SetRules()";
   for (const auto observer : observers_) {
     observer->OnRulesUpdated();
@@ -205,6 +208,7 @@ void WebcompatExceptionsService::OnComponentReady(
   LoadWebcompatExceptions(install_dir);
 }
 
+// static
 void WebcompatExceptionsService::AddObserver(
     WebcompatExceptionsObserver* observer) {
   observers_.push_back(observer);
@@ -217,6 +221,7 @@ WebcompatExceptionsService* WebcompatExceptionsService::CreateInstance(
     LocalDataFilesService* local_data_files_service) {
   if (singleton == nullptr) {
     singleton = new WebcompatExceptionsService(local_data_files_service);
+    DLOG(INFO) << "WebcompatExceptionsService created";
   }
   return singleton;
 }

@@ -56,7 +56,7 @@ class WebcompatExceptionsService
   std::vector<ContentSettingsPattern> GetPatterns(
       ContentSettingsType webcompat_type);
   void SetRulesForTesting(PatternsByWebcompatTypeMap patterns_by_webcompat_type);
-  void AddObserver(WebcompatExceptionsObserver* observer);
+  static void AddObserver(WebcompatExceptionsObserver* observer);
 
  private:
   void LoadWebcompatExceptions(const base::FilePath& install_dir);
@@ -65,7 +65,6 @@ class WebcompatExceptionsService
   void SetRules(PatternsByWebcompatTypeMap patterns_by_webcompat_type);
   base::Lock lock_;
   PatternsByWebcompatTypeMap patterns_by_webcompat_type_ GUARDED_BY(lock_);
-  std::vector<WebcompatExceptionsObserver*> observers_;
   base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
 };
 }  // namespace webcompat

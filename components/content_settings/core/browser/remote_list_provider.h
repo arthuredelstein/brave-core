@@ -16,8 +16,7 @@ namespace content_settings {
 // RemoteListProvider provides webcompat exceptions rules from the remote list
 // to the HostContentSettingsMap. This allows remote rules to be overridden
 // by user-defined rules.
-class RemoteListProvider : public ObservableProvider,
-                           webcompat::WebcompatExceptionsObserver {
+class RemoteListProvider : public ObservableProvider {
  public:
   RemoteListProvider();
   ~RemoteListProvider() override = default;
@@ -48,8 +47,6 @@ class RemoteListProvider : public ObservableProvider,
                                     const PartitionKey& partition_key) override;
 
   void ShutdownOnUIThread() override;
-
-  void OnRulesUpdated() override;
 };
 
 }  // namespace content_settings

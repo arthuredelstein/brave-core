@@ -216,7 +216,9 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
                                        GURL("https://a.test"), nullptr);
     observed_setting =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
-    EXPECT_EQ(observed_setting, CONTENT_SETTING_BLOCK);
+    EXPECT_EQ(observed_setting, test_case.type == BRAVE_FINGERPRINTING_V2
+                                    ? CONTENT_SETTING_ASK
+                                    : CONTENT_SETTING_BLOCK);
     // Enable exception via remote testing.
     webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
     // Now disable it via remote testing.

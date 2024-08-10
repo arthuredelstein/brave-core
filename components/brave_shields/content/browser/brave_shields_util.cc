@@ -874,11 +874,9 @@ void SetWebcompatEnabled(HostContentSettingsMap* map,
     const auto patterns = svc->GetPatterns(webcompat_settings_type);
     bool patternExists = std::find(patterns.begin(), patterns.end(),
                                    primary_pattern) != patterns.end();
-    redundant = (raw_setting == CONTENT_SETTING_BLOCK && !patternExists) ||
-                (raw_setting == CONTENT_SETTING_ALLOW && patternExists);
+    redundant = (!enabled && !patternExists) || (enabled && patternExists);
   }
   ContentSetting setting = redundant ? CONTENT_SETTING_DEFAULT : raw_setting;
-
   map->SetContentSettingCustomScope(primary_pattern,
                                     ContentSettingsPattern::Wildcard(),
                                     webcompat_settings_type, setting);

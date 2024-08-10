@@ -229,13 +229,15 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting, CONTENT_SETTING_ALLOW);
 
-    // Check that setting a pref is skipped if it is redundant.
+    // Check that a pref is deleted when set to ALLOW if it is redundant.
     // First, disable exception via remote list.
     webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
     // Now, enable exception via remote list.
     webcompat_exceptions_service->SetRulesForTesting(rule_map);
+    // Set a redundant pref (should get deleted)
     brave_shields::SetWebcompatEnabled(map, test_case.type, true,
                                        GURL("https://a.test"), nullptr);
+    // Disable exception via remote list again.
     webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
     // Confirm that the exception is disabled (BLOCK fingerprinting).
     observed_setting =
@@ -243,5 +245,20 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
     EXPECT_EQ(observed_setting, test_case.type == BRAVE_FINGERPRINTING_V2
                                     ? CONTENT_SETTING_ASK
                                     : CONTENT_SETTING_BLOCK);
+
+    // Check that a pref is deleted when set to BLOCK if it is redundant.
+    // First, enable exception via remote list.
+    webcompat_exceptions_service->SetRulesForTesting(rule_map);
+    // Now, disable exception via remote list.
+    webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
+    // Set a redundant pref (should get deleted)
+    brave_shields::SetWebcompatEnabled(map, test_case.type, false,
+                                       GURL("https://a.test"), nullptr);
+    // Enable exception via remote list again.
+    webcompat_exceptions_service->SetRulesForTesting(rule_map);
+    // Confirm that the exception is enabled (ALLOW fingerprinting).
+    observed_setting =
+        map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
+    EXPECT_EQ(observed_setting, CONTENT_SETTING_ALLOW);
   }
 }

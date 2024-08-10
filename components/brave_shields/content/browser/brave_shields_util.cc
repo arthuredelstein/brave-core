@@ -69,6 +69,22 @@ ContentSetting GetDefaultBlockFromControlType(ControlType type) {
                                     : CONTENT_SETTING_BLOCK;
 }
 
+ContentSetting ModifyContentSettingIfRedundant(
+    const ContentSettingsPattern& primary_pattern,
+    ContentSettingsType webcompat_settings_type,
+    ContentSetting raw_setting) {
+  auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
+  if (!svc) {
+    return raw_setting;
+  }
+  const auto patterns = svc->GetPatterns(webcompat_settings_type);
+  bool patternExists = std::find(patterns.begin(), patterns.end(),
+                                 primary_pattern) != patterns.end();
+  bool allow = raw_setting == CONTENT_SETTING_ALLOW;
+  bool redundant = (!allow && !patternExists) || (allow && patternExists);
+  return redundant ? CONTENT_SETTING_DEFAULT : raw_setting;
+}
+
 class BraveCookieRules {
  public:
   BraveCookieRules(ContentSetting general_setting,
@@ -588,7 +604,10 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
 
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
-      ContentSettingsType::BRAVE_FINGERPRINTING_V2, content_setting);
+      ContentSettingsType::BRAVE_FINGERPRINTING_V2,
+      ModifyContentSettingIfRedundant(
+          primary_pattern, ContentSettingsType::BRAVE_FINGERPRINTING_V2,
+          content_setting));
   if (!map->IsOffTheRecord()) {
     // Only report to P3A if not a guest/incognito profile
     RecordShieldsSettingChanged(local_state);
@@ -866,20 +885,14 @@ void SetWebcompatEnabled(HostContentSettingsMap* map,
     return;
   }
 
-  ContentSetting raw_setting =
+  ContentSetting setting =
       enabled ? CONTENT_SETTING_ALLOW : CONTENT_SETTING_BLOCK;
-  bool redundant = false;
-  auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
-  if (svc) {
-    const auto patterns = svc->GetPatterns(webcompat_settings_type);
-    bool patternExists = std::find(patterns.begin(), patterns.end(),
-                                   primary_pattern) != patterns.end();
-    redundant = (!enabled && !patternExists) || (enabled && patternExists);
-  }
-  ContentSetting setting = redundant ? CONTENT_SETTING_DEFAULT : raw_setting;
-  map->SetContentSettingCustomScope(primary_pattern,
-                                    ContentSettingsPattern::Wildcard(),
-                                    webcompat_settings_type, setting);
+
+  map->SetContentSettingCustomScope(
+      primary_pattern, ContentSettingsPattern::Wildcard(),
+      webcompat_settings_type,
+      ModifyContentSettingIfRedundant(primary_pattern, webcompat_settings_type,
+                                      setting));
   RecordShieldsSettingChanged(local_state);
 }
 

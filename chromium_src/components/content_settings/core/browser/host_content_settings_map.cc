@@ -67,52 +67,26 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 #undef clear
 #undef IsMorePermissive
 
-void HostContentSettingsMap::MaybeRemoveRedundantWebcompatSettingInternal(
-    const std::vector<ContentSettingsPattern>& patterns,
-    ContentSettingsType settings_type,
-    ContentSetting prefSettingValue,
-    const ContentSettingsPattern& prefPattern) {
-  bool patternExists = std::find(patterns.begin(), patterns.end(),
-                                 prefPattern) != patterns.end();
-  if ((prefSettingValue == CONTENT_SETTING_BLOCK && !patternExists) ||
-      (prefSettingValue == CONTENT_SETTING_ALLOW && patternExists)) {
-    SetContentSettingCustomScope(prefPattern,
-                                 ContentSettingsPattern::Wildcard(),
-                                 settings_type, CONTENT_SETTING_DEFAULT);
-  }
-}
-
-void HostContentSettingsMap::MaybeRemoveRedundantWebcompatSetting(
-    ContentSettingsType settings_type,
-    ContentSetting prefSettingValue,
-    const ContentSettingsPattern& prefPattern) {
+void HostContentSettingsMap::RemoveRedundantWebcompatSettingsByType(
+    ContentSettingsType settings_type) {
   auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
   if (!svc) {
     return;
   }
-  const auto patterns = svc->GetPatterns(settings_type);
-  if (patterns.size() == 0) {
-    return;
-  }
-  MaybeRemoveRedundantWebcompatSettingInternal(patterns, settings_type,
-                                               prefSettingValue, prefPattern);
-}
-
-void HostContentSettingsMap::RemoveRedundantWebcompatSettingsByType(
-    webcompat::WebcompatExceptionsService* svc,
-    ContentSettingsType settings_type) {
-  const auto patterns = svc->GetPatterns(settings_type);
-  if (patterns.size() == 0) {
-    return;
-  }
+  const auto& patterns = svc->GetPatterns(settings_type);
   for (const ContentSettingPatternSource& setting :
        GetSettingsForOneType(settings_type)) {
     if (setting.source == ProviderType::kPrefProvider) {
       const auto prefSettingValue =
           content_settings::ValueToContentSetting(setting.setting_value);
-      const auto& prefPattern = setting.primary_pattern;
-      MaybeRemoveRedundantWebcompatSettingInternal(
-          patterns, settings_type, prefSettingValue, prefPattern);
+      bool patternExists = std::find(patterns.begin(), patterns.end(),
+                                     setting.primary_pattern) != patterns.end();
+      if ((prefSettingValue == CONTENT_SETTING_BLOCK && !patternExists) ||
+          (prefSettingValue == CONTENT_SETTING_ALLOW && patternExists)) {
+        SetContentSettingCustomScope(setting.primary_pattern,
+                                     ContentSettingsPattern::Wildcard(),
+                                     settings_type, CONTENT_SETTING_DEFAULT);
+      }
     }
   }
 }
@@ -120,18 +94,14 @@ void HostContentSettingsMap::RemoveRedundantWebcompatSettingsByType(
 // Removes all webcompat settings set by user in Prefs that are the same as
 // those provided by the remote webcompat exceptions list.
 void HostContentSettingsMap::RemoveRedundantWebcompatSettings() {
-  auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
-  if (!svc) {
-    return;
-  }
   for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
        settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
        settings_type = static_cast<ContentSettingsType>(
            static_cast<int32_t>(settings_type) + 1)) {
-    RemoveRedundantWebcompatSettingsByType(svc, settings_type);
+    RemoveRedundantWebcompatSettingsByType(settings_type);
   }
   RemoveRedundantWebcompatSettingsByType(
-      svc, ContentSettingsType::BRAVE_FINGERPRINTING_V2);
+      ContentSettingsType::BRAVE_FINGERPRINTING_V2);
 }
 
 void HostContentSettingsMap::OnWebcompatRulesUpdated() {

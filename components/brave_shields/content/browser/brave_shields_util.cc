@@ -588,11 +588,6 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
   map->SetContentSettingCustomScope(
       primary_pattern, ContentSettingsPattern::Wildcard(),
       ContentSettingsType::BRAVE_FINGERPRINTING_V2, content_setting);
-
-  map->MaybeRemoveRedundantWebcompatSetting(
-      ContentSettingsType::BRAVE_FINGERPRINTING_V2, content_setting,
-      primary_pattern);
-
   if (!map->IsOffTheRecord()) {
     // Only report to P3A if not a guest/incognito profile
     RecordShieldsSettingChanged(local_state);
@@ -875,10 +870,6 @@ void SetWebcompatEnabled(HostContentSettingsMap* map,
   map->SetContentSettingCustomScope(primary_pattern,
                                     ContentSettingsPattern::Wildcard(),
                                     webcompat_settings_type, setting);
-
-  map->MaybeRemoveRedundantWebcompatSetting(webcompat_settings_type, setting,
-                                            primary_pattern);
-
   RecordShieldsSettingChanged(local_state);
 }
 

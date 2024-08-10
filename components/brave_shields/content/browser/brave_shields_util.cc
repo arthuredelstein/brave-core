@@ -17,6 +17,7 @@
 #include "brave/components/constants/url_constants.h"
 #include "brave/components/content_settings/core/common/content_settings_util.h"
 #include "brave/components/https_upgrade_exceptions/browser/https_upgrade_exceptions_service.h"
+#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/cookie_settings.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings.h"
@@ -865,8 +866,19 @@ void SetWebcompatEnabled(HostContentSettingsMap* map,
     return;
   }
 
-  ContentSetting setting =
+  ContentSetting raw_setting =
       enabled ? CONTENT_SETTING_ALLOW : CONTENT_SETTING_BLOCK;
+  bool redundant = false;
+  auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
+  if (svc) {
+    const auto patterns = svc->GetPatterns(webcompat_settings_type);
+    bool patternExists = std::find(patterns.begin(), patterns.end(),
+                                   primary_pattern) != patterns.end();
+    redundant = (raw_setting == CONTENT_SETTING_BLOCK && !patternExists) ||
+                (raw_setting == CONTENT_SETTING_ALLOW && patternExists);
+  }
+  ContentSetting setting = redundant ? CONTENT_SETTING_DEFAULT : raw_setting;
+
   map->SetContentSettingCustomScope(primary_pattern,
                                     ContentSettingsPattern::Wildcard(),
                                     webcompat_settings_type, setting);

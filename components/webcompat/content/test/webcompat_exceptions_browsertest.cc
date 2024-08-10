@@ -147,14 +147,15 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
   auto* map = content_settings();
   ContentSetting observed_setting;
   for (const auto& test_case : kTestCases) {
+    webcompat::PatternsByWebcompatTypeMap rule_map;
+    rule_map[test_case.type] = std::vector<ContentSettingsPattern>({pattern});
+
     // Check the default setting
     observed_setting =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_NE(observed_setting, CONTENT_SETTING_ALLOW);
 
-    // Create a rule and then reload the page.
-    webcompat::PatternsByWebcompatTypeMap rule_map;
-    rule_map[test_case.type] = std::vector<ContentSettingsPattern>({pattern});
+    // Set a remote rule and then reload the page.
     webcompat_exceptions_service->SetRulesForTesting(rule_map);
     NavigateToURL("a.test", "/simple.html");
 
@@ -199,9 +200,9 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
     observed_setting =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting, CONTENT_SETTING_ALLOW);
-    // Enable exception via remote testing.
+    // Enable exception via remote list.
     webcompat_exceptions_service->SetRulesForTesting(rule_map);
-    // Now disable it via remote testing.
+    // Now disable it via remote list.
     webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
     // Confirm that the exception is disabled (BLOCK fingerprinting).
     observed_setting =
@@ -219,13 +220,28 @@ IN_PROC_BROWSER_TEST_F(WebcompatExceptionsBrowserTest, RemoteSettingsTest) {
     EXPECT_EQ(observed_setting, test_case.type == BRAVE_FINGERPRINTING_V2
                                     ? CONTENT_SETTING_ASK
                                     : CONTENT_SETTING_BLOCK);
-    // Enable exception via remote testing.
+    // Disable exception via remote list.
     webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
-    // Now disable it via remote testing.
+    // Now enable it via remote list.
     webcompat_exceptions_service->SetRulesForTesting(rule_map);
     // Confirm that the exception is enabled (ALLOW fingerprinting).
     observed_setting =
         map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
     EXPECT_EQ(observed_setting, CONTENT_SETTING_ALLOW);
+
+    // Check that setting a pref is skipped if it is redundant.
+    // First, disable exception via remote list.
+    webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
+    // Now, enable exception via remote list.
+    webcompat_exceptions_service->SetRulesForTesting(rule_map);
+    brave_shields::SetWebcompatEnabled(map, test_case.type, true,
+                                       GURL("https://a.test"), nullptr);
+    webcompat_exceptions_service->SetRulesForTesting(rule_map_empty);
+    // Confirm that the exception is disabled (BLOCK fingerprinting).
+    observed_setting =
+        map->GetContentSetting(GURL("https://a.test"), GURL(), test_case.type);
+    EXPECT_EQ(observed_setting, test_case.type == BRAVE_FINGERPRINTING_V2
+                                    ? CONTENT_SETTING_ASK
+                                    : CONTENT_SETTING_BLOCK);
   }
 }

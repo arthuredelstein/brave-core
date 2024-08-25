@@ -894,9 +894,9 @@ void SetWebcompatEnabled(HostContentSettingsMap* map,
                                : (exception_exists ? CONTENT_SETTING_BLOCK
                                                    : CONTENT_SETTING_DEFAULT);
 
-  map->SetContentSettingCustomScope(
-      primary_pattern, ContentSettingsPattern::Wildcard(),
-      webcompat_settings_type, setting);
+  map->SetContentSettingCustomScope(primary_pattern,
+                                    ContentSettingsPattern::Wildcard(),
+                                    webcompat_settings_type, setting);
   RecordShieldsSettingChanged(local_state);
 }
 

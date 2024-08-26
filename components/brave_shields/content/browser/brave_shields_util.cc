@@ -592,10 +592,10 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
   ContentSetting content_setting;
   if (type == ControlType::DEFAULT || type == ControlType::BLOCK_THIRD_PARTY) {
     type = ControlType::DEFAULT;
-    bool exception_exists = WebcompatExceptionExists(
-        primary_pattern, ContentSettingsType::BRAVE_FINGERPRINTING_V2);
+    bool something_to_override = setting_info.primary_pattern.MatchesAllHosts() ||
+      WebcompatExceptionExists(primary_pattern,  ContentSettingsType::BRAVE_FINGERPRINTING_V2);
     content_setting =
-        exception_exists ? CONTENT_SETTING_ASK : CONTENT_SETTING_DEFAULT;
+        something_to_override ? CONTENT_SETTING_ASK : CONTENT_SETTING_DEFAULT;
   } else {
     content_setting = GetDefaultBlockFromControlType(type);
   }
@@ -870,12 +870,13 @@ void SetWebcompatEnabled(HostContentSettingsMap* map,
                          const GURL& url,
                          PrefService* local_state,
                          PrefService* profile_state) {
+  DCHECK(map);
+
   if (webcompat_settings_type == ContentSettingsType::BRAVE_FINGERPRINTING_V2) {
     return SetFingerprintingControlType(
         map, enabled ? ControlType::ALLOW : ControlType::DEFAULT, url,
         local_state, profile_state);
   }
-  DCHECK(map);
 
   if (!url.SchemeIsHTTPOrHTTPS() && !url.is_empty()) {
     return;

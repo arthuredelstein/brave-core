@@ -592,8 +592,10 @@ void SetFingerprintingControlType(HostContentSettingsMap* map,
   ContentSetting content_setting;
   if (type == ControlType::DEFAULT || type == ControlType::BLOCK_THIRD_PARTY) {
     type = ControlType::DEFAULT;
-    bool something_to_override = setting_info.primary_pattern.MatchesAllHosts() ||
-      WebcompatExceptionExists(primary_pattern,  ContentSettingsType::BRAVE_FINGERPRINTING_V2);
+    bool something_to_override =
+        setting_info.primary_pattern.MatchesAllHosts() ||
+        WebcompatExceptionExists(primary_pattern,
+                                 ContentSettingsType::BRAVE_FINGERPRINTING_V2);
     content_setting =
         something_to_override ? CONTENT_SETTING_ASK : CONTENT_SETTING_DEFAULT;
   } else {

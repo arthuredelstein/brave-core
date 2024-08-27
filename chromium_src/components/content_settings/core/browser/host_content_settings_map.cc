@@ -69,6 +69,8 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 #undef clear
 #undef IsMorePermissive
 
+#if !BUILDFLAG(IS_IOS)
+
 void HostContentSettingsMap::RemoveRedundantWebcompatSettingsByType(
     ContentSettingsType settings_type) {
   auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
@@ -111,7 +113,6 @@ void HostContentSettingsMap::OnWebcompatRulesUpdated() {
   RemoveRedundantWebcompatSettings();
 }
 
-#if !BUILDFLAG(IS_IOS)
 #undef PrefProvider
 #undef PolicyProvider
-#endif
+#endif  // !BUILDFLAG(IS_IOS)

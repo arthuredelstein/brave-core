@@ -12,9 +12,9 @@
 #define PREF_PROVIDER PREF_PROVIDER, REMOTE_LIST_PROVIDER
 
 #if !BUILDFLAG(IS_IOS)
+
 #define RefcountedKeyedService \
   RefcountedKeyedService, public webcompat::WebcompatExceptionsObserver
-#endif  // !BUILDFLAG(IS_IOS)
 
 #define FlushLossyWebsiteSettings()            \
   RemoveRedundantWebcompatSettings();          \
@@ -22,6 +22,8 @@
       ContentSettingsType settings_type);      \
   void OnWebcompatRulesUpdated() override;     \
   void FlushLossyWebsiteSettings()
+
+#endif  // !BUILDFLAG(IS_IOS)
 
 #include "src/components/content_settings/core/browser/host_content_settings_map.h"  // IWYU pragma: export
 

@@ -21,7 +21,7 @@
 #if !BUILDFLAG(IS_IOS)
 #include "brave/components/content_settings/core/browser/brave_content_settings_pref_provider.h"
 #define PrefProvider BravePrefProvider
-#endif
+#endif  // !BUILDFLAG(IS_IOS)
 
 namespace content_settings {
 namespace {
@@ -59,17 +59,22 @@ bool IsMorePermissive_BraveImpl(ContentSettingsType content_type,
 
 #define IsMorePermissive(a, b) IsMorePermissive_BraveImpl(content_type, a, b)
 
+#if !BUILDFLAG(IS_IOS)
+
 // Insert code into HostContentSettingsMap::ShutdownOnUIThread() body:
 #define clear() \
   clear();      \
   webcompat::WebcompatExceptionsService::RemoveObserver(this)
 
+#endif  // !BUILDFLAG(IS_IOS)
+
 #include "src/components/content_settings/core/browser/host_content_settings_map.cc"
 
-#undef clear
 #undef IsMorePermissive
 
 #if !BUILDFLAG(IS_IOS)
+
+#undef clear
 
 void HostContentSettingsMap::RemoveRedundantWebcompatSettingsByType(
     ContentSettingsType settings_type) {

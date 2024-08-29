@@ -6,4 +6,13 @@
 #ifndef BRAVE_COMPONENTS_WEBCOMPAT_CORE_BROWSER_WEBCOMPAT_SETTINGS_CLEANER_H_
 #define BRAVE_COMPONENTS_WEBCOMPAT_CORE_BROWSER_WEBCOMPAT_SETTINGS_CLEANER_H_
 
+#include "components/keyed_service/core/refcounted_keyed_service.h"
+
+class WebcompatSettingsCleaner: public RefcountedKeyedService {
+public:
+  void ShutdownOnUIThread() override;
+protected:
+  ~WebcompatSettingsCleaner() override;
+};
+
 #endif  // BRAVE_COMPONENTS_WEBCOMPAT_CORE_BROWSER_WEBCOMPAT_SETTINGS_CLEANER_H_

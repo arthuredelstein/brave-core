@@ -4,3 +4,11 @@
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "brave/components/webcompat/core/browser/webcompat_settings_cleaner.h"
+
+void WebcompatSettingsCleaner::ShutdownOnUIThread() {
+  // NOOP
+}
+
+WebcompatSettingsCleaner::~WebcompatSettingsCleaner() {
+  // NOOP
+}

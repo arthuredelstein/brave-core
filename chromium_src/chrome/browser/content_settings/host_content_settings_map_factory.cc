@@ -38,7 +38,7 @@ HostContentSettingsMapFactory::BuildServiceInstanceFor(
                                  std::move(remote_list_provider_ptr));
 
 #if !BUILDFLAG(IS_IOS)
-  new webcompat::WebcompatSettingsCleaningService::AddSettingsMap(settings_map);
+  webcompat::WebcompatSettingsCleaningService::AddSettingsMap(settings_map);
 #endif  // !BUILDFLAG(IS_IOS)
 
   return settings_map_keyed_service;

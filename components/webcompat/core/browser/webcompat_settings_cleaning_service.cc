@@ -48,8 +48,6 @@ void RemoveRedundantWebcompatSettingsByType(
   }
 }
 
-// Removes all webcompat settings set by user in Prefs that are the same as
-// those provided by the remote webcompat exceptions list.
 void RemoveRedundantWebcompatSettings(
     base::WeakPtr<HostContentSettingsMap> settings_map) {
   for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
@@ -77,9 +75,7 @@ WebcompatSettingsCleaningService::WebcompatSettingsCleaningService() {
   webcompat::WebcompatExceptionsService::AddObserver(this);
 }
 
-WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {
-  // NOOP
-}
+WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {}
 
 // static
 WebcompatSettingsCleaningService*

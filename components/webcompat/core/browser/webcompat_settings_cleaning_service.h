@@ -11,10 +11,6 @@
 
 class HostContentSettingsMap;
 
-namespace content_settings {
-class PartitionKey;
-}  // namespace content_settings
-
 namespace webcompat {
 
 class WebcompatSettingsCleaningService : public WebcompatExceptionsObserver {

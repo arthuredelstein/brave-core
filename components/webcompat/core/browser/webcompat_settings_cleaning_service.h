@@ -17,7 +17,7 @@ class PartitionKey;
 
 namespace webcompat {
 
-class WebcompatSettingsCleaningService: public WebcompatExceptionsObserver {
+class WebcompatSettingsCleaningService : public WebcompatExceptionsObserver {
  public:
   WebcompatSettingsCleaningService();
   void Add(HostContentSettingsMap* settings_map);
@@ -30,7 +30,8 @@ class WebcompatSettingsCleaningService: public WebcompatExceptionsObserver {
 
  private:
   void RemoveRedundantWebcompatSettingsByType(
-      HostContentSettingsMap* settings_map, ContentSettingsType settings_type);
+      HostContentSettingsMap* settings_map,
+      ContentSettingsType settings_type);
 
   base::WeakPtrFactory<WebcompatSettingsCleaningService> weak_factory_{this};
 };

@@ -5,19 +5,19 @@
 
 #include "brave/components/webcompat/core/browser/webcompat_settings_cleaning_service.h"
 
+#include "base/memory/weak_ptr.h"
+#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings_partition_key.h"
-#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
-#include "components/content_settings/core/common/content_settings_utils.h"
 #include "components/content_settings/core/common/content_settings_types.h"
-#include "base/memory/weak_ptr.h"
+#include "components/content_settings/core/common/content_settings_utils.h"
 
 namespace webcompat {
 
 namespace {
 
 WebcompatSettingsCleaningService* singleton = nullptr;
-std::vector<base::WeakPtr<HostContentSettingsMap> > settings_maps_;
+std::vector<base::WeakPtr<HostContentSettingsMap>> settings_maps_;
 
 void RemoveRedundantWebcompatSettingsByType(
     base::WeakPtr<HostContentSettingsMap> settings_map,
@@ -47,15 +47,16 @@ void RemoveRedundantWebcompatSettingsByType(
 
 // Removes all webcompat settings set by user in Prefs that are the same as
 // those provided by the remote webcompat exceptions list.
-void RemoveRedundantWebcompatSettings(base::WeakPtr<HostContentSettingsMap> settings_map) {
+void RemoveRedundantWebcompatSettings(
+    base::WeakPtr<HostContentSettingsMap> settings_map) {
   for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
        settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
        settings_type = static_cast<ContentSettingsType>(
            static_cast<int32_t>(settings_type) + 1)) {
     RemoveRedundantWebcompatSettingsByType(settings_map, settings_type);
   }
-  RemoveRedundantWebcompatSettingsByType(settings_map,
-      ContentSettingsType::BRAVE_FINGERPRINTING_V2);
+  RemoveRedundantWebcompatSettingsByType(
+      settings_map, ContentSettingsType::BRAVE_FINGERPRINTING_V2);
 }
 
 }  // namespace
@@ -69,7 +70,7 @@ void WebcompatSettingsCleaningService::OnWebcompatRulesUpdated() {
 }
 
 WebcompatSettingsCleaningService::WebcompatSettingsCleaningService() {
-    webcompat::WebcompatExceptionsService::AddObserver(this);
+  webcompat::WebcompatExceptionsService::AddObserver(this);
 }
 
 WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {
@@ -77,7 +78,8 @@ WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {
 }
 
 // static
-WebcompatSettingsCleaningService* WebcompatSettingsCleaningService::GetInstance() {
+WebcompatSettingsCleaningService*
+WebcompatSettingsCleaningService::GetInstance() {
   if (singleton == nullptr) {
     singleton = new WebcompatSettingsCleaningService();
   }
@@ -85,7 +87,8 @@ WebcompatSettingsCleaningService* WebcompatSettingsCleaningService::GetInstance(
 }
 
 // static
-void WebcompatSettingsCleaningService::AddSettingsMap(HostContentSettingsMap* settings_map) {
+void WebcompatSettingsCleaningService::AddSettingsMap(
+    HostContentSettingsMap* settings_map) {
   settings_maps_.push_back(settings_map->GetWeakPtr());
 }
 

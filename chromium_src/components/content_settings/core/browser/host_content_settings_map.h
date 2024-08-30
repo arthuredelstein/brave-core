@@ -6,32 +6,9 @@
 #ifndef BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_HOST_CONTENT_SETTINGS_MAP_H_
 #define BRAVE_CHROMIUM_SRC_COMPONENTS_CONTENT_SETTINGS_CORE_BROWSER_HOST_CONTENT_SETTINGS_MAP_H_
 
-#include "brave/components/webcompat/content/browser/webcompat_exceptions_observer.h"
-#include "components/keyed_service/core/refcounted_keyed_service.h"
-
 #define PREF_PROVIDER PREF_PROVIDER, REMOTE_LIST_PROVIDER
 
-#if !BUILDFLAG(IS_IOS)
-
-#define RefcountedKeyedService \
-  RefcountedKeyedService, public webcompat::WebcompatExceptionsObserver
-
-#define FlushLossyWebsiteSettings()            \
-  RemoveRedundantWebcompatSettings();          \
-  void RemoveRedundantWebcompatSettingsByType( \
-      ContentSettingsType settings_type);      \
-  void OnWebcompatRulesUpdated() override;     \
-  void FlushLossyWebsiteSettings()
-
-#endif  // !BUILDFLAG(IS_IOS)
-
 #include "src/components/content_settings/core/browser/host_content_settings_map.h"  // IWYU pragma: export
-
-#undef FlushLossyWebsiteSettings
-
-#if !BUILDFLAG(IS_IOS)
-#undef RefcountedKeyedService
-#endif  // !BUILDFLAG(IS_IOS)
 
 #undef PREF_PROVIDER
 

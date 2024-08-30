@@ -8,7 +8,7 @@
 #include "brave/components/content_settings/core/browser/remote_list_provider.h"
 #include "brave/components/webcompat/content/browser/webcompat_exceptions_observer.h"
 #include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
-#include "brave/components/webcompat/core/browser/webcompat_settings_cleaner.h"
+#include "brave/components/webcompat/core/browser/webcompat_settings_cleaning_service.h"
 #include "build/buildflag.h"
 #include "chrome/browser/supervised_user/supervised_user_settings_service_factory.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
@@ -38,8 +38,7 @@ HostContentSettingsMapFactory::BuildServiceInstanceFor(
                                  std::move(remote_list_provider_ptr));
 
 #if !BUILDFLAG(IS_IOS)
-  new webcompat::WebcompatSettingsCleaningService(settings_map);
-  settings_map->RemoveRedundantWebcompatSettings();
+  new webcompat::WebcompatSettingsCleaningService::AddSettingsMap(settings_map);
 #endif  // !BUILDFLAG(IS_IOS)
 
   return settings_map_keyed_service;

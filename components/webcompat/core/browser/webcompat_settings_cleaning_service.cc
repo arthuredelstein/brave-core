@@ -3,34 +3,24 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "brave/components/webcompat/core/browser/webcompat_settings_cleaner.h"
+#include "brave/components/webcompat/core/browser/webcompat_settings_cleaning_service.h"
 
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings_partition_key.h"
 #include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
 #include "components/content_settings/core/common/content_settings_utils.h"
+#include "components/content_settings/core/common/content_settings_types.h"
+#include "base/memory/weak_ptr.h"
 
 namespace webcompat {
 
 namespace {
 
-WebcompatExceptionsService* singleton = nullptr;
-std::vector<WeakPtr<HostContentSettingsMap> > settings_maps_;
+WebcompatSettingsCleaningService* singleton = nullptr;
+std::vector<base::WeakPtr<HostContentSettingsMap> > settings_maps_;
 
-}  // namespace
-
-WebcompatSettingsCleaningService::WebcompatSettingsCleaningService(
-    HostContentSettingsMap* settings_map)
-    : settings_map_(settings_map) {
-    webcompat::WebcompatExceptionsService::AddObserver(this);
-}
-
-WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {
-  // NOOP
-}
-
-void WebcompatSettingsCleaningService::RemoveRedundantWebcompatSettingsByType(
-    HostContentSettingsMap* settings_map,
+void RemoveRedundantWebcompatSettingsByType(
+    base::WeakPtr<HostContentSettingsMap> settings_map,
     ContentSettingsType settings_type) {
   auto* svc = webcompat::WebcompatExceptionsService::GetInstance();
   if (!svc) {
@@ -38,7 +28,7 @@ void WebcompatSettingsCleaningService::RemoveRedundantWebcompatSettingsByType(
   }
   const auto& patterns = svc->GetPatterns(settings_type);
   for (const ContentSettingPatternSource& setting :
-       settings_map_->GetSettingsForOneType(settings_type)) {
+       settings_map->GetSettingsForOneType(settings_type)) {
     if (setting.source == content_settings::ProviderType::kPrefProvider) {
       const auto prefSettingValue =
           content_settings::ValueToContentSetting(setting.setting_value);
@@ -47,7 +37,7 @@ void WebcompatSettingsCleaningService::RemoveRedundantWebcompatSettingsByType(
       if ((prefSettingValue == CONTENT_SETTING_BLOCK ||
            prefSettingValue == CONTENT_SETTING_ASK) &&
           !patternExists) {
-        settings_map_->SetContentSettingCustomScope(
+        settings_map->SetContentSettingCustomScope(
             setting.primary_pattern, ContentSettingsPattern::Wildcard(),
             settings_type, CONTENT_SETTING_DEFAULT);
       }
@@ -55,31 +45,48 @@ void WebcompatSettingsCleaningService::RemoveRedundantWebcompatSettingsByType(
   }
 }
 
+// Removes all webcompat settings set by user in Prefs that are the same as
+// those provided by the remote webcompat exceptions list.
+void RemoveRedundantWebcompatSettings(base::WeakPtr<HostContentSettingsMap> settings_map) {
+  for (auto settings_type = ContentSettingsType::BRAVE_WEBCOMPAT_NONE;
+       settings_type != ContentSettingsType::BRAVE_WEBCOMPAT_ALL;
+       settings_type = static_cast<ContentSettingsType>(
+           static_cast<int32_t>(settings_type) + 1)) {
+    RemoveRedundantWebcompatSettingsByType(settings_map, settings_type);
+  }
+  RemoveRedundantWebcompatSettingsByType(settings_map,
+      ContentSettingsType::BRAVE_FINGERPRINTING_V2);
+}
+
+}  // namespace
+
 void WebcompatSettingsCleaningService::OnWebcompatRulesUpdated() {
-  if (content_type_set.ContainsAllTypes()) {
-    return;
+  for (auto settings_map : settings_maps_) {
+    if (settings_map) {
+      RemoveRedundantWebcompatSettings(settings_map);
+    }
   }
-  ContentSettingsType settings_type = content_type_set.GetType();
-  if ((settings_type >= ContentSettingsType::BRAVE_WEBCOMPAT_NONE &&
-       settings_type < ContentSettingsType::BRAVE_WEBCOMPAT_ALL) ||
-      settings_type == ContentSettingsType::BRAVE_FINGERPRINTING_V2) {
-    DLOG(INFO) << "OnContentSettingChanged(): " << primary_pattern.ToString()
-               << ", " << secondary_pattern.ToString() << ", " << settings_type;
-    RemoveRedundantWebcompatSettingsByType(settings_type);
-  }
+}
+
+WebcompatSettingsCleaningService::WebcompatSettingsCleaningService() {
+    webcompat::WebcompatExceptionsService::AddObserver(this);
+}
+
+WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {
+  // NOOP
 }
 
 // static
 WebcompatSettingsCleaningService* WebcompatSettingsCleaningService::GetInstance() {
   if (singleton == nullptr) {
-    singleton = new WebcompatExceptionsService();
+    singleton = new WebcompatSettingsCleaningService();
   }
   return singleton;
 }
 
 // static
-WebcompatSettingsCleaningService* WebcompatSettingsCleaningService::AddSettingsMap(HostContentSettingsMap* settings_map) {
-  settings_maps_.push_back(settings_map);
+void WebcompatSettingsCleaningService::AddSettingsMap(HostContentSettingsMap* settings_map) {
+  settings_maps_.push_back(settings_map->GetWeakPtr());
 }
 
 }  // namespace webcompat

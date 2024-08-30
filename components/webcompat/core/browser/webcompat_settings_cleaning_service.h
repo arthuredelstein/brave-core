@@ -7,6 +7,7 @@
 #define BRAVE_COMPONENTS_WEBCOMPAT_CORE_BROWSER_WEBCOMPAT_SETTINGS_CLEANER_H_
 
 #include "brave/components/webcompat/content/browser/webcompat_exceptions_observer.h"
+#include "components/content_settings/core/common/content_settings_types.h"
 
 class HostContentSettingsMap;
 
@@ -20,7 +21,8 @@ class WebcompatSettingsCleaningService: public WebcompatExceptionsObserver {
  public:
   WebcompatSettingsCleaningService();
   void Add(HostContentSettingsMap* settings_map);
-  static WebcompatExceptionsService* GetInstance();
+  void OnWebcompatRulesUpdated() override;
+  static WebcompatSettingsCleaningService* GetInstance();
   static void AddSettingsMap(HostContentSettingsMap* settings_map);
 
  protected:
@@ -30,7 +32,7 @@ class WebcompatSettingsCleaningService: public WebcompatExceptionsObserver {
   void RemoveRedundantWebcompatSettingsByType(
       HostContentSettingsMap* settings_map, ContentSettingsType settings_type);
 
-  base::WeakPtrFactory<WebcompatExceptionsService> weak_factory_{this};
+  base::WeakPtrFactory<WebcompatSettingsCleaningService> weak_factory_{this};
 };
 
 }  // namespace webcompat

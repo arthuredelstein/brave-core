@@ -11,6 +11,7 @@
 #include "components/content_settings/core/common/content_settings_partition_key.h"
 #include "components/content_settings/core/common/content_settings_types.h"
 #include "components/content_settings/core/common/content_settings_utils.h"
+#include "content/public/browser/browser_thread.h"
 
 namespace webcompat {
 
@@ -62,6 +63,7 @@ void RemoveRedundantWebcompatSettings(
 }  // namespace
 
 void WebcompatSettingsCleaningService::OnWebcompatRulesUpdated() {
+  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   for (auto settings_map : settings_maps_) {
     if (settings_map) {
       RemoveRedundantWebcompatSettings(settings_map);
@@ -89,7 +91,9 @@ WebcompatSettingsCleaningService::GetInstance() {
 // static
 void WebcompatSettingsCleaningService::AddSettingsMap(
     HostContentSettingsMap* settings_map) {
-  settings_maps_.push_back(settings_map->GetWeakPtr());
+  auto settings_map_weak_ptr = settings_map->GetWeakPtr();
+  settings_maps_.push_back(settings_map_weak_ptr);
+  RemoveRedundantWebcompatSettings(settings_map_weak_ptr);
 }
 
 }  // namespace webcompat

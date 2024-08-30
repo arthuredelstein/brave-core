@@ -11,5 +11,11 @@ source_set("browser") {
     "webcompat_settings_cleaning_service.h",
   ]
 
-  deps = [ "//base" ]
+  deps = [
+    "//base",
+    "//brave/components/webcompat/content/browser",
+    "//components/content_settings/core/browser:browser",
+    "//components/content_settings/core/common:common",
+    "//content/public/browser",
+  ]
 }

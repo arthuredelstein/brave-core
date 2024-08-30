@@ -81,7 +81,7 @@ WebcompatSettingsCleaningService::~WebcompatSettingsCleaningService() {
 
 // static
 WebcompatSettingsCleaningService*
-WebcompatSettingsCleaningService::GetInstance() {
+WebcompatSettingsCleaningService::CreateInstance() {
   if (singleton == nullptr) {
     singleton = new WebcompatSettingsCleaningService();
   }

@@ -54,6 +54,7 @@
 #include "chrome/common/chrome_paths.h"
 #include "chrome/common/pref_names.h"
 #include "components/component_updater/timer_update_scheduler.h"
+#include "brave/components/webcompat/core/browser/webcompat_settings_cleaning_service.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
 #include "net/base/features.h"
@@ -229,6 +230,7 @@ void BraveBrowserProcessImpl::StartBraveServices() {
           webcompat::features::kBraveWebcompatExceptionsService)) {
     webcompat::WebcompatExceptionsService::CreateInstance(
         local_data_files_service());
+    webcompat::WebcompatSettingsCleaningService::CreateInstance();
   }
 
 #if BUILDFLAG(ENABLE_GREASELION)

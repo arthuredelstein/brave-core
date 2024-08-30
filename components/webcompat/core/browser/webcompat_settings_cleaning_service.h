@@ -22,7 +22,7 @@ class WebcompatSettingsCleaningService : public WebcompatExceptionsObserver {
   WebcompatSettingsCleaningService();
   void Add(HostContentSettingsMap* settings_map);
   void OnWebcompatRulesUpdated() override;
-  static WebcompatSettingsCleaningService* GetInstance();
+  static WebcompatSettingsCleaningService* CreateInstance();
   static void AddSettingsMap(HostContentSettingsMap* settings_map);
 
  protected:

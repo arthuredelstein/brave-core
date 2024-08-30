@@ -7,8 +7,8 @@ import("//brave/build/config.gni")
 
 source_set("browser") {
   sources = [
-    "webcompat_settings_cleaner.cc",
-    "webcompat_settings_cleaner.h",
+    "webcompat_settings_cleaning_service.cc",
+    "webcompat_settings_cleaning_service.h",
   ]
 
   deps = [ "//base" ]

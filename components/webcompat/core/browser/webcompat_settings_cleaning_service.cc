@@ -5,6 +5,8 @@
 
 #include "brave/components/webcompat/core/browser/webcompat_settings_cleaning_service.h"
 
+#include <vector>
+
 #include "base/memory/weak_ptr.h"
 #include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"

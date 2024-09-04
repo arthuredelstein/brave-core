@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
+#include "brave/components/webcompat/core/browser/webcompat_exceptions_service.h"
 
 #include <algorithm>
 #include <memory>
@@ -96,7 +96,8 @@ void AddRules(
       const auto pattern =
           ContentSettingsPattern::FromString(include_string.GetString());
       for (const base::Value& exception : exceptions->GetList()) {
-        const bool success = AddRule(pattern, exception.GetString(), patterns_by_webcompat_type);
+        const bool success = AddRule(pattern, exception.GetString(),
+                                     patterns_by_webcompat_type);
         if (!success) {
           DLOG(ERROR) << "Unrecognized webcompat exception "
                       << exception.GetString();

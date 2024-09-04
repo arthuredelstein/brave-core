@@ -3,12 +3,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "brave/components/webcompat/core/browser/webcompat_settings_cleaning_service.h"
+#include "brave/components/webcompat/content/browser/webcompat_settings_cleaning_service.h"
 
 #include <vector>
 
 #include "base/memory/weak_ptr.h"
-#include "brave/components/webcompat/content/browser/webcompat_exceptions_service.h"
+#include "brave/components/webcompat/core/browser/webcompat_exceptions_service.h"
 #include "components/content_settings/core/browser/host_content_settings_map.h"
 #include "components/content_settings/core/common/content_settings_partition_key.h"
 #include "components/content_settings/core/common/content_settings_types.h"

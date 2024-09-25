@@ -6,6 +6,7 @@
 import * as React from 'react'
 import { withKnobs } from '@storybook/addon-knobs'
 import { VPNWidget } from '../components/default/vpn/vpn_card';
+import { VPNBannerWidget } from '../components/default/vpn/vpn_banner';
 import * as BraveVPN from '../api/braveVpn';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -29,4 +30,8 @@ const vpnWidgetProps = {
 
 export const VPN = () => (
   <VPNWidget {...vpnWidgetProps} />
+)
+
+export const VPNBanner = () => (
+  <VPNBannerWidget {...vpnWidgetProps} />
 )

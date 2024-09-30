@@ -83,5 +83,13 @@ provideStrings({
     'VPN connection failed. Please try connecting again, and be sure to click "Allow" to enable Brave\'s VPN configuration.',
   braveVpnSessionExpiredTitle: 'Session expired',
   braveVpnSessionExpiredContent:
-    'Please log in to your $1Brave Account$2 to refresh your VPN session.'
+    'Please log in to your $1Brave Account$2 to refresh your VPN session.',
+  braveVpnBannerText1:
+  `Brave Browser's privacy protections are second to none. Brave blocks
+  tracking scripts, fingerprinting, and many other threats to your privacy. But for
+  complete privacy protection, you need to hide your IP address. That's why
+  we offer Brave VPN, a service that keeps your IP address private so it
+  can't be used to follow you as you use the web.`,
+  braveVpnBannerTitle1:
+  `⚠️ Your IP address is not hidden.`
 })

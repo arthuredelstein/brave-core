@@ -28,11 +28,18 @@ export const heading = styled.div`
 `
 
 export const text = styled.div`
-  font: var(--tos-update-notice-text-font, ${leo.font.default.regular});
+  font: ${leo.font.default.regular};
+  font-size: 16px;
+  line-height 24px;
   color: ${leo.color.text.secondary};
 
   button {
     text-decoration: underline;
     cursor: pointer;
   }
+`
+
+export const link = styled.div`
+  font-weight: bold
+  font-size: 18px;
 `

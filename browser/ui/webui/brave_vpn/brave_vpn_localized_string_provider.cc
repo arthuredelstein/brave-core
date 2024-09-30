@@ -112,6 +112,7 @@ void AddLocalizedStrings(content::WebUIDataSource* html_source) {
       {"braveVpnSessionExpiredContent",
        IDS_BRAVE_VPN_MAIN_PANEL_SESSION_EXPIRED_PART_CONTENT},
       {"braveVpnBannerText1", IDS_BRAVE_VPN_BANNER_TEXT_1},
+      {"braveVpnBannerTitle1", IDS_BRAVE_VPN_BANNER_TITLE_1}
   };
 
   for (const auto& str : kLocalizedStrings) {

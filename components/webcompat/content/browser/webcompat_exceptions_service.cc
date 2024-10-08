@@ -55,6 +55,7 @@ constexpr auto kWebcompatNamesToType =
         {"keyboard", BRAVE_WEBCOMPAT_KEYBOARD},
         {"language", BRAVE_WEBCOMPAT_LANGUAGE},
         {"media-devices", BRAVE_WEBCOMPAT_MEDIA_DEVICES},
+        {"performance", BRAVE_WEBCOMPAT_PERFORMANCE},
         {"plugins", BRAVE_WEBCOMPAT_PLUGINS},
         {"screen", BRAVE_WEBCOMPAT_SCREEN},
         {"speech-synthesis", BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS},

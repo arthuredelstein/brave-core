@@ -6,6 +6,11 @@
 #ifndef BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_H_
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_H_
 
+class DOMHighResTimeStamp;
+
+#include "base/strings/to_string.h"
+#include "third_party/libc++/src/include/__condition_variable/condition_variable.h"
+
 #define now() \
   now_ChromiumImpl() const; \
   DOMHighResTimeStamp now()

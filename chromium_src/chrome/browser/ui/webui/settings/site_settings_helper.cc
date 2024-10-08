@@ -41,6 +41,7 @@
   {ContentSettingsType::BRAVE_WEBCOMPAT_KEYBOARD, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_LANGUAGE, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIA_DEVICES, nullptr}, \
+  {ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, nullptr}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, nullptr}, \

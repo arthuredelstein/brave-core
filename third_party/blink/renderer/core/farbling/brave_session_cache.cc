@@ -5,6 +5,7 @@
 
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 
+#include <cmath>
 #include <string_view>
 
 #include "base/command_line.h"
@@ -154,6 +155,13 @@ bool BlockScreenFingerprinting(ExecutionContext* context,
             : ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN,
       BraveFarblingLevel::OFF);
   return level != BraveFarblingLevel::OFF;
+}
+
+double RoundIfFarbling(ExecutionContext* context, double raw_time_stamp) {
+  bool round = brave::GetBraveFarblingLevelFor(context,
+              ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE,
+              BraveFarblingLevel::OFF) != BraveFarblingLevel::OFF;
+  return round ? std::round(raw_time_stamp) : raw_time_stamp;
 }
 
 int FarbledPointerScreenCoordinate(const DOMWindow* view,

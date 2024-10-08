@@ -18,14 +18,7 @@
 namespace blink {
 
 DOMHighResTimeStamp Performance::now() const {
-        if (brave::GetBraveFarblingLevelFor(
-              GetExecutionContext(),
-              ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE,
-              BraveFarblingLevel::BALANCED) != BraveFarblingLevel::OFF) {
-                return 10 * now_ChromiumImpl();
-  } else {
-    return now_ChromiumImpl();
-  }
+  return brave::RoundIfFarbling(GetExecutionContext(), now_ChromiumImpl());
 }
 
 }  // namespace blink

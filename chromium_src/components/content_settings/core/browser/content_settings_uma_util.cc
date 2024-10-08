@@ -55,7 +55,6 @@ static_assert(static_cast<int>(ContentSettingsType::kMaxValue) <
   {ContentSettingsType::BRAVE_WEBCOMPAT_KEYBOARD, brave_value(57)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_LANGUAGE, brave_value(58)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_MEDIA_DEVICES, brave_value(59)}, \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE, brave_value(68)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_PLUGINS, brave_value(60)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SCREEN, brave_value(61)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, brave_value(62)}, \
@@ -64,7 +63,7 @@ static_assert(static_cast<int>(ContentSettingsType::kMaxValue) <
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL, brave_value(65)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEBGL2, brave_value(66)}, \
   {ContentSettingsType::BRAVE_WEBCOMPAT_WEB_SOCKETS_POOL, brave_value(67)}, \
-  {ContentSettingsType::BRAVE_WEBCOMPAT_ALL, brave_value(69)},
+  {ContentSettingsType::BRAVE_WEBCOMPAT_ALL, brave_value(68)},
 // clang-format on
 
 #define kDefaultProvider       \

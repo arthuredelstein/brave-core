@@ -11,9 +11,7 @@
 
 #undef now
 
-#include "brave/third_party/blink/renderer/brave_farbling_constants.h"
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
-// #include "third_party/blink/renderer/core/timing/performance_user_timing.h"
 
 namespace blink {
 

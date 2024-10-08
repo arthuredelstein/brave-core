@@ -31,7 +31,7 @@ constexpr auto kSettingsNames =
         {BRAVE_WEBCOMPAT_KEYBOARD, "brave-webcompat-keyboard"},
         {BRAVE_WEBCOMPAT_LANGUAGE, "brave-webcompat-language"},
         {BRAVE_WEBCOMPAT_MEDIA_DEVICES, "brave-webcompat-media-devices"},
-        {BRAVE_WEBCOMPAT_PLUGINS, "brave-webcompat-performance"},
+   //     {BRAVE_WEBCOMPAT_PERFORMANCE, "brave-webcompat-performance"},
         {BRAVE_WEBCOMPAT_PLUGINS, "brave-webcompat-plugins"},
         {BRAVE_WEBCOMPAT_SCREEN, "brave-webcompat-screen"},
         {BRAVE_WEBCOMPAT_SPEECH_SYNTHESIS, "brave-webcompat-speech-synthesis"},

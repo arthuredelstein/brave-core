@@ -11,7 +11,7 @@ class DOMHighResTimeStamp;
 #include "base/strings/to_string.h"
 #include "third_party/libc++/src/include/__condition_variable/condition_variable.h"
 
-#define now() \
+#define now()               \
   now_ChromiumImpl() const; \
   DOMHighResTimeStamp now()
 

@@ -157,10 +157,11 @@ bool BlockScreenFingerprinting(ExecutionContext* context,
   return level != BraveFarblingLevel::OFF;
 }
 
-double RoundIfFarbling(ExecutionContext* context, double raw_time_stamp) {
-  bool round = brave::GetBraveFarblingLevelFor(context,
-              ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE,
-              BraveFarblingLevel::OFF) != BraveFarblingLevel::OFF;
+double RoundPerformanceIfFarbling(ExecutionContext* context,
+                                  double raw_time_stamp) {
+  bool round = brave::GetBraveFarblingLevelFor(
+                   context, ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE,
+                   BraveFarblingLevel::OFF) != BraveFarblingLevel::OFF;
   return round ? std::round(raw_time_stamp) : raw_time_stamp;
 }
 

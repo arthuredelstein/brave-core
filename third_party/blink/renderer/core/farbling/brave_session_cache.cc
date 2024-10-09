@@ -159,6 +159,7 @@ bool BlockScreenFingerprinting(ExecutionContext* context,
 
 double RoundPerformanceIfFarbling(ExecutionContext* context,
                                   double raw_time_stamp) {
+  DLOG(INFO) << "RoundPerformanceIfFarbling";
   bool round = brave::GetBraveFarblingLevelFor(
                    context, ContentSettingsType::BRAVE_WEBCOMPAT_PERFORMANCE,
                    BraveFarblingLevel::OFF) != BraveFarblingLevel::OFF;

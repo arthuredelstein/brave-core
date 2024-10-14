@@ -33,4 +33,11 @@ DOMHighResTimeStamp Performance::BraveMonotonicTimeToDOMHighResTimeStamp(
                    cross_origin_isolated_capability));
 }
 
+DOMHighResTimeStamp Performance::BraveMonotonicTimeToDOMHighResTimeStamp(
+    ExecutionContext* context,
+    base::TimeTicks monotonic_time) {
+  return brave::RoundPerformanceIfFarbling(
+      context, MonotonicTimeToDOMHighResTimeStamp(monotonic_time));
+}
+
 }  // namespace blink

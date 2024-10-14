@@ -5,8 +5,11 @@
 
 #include "third_party/blink/renderer/core/timing/performance_navigation_timing.h"
 
+#include "third_party/blink/renderer/core/timing/performance.h"
+
+#define MonotonicTimeToDOMHighResTimeStamp(...) \
+  BraveMonotonicTimeToDOMHighResTimeStamp(GetExecutionContext(), __VA_ARGS__)
+
 #include "src/third_party/blink/renderer/core/timing/performance_navigation_timing.cc"
 
-namespace blink {
-
-}  // namespace blink
+#undef MonotonicTimeToDOMHighResTimeStamp

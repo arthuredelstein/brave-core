@@ -18,12 +18,11 @@ class DOMHighResTimeStamp;
 #define ClampTimeResolution(...)                                      \
   ClampTimeResolution(__VA_ARGS__);                                   \
   static DOMHighResTimeStamp BraveMonotonicTimeToDOMHighResTimeStamp( \
-    ExecutionContext* context, \
-    base::TimeTicks time_origin, \
-    base::TimeTicks monotonic_time, \
-    bool allow_negative_value, \
-    bool cross_origin_isolated_capability) \
-  );
+      ExecutionContext* context, base::TimeTicks time_origin,         \
+      base::TimeTicks monotonic_time, bool allow_negative_value,      \
+      bool cross_origin_isolated_capability);                         \
+  DOMHighResTimeStamp BraveMonotonicTimeToDOMHighResTimeStamp(        \
+      ExecutionContext* context, base::TimeTicks monotonic_time)
 
 #include "src/third_party/blink/renderer/core/timing/performance.h"  // IWYU pragma: export
 

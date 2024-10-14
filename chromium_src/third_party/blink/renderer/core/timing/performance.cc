@@ -20,4 +20,15 @@ DOMHighResTimeStamp Performance::now() const {
                                            now_ChromiumImpl());
 }
 
+// static
+DOMHighResTimeStamp Performance::BraveMonotonicTimeToDOMHighResTimeStamp(
+    ExecutionContext* context,
+    base::TimeTicks time_origin,
+    base::TimeTicks monotonic_time,
+    bool allow_negative_value,
+    bool cross_origin_isolated_capability) {
+  return brave::RoundPerformanceIfFarbling(context,
+    MonotonicTimeToDOMHighResTimeStamp(time_origin, monotonic_time, allow_negative_value, cross_origin_isolated_capability));
+}
+
 }  // namespace blink

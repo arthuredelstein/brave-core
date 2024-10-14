@@ -5,7 +5,6 @@
 
 #include "third_party/blink/renderer/core/timing/performance_resource_timing.h"
 
-#include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 #include "third_party/blink/renderer/core/timing/performance.h"
 #include "third_party/blink/renderer/core/timing/performance_entry.h"
 

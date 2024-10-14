@@ -7,18 +7,17 @@
 
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 
-#define duration_(...) \
-  duration_(brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source), __VA_ARGS__))
+#define duration_(...)                         \
+  duration_(brave::RoundPerformanceIfFarbling( \
+      DynamicTo<LocalDOMWindow>(source), __VA_ARGS__))
 
-#define start_time_(...) \
-  start_time_(brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source), __VA_ARGS__))
-
+#define start_time_(...)                         \
+  start_time_(brave::RoundPerformanceIfFarbling( \
+      DynamicTo<LocalDOMWindow>(source), __VA_ARGS__))
 
 #include "src/third_party/blink/renderer/core/timing/performance_entry.cc"
 
 #undef duration_
 #undef start_time_
 
-namespace blink {
-
-}  // namespace blink
+namespace blink {}  // namespace blink

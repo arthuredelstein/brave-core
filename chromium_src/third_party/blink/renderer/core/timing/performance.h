@@ -15,8 +15,8 @@ class DOMHighResTimeStamp;
   now_ChromiumImpl() const; \
   DOMHighResTimeStamp now()
 
-#define ClampTimeResolution(...) \
-  ClampTimeResolution(__VA_ARGS__); \
+#define ClampTimeResolution(...)                                      \
+  ClampTimeResolution(__VA_ARGS__);                                   \
   static DOMHighResTimeStamp BraveMonotonicTimeToDOMHighResTimeStamp( \
     ExecutionContext* context, \
     base::TimeTicks time_origin, \

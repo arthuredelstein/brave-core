@@ -165,7 +165,8 @@ double RoundPerformanceIfFarbling(ExecutionContext* context,
   if (context) {
     const auto url = context->Url();
     if (url.Protocol() == url::kHttpsScheme) {
-      DLOG(INFO) << "RoundPerformanceIfFarbling -- " << url << " rounding:" << (round ? "true" : "false");
+      DLOG(INFO) << "RoundPerformanceIfFarbling -- " << url
+                 << " rounding:" << (round ? "true" : "false");
     }
   }
   return round ? std::round(raw_time_stamp) : raw_time_stamp;

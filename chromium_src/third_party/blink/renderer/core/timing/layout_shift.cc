@@ -5,6 +5,8 @@
 
 #include "third_party/blink/renderer/core/timing/layout_shift.h"
 
+#include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
+
 #define value_(...) \
   value(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 

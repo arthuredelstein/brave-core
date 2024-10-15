@@ -65,6 +65,8 @@ CORE_EXPORT bool BlockScreenFingerprinting(ExecutionContext* context,
                                            bool early = false);
 CORE_EXPORT double RoundPerformanceIfFarbling(ExecutionContext* context,
                                               double raw_time_stamp);
+CORE_EXPORT double RoundPerformanceIfFarbling(const DOMWindow* view,
+                                              double raw_time_stamp);
 CORE_EXPORT int FarbledPointerScreenCoordinate(const DOMWindow* view,
                                                FarbleKey key,
                                                int client_coordinate,

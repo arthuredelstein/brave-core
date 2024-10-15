@@ -172,6 +172,17 @@ double RoundPerformanceIfFarbling(ExecutionContext* context,
   return round ? std::round(raw_time_stamp) : raw_time_stamp;
 }
 
+double RoundPerformanceIfFarbling(const DOMWindow* view,
+                                  double raw_time_stamp) {
+  const blink::LocalDOMWindow* local_dom_window =
+    blink::DynamicTo<blink::LocalDOMWindow>(view);
+  if (!local_dom_window) {
+    return raw_time_stamp;
+  }
+  ExecutionContext* context = local_dom_window->GetExecutionContext();
+  return RoundPerformanceIfFarbling(context, raw_time_stamp);
+}
+
 int FarbledPointerScreenCoordinate(const DOMWindow* view,
                                    FarbleKey key,
                                    int client_coordinate,

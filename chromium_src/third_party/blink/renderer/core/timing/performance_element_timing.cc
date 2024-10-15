@@ -11,8 +11,7 @@
   render_time_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #define load_time_(...) \
-  load_time_(           \
-      brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+  load_time_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #include "src/third_party/blink/renderer/core/timing/performance_element_timing.cc"
 

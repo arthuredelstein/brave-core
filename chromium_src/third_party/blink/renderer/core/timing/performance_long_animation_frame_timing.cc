@@ -7,10 +7,44 @@
 
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 #include "third_party/blink/renderer/bindings/core/v8/v8_object_builder.h"
+#include "third_party/blink/renderer/core/dom/dom_high_res_time_stamp.h"
+
+#define renderStart renderStart_ChromiumImpl
+#define styleAndLayoutStart styleAndLayoutStart_ChromiumImpl
+#define firstUIEventTimestamp firstUIEventTimestamp_ChromiumImpl
+#define blockingDuration blockingDuration_ChromiumImpl
 
 #define AddNumber(A, B) \
   AddNumber(A, brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source()), B))
 
 #include "src/third_party/blink/renderer/core/timing/performance_long_animation_frame_timing.cc"
 
+#undef renderStart
+#undef styleAndLayoutStart
+#undef firstUIEventTimestamp
+#undef blockingDuration
+
 #undef AddNumber
+
+namespace blink {
+
+DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::renderStart() const {
+  return brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source()), renderStart_ChromiumImpl());
+}
+
+DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::styleAndLayoutStart()
+    const {
+  return brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source()), styleAndLayoutStart_ChromiumImpl());
+}
+
+DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::firstUIEventTimestamp()
+    const {
+  return brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source()), firstUIEventTimestamp_ChromiumImpl());
+}
+
+DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::blockingDuration()
+    const {
+  return brave::RoundPerformanceIfFarbling(DynamicTo<LocalDOMWindow>(source()), blockingDuration_ChromiumImpl());
+}
+
+}  // namespace blink

@@ -9,7 +9,7 @@
 #include "third_party/blink/renderer/core/timing/performance_entry.h"
 
 #define MonotonicTimeToDOMHighResTimeStamp(...) \
-  BraveMonotonicTimeToDOMHighResTimeStamp(source(), __VA_ARGS__)
+  BraveMonotonicTimeToDOMHighResTimeStamp(DynamicTo<LocalDOMWindow>(source()), __VA_ARGS__)
 
 // Put back the original MonotonicTimeToDOMHighResTimeStamp in the constructor.
 #define PerformanceEntry(PARAM1, PARAM2, PARAM3, PARAM4)                \

@@ -6,9 +6,11 @@
 #include "third_party/blink/renderer/core/timing/layout_shift.h"
 
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
+// Avoid modifying 'value' variables in headers.
+#include "third_party/blink/renderer/bindings/core/v8/script_promise.h"
 
 #define value_(...) \
-  value(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+  value_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #define most_recent_input_timestamp_(...) \
   most_recent_input_timestamp_(           \

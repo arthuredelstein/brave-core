@@ -8,7 +8,7 @@
 #include "third_party/blink/renderer/core/timing/performance.h"
 #include "third_party/blink/renderer/core/timing/performance_entry.h"
 
-#define MonotonicTimeToDOMHighResTimeStamp(...)            \
+#define MonotonicTimeToDOMHighResTimeStamp(...) \
   BraveMonotonicTimeToDOMHighResTimeStamp(source(), __VA_ARGS__)
 
 // Put back the original MonotonicTimeToDOMHighResTimeStamp in the constructor.

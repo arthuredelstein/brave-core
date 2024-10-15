@@ -7,13 +7,11 @@
 
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
 
-#define duration_(...)                         \
-  duration_(brave::RoundPerformanceIfFarbling( \
-      source, __VA_ARGS__))
+#define duration_(...) \
+  duration_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
-#define start_time_(...)                         \
-  start_time_(brave::RoundPerformanceIfFarbling( \
-      source, __VA_ARGS__))
+#define start_time_(...) \
+  start_time_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #include "src/third_party/blink/renderer/core/timing/performance_entry.cc"
 

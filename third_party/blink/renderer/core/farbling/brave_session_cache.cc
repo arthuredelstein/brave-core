@@ -175,7 +175,7 @@ double RoundPerformanceIfFarbling(ExecutionContext* context,
 double RoundPerformanceIfFarbling(const DOMWindow* view,
                                   double raw_time_stamp) {
   const blink::LocalDOMWindow* local_dom_window =
-    blink::DynamicTo<blink::LocalDOMWindow>(view);
+      blink::DynamicTo<blink::LocalDOMWindow>(view);
   if (!local_dom_window) {
     return raw_time_stamp;
   }

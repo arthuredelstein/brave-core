@@ -6,21 +6,21 @@
 #ifndef BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_LONG_ANIMATION_FRAME_TIMING_H_
 #define BRAVE_CHROMIUM_SRC_THIRD_PARTY_BLINK_RENDERER_CORE_TIMING_PERFORMANCE_LONG_ANIMATION_FRAME_TIMING_H_
 
-#define renderStart() \
-    renderStart() const; \
-    DOMHighResTimeStamp renderStart_ChromiumImpl()
+#define renderStart()  \
+  renderStart() const; \
+  DOMHighResTimeStamp renderStart_ChromiumImpl()
 
-#define styleAndLayoutStart() \
-    styleAndLayoutStart() const; \
-    DOMHighResTimeStamp styleAndLayoutStart_ChromiumImpl()
+#define styleAndLayoutStart()  \
+  styleAndLayoutStart() const; \
+  DOMHighResTimeStamp styleAndLayoutStart_ChromiumImpl()
 
-#define firstUIEventTimestamp() \
-    firstUIEventTimestamp() const; \
-    DOMHighResTimeStamp firstUIEventTimestamp_ChromiumImpl()
+#define firstUIEventTimestamp()  \
+  firstUIEventTimestamp() const; \
+  DOMHighResTimeStamp firstUIEventTimestamp_ChromiumImpl()
 
-#define blockingDuration() \
-    blockingDuration() const; \
-    DOMHighResTimeStamp blockingDuration_ChromiumImpl()
+#define blockingDuration()  \
+  blockingDuration() const; \
+  DOMHighResTimeStamp blockingDuration_ChromiumImpl()
 
 #include "src/third_party/blink/renderer/core/timing/performance_long_animation_frame_timing.h"  // IWYU pragma: export
 

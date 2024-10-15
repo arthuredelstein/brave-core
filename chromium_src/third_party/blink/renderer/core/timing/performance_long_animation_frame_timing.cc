@@ -29,22 +29,27 @@
 namespace blink {
 
 DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::renderStart() const {
-  return brave::RoundPerformanceIfFarbling(source(), renderStart_ChromiumImpl());
+  return brave::RoundPerformanceIfFarbling(source(),
+                                           renderStart_ChromiumImpl());
 }
 
 DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::styleAndLayoutStart()
     const {
-  return brave::RoundPerformanceIfFarbling(source(), styleAndLayoutStart_ChromiumImpl());
+  return brave::RoundPerformanceIfFarbling(source(),
+                                           styleAndLayoutStart_ChromiumImpl());
 }
 
 DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::firstUIEventTimestamp()
     const {
-  return brave::RoundPerformanceIfFarbling(source(), firstUIEventTimestamp_ChromiumImpl());
+  return brave::RoundPerformanceIfFarbling(
+      source(), firstUIEventTimestamp_ChromiumImpl());
 }
 
 DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::blockingDuration()
     const {
-  return brave::RoundPerformanceIfFarbling(source(), blockingDuration_ChromiumImpl());
+  return brave::RoundPerformanceIfFarbling(source(),
+                                           blockingDuration_ChromiumImpl());
 }
 
 }  // namespace blink
+                     

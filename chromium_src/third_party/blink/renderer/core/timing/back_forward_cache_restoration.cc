@@ -9,10 +9,10 @@
 #include "third_party/blink/renderer/core/frame/local_dom_window.h"
 
 #define pageshow_event_start_(...) \
-    pageshow_event_start_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+  pageshow_event_start_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #define pageshow_event_end_(...) \
-    pageshow_event_end_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+  pageshow_event_end_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #include "src/third_party/blink/renderer/core/timing/back_forward_cache_restoration.cc"
 

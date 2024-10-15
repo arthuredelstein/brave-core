@@ -14,7 +14,8 @@
   load_time_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #define first_animated_frame_time_(...) \
-  first_animated_frame_time_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+  first_animated_frame_time_(           \
+      brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
 
 #include "src/third_party/blink/renderer/core/timing/largest_contentful_paint.cc"
 

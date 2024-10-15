@@ -5,8 +5,14 @@
 
 #include "third_party/blink/renderer/core/timing/layout_shift.h"
 
+#define value_(...) \
+  value(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+
+#define most_recent_input_timestamp_(...) \
+  most_recent_input_timestamp_(           \
+      brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))
+
 #include "src/third_party/blink/renderer/core/timing/layout_shift.cc"
 
-namespace blink {
-
-}  // namespace blink
+#undef value_
+#undef most_recent_input_timestamp_

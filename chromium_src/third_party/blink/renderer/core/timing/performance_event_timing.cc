@@ -5,8 +5,9 @@
 
 #include "third_party/blink/renderer/core/timing/performance_event_timing.h"
 
-#define MonotonicTimeToDOMHighResTimeStamp(...) \
-  BraveMonotonicTimeToDOMHighResTimeStamp(DynamicTo<LocalDOMWindow>(source), __VA_ARGS__)
+#define MonotonicTimeToDOMHighResTimeStamp(...)                              \
+  BraveMonotonicTimeToDOMHighResTimeStamp(DynamicTo<LocalDOMWindow>(source), \
+                                          __VA_ARGS__)
 
 #include "src/third_party/blink/renderer/core/timing/performance_event_timing.cc"
 

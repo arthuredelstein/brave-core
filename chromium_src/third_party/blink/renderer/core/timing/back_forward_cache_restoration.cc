@@ -6,7 +6,6 @@
 #include "third_party/blink/renderer/core/timing/back_forward_cache_restoration.h"
 
 #include "brave/third_party/blink/renderer/core/farbling/brave_session_cache.h"
-#include "third_party/blink/renderer/core/frame/local_dom_window.h"
 
 #define pageshow_event_start_(...) \
   pageshow_event_start_(brave::RoundPerformanceIfFarbling(source, __VA_ARGS__))

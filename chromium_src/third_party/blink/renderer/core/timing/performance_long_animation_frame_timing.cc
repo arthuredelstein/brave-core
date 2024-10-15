@@ -52,4 +52,3 @@ DOMHighResTimeStamp PerformanceLongAnimationFrameTiming::blockingDuration()
 }
 
 }  // namespace blink
-                     

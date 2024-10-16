@@ -5,8 +5,12 @@
 
 #include "third_party/blink/renderer/modules/compute_pressure/pressure_client_impl.h"
 
+#include "third_party/blink/renderer/core/timing/performance.h"
+
+#define MonotonicTimeToDOMHighResTimeStamp(...) \
+  BraveMonotonicTimeToDOMHighResTimeStamp(context, __VA_ARGS__)
+
 #include "src/third_party/blink/renderer/modules/compute_pressure/pressure_client_impl.cc"
 
-namespace blink {
+#undef MonotonicTimeToDOMHighResTimeStamp
 
-}  // namespace blink

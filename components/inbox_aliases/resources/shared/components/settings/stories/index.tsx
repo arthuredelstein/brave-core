@@ -4,8 +4,8 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
  import * as React from 'react'
- import styled from 'styled-components'
- import * as knobs from '@storybook/addon-knobs'
+ //import styled from 'styled-components'
+ //import * as knobs from '@storybook/addon-knobs'
  //import MainPanel from '../components/main-panel'
  
  
@@ -13,6 +13,7 @@
    title: 'Inbox Aliases/Main'
  }
  
+ /*
  function actionLogger (name: string, ...args: any[]) {
    return (...args: any[]) => console.log(name, ...args)
  }
@@ -26,8 +27,9 @@
      padding: 24px;
    `
  }
+*/
  
- export const _Main = () => {
+ export const Manage = () => {
   return (
     <div>hello</div>
   )

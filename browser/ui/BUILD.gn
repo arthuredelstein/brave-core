@@ -1255,6 +1255,8 @@ source_set("ui") {
       "wallet_bubble_manager_delegate_impl.h",
       "webui/brave_news_internals/brave_news_internals_ui.cc",
       "webui/brave_news_internals/brave_news_internals_ui.h",
+      "webui/inbox_aliases/inbox_aliases_page_ui.cc",
+      "webui/inbox_aliases/inbox_aliases_page_ui.h",
       "webui/brave_wallet/ledger/ledger_ui.cc",
       "webui/brave_wallet/ledger/ledger_ui.h",
       "webui/brave_wallet/page_handler/wallet_page_handler.cc",

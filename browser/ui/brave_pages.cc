@@ -84,4 +84,8 @@ void ShowWalletSettings(Browser* browser) {
   ShowSingletonTabOverwritingNTP(browser, GURL(kWalletSettingsURL));
 }
 
+void ShowInboxAliasSettings(Browser* browser) {
+  ShowSingletonTabOverwritingNTP(browser, GURL(kInboxAliasesPageURL));
+}
+
 }  // namespace brave

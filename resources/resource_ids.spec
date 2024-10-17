@@ -221,4 +221,8 @@
     "META": {"sizes": {"includes": [50]}},
     "includes": [64430],
   },
+  "<(SHARED_INTERMEDIATE_DIR)/brave/web-ui-inbox_aliases/inbox_aliases.grd": {
+    "META": {"sizes": {"includes": [10]}},
+    "includes": [64440],
+  },
 }

@@ -1,0 +1,135 @@
+/* #css_wrapper_metadata_start
+ * #type=vars
+ * #import=chrome://resources/cr_elements/cr_shared_vars.css.js
+ * #css_wrapper_metadata_end */
+
+@import '../../../../../../../ui/webui/resources/cr_elements/cr_shared_vars.css';
+
+.page-title {
+  font-weight: 600;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:active {
+  background-color: lightgray
+}
+
+.card {
+  background-color: var(--cr-card-background-color);
+  border-radius: var(--cr-card-border-radius);
+  box-shadow: var(--cr-card-shadow);
+  overflow: hidden;
+  padding: 0px;
+  margin-bottom: 25px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.card > div, .card > h2 {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.card h2 {
+  font-weight: 600;
+  padding-top: 10px;
+}
+
+.text {
+  font-size: 125%;
+  line-height: 150%;
+}
+
+.fine-print {
+  font-size: 110%;
+  line-height: 130%;
+  opacity: 85%;
+}
+
+.alias-list {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.alias-list-intro {
+  margin-bottom: 20px;
+}
+
+.alias-item {
+  margin: 0px;
+  font-size: 125%;
+  padding: 18px 0px 18px 25px;
+  border-radius: var(--cr-card-border-radius);
+  background-color: var(--cr-card-background);
+  border-bottom: var(--cr-separator-line);
+  justify-content: space-between;
+}
+
+.alias-annotation {
+  font-size: 80%;
+  font-weight: 400;
+  padding-top: 0.25em;
+  color: rgb(80, 80, 80);
+}
+
+.account-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0px 20px;
+}
+
+.main-email {
+  font-size: 130%;
+  font-weight: 600;
+  padding-bottom: 6px;
+}
+
+.main-email-text-container {
+  justify-content: center;
+}
+
+.main-email-description {
+  font-size: 115%;
+}
+
+.button-container {
+  justify-content: end;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+button {
+  color: white;
+ /* background-color: var(--leo-color-button-background);*/
+  border: none;
+  border-radius: var(--cr-card-border-radius);
+  padding: 8px 16px;
+}
+
+.alias-controls {
+  height: 1.5em;
+}
+
+.brave-icon {
+  border: #E3E3E8 1px solid;
+  border-radius:50%;
+  width: 4.5em;
+  height: 4.5em;
+  background-image: url('./assets/brave-logo.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 2.5em;
+  margin-inline-end: 1.5em;
+}

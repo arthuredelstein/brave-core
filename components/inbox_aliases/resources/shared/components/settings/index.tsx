@@ -1,49 +1,35 @@
 import * as React from 'react'
+
 // import '../../../../../../../ui/webui/resources/cr_elements/cr_shared_style.css'
 // /Users/arthur/brave-browser/src/chrome/browser/resources/app_settings/app_management_shared_style.css
 import './index.css'
-import moreVertical from './assets/more-vertical.svg'
+import moreVerticalIcon from './assets/more-vertical.svg'
 import copyIcon from './assets/copy.svg'
 import launchIcon from './assets/launch.svg'
+import crossIcon from './assets/cross.svg'
+import refreshIcon from './assets/refresh.svg'
 
-export type Alias = {
+type Alias = {
   email: string,
   note?: string,
   domains?: string[]
 }
 
-/*
-  *
-  Enter your search here
-  Only search in this page
-  Subtext
-  Message goes here
-  Autofill and passwords
-  Level2
-  Inbox Aliases
-  Level3
-  Level4
-  Inbox Aliases
-  Keep your personal email address private
-  Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. Learn more
-  aruiz@brave.com
-  Brave account
-  Your email aliases
-  New alias
-  Create up to 10 free email aliases to protect your real email address. You can create unlimited aliases with a Premium account. Get Premium
-  horse.radish.record57@bravealias.com
-  Alias for all my newsletters
-  start.plane.division.laser42@bravealias.com
-  Used on x.com
-  racoon.pencil.test14@bravealias.com
-  Marketplace email for Facebook</p>
+export type InboxAliasesManagementState = {
+  email: string,
+  aliases: Alias[]
 }
-  */
 
-export const Introduction = ({email} : { email: string }) => (
+enum ViewMode {
+  Main,
+  Create,
+  Edit
+}
+
+const Introduction = ({email} : { email: string }) => (
   <div className='card' id='introduction'>
     <h2>Keep your personal email address private</h2>
-    <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com">Learn more</a></div>
+    <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
     <div className='account-row row'>
       <div className='main-email-container row'>
         <div className='brave-icon'></div>
@@ -52,24 +38,36 @@ export const Introduction = ({email} : { email: string }) => (
           <div className='main-email-description'>Brave Account</div>
         </div>
       </div>
-      <div>
+      <a href='https://account.brave.com' target='_blank'>
         <img src={launchIcon}></img>
-      </div>
+      </a>
     </div>
-  </div>)
+  </div>
+)
 
+/*
+const CopiedNotification = () => (
+  <div>Copied!</div>
+)
+*/
 
-const copyEmailToClipboard = (email: string) => {
+const copyEmailToClipboard = (
+  event: React.MouseEvent<HTMLElement>,
+  email: string
+) => {
   navigator.clipboard.writeText(email)
-  console.log(`copied to clipboard: ${email}`)
+  console.log(`copied to clipboard: ${event.target} ${email}`)
+  //const copiedNotification = <CopiedNotification></CopiedNotification>
+  //if (event.target instanceof Element) {
+  //  event.target.after(useRef(copiedNotification).current)
+  //}
 }
 
-export const AliasItem = ({alias} : {alias: Alias}) => {
-  return (
+const AliasItem = ({alias} : {alias: Alias}) => (
   <div className='alias-item row'>
     <div className='email-container'>
       <div className="alias-item-email clickable"
-           onClick={() => copyEmailToClipboard(alias.email)}>
+           onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
         {alias.email}
       </div>
       {((alias.note || alias.domains) &&
@@ -81,39 +79,78 @@ export const AliasItem = ({alias} : {alias: Alias}) => {
       )}
     </div>
     <div className='alias-controls row'>
-      <div className='clickable' onClick={() => copyEmailToClipboard(alias.email)}>
+      <div className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
         <img src={copyIcon}></img>
       </div>
       <div className='clickable'>
-        <img src={moreVertical}></img>
+        <img src={moreVerticalIcon}></img>
       </div>
     </div>
   </div>
-)}
+)
 
-export const AliasList = ({aliases} : {aliases:Alias[]}) => {
-  return (
-    <div className='card alias-list col'>
-      <div className='alias-list-intro row'>
-        <div className='col'>
-          <h2>Your email aliases</h2>
-          <div className='fine-print'>Create up to 10 free email aliases to protect your real email address. You can create unlimited aliases with a Premium account. <a href="https://premium.brave.com">Get Premium</a></div>
-        </div>
-        <div className="button-container col">
-          <button className='leoButton isFilled' id='add-alias'>New alias</button>
+const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Function}) => (
+  <div className='card alias-list col'>
+    <div className='alias-list-intro row'>
+      <div className='col'>
+        <h2>Your email aliases</h2>
+        <div className='fine-print'>
+          Create up to 10 free email aliases to protect your real email
+          address. You can create unlimited aliases with a Premium
+          account. <a href="https://premium.brave.com" target="_blank">Get Premium</a>
         </div>
       </div>
-      {aliases.map(
-        alias => <AliasItem alias={alias}></AliasItem>)}
-    </div>)
-}
+      <div className="button-container col">
+        <button id='add-alias' onClick={() => onViewChange(ViewMode.Create)}>New alias</button>
+      </div>
+    </div>
+    {aliases.map(
+      alias => <AliasItem alias={alias}></AliasItem>)}
+  </div>
+)
 
-export const ManagePage = ({email, aliases} : { email: string, aliases: Alias[]}) => {
+const EmailAliasOverlay = ({returnToMain, viewState} : {returnToMain: any, viewState: ViewMode}) => (
+  <div className='overlay col'>
+    <img className='close clickable' src={crossIcon} onClick={returnToMain}></img>
+    <h2>{viewState == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
+    <div>
+      <h3>Email alias</h3>
+      <div className='generated-email-container row'>
+        <div>coolnews.airplane.potato57@bravealias.com</div>
+        {viewState == ViewMode.Create && <img className='clickable' src={refreshIcon}></img>}
+      </div>
+      <div className='fine-print'>Emails will be forwarded to aruiz@brave.com.
+        {viewState == ViewMode.Create && <span>Custom aliases are a premium feature. <a href='https://support.brave.com'>Learn more</a>`</span>}
+      </div>
+    </div>
+    <div className='col'>
+      <h3>Note</h3>
+      <input className='note-input' type='text'
+             value={viewState == ViewMode.Create ? 'Enter a note for your new address' : ''}>
+      </input>
+      {viewState == ViewMode.Edit && <div className='fine-print'>Used by bbcnews.com, nytimes.com</div>}
+    </div>
+    <div className='overlay-buttons row'>
+      <button className='cancel-button' onClick={returnToMain}>Cancel</button>
+      <button>{viewState == ViewMode.Create ? 'Create' : 'Save'}</button>
+    </div>
+  </div>
+)
+
+export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
+  const [viewState, setViewState] = React.useState<ViewMode>(ViewMode.Main)
+  const returnToMain = () => setViewState(ViewMode.Main)
   return (
+  <div className='app col'>
     <div className='col'>
       <h1 className="flex page-title">Inbox Aliases</h1>
       <Introduction email={email}></Introduction>
-      <AliasList aliases={aliases}></AliasList>
+      <AliasList aliases={aliases} onViewChange={setViewState}></AliasList>
     </div >
-  )
-}
+    {viewState == ViewMode.Main ? undefined :
+      <div className='grey-out' onClick={returnToMain}>&nbsp;
+    </div>}
+    {(viewState == ViewMode.Create || viewState == ViewMode.Edit) &&
+     <EmailAliasOverlay returnToMain={returnToMain} viewState={viewState}></EmailAliasOverlay>}
+  </div>
+)}

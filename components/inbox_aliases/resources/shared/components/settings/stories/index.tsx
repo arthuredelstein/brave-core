@@ -5,12 +5,12 @@
 
  import * as React from 'react'
  //import styled from 'styled-components'
- //import * as knobs from '@storybook/addon-knobs'
+// import * as knobs from '@storybook/addon-knobs'
  //import MainPanel from '../components/main-panel'
- import { ManagePage, Alias } from '../index'
+ import { ManagePage, InboxAliasesManagementState } from '../index'
  
  export default {
-   title: 'Inbox Aliases/Main'
+   title: 'Inbox Aliases/Main',
  }
  
  /*
@@ -28,25 +28,26 @@
    `
  }
 */
- 
-  const demoData : { email: string, aliases: Alias[]} = {
-    email: 'aruiz@brave.com',
-    aliases: [
-      {
-        email: 'horse.radish.record57@bravealias.com',
-        note: 'Alias for all my newsletters',
-      },
-      {
-        email: 'start.plane.division.laser42@bravealias.com',
-        domains: ['x.com'],
-        note: 'Twitter account'
-      },
-      {
-        email: 'racoon.pencil.test14@bravealias.com',
-        note: 'Marketplace email for Facebook'
-      }
-    ]
-  }
+
+
+const demoData : InboxAliasesManagementState = {
+  email: 'aruiz@brave.com',
+  aliases: [
+    {
+      email: 'horse.radish.record57@bravealias.com',
+      note: 'Alias for all my newsletters',
+    },
+    {
+      email: 'start.plane.division.laser42@bravealias.com',
+      domains: ['x.com'],
+      note: 'Twitter account'
+    },
+    {
+      email: 'racoon.pencil.test14@bravealias.com',
+      note: 'Marketplace email for Facebook'
+    }
+  ]
+}
 
  export const Manage = () => {
   return (

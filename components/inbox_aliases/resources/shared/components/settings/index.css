@@ -11,10 +11,11 @@
 
 .clickable {
   cursor: pointer;
+ /* background-color: white;*/
 }
 
 .clickable:active {
-  background-color: lightgray
+  backdrop-filter: brightness(80%);
 }
 
 .card {
@@ -41,7 +42,7 @@
   padding-right: 25px;
 }
 
-.card h2 {
+.card h2, .overlay h2 {
   font-weight: 600;
   padding-top: 10px;
 }
@@ -70,10 +71,13 @@
   margin: 0px;
   font-size: 125%;
   padding: 18px 0px 18px 25px;
-  border-radius: var(--cr-card-border-radius);
   background-color: var(--cr-card-background);
   border-bottom: var(--cr-separator-line);
   justify-content: space-between;
+}
+
+.alias-item:hover {
+  background-color: #F0f0F0;
 }
 
 .alias-annotation {
@@ -98,6 +102,8 @@
 
 .main-email-text-container {
   justify-content: center;
+  cursor: default;
+  user-select: none;
 }
 
 .main-email-description {
@@ -112,14 +118,26 @@
 
 button {
   color: white;
- /* background-color: var(--leo-color-button-background);*/
+  background-color: var(--leo-color-button-background);
   border: none;
+  font-size: 120%;
   border-radius: var(--cr-card-border-radius);
-  padding: 8px 16px;
+  padding: 0.75em 1em;
+  cursor: pointer;
+}
+
+button:active {
+  filter: brightness(70%)
 }
 
 .alias-controls {
   height: 1.5em;
+  user-select: none;
+}
+
+.alias-controls > div {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
 }
 
 .brave-icon {
@@ -132,4 +150,73 @@ button {
   background-repeat: no-repeat;
   background-size: 2.5em;
   margin-inline-end: 1.5em;
+}
+
+.invisible {
+  display: none;
+}
+
+.grey-out {
+  background-color: rgb(50,50,50,0.5);
+  position: absolute;
+  z-index: 1;
+  left: 0em;
+  right: 0em;
+  top: 0em;
+  bottom: 0em;
+}
+.app {
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay {
+  border-radius: var(--cr-card-border-radius);
+  background-color: white;
+  z-index: 2;
+  border: none;
+  opacity: 100%;
+  position: absolute;
+  width: 45em;
+  height: 33em;
+  padding: 1em 2em;
+  justify-content: space-between;
+}
+
+.close {
+  position: absolute;
+  top: 1.75em;
+  right:1.75em;
+}
+
+.cancel-button {
+  color: black;
+  background-color: white;
+}
+
+.note-input {
+  font-size: 135%;
+  padding: 0.75em;
+  margin-bottom: 0.5em;
+  border-radius: 0.5em;
+  border: 1px lightgray solid;
+}
+
+.generated-email-container {
+  font-size: 135%;
+  background-color: #f4f4f4;
+  border-radius: 0.5em;
+  padding: 0.75em;
+  margin: 0.5em 0em;
+  justify-content: space-between;
+}
+
+.overlay-buttons {
+  justify-content: end;
+  margin: 1.5em 0em 0.5em;
+}
+
+.overlay h3 {
+  padding-left: 0.25em;
+  line-height: 0.3em;
 }

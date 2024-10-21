@@ -71,11 +71,14 @@ const autoFocus = (element: HTMLElement|null) => element?.focus();
 const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
   const [visible, setVisible] = React.useState<boolean>(false)
   return (
-    <div>
+    <div tabIndex={-1} ref={autoFocus}
+    onBlur={() => setVisible(false)}>
+      <div title='More options' className='clickable' onClick={() => setVisible(!visible)}>
+        <img src={moreVerticalIcon}></img>
+      </div>
       {
         visible &&
-        (<div className='option-menu col' tabIndex={-1} ref={autoFocus}
-              onBlur={() => setVisible(false)}>
+        (<div className='option-menu col' >
           <div title='Edit this email alias' className='row clickable option-menu-item'
             onClick={() => {
               setVisible(false)
@@ -90,9 +93,6 @@ const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
           </div>
         </div>)
       }
-      <div title='More options' className='clickable' onClick={() => setVisible(true)}>
-        <img src={moreVerticalIcon}></img>
-      </div>
     </div>
   )
 }

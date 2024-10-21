@@ -8,6 +8,8 @@ import copyIcon from './assets/copy.svg'
 import launchIcon from './assets/launch.svg'
 import crossIcon from './assets/cross.svg'
 import refreshIcon from './assets/refresh.svg'
+import editIcon from './assets/edit.svg'
+import trashIcon from './assets/trash.svg'
 
 type Alias = {
   email: string,
@@ -63,31 +65,62 @@ const copyEmailToClipboard = (
   //}
 }
 
-const AliasItem = ({alias} : {alias: Alias}) => (
-  <div className='alias-item row'>
-    <div className='email-container'>
-      <div className="alias-item-email clickable"
-           onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
-        {alias.email}
-      </div>
-      {((alias.note || alias.domains) &&
-        <div className="alias-annotation">
-          {(alias.note && <span>{alias.note}</span>)}
-          {alias.domains && alias.note && <span>. </span>}
-          {(alias.domains && <span>Used by {alias.domains?.join(", ")}</span>)}
-        </div>
-      )}
-    </div>
-    <div className='alias-controls row'>
-      <div className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
-        <img src={copyIcon}></img>
-      </div>
-      <div className='clickable'>
+const autoFocus = (element: HTMLElement| null) => element?.focus();
+
+const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
+  const [visible, setVisible] = React.useState<boolean>(false)
+  return (
+    <div>
+      {
+        visible &&
+        (<div className='option-menu col' tabIndex={-1} ref={autoFocus}
+              onBlur={() => setVisible(false)}>
+          <div className='row clickable option-menu-item'
+            onClick={() => {
+              setVisible(false)
+              onEdit()
+            }}>
+            <img src={editIcon}></img>
+            <div>Edit</div>
+          </div>
+          <div className='row clickable option-menu-item'>
+            <img src={trashIcon}></img>
+            <div>Delete</div>
+          </div>
+        </div>)
+      }
+      <div className='clickable' onClick={() => setVisible(true)}>
         <img src={moreVerticalIcon}></img>
       </div>
     </div>
-  </div>
-)
+  )
+}
+
+const AliasItem = ({alias, onEdit} : {alias: Alias, onEdit: Function}) => {
+  return (
+    <div className='alias-item row'>
+      <div className='email-container'>
+        <div className="alias-item-email clickable"
+            onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+          {alias.email}
+        </div>
+        {((alias.note || alias.domains) &&
+          <div className="alias-annotation">
+            {(alias.note && <span>{alias.note}</span>)}
+            {alias.domains && alias.note && <span>. </span>}
+            {(alias.domains && <span>Used by {alias.domains?.join(", ")}</span>)}
+          </div>
+        )}
+      </div>
+      <div className='alias-controls row'>
+        <div className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+          <img src={copyIcon}></img>
+        </div>
+        <PopupMenu onEdit={onEdit}></PopupMenu>
+      </div>
+    </div>
+  )
+}
 
 const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Function}) => (
   <div className='card alias-list col'>
@@ -105,7 +138,7 @@ const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Func
       </div>
     </div>
     {aliases.map(
-      alias => <AliasItem alias={alias}></AliasItem>)}
+      alias => <AliasItem alias={alias} onEdit={() => onViewChange(ViewMode.Edit)}></AliasItem>)}
   </div>
 )
 

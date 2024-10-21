@@ -186,7 +186,12 @@ button:active {
 .close {
   position: absolute;
   top: 1.75em;
-  right:1.75em;
+  right: 1.75em;
+}
+
+.close:dir(rtl) {
+  left: 1.75em;
+  right: auto;
 }
 
 .cancel-button {
@@ -219,4 +224,31 @@ button:active {
 .overlay h3 {
   padding-left: 0.25em;
   line-height: 0.3em;
+}
+
+.option-menu {
+  position: absolute;
+  display: black;
+  background-color: white;
+  border: 0.5px gray solid;
+  padding: 0em;
+  font-size: 90%;
+  border-radius: 0.5em;
+}
+
+
+.option-menu > div {
+  padding: 0.8em 0.8em;
+}
+
+.option-menu img {
+  padding-inline-end: 0.5em;
+}
+
+.option-menu-item:hover {
+  backdrop-filter: brightness(90%);
+}
+
+.option-menu-item:active {
+  backdrop-filter: brightness(80%);
 }

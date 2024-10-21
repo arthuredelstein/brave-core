@@ -234,8 +234,13 @@ button:active {
   padding: 0em;
   font-size: 90%;
   border-radius: 0.5em;
+  transform: translateX(-2em);
+  outline:none;
 }
 
+.option-menu:dir(rtl) {
+  transform: translateX(2em);
+}
 
 .option-menu > div {
   padding: 0.8em 0.8em;

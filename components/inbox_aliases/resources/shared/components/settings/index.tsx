@@ -25,7 +25,8 @@ export type InboxAliasesManagementState = {
 enum ViewMode {
   Main,
   Create,
-  Edit
+  Edit,
+  Delete
 }
 
 const Introduction = ({email} : { email: string }) => (
@@ -40,7 +41,7 @@ const Introduction = ({email} : { email: string }) => (
           <div className='main-email-description'>Brave Account</div>
         </div>
       </div>
-      <a href='https://account.brave.com' target='_blank'>
+      <a title='Go to Brave Accounts' href='https://account.brave.com' target='_blank'>
         <img src={launchIcon}></img>
       </a>
     </div>
@@ -65,7 +66,7 @@ const copyEmailToClipboard = (
   //}
 }
 
-const autoFocus = (element: HTMLElement| null) => element?.focus();
+const autoFocus = (element: HTMLElement|null) => element?.focus();
 
 const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
   const [visible, setVisible] = React.useState<boolean>(false)
@@ -89,18 +90,20 @@ const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
           </div>
         </div>)
       }
-      <div className='clickable' onClick={() => setVisible(true)}>
+      <div title='More options' className='clickable' onClick={() => setVisible(true)}>
         <img src={moreVerticalIcon}></img>
       </div>
     </div>
   )
 }
 
+const copyTitle = 'Click to copy alias email to clipboard';
+
 const AliasItem = ({alias, onEdit} : {alias: Alias, onEdit: Function}) => {
   return (
     <div className='alias-item row'>
       <div className='email-container'>
-        <div className="alias-item-email clickable"
+        <div title={copyTitle} className="alias-item-email clickable"
             onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
           {alias.email}
         </div>
@@ -113,7 +116,8 @@ const AliasItem = ({alias, onEdit} : {alias: Alias, onEdit: Function}) => {
         )}
       </div>
       <div className='alias-controls row'>
-        <div className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+        <div title={copyTitle}
+             className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
           <img src={copyIcon}></img>
         </div>
         <PopupMenu onEdit={onEdit}></PopupMenu>
@@ -134,7 +138,7 @@ const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Func
         </div>
       </div>
       <div className="button-container col">
-        <button id='add-alias' onClick={() => onViewChange(ViewMode.Create)}>New alias</button>
+        <button title='Create a new alias email' id='add-alias' onClick={() => onViewChange(ViewMode.Create)}>New alias</button>
       </div>
     </div>
     {aliases.map(

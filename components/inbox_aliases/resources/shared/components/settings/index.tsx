@@ -76,7 +76,7 @@ const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
         visible &&
         (<div className='option-menu col' tabIndex={-1} ref={autoFocus}
               onBlur={() => setVisible(false)}>
-          <div className='row clickable option-menu-item'
+          <div title='Edit this email alias' className='row clickable option-menu-item'
             onClick={() => {
               setVisible(false)
               onEdit()
@@ -84,7 +84,7 @@ const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
             <img src={editIcon}></img>
             <div>Edit</div>
           </div>
-          <div className='row clickable option-menu-item'>
+          <div title='Delete this email alias' className='row clickable option-menu-item'>
             <img src={trashIcon}></img>
             <div>Delete</div>
           </div>
@@ -146,15 +146,16 @@ const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Func
   </div>
 )
 
-const EmailAliasOverlay = ({returnToMain, viewState} : {returnToMain: any, viewState: ViewMode}) => (
-  <div className='overlay col'>
+const EmailAliasOverlay = ({returnToMain, viewState} : {returnToMain: any, viewState: ViewMode}) => {
+  const [startedNote, setStartedNote] = React.useState(viewState !== ViewMode.Create)
+  return (<div className='overlay col'>
     <img className='close clickable' src={crossIcon} onClick={returnToMain}></img>
     <h2>{viewState == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
     <div>
       <h3>Email alias</h3>
       <div className='generated-email-container row'>
         <div>coolnews.airplane.potato57@bravealias.com</div>
-        {viewState == ViewMode.Create && <img className='clickable' src={refreshIcon}></img>}
+        {viewState == ViewMode.Create && <img title='Suggest another email alias' className='clickable' src={refreshIcon}></img>}
       </div>
       <div className='fine-print'>Emails will be forwarded to aruiz@brave.com.
         {viewState == ViewMode.Create && <span>Custom aliases are a premium feature. <a href='https://support.brave.com'>Learn more</a>`</span>}
@@ -162,17 +163,20 @@ const EmailAliasOverlay = ({returnToMain, viewState} : {returnToMain: any, viewS
     </div>
     <div className='col'>
       <h3>Note</h3>
-      <input className='note-input' type='text'
-             value={viewState == ViewMode.Create ? 'Enter a note for your new address' : ''}>
+      <div className='note-input-container col'>
+        {!startedNote && <div className='note-input note-input-overlay'>Enter a note for your new address</div>}
+        <input className='note-input' type='text'
+              onFocus={() => setStartedNote(true)}>
       </input>
+      </div>
       {viewState == ViewMode.Edit && <div className='fine-print'>Used by bbcnews.com, nytimes.com</div>}
     </div>
     <div className='overlay-buttons row'>
       <button className='cancel-button' onClick={returnToMain}>Cancel</button>
       <button>{viewState == ViewMode.Create ? 'Create' : 'Save'}</button>
     </div>
-  </div>
-)
+  </div>)
+}
 
 export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
   const [viewState, setViewState] = React.useState<ViewMode>(ViewMode.Main)

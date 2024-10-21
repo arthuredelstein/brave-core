@@ -199,12 +199,24 @@ button:active {
   background-color: white;
 }
 
+.note-input-container {
+  position: relative;
+}
+
 .note-input {
+  background: none;
   font-size: 135%;
   padding: 0.75em;
   margin-bottom: 0.5em;
   border-radius: 0.5em;
   border: 1px lightgray solid;
+}
+
+.note-input-overlay {
+  border: none;
+  color: gray;
+  position: absolute;
+  z-index: -1;
 }
 
 .generated-email-container {

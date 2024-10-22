@@ -163,6 +163,11 @@ const readAliasesWithNotes = async () : Promise<Alias[]> => {
   return aliases
 }
 
+const deleteAliasWithNotes = async(alias: Alias) => {
+  await deleteAliasWithNotes(alias)
+  localStorage.removeItem(alias.email)
+}
+
 const updateAliasList = async (onDataReady: Function) => {
   const aliases = await readAliasesWithNotes();
   onDataReady(aliases)

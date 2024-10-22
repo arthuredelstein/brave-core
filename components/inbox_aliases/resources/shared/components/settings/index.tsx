@@ -74,7 +74,7 @@ const copyEmailToClipboard = (
 
 const autoFocus = (element: HTMLElement|null) => element?.focus();
 
-const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
+const PopupMenu = ({ onEdit, onDelete }: { onEdit: Function, onDelete: Function }) => {
   const [visible, setVisible] = React.useState<boolean>(false)
   return (
     <div tabIndex={-1} ref={autoFocus}
@@ -93,7 +93,11 @@ const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
             <img src={editIcon}></img>
             <div>Edit</div>
           </div>
-          <div title='Delete this email alias' className='row clickable option-menu-item'>
+          <div title='Delete this email alias' className='row clickable option-menu-item'
+            onClick={() => {
+              setVisible(false)
+              onDelete()
+            }}>
             <img src={trashIcon}></img>
             <div>Delete</div>
           </div>
@@ -104,33 +108,6 @@ const PopupMenu = ({ onEdit }: { onEdit: Function }) => {
 }
 
 const copyTitle = 'Click to copy alias email to clipboard';
-
-const AliasItem = ({alias, onEdit} : {alias: Alias, onEdit: Function}) => {
-  return (
-    <div className='alias-item row'>
-      <div className='email-container'>
-        <div title={copyTitle} className="alias-item-email clickable"
-            onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
-          {alias.email}
-        </div>
-        {((alias.note || alias.domains) &&
-          <div className="alias-annotation">
-            {(alias.note && <span>{alias.note}</span>)}
-            {alias.domains && alias.note && <span>. </span>}
-            {(alias.domains && <span>Used by {alias.domains?.join(", ")}</span>)}
-          </div>
-        )}
-      </div>
-      <div className='alias-controls row'>
-        <div title={copyTitle}
-             className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
-          <img src={copyIcon}></img>
-        </div>
-        <PopupMenu onEdit={onEdit}></PopupMenu>
-      </div>
-    </div>
-  )
-}
 
 const generateNewAlias = async () => {
   const response = await fetch(`${ENDPOINT}/generate`)
@@ -154,19 +131,19 @@ const readAliases = async (): Promise<{ alias_email: string }[]> => {
   if (response.status !== 200) {
     throw new Error(`Read aliases failed: ${response.status} ${response.statusText}`)
   }
+  console.log("readAliases: ", result)
   return result
 }
 
-/*
+
 const deleteAlias = async(alias: Alias) => {
-  const response = await fetch(`${ENDPOINT}/manage/${alias.email}`, {
-    method: "DELETE"
+  const response = await fetch(encodeURI(`${ENDPOINT}/manage/${alias.email}`), {
+    method: "DELETE",
   })
   if (response.status !== 204) {
     throw new Error(`Delete alias failed: ${response.status} ${response.statusText}`)
   }
 }
-*/
 
 const createAliasWithNotes = async (alias: Alias): Promise<void> => {
   localStorage.setItem(alias.email, JSON.stringify(alias))
@@ -176,8 +153,8 @@ const createAliasWithNotes = async (alias: Alias): Promise<void> => {
 const readAliasesWithNotes = async () : Promise<Alias[]> => {
   const results = await readAliases();
   let aliases : Alias[] = []
-  for (const item of results) {
-    const data =localStorage.getItem(item.alias_email)
+  for (const alias_email of [...results.map(x => x.alias_email)].sort()) {
+    const data =localStorage.getItem(alias_email)
     if (data) {
       const alias: Alias = JSON.parse(data)
       aliases.push(alias)
@@ -191,7 +168,37 @@ const updateAliasList = async (onDataReady: Function) => {
   onDataReady(aliases)
 }
 
-const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Function}) => (
+const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, onDelete: Function}) => {
+  return (
+    <div className='alias-item row'>
+      <div className='email-container'>
+        <div title={copyTitle} className="alias-item-email clickable"
+            onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+          {alias.email}
+        </div>
+        {((alias.note || alias.domains) &&
+          <div className="alias-annotation">
+            {(alias.note && <span>{alias.note}</span>)}
+            {alias.domains && alias.note && <span>. </span>}
+            {(alias.domains && <span>Used by {alias.domains?.join(", ")}</span>)}
+          </div>
+        )}
+      </div>
+      <div className='alias-controls row'>
+        <div title={copyTitle}
+             className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+          <img src={copyIcon}></img>
+        </div>
+        <PopupMenu onEdit={onEdit} onDelete={async () => {
+          await deleteAlias(alias)
+          onDelete()
+        }}></PopupMenu>
+      </div>
+    </div>
+  )
+}
+
+const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onViewChange:Function, onListChange:Function}) => (
   <div className='card alias-list col'>
     <div className='alias-list-intro row'>
       <div className='col'>
@@ -216,7 +223,9 @@ const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Func
       </div>
     </div>
     {aliases.map(
-      alias => <AliasItem alias={alias} onEdit={() => onViewChange({mode: ViewMode.Edit, alias: alias})}></AliasItem>)}
+      alias => <AliasItem alias={alias}
+                          onEdit={() => onViewChange({mode: ViewMode.Edit, alias: alias})}
+                          onDelete={onListChange}></AliasItem>)}
   </div>
 )
 
@@ -282,7 +291,8 @@ export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
     <div className='col'>
       <h1 className="flex page-title">Inbox Aliases</h1>
       <Introduction email={email}></Introduction>
-      <AliasList aliases={aliasesState} onViewChange={setViewState}></AliasList>
+      <AliasList aliases={aliasesState} onViewChange={setViewState}
+                 onListChange={() => updateAliasList(setAliasesState)}></AliasList>
     </div >
     {mode == ViewMode.Main ? undefined :
       <div className='grey-out' onClick={returnToMain}>&nbsp;

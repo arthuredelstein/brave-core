@@ -35,6 +35,7 @@
 .row {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .card > div, .card > h2 {
@@ -42,7 +43,7 @@
   padding-right: 25px;
 }
 
-.card h2, .overlay h2 {
+.card h2, .modal h2 {
   font-weight: 600;
   padding-top: 10px;
 }
@@ -110,6 +111,16 @@
   font-size: 115%;
 }
 
+.manage-account-link {
+  font-size: 120%;
+  align-items: center;
+  text-decoration: none;
+}
+
+.manage-account-icon {
+  margin: 0.5em;
+}
+
 .button-container {
   justify-content: end;
   margin-left: 10px;
@@ -170,7 +181,7 @@ button:active {
   align-items: center;
 }
 
-.overlay {
+.modal {
   border-radius: var(--cr-card-border-radius);
   background-color: white;
   z-index: 2;
@@ -212,7 +223,7 @@ button:active {
   border: 1px lightgray solid;
 }
 
-.note-input-overlay {
+.note-input-modal {
   border: none;
   color: gray;
   position: absolute;
@@ -228,12 +239,16 @@ button:active {
   justify-content: space-between;
 }
 
-.overlay-buttons {
+.modal-buttons {
   justify-content: end;
   margin: 1.5em 0em 0.5em;
 }
 
-.overlay h3 {
+.modal-buttons button {
+  margin-inline-start: 0.5em;
+}
+
+.modal h3 {
   padding-left: 0.25em;
   line-height: 0.3em;
 }

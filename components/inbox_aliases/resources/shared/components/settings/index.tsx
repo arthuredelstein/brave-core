@@ -11,6 +11,8 @@ import refreshIcon from './assets/refresh.svg'
 import editIcon from './assets/edit.svg'
 import trashIcon from './assets/trash.svg'
 
+const ENDPOINT = 'http://localhost:8090';
+
 type Alias = {
   email: string,
   note?: string,
@@ -29,6 +31,11 @@ enum ViewMode {
   Delete
 }
 
+type ViewState = {
+  mode: ViewMode,
+  alias?: Alias
+}
+
 const Introduction = ({email} : { email: string }) => (
   <div className='card' id='introduction'>
     <h2>Keep your personal email address private</h2>
@@ -41,8 +48,8 @@ const Introduction = ({email} : { email: string }) => (
           <div className='main-email-description'>Brave Account</div>
         </div>
       </div>
-      <a title='Go to Brave Accounts' href='https://account.brave.com' target='_blank'>
-        <img src={launchIcon}></img>
+      <a className='manage-account-link row' title='Manage Brave account' href='https://account.brave.com' target='_blank'>
+        <img className='manage-account-icon' src={launchIcon}></img> <span>Manage Brave account</span>
       </a>
     </div>
   </div>
@@ -59,7 +66,6 @@ const copyEmailToClipboard = (
   email: string
 ) => {
   navigator.clipboard.writeText(email)
-  console.log(`copied to clipboard: ${event.target} ${email}`)
   //const copiedNotification = <CopiedNotification></CopiedNotification>
   //if (event.target instanceof Element) {
   //  event.target.after(useRef(copiedNotification).current)
@@ -126,6 +132,65 @@ const AliasItem = ({alias, onEdit} : {alias: Alias, onEdit: Function}) => {
   )
 }
 
+const generateNewAlias = async () => {
+  const response = await fetch(`${ENDPOINT}/generate`)
+  const result = await response.json()
+  return result.email
+}
+
+const createAlias = async (alias: string): Promise<void> => {
+  const response = await fetch(`${ENDPOINT}/manage`, {
+    method: "POST",
+    body: JSON.stringify({email: alias})
+  })
+  if (response.status !== 201) {
+    throw new Error(`Create alias failed: ${response.status} ${response.statusText}`)
+  }
+}
+
+const readAliases = async (): Promise<{ alias_email: string }[]> => {
+  const response = await fetch(`${ENDPOINT}/manage`)
+  const result = await response.json()
+  if (response.status !== 200) {
+    throw new Error(`Read aliases failed: ${response.status} ${response.statusText}`)
+  }
+  return result
+}
+
+/*
+const deleteAlias = async(alias: Alias) => {
+  const response = await fetch(`${ENDPOINT}/manage/${alias.email}`, {
+    method: "DELETE"
+  })
+  if (response.status !== 204) {
+    throw new Error(`Delete alias failed: ${response.status} ${response.statusText}`)
+  }
+}
+*/
+
+const createAliasWithNotes = async (alias: Alias): Promise<void> => {
+  localStorage.setItem(alias.email, JSON.stringify(alias))
+  await createAlias(alias.email)
+}
+
+const readAliasesWithNotes = async () : Promise<Alias[]> => {
+  const results = await readAliases();
+  let aliases : Alias[] = []
+  for (const item of results) {
+    const data =localStorage.getItem(item.alias_email)
+    if (data) {
+      const alias: Alias = JSON.parse(data)
+      aliases.push(alias)
+    }
+  }
+  return aliases
+}
+
+const updateAliasList = async (onDataReady: Function) => {
+  const aliases = await readAliasesWithNotes();
+  onDataReady(aliases)
+}
+
 const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Function}) => (
   <div className='card alias-list col'>
     <div className='alias-list-intro row'>
@@ -138,60 +203,93 @@ const AliasList = ({aliases, onViewChange} : {aliases:Alias[], onViewChange:Func
         </div>
       </div>
       <div className="button-container col">
-        <button title='Create a new alias email' id='add-alias' onClick={() => onViewChange(ViewMode.Create)}>New alias</button>
+        <button title='Create a new alias email' id='add-alias'
+                onClick={
+                  async () => {
+                    onViewChange({mode: ViewMode.Create})
+                    const newEmailAlias = await generateNewAlias()
+                    onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias }})
+                  }
+                }>
+          New alias
+        </button>
       </div>
     </div>
     {aliases.map(
-      alias => <AliasItem alias={alias} onEdit={() => onViewChange(ViewMode.Edit)}></AliasItem>)}
+      alias => <AliasItem alias={alias} onEdit={() => onViewChange({mode: ViewMode.Edit, alias: alias})}></AliasItem>)}
   </div>
 )
 
-const EmailAliasOverlay = ({returnToMain, viewState} : {returnToMain: any, viewState: ViewMode}) => {
-  const [startedNote, setStartedNote] = React.useState(viewState !== ViewMode.Create)
-  return (<div className='overlay col'>
+const EmailAliasModal = (
+  {returnToMain, viewState, email, onViewChange, onListChange} :
+  {returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function}
+) => {
+  const mode = viewState.mode
+  const [startedNote, setStartedNote] = React.useState(mode !== ViewMode.Create)
+  const noteInputRef = React.useRef<HTMLInputElement>(null)
+  return (<div className='modal col'>
     <img className='close clickable' src={crossIcon} onClick={returnToMain}></img>
-    <h2>{viewState == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
+    <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
     <div>
       <h3>Email alias</h3>
       <div className='generated-email-container row'>
-        <div>coolnews.airplane.potato57@bravealias.com</div>
-        {viewState == ViewMode.Create && <img title='Suggest another email alias' className='clickable' src={refreshIcon}></img>}
+        <div>{viewState?.alias?.email}</div>
+        {mode == ViewMode.Create && <img title='Suggest another email alias' className='clickable' src={refreshIcon}
+          onClick= {async () => {
+            const newEmailAlias = await generateNewAlias()
+            onViewChange({ mode: viewState.mode, alias: { email: newEmailAlias }})
+          }}></img>}
       </div>
-      <div className='fine-print'>Emails will be forwarded to aruiz@brave.com.
-        {viewState == ViewMode.Create && <span>Custom aliases are a premium feature. <a href='https://support.brave.com'>Learn more</a>`</span>}
+      <div className='fine-print'>{`Emails will be forwarded to ${email}.`}
+        {mode == ViewMode.Create && <span> Custom aliases are a premium feature. <a href='https://support.brave.com'>Learn more</a>`</span>}
       </div>
     </div>
     <div className='col'>
       <h3>Note</h3>
       <div className='note-input-container col'>
-        {!startedNote && <div className='note-input note-input-overlay'>Enter a note for your new address</div>}
-        <input className='note-input' type='text'
-              onFocus={() => setStartedNote(true)}>
+        {!startedNote && <div className='note-input note-input-modal'>Enter a note for your new address</div>}
+        <input className='note-input' id='note-input' type='text' defaultValue={viewState.alias?.note}
+               ref={noteInputRef}
+               onFocus={() => setStartedNote(true)}>
       </input>
       </div>
-      {viewState == ViewMode.Edit && <div className='fine-print'>Used by bbcnews.com, nytimes.com</div>}
+      {mode == ViewMode.Edit && viewState.alias?.domains && <div className='fine-print'>Used by {viewState.alias?.domains?.join(', ')}</div>}
     </div>
-    <div className='overlay-buttons row'>
+    <div className='modal-buttons row'>
       <button className='cancel-button' onClick={returnToMain}>Cancel</button>
-      <button>{viewState == ViewMode.Create ? 'Create' : 'Save'}</button>
+      <button onClick={async () => {
+        const aliasEmail = viewState?.alias?.email
+        if (aliasEmail) {
+          await createAliasWithNotes(
+            {email: aliasEmail,
+             note: noteInputRef?.current?.value})
+          onListChange()
+          onViewChange({mode: ViewMode.Main})
+        }
+      }
+      }>{mode == ViewMode.Create ? 'Create' : 'Save'}</button>
     </div>
   </div>)
 }
 
 export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
-  const [viewState, setViewState] = React.useState<ViewMode>(ViewMode.Main)
-  const returnToMain = () => setViewState(ViewMode.Main)
+  const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main})
+  const returnToMain = () => setViewState({ mode: ViewMode.Main})
+  const [aliasesState, setAliasesState] = React.useState<Alias[]>(aliases);
+  const mode = viewState.mode
   return (
   <div className='app col'>
     <div className='col'>
       <h1 className="flex page-title">Inbox Aliases</h1>
       <Introduction email={email}></Introduction>
-      <AliasList aliases={aliases} onViewChange={setViewState}></AliasList>
+      <AliasList aliases={aliasesState} onViewChange={setViewState}></AliasList>
     </div >
-    {viewState == ViewMode.Main ? undefined :
+    {mode == ViewMode.Main ? undefined :
       <div className='grey-out' onClick={returnToMain}>&nbsp;
     </div>}
-    {(viewState == ViewMode.Create || viewState == ViewMode.Edit) &&
-     <EmailAliasOverlay returnToMain={returnToMain} viewState={viewState}></EmailAliasOverlay>}
+    {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
+     <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
+                      onListChange={() => updateAliasList(setAliasesState)}
+                      onViewChange={setViewState}></EmailAliasModal>}
   </div>
 )}

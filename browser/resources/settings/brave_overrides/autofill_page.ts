@@ -22,7 +22,7 @@ RegisterPolymerTemplateModifications({
     const parentManagerButton = templateContent.getElementById('paymentManagerButton')
     parentManagerButton.parentNode.insertBefore(html`
       <cr-link-row id="inboxAliasesButton"
-          start-icon=""
+          start-icon="email-shield"
           label="${loadTimeData.getString('inboxAliasesLabel')}"
           on-click="onInboxAliasesClicked_"
           role-description="$i18n{subpageArrowRoleDescription}"></cr-link-row>

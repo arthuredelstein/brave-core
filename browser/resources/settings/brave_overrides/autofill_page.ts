@@ -7,26 +7,13 @@ import {
   html,
   RegisterPolymerTemplateModifications,
   RegisterPolymerComponentReplacement,
-  RegisterPolymerComponentBehaviors
 } from 'chrome://resources/brave/polymer_overriding.js'
 import {BraveSettingsAutofillPageElement} from '../brave_autofill_page/brave_autofill_page.js'
 import {loadTimeData} from '../i18n_setup.js'
-import {Router} from '../router.js';
 
 RegisterPolymerComponentReplacement(
   'settings-autofill-page', BraveSettingsAutofillPageElement
 )
-/*
-RegisterPolymerComponentBehaviors({
-  'settings-autofill-page': [
-    {
-      onInboxAliasesClicked_: () => {
-        const router = Router.getInstance()
-        router.navigateTo((router.getRoutes() as any).INBOX_ALIASES)
-      }
-    }
-  ]
-})*/
 
 // chrome://settings/inbox_aliases_page/email_shield.svg
 

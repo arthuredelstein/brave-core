@@ -23,6 +23,8 @@
 #include "content/public/browser/web_ui.h"
 #include "content/public/browser/web_ui_data_source.h"
 #include "third_party/blink/public/common/peerconnection/webrtc_ip_handling_policy.h"
+#include "base/feature_list.h"
+#include "brave/browser/brave_browser_features.h"
 
 #if BUILDFLAG(ENABLE_REQUEST_OTR)
 #include "brave/components/request_otr/common/features.h"
@@ -102,6 +104,9 @@ void BravePrivacyHandler::AddLoadTimeData(content::WebUIDataSource* data_source,
       "isOpenAIChatFromBraveSearchEnabled",
       ai_chat::IsAIChatEnabled(profile->GetPrefs()) &&
           ai_chat::features::IsOpenAIChatFromBraveSearchEnabled());
+  data_source->AddBoolean(
+      "isEmailAliasesFeatureEnabled",
+      base::FeatureList::IsEnabled(features::kBraveEmailAliases));
 }
 
 void BravePrivacyHandler::SetLocalStateBooleanEnabled(

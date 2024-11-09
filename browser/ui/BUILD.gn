@@ -67,6 +67,8 @@ source_set("ui") {
   sources = [
     "brave_ui_features.cc",
     "brave_ui_features.h",
+    "views/email_aliases_bubble_view.cc",
+    "views/email_aliases_bubble_view.h",
     "webui/ai_chat/ai_chat_ui.cc",
     "webui/ai_chat/ai_chat_ui.h",
     "webui/ai_chat/ai_chat_ui_page_handler.cc",
@@ -295,6 +297,8 @@ source_set("ui") {
       "webui/settings/brave_import_data_handler.h",
       "webui/settings/brave_importer_observer.cc",
       "webui/settings/brave_importer_observer.h",
+      "webui/settings/brave_email_aliases_handler.cc",
+      "webui/settings/brave_email_aliases_handler.h",
       "webui/settings/brave_privacy_handler.cc",
       "webui/settings/brave_privacy_handler.h",
       "webui/settings/brave_search_engines_handler.cc",
@@ -950,6 +954,7 @@ source_set("ui") {
       "//brave/components/brave_webtorrent:static_resources",
       "//brave/components/webcompat_reporter/browser",
       "//brave/components/webcompat_reporter/ui:generated_resources",
+      "//brave/components/email_aliases/browser/resources:generated_resources",
     ]
   }
 
@@ -1250,6 +1255,8 @@ source_set("ui") {
       "views/wallet_bubble_focus_observer.h",
       "wallet_bubble_manager_delegate_impl.cc",
       "wallet_bubble_manager_delegate_impl.h",
+      "webui/email_aliases/email_aliases_bubble_ui.cc",
+      "webui/email_aliases/email_aliases_bubble_ui.h",
       "webui/brave_wallet/ledger/ledger_ui.cc",
       "webui/brave_wallet/ledger/ledger_ui.h",
       "webui/brave_wallet/page_handler/wallet_page_handler.cc",
@@ -1268,6 +1275,7 @@ source_set("ui") {
     deps += [
       "//brave/browser/brave_wallet:tab_helper",
       "//brave/browser/resources/settings/shortcuts_page:generated_resources",
+      "//brave/browser/resources/settings/email_aliases_page:generated_resources",
       "//brave/browser/ui/brave_wallet",
       "//brave/browser/ui/webui/brave_wallet/common_handler",
       "//brave/components/brave_wallet/browser:permission_utils",

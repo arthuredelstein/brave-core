@@ -22,4 +22,9 @@ export class BraveSettingsAutofillPageElement extends RouteObserverMixin(BaseEle
   override currentRouteChanged(newRoute: Route) {
     this.isAutofillPage_ = newRoute == Router.getInstance().getRoutes().AUTOFILL
   }
+
+  onInboxAliasesClicked_() {
+    const router = Router.getInstance()
+    router.navigateTo((router.getRoutes() as any).INBOX_ALIASES)
+  }
 }

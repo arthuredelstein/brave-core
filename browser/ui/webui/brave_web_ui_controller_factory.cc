@@ -160,6 +160,9 @@ WebUIController* NewWebUI(WebUI* web_ui, const GURL& url) {
       return new ai_rewriter::AIRewriterUI(web_ui);
     }
 #endif
+  } else if (host == kInboxAliasesHost) {
+    return nullptr;
+    // return new inbox_aliases::InboxAliasesUI(web_ui);
   }
   return nullptr;
 }

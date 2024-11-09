@@ -100,6 +100,9 @@ export default function addBraveRoutes(r: Partial<SettingsRoutes>) {
   } else if (!isGuest) {
     console.error('[Brave Settings Overrides] Could not move autofill route to advanced route', r)
   }
+
+  r.INBOX_ALIASES = r.AUTOFILL.createChild('/inbox-aliases')
+
   // Delete performance menu - system menu includes it instead.
   if (r.PERFORMANCE) {
     delete r.PERFORMANCE

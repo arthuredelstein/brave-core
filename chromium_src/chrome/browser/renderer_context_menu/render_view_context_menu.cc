@@ -35,7 +35,10 @@
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/paint_vector_icon.h"
+#include "brave/browser/ui/views/email_aliases_bubble_view.h"
 #include "url/origin.h"
+#include "base/feature_list.h"
+#include "brave/browser/brave_browser_features.h"
 
 #if BUILDFLAG(ENABLE_TOR)
 #include "brave/browser/tor/tor_profile_manager.h"
@@ -429,6 +432,8 @@ bool BraveRenderViewContextMenu::IsCommandIdEnabled(int id) const {
       return CanOpenSplitViewForWebContents(source_web_contents_->GetWeakPtr());
     case IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS:
       return true;
+    case IDC_NEW_EMAIL_ALIAS:
+      return true;
     default:
       return RenderViewContextMenu_Chromium::IsCommandIdEnabled(id);
   }
@@ -500,6 +505,11 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
     case IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS:
       cosmetic_filters::CosmeticFiltersTabHelper::LaunchContentPicker(
           source_web_contents_);
+      break;
+    case IDC_NEW_EMAIL_ALIAS:
+      if (params_.form_control_type.value() == blink::mojom::FormControlType::kInputEmail || params_.is_content_editable_for_autofill) {
+        EmailAliasesBubbleView::Show(GetBrowser(), params_.field_renderer_id);
+      }
       break;
     default:
       RenderViewContextMenu_Chromium::ExecuteCommand(id, event_flags);
@@ -729,6 +739,15 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
       menu_model_.AddItemWithStringId(IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS,
                                       IDS_ADBLOCK_CONTEXT_BLOCK_ELEMENTS);
     }
+  }
+
+  if (base::FeatureList::IsEnabled(features::kBraveEmailAliases) &&
+      params_.form_control_type &&
+        params_.form_control_type.value() ==
+          blink::mojom::FormControlType::kInputEmail) {
+    menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+    menu_model_.AddItemWithStringId(IDC_NEW_EMAIL_ALIAS,
+                                    IDS_NEW_EMAIL_ALIAS);
   }
 }
 

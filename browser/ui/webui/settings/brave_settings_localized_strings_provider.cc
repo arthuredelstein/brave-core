@@ -320,6 +320,7 @@ void BraveAddCommonStrings(content::WebUIDataSource* html_source,
       {"braveWebDiscoveryLabel", IDS_SETTINGS_WEB_DISCOVERY_LABEL},
       {"braveWebDiscoverySubLabel", IDS_SETTINGS_WEB_DISCOVERY_SUBLABEL},
 #endif
+      {"emailAliasesLabel", IDS_SETTINGS_EMAIL_ALIASES_LABEL},
       {"autofillInPrivateSettingLabel",
        IDS_SETTINGS_BRAVE_AUTOFILL_PRIVATE_WINDOWS_LABEL},
       {"autofillInPrivateSettingDesc",

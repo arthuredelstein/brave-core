@@ -25,7 +25,11 @@ void ShowSync(Browser* browser);
 void ShowBraveNewsConfigure(Browser* browser);
 void ShowShortcutsPage(Browser* browser);
 void ShowBraveTalk(Browser* browser);
+void ShowInboxAliases(Browser* browser);
+
+#if BUILDFLAG(ENABLE_AI_CHAT)
 void ShowFullpageChat(Browser* browser);
+#endif
 
 void ShowAppsPage(Browser* browser);
 

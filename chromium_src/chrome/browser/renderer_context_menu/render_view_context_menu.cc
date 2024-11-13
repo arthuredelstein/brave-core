@@ -427,6 +427,8 @@ bool BraveRenderViewContextMenu::IsCommandIdEnabled(int id) const {
       return CanOpenSplitViewForWebContents(source_web_contents_->GetWeakPtr());
     case IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS:
       return true;
+    case IDC_NEW_INBOX_ALIAS:
+      return true;
     default:
       return RenderViewContextMenu_Chromium::IsCommandIdEnabled(id);
   }
@@ -498,6 +500,9 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
     case IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS:
       cosmetic_filters::CosmeticFiltersTabHelper::LaunchContentPicker(
           source_web_contents_);
+      break;
+    case IDC_NEW_INBOX_ALIAS:
+      // Do something here
       break;
     default:
       RenderViewContextMenu_Chromium::ExecuteCommand(id, event_flags);
@@ -726,6 +731,10 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
                                       IDS_ADBLOCK_CONTEXT_BLOCK_ELEMENTS);
     }
   }
+
+  menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+  menu_model_.AddItemWithStringId(IDC_NEW_INBOX_ALIAS,
+                                  IDS_NEW_INBOX_ALIAS);
 }
 
 void BraveRenderViewContextMenu::SetAIEngineForTesting(

@@ -732,9 +732,13 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
     }
   }
 
-  menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
-  menu_model_.AddItemWithStringId(IDC_NEW_INBOX_ALIAS,
-                                  IDS_NEW_INBOX_ALIAS);
+  if (params_.form_control_type &&
+        params_.form_control_type.value() ==
+          blink::mojom::FormControlType::kInputEmail) {
+    menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+    menu_model_.AddItemWithStringId(IDC_NEW_INBOX_ALIAS,
+                                    IDS_NEW_INBOX_ALIAS);
+  }
 }
 
 void BraveRenderViewContextMenu::SetAIEngineForTesting(

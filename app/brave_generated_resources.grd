@@ -355,7 +355,7 @@ Or change later at <ph name="SETTINGS_EXTENIONS_LINK">$2<ex>brave://settings/ext
       </message>
 
       <!-- Adblock contenxt menu -->
-      <message name="IDS_NEW_INBOX_ALIAS" desc="Message for context menu that enables the element picker UI to apply cosmetic filter rules to the page">
+      <message name="IDS_NEW_INBOX_ALIAS" desc="Message for context menu that enables the Inbox Alias generator UI for the page">
         New Inbox Alias
       </message>
 

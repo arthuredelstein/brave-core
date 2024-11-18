@@ -175,6 +175,20 @@ RegisterPolymerComponentReplacement(
               }
               lists_.permissionsAdvanced.splice(currentIndex, 0, solanaItem)
             }
+            const isInboxAliasesEnabled = true
+            if (isInboxAliasesEnabled) {
+              currentIndex++
+              const inboxAliasesItem = {
+                route: routes.INBOX_ALIASES,
+                id: 'braveInboxAliases',
+                label: 'siteSettingsInboxAliases',
+                icon: 'product-inbox-aliases',
+                enabledLabel: 'siteSettingsInboxAliasesAsk',
+                disabledLabel: 'siteSettingsInboxAliasesBlock'
+              }
+              lists_.permissionsAdvanced.splice(currentIndex, 0,
+                inboxAliasesItem)
+            }
           }
         }
         lists_.shieldsBasic = [

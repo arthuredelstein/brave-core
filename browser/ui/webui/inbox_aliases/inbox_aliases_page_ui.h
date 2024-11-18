@@ -13,6 +13,9 @@
 #include "content/public/browser/web_ui_controller.h"
 //#include "mojo/public/cpp/bindings/pending_receiver.h"
 
+
+namespace inbox_aliases {
+
 class InboxAliasesPageUI : public content::WebUIController {
  public:
   explicit InboxAliasesPageUI(content::WebUI* web_ui,
@@ -29,5 +32,7 @@ class InboxAliasesPageUI : public content::WebUIController {
  private:
   //WEB_UI_CONTROLLER_TYPE_DECL();
 };
+
+}  // namespace inbox_aliases
 
 #endif  // BRAVE_BROWSER_UI_WEBUI_INBOX_ALIASES_PAGE_UI_H_

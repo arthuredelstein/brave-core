@@ -11,17 +11,20 @@
 //#include "brave/browser/brave_news/brave_news_controller_factory.h"
 #include "brave/browser/ui/webui/brave_webui_source.h"
 //#include "brave/components/brave_news/browser/brave_news_controller.h"
-#include "brave/components/brave_news/browser/resources/grit/brave_news_internals_generated_map.h"
+//#include "brave/components/brave_news/browser/resources/grit/brave_news_internals_generated_map.h"
 //#include "brave/components/brave_news/common/brave_news.mojom.h"
 #include "chrome/browser/profiles/profile.h"
+#include "content/public/browser/web_ui_data_source.h"
 #include "components/grit/brave_components_resources.h"
 
+namespace inbox_aliases {
+
 InboxAliasesPageUI::InboxAliasesPageUI(content::WebUI* web_ui,
-                                           const std::string& host)
+                                       const std::string& host)
     : content::WebUIController(web_ui) {
-  auto* source = CreateAndAddWebUIDataSource(
-      web_ui, host, kBraveNewsInternalsGenerated,
-      kBraveNewsInternalsGeneratedSize, IDR_INBOX_ALIAS_PAGE_HTML);
+  auto* source = content::WebUIDataSource::CreateAndAdd(
+      Profile::FromWebUI(web_ui), host/*, kInboxAliasInternalsGenerated,
+      kInboxAliasInternalsGeneratedSize, IDR_INBOX_ALIAS_PAGE_HTML*/);
   DCHECK(source);
 }
 
@@ -52,3 +55,6 @@ void InboxAliasesPageUI::BindInterface(
   controller->Bind(std::move(receiver));
 }
 */
+
+
+}  // namespace inbox_aliases

@@ -14,7 +14,6 @@
 //#include "brave/components/brave_news/browser/resources/grit/brave_news_internals_generated_map.h"
 //#include "brave/components/brave_news/common/brave_news.mojom.h"
 #include "chrome/browser/profiles/profile.h"
-#include "chrome/browser/ui/webui/webui_util.h"
 #include "content/public/browser/web_ui_data_source.h"
 #include "components/grit/brave_components_resources.h"
 
@@ -27,9 +26,6 @@ InboxAliasesPageUI::InboxAliasesPageUI(content::WebUI* web_ui,
       Profile::FromWebUI(web_ui), host/*, kInboxAliasInternalsGenerated,
       kInboxAliasInternalsGeneratedSize, IDR_INBOX_ALIAS_PAGE_HTML*/);
   DCHECK(source);
-  source->AddResourcePath("", IDR_INBOX_ALIAS_PAGE_HTML);
-//  webui::SetupWebUIDataSource(source, base::span(kInboxAliasInternalsGenerated),
-//                              IDR_INBOX_ALIAS_PAGE_HTML);
 }
 
 InboxAliasesPageUI::~InboxAliasesPageUI() = default;

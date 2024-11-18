@@ -97,8 +97,4 @@ void ShowInboxAliases(Browser* browser) {
   ShowSingletonTabOverwritingNTP(browser, GURL(kInboxAliasesSettingsURL));
 }
 
-void ShowInboxAliasSettings(Browser* browser) {
-  ShowSingletonTabOverwritingNTP(browser, GURL(kInboxAliasesPageURL));
-}
-
 }  // namespace brave

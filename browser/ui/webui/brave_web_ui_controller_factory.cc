@@ -42,6 +42,7 @@
 #include "brave/browser/brave_wallet/brave_wallet_context_utils.h"
 #include "brave/browser/ui/webui/brave_news_internals/brave_news_internals_ui.h"
 #include "brave/browser/ui/webui/brave_wallet/wallet_page_ui.h"
+#include "brave/browser/ui/webui/inbox_aliases/inbox_aliases_page_ui.h"
 #include "brave/browser/ui/webui/new_tab_page/brave_new_tab_ui.h"
 #include "brave/browser/ui/webui/welcome_page/brave_welcome_ui.h"
 #include "brave/components/brave_news/common/features.h"
@@ -161,8 +162,7 @@ WebUIController* NewWebUI(WebUI* web_ui, const GURL& url) {
     }
 #endif
   } else if (host == kInboxAliasesHost) {
-    return nullptr;
-    // return new inbox_aliases::InboxAliasesUI(web_ui);
+    return new inbox_aliases::InboxAliasesPageUI(web_ui, url.host());
   }
   return nullptr;
 }

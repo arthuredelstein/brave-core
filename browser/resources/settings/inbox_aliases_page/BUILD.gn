@@ -1,0 +1,22 @@
+# Copyright (c) 2023 The Brave Authors. All rights reserved.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at https://mozilla.org/MPL/2.0/.
+
+import("//brave/components/common/typescript.gni")
+
+transpile_web_ui("inbox_aliases_ui") {
+  entry_points = [ [
+        "inbox_aliases",
+        rebase_path("inbox_aliases.tsx"),
+      ] ]
+
+  resource_name = "inbox_aliases"
+}
+
+pack_web_resources("generated_resources") {
+  resource_name = "inbox_aliases"
+  output_dir = "$root_gen_dir/brave/browser/resources/settings/inbox_aliases_page"
+  deps = [ ":inbox_aliases_ui" ]
+  
+}

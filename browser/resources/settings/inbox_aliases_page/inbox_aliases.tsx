@@ -226,7 +226,7 @@ export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
   return (
   <div className='app col'>
     <div className='col'>
-      <h1 className="flex page-title">Inbox Aliases</h1>
+      <h1 className="flex page-title">Email Aliases</h1>
       <Introduction email={email}></Introduction>
       <AliasList aliases={aliasesState} onViewChange={setViewState}
                  onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>

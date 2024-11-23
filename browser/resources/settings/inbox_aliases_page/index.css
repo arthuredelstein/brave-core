@@ -156,7 +156,7 @@ button:active {
   border-radius:50%;
   width: 4.5em;
   height: 4.5em;
-  background-image: url('./assets/brave-logo.svg');
+  background-color: yellow;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 2.5em;

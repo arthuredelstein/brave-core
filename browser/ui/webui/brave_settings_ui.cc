@@ -22,6 +22,7 @@
 #include "brave/browser/resources/settings/grit/brave_settings_resources.h"
 #include "brave/browser/resources/settings/grit/brave_settings_resources_map.h"
 #include "brave/browser/resources/settings/shortcuts_page/grit/commands_generated_map.h"
+#include "brave/browser/resources/settings/inbox_aliases_page/grit/inbox_aliases_generated_map.h"
 #include "brave/browser/shell_integrations/buildflags/buildflags.h"
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
 #include "brave/browser/ui/tabs/features.h"
@@ -141,6 +142,12 @@ void BraveSettingsUI::AddResources(content::WebUIDataSource* html_source,
       html_source->AddResourcePath(kCommandsGenerated[i].path,
                                    kCommandsGenerated[i].id);
     }
+  }
+
+  for (size_t i = 0; i < kInboxAliasesGeneratedSize; ++i) {
+    std::cout << "-------------------------" << kInboxAliasesGenerated[i].path << std::endl;
+    html_source->AddResourcePath(kInboxAliasesGenerated[i].path,
+                                  kInboxAliasesGenerated[i].id);
   }
 
   html_source->AddBoolean("isSyncDisabled", !syncer::IsSyncAllowedByFlag());

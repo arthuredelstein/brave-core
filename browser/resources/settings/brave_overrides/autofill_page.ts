@@ -11,6 +11,8 @@ import {
 import { BraveSettingsAutofillPageElement } from '../brave_autofill_page/brave_autofill_page.js'
 import { loadTimeData } from '../i18n_setup.js'
 
+import '../inbox_aliases_page/inbox_aliases_page.js'
+
 RegisterPolymerComponentReplacement(
   'settings-autofill-page', BraveSettingsAutofillPageElement
 )
@@ -43,7 +45,6 @@ RegisterPolymerTemplateModifications({
             associated-control="[[$$('#paymentManagerButton')]]"
             page-title="Inbox Aliases"
             learn-more-url="$i18n{addressesAndPaymentMethodsLearnMoreURL}">
-          <span>hello inbox aliases!</span>
          <settings-inbox-aliases-page id="inboxAliasesSection" prefs="{{prefs}}">
           </settings-inbox-aliases-page>
          <!-- <settings-payments-section id="paymentsSection" prefs="{{prefs}}">

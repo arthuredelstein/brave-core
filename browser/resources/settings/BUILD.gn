@@ -56,7 +56,6 @@ generate_grd("build_grd") {
     "images/safe_browsing_banner.svg",
     "images/safe_browsing_banner_dark.svg",
     "images/warning_triangle.svg",
-    "inbox_aliases_page/email_shield.svg",
   ]
   input_files_base_dir = rebase_path(".", "//")
 

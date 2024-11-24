@@ -31,7 +31,18 @@ const Introduction = ({email} : { email: string }) => (
     <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
     <div className='account-row row'>
       <div className='main-email-container row'>
-        <div className='brave-icon'></div>
+        <div className='brave-icon' style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{
+            transform:'scale(2)',
+            display:"inline-block"
+          }}>
+            <Icon name='brave-icon-release-color' />
+          </div>
+        </div>
         <div className='main-email-text-container col'>
           <div className='main-email'>{email}</div>
           <div className='main-email-description'>Brave Account</div>

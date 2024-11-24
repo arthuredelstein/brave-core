@@ -7,6 +7,7 @@ import './index.css'
 import {Alias} from './types'
 import * as Data from './data'
 import Icon from '@brave/leo/react/icon'
+import styled from 'styled-components'
 
 export type InboxAliasesManagementState = {
   email: string,
@@ -25,24 +26,40 @@ type ViewState = {
   alias?: Alias
 }
 
+const BraveIconCircle = styled.div`
+  align-items: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 2.5em;
+  border-radius: 50%;
+  border: #E3E3E8 1px solid;
+  display: flex;
+  height: 4.5em;
+  justify-content: center;
+  margin-inline-end: 1.5em;
+  width: 4.5em;
+`
+
+const BraveIconWrapper = styled.div`
+  transform scale(2);
+  display: inline-block;
+`
+
+const BraveIcon = () => (
+  <BraveIconCircle>
+    <BraveIconWrapper>
+      <Icon name='brave-icon-release-color' />
+    </BraveIconWrapper>
+  </BraveIconCircle>
+)
+
 const Introduction = ({email} : { email: string }) => (
   <div className='card' id='introduction'>
     <h2>Keep your personal email address private</h2>
     <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
     <div className='account-row row'>
       <div className='main-email-container row'>
-        <div className='brave-icon' style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
-          <div style={{
-            transform:'scale(2)',
-            display:"inline-block"
-          }}>
-            <Icon name='brave-icon-release-color' />
-          </div>
-        </div>
+        <BraveIcon/>
         <div className='main-email-text-container col'>
           <div className='main-email'>{email}</div>
           <div className='main-email-description'>Brave Account</div>

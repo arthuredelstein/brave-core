@@ -151,17 +151,6 @@ button:active {
   margin-right: 0.25em;
 }
 
-.brave-icon {
-  border: #E3E3E8 1px solid;
-  border-radius:50%;
-  width: 4.5em;
-  height: 4.5em;
-  background-color: yellow;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 2.5em;
-  margin-inline-end: 1.5em;
-}
 
 .invisible {
   display: none;

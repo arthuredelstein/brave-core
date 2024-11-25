@@ -3,11 +3,12 @@ import { render } from 'react-dom'
 
 // import '../../../../../../../ui/webui/resources/cr_elements/cr_shared_style.css'
 // /Users/arthur/brave-browser/src/chrome/browser/resources/app_settings/app_management_shared_style.css
-import './index.css'
+//import './index.css'
 import {Alias} from './types'
 import * as Data from './data'
 import Icon from '@brave/leo/react/icon'
-import styled from 'styled-components'
+import styled, { StyleSheetManager } from 'styled-components'
+import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variables'
 
 export type InboxAliasesManagementState = {
   email: string,
@@ -45,6 +46,13 @@ const BraveIconWrapper = styled.div`
   display: inline-block;
 `
 
+const Card = styled.div`
+  background-color: ${color.container.background};
+  border: none;
+  overflow: hidden;
+  padding: ${spacing.l} ;
+`
+
 const BraveIcon = () => (
   <BraveIconCircle>
     <BraveIconWrapper>
@@ -54,7 +62,7 @@ const BraveIcon = () => (
 )
 
 const Introduction = ({email} : { email: string }) => (
-  <div className='card' id='introduction'>
+  <Card id='introduction'>
     <h2>Keep your personal email address private</h2>
     <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
     <div className='account-row row'>
@@ -70,7 +78,7 @@ const Introduction = ({email} : { email: string }) => (
         <span>Manage Brave account</span>
       </a>
     </div>
-  </div>
+  </Card>
 )
 
 /*
@@ -160,7 +168,7 @@ const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, 
 }
 
 const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onViewChange:Function, onListChange:Function}) => (
-  <div className='card alias-list col'>
+  <Card className='card alias-list col' style={{ borderTop: `1px solid ${color.legacy.divider1}`}}>
     <div className='alias-list-intro row'>
       <div className='col'>
         <h2>Your email aliases</h2>
@@ -187,7 +195,7 @@ const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onV
       alias => <AliasItem alias={alias}
                           onEdit={() => onViewChange({mode: ViewMode.Edit, alias: alias})}
                           onDelete={onListChange}></AliasItem>)}
-  </div>
+  </Card>
 )
 
 const EmailAliasModal = (
@@ -246,19 +254,19 @@ const EmailAliasModal = (
   </div>)
 }
 
+//     <div className='col' style={{ padding: spacing.l }}>
+
+
 export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main})
   const returnToMain = () => setViewState({ mode: ViewMode.Main})
   const [aliasesState, setAliasesState] = React.useState<Alias[]>(aliases);
   const mode = viewState.mode
   return (
-  <div className='app col'>
-    <div className='col'>
-      <h1 className="flex page-title">Email Aliases</h1>
+  <div className='app col' style={{ padding: spacing.l }}>
       <Introduction email={email}></Introduction>
       <AliasList aliases={aliasesState} onViewChange={setViewState}
                  onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>
-    </div >
     {mode == ViewMode.Main ? undefined :
       <div className='grey-out' onClick={returnToMain}>&nbsp;
     </div>}
@@ -271,7 +279,9 @@ export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
 
 export const mount = (at: HTMLElement) => {
   render(
-    <ManagePage email={'arthuredelstein@gmail.com'} aliases={[]} />,
+    <StyleSheetManager target={at}>
+      <ManagePage email={'arthuredelstein@gmail.com'} aliases={[]} />
+    </StyleSheetManager>,
     at
   )
 }

@@ -54,10 +54,7 @@
         <include name="IDR_BRAVE_WALLET_LEDGER_BRIDGE_HTML" file="../brave_wallet_ui/ledger/ledger.html" type="BINDATA" />
         <include name="IDR_BRAVE_WALLET_TREZOR_BRIDGE_HTML" file="../brave_wallet_ui/trezor/trezor.html" type="BINDATA" />
       </if>
-
-      <!-- WebUI Inbox Aliases resources -->
-      <include name="IDR_INBOX_ALIAS_PAGE_HTML" file="../inbox_aliases/page/inbox_aliases_page.html" type="BINDATA" />
-
+     
       <!-- WebUI swap, send, and deposit page resources for Android -->
       <if expr="is_android">
         <include name="IDR_BRAVE_WALLET_SWAP_PAGE_HTML" file="../brave_wallet_ui/page/screens/swap/android/swap.html" type="BINDATA" />

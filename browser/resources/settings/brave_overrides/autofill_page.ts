@@ -43,12 +43,9 @@ RegisterPolymerTemplateModifications({
       <template is="dom-if" route-path="/inbox-aliases">
         <settings-subpage
             associated-control="[[$$('#paymentManagerButton')]]"
-            page-title="Inbox Aliases"
+            page-title="Email Aliases"
             learn-more-url="$i18n{addressesAndPaymentMethodsLearnMoreURL}">
-         <settings-inbox-aliases-page id="inboxAliasesSection" prefs="{{prefs}}">
-          </settings-inbox-aliases-page>
-         <!-- <settings-payments-section id="paymentsSection" prefs="{{prefs}}">
-          </settings-payments-section> -->
+          <settings-inbox-aliases-page id="inboxAliasesSection" prefs="{{prefs}}" />
         </settings-subpage>
       </template>
     `)

@@ -1,36 +1,16 @@
-/* Copyright (c) 2021 The Brave Authors. All rights reserved.
+/* Copyright (c) 2024 The Brave Authors. All rights reserved.
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
- import * as React from 'react'
- //import styled from 'styled-components'
-// import * as knobs from '@storybook/addon-knobs'
- //import MainPanel from '../components/main-panel'
- import { ManagePage, InboxAliasesManagementState } from '../index'
- 
- export default {
-   title: 'Inbox Aliases/Main',
- }
- 
- /*
- function actionLogger (name: string, ...args: any[]) {
-   return (...args: any[]) => console.log(name, ...args)
- }
- 
- const style = {
-   card: styled.div`
-     width: 284px;
-     background: #1C1E26B2;
-     backdrop-filter: blur(27.5px);
-     border-radius: 16px;
-     padding: 24px;
-   `
- }
-*/
+import * as React from 'react'
+import { ManagePage, InboxAliasesManagementState } from '../../../../../../../browser/resources/settings/inbox_aliases_page/inbox_aliases'
 
+export default {
+  title: 'Inbox Aliases/Main',
+}
 
-const demoData : InboxAliasesManagementState = {
+const demoData: InboxAliasesManagementState = {
   email: 'aruiz@brave.com',
   aliases: [
     {
@@ -49,7 +29,7 @@ const demoData : InboxAliasesManagementState = {
   ]
 }
 
- export const Manage = () => {
+export const Manage = () => {
   return (
     <ManagePage email={demoData.email} aliases={demoData.aliases}></ManagePage>
   )

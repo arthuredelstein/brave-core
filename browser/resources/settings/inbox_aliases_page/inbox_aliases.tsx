@@ -11,6 +11,7 @@ import styled, { StyleSheetManager } from 'styled-components'
 import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variables'
 import Button from '@brave/leo/react/button'
 import Input from '@brave/leo/react/input'
+import ButtonMenu from '@brave/leo/react/buttonMenu'
 
 export type InboxAliasesManagementState = {
   email: string,
@@ -106,6 +107,11 @@ const ManageAccountLink = styled.a`
   text-decoration: none;
 `
 
+const MenuButton = styled(Button)`
+  --leo-button-padding: 0;
+  flex-grow: 0;
+`
+
 const Introduction = ({email} : { email: string }) => (
   <Card id='introduction'>
     <h2>Keep your personal email address private</h2>
@@ -133,61 +139,13 @@ const CopiedNotification = () => (
 */
 
 const copyEmailToClipboard = (
-  event: React.MouseEvent<HTMLElement>,
   email: string
 ) => {
   navigator.clipboard.writeText(email)
-  //const copiedNotification = <CopiedNotification></CopiedNotification>
-  //if (event.target instanceof Element) {
-  //  event.target.after(useRef(copiedNotification).current)
-  //}
 }
 
-const autoFocus = (element: HTMLElement|null) => element?.focus();
+//const autoFocus = (element: HTMLElement|null) => element?.focus();
 
-const OptionMenu = styled(Col)`
-  position: absolute;
-  display: black;
-  background-color: white;
-  border: 0.5px gray solid;
-  padding: 0em;
-  font-size: 90%;
-  border-radius: 0.5em;
-  transform: translateX(-2em);
-  outline:none;
-`
-
-const PopupMenu = ({ onEdit, onDelete }: { onEdit: Function, onDelete: Function }) => {
-  const [visible, setVisible] = React.useState<boolean>(false)
-  return (
-    <div tabIndex={-1} ref={autoFocus} onBlur={() => setVisible(false)}>
-      <div title='More options' className='clickable' onClick={() => setVisible(!visible)}>
-        <Icon name="more-vertical" />
-      </div>
-      {
-        visible &&
-        (<OptionMenu>
-          <div title='Edit this email alias' className='row clickable option-menu-item'
-            onClick={() => {
-              setVisible(false)
-              onEdit()
-            }}>
-            <Icon name="edit-pencil" />
-            <div>Edit</div>
-          </div>
-          <div title='Delete this email alias' className='row clickable option-menu-item'
-            onClick={() => {
-              setVisible(false)
-              onDelete()
-            }}>
-            <Icon name="trash" />
-            <div>Delete</div>
-          </div>
-        </OptionMenu>)
-      }
-    </div>
-  )
-}
 
 const copyTitle = 'Click to copy alias email to clipboard';
 
@@ -211,12 +169,23 @@ const AliasControls = styled(Row)`
   user-select: none;
 `
 
+const AliasMenuItem = ({onClick, iconName, text} :
+                       {onClick: EventListener, iconName: string, text: string}) => (
+  <leo-menu-item
+  onClick={onClick}>
+  <Row style={{fontSize: '90%'}}>
+    <Icon name={iconName} />
+    <span style={{marginInlineStart: '0.5em'}}>{text}</span>
+  </Row>
+</leo-menu-item>
+)
+
 const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, onDelete: Function}) => {
   return (
     <AliasItemRow>
       <div className='email-container'>
         <div title={copyTitle} className="alias-item-email clickable"
-            onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+            onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(alias.email)}>
           {alias.email}
         </div>
         {((alias.note || alias.domains) &&
@@ -228,14 +197,29 @@ const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, 
         )}
       </div>
       <AliasControls>
-        <div title={copyTitle}
-             className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
+        <Button size='medium'
+          style='width: 1.5em;'
+          kind='plain'
+          title={copyTitle}
+          onClick={() => copyEmailToClipboard(alias.email)}>
           <Icon name="copy" />
-        </div>
-        <PopupMenu onEdit={onEdit} onDelete={async () => {
-          await Data.deleteAliasWithNotes(alias)
-          onDelete()
-        }}></PopupMenu>
+          </Button>
+        <ButtonMenu>
+          <MenuButton slot='anchor-content' kind='plain-faint' size="medium" style='width: 1.5em;'>
+            <Icon name="more-vertical" />
+          </MenuButton>
+          <AliasMenuItem
+            iconName="edit-pencil"
+            text="Edit"
+            onClick={() => onEdit()} />
+          <AliasMenuItem
+            iconName="trash"
+            text="Delete"
+            onClick={() => async () => {
+              await Data.deleteAliasWithNotes(alias)
+              onDelete()
+            }} />
+        </ButtonMenu>
       </AliasControls>
     </AliasItemRow>
   )

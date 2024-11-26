@@ -9,6 +9,8 @@ import * as Data from './data'
 import Icon from '@brave/leo/react/icon'
 import styled, { StyleSheetManager } from 'styled-components'
 import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variables'
+import Button from '@brave/leo/react/button'
+import Input from '@brave/leo/react/input'
 
 export type InboxAliasesManagementState = {
   email: string,
@@ -61,23 +63,66 @@ const BraveIcon = () => (
   </BraveIconCircle>
 )
 
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`
+
+const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const AccountRow = styled(Row)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0px 20px;
+`
+
+const MainEmailTextContainer = styled(Col)`
+  justify-content: center;
+  cursor: default;
+  user-select: none;
+`
+
+const MainEmail = styled.div`
+  font-size: 130%;
+  font-weight: 600;
+  padding-bottom: 6px;
+`
+
+const MainEmailDescription = styled.div`
+  font-size: 115%;
+`
+
+const ManageAccountLink = styled.a`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 120%;
+  align-items: center;
+  text-decoration: none;
+`
+
 const Introduction = ({email} : { email: string }) => (
   <Card id='introduction'>
     <h2>Keep your personal email address private</h2>
     <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
-    <div className='account-row row'>
-      <div className='main-email-container row'>
+    <AccountRow>
+      <Row>
         <BraveIcon/>
-        <div className='main-email-text-container col'>
-          <div className='main-email'>{email}</div>
-          <div className='main-email-description'>Brave Account</div>
-        </div>
-      </div>
-      <a className='manage-account-link row' title='Manage Brave account' href='https://account.brave.com' target='_blank'>
-        <Icon name="launch" />
-        <span>Manage Brave account</span>
-      </a>
-    </div>
+        <MainEmailTextContainer>
+          <MainEmail>{email}</MainEmail>
+          <MainEmailDescription>Brave Account</MainEmailDescription>
+        </MainEmailTextContainer>
+      </Row>
+      <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
+        <Icon name="launch"  />
+        <span style={{ margin: '0.5em' }}>Manage Brave account</span>
+      </ManageAccountLink>
+    </AccountRow>
   </Card>
 )
 
@@ -100,17 +145,28 @@ const copyEmailToClipboard = (
 
 const autoFocus = (element: HTMLElement|null) => element?.focus();
 
+const OptionMenu = styled(Col)`
+  position: absolute;
+  display: black;
+  background-color: white;
+  border: 0.5px gray solid;
+  padding: 0em;
+  font-size: 90%;
+  border-radius: 0.5em;
+  transform: translateX(-2em);
+  outline:none;
+`
+
 const PopupMenu = ({ onEdit, onDelete }: { onEdit: Function, onDelete: Function }) => {
   const [visible, setVisible] = React.useState<boolean>(false)
   return (
-    <div tabIndex={-1} ref={autoFocus}
-    onBlur={() => setVisible(false)}>
+    <div tabIndex={-1} ref={autoFocus} onBlur={() => setVisible(false)}>
       <div title='More options' className='clickable' onClick={() => setVisible(!visible)}>
         <Icon name="more-vertical" />
       </div>
       {
         visible &&
-        (<div className='option-menu col' >
+        (<OptionMenu>
           <div title='Edit this email alias' className='row clickable option-menu-item'
             onClick={() => {
               setVisible(false)
@@ -127,7 +183,7 @@ const PopupMenu = ({ onEdit, onDelete }: { onEdit: Function, onDelete: Function 
             <Icon name="trash" />
             <div>Delete</div>
           </div>
-        </div>)
+        </OptionMenu>)
       }
     </div>
   )
@@ -135,25 +191,43 @@ const PopupMenu = ({ onEdit, onDelete }: { onEdit: Function, onDelete: Function 
 
 const copyTitle = 'Click to copy alias email to clipboard';
 
+const AliasItemRow = styled(Row)`
+  margin: 0px;
+  font-size: 125%;
+  padding: 18px 0px 18px 25px;
+  border-top: ${color.legacy.divider1} 1px solid;
+  justify-content: space-between;
+`
 
+const AliasAnnotation = styled.div`
+  font-size: 80%;
+  font-weight: 400;
+  padding-top: 0.25em;
+  color: rgb(80, 80, 80);
+`
+
+const AliasControls = styled(Row)`
+  height: 1.5em;
+  user-select: none;
+`
 
 const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, onDelete: Function}) => {
   return (
-    <div className='alias-item row'>
+    <AliasItemRow>
       <div className='email-container'>
         <div title={copyTitle} className="alias-item-email clickable"
             onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
           {alias.email}
         </div>
         {((alias.note || alias.domains) &&
-          <div className="alias-annotation">
+          <AliasAnnotation>
             {(alias.note && <span>{alias.note}</span>)}
             {alias.domains && alias.note && <span>. </span>}
             {(alias.domains && <span>Used by {alias.domains?.join(", ")}</span>)}
-          </div>
+          </AliasAnnotation>
         )}
       </div>
-      <div className='alias-controls row'>
+      <AliasControls>
         <div title={copyTitle}
              className='clickable' onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(event, alias.email)}>
           <Icon name="copy" />
@@ -162,35 +236,38 @@ const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, 
           await Data.deleteAliasWithNotes(alias)
           onDelete()
         }}></PopupMenu>
-      </div>
-    </div>
+      </AliasControls>
+    </AliasItemRow>
   )
 }
 
+const AliasListIntro = styled(Row)`
+  margin-bottom: 20px;
+  justify-content: space-between;
+`
+
 const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onViewChange:Function, onListChange:Function}) => (
   <Card className='card alias-list col' style={{ borderTop: `1px solid ${color.legacy.divider1}`}}>
-    <div className='alias-list-intro row'>
-      <div className='col'>
+    <AliasListIntro>
+      <Col>
         <h2>Your email aliases</h2>
         <div className='fine-print'>
-          Create up to 10 free email aliases to protect your real email
-          address. You can create unlimited aliases with a Premium
-          account. <a href="https://premium.brave.com" target="_blank">Get Premium</a>
+          Create up to 10 free email aliases to protect your real email address.
         </div>
-      </div>
-      <div className="button-container col">
-        <button title='Create a new alias email' id='add-alias'
-                onClick={
-                  async () => {
-                    onViewChange({mode: ViewMode.Create})
-                    const newEmailAlias = await Data.generateNewAlias()
-                    onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias }})
-                  }
-                }>
-          New alias
-        </button>
-      </div>
-    </div>
+      </Col>
+    <Button style='flex-grow: 0;'
+            title='Create a new alias email'
+            id='add-alias'
+            onClick={
+              async () => {
+                onViewChange({mode: ViewMode.Create})
+                const newEmailAlias = await Data.generateNewAlias()
+                onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias }})
+              }
+            }>
+      New alias
+    </Button>
+    </AliasListIntro>
     {aliases.map(
       alias => <AliasItem alias={alias}
                           onEdit={() => onViewChange({mode: ViewMode.Edit, alias: alias})}
@@ -198,47 +275,93 @@ const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onV
   </Card>
 )
 
+const Modal = styled(Col)`
+  border-radius: var(--cr-card-border-radius);
+  background-color: white;
+  z-index: 2;
+  border: none;
+  opacity: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 45em;
+  padding: 1em 2em;
+  justify-content: flex-start;
+`
+
+const CloseButton = styled.span`
+  cursor: pointer;
+  position: absolute;
+  top: 1.75em;
+  right: 1.75em;
+`
+
+const GeneratedEmailContainer = styled(Row)`
+  font-size: 135%;
+  background-color: #f4f4f4;
+  border-radius: 0.5em;
+  padding: 0em 0em 0em 0.75em;
+  margin: 0.25em 0em;
+  justify-content: space-between;
+`
+
+const ButtonRow = styled(Row)`
+  justify-content: end;
+  margin: 1em 0em;
+`
+
+const ModalSectionCol = styled(Col)`
+  justify-content: flex-start;
+  margin: 1em 0em;
+`
+
 const EmailAliasModal = (
   {returnToMain, viewState, email, onViewChange, onListChange} :
   {returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function}
 ) => {
   const mode = viewState.mode
-  const [startedNote, setStartedNote] = React.useState(mode !== ViewMode.Create)
   const noteInputRef = React.useRef<HTMLInputElement>(null)
-  return (<div className='modal col'>
-    <span className='close clickable' onClick={returnToMain}><Icon name='close' /></span>
+  const notePlaceholder = mode === ViewMode.Create ?
+    'Enter a note for your new address (optional)' :
+    'Enter a note for your address (optional)'
+  return (<Modal>
+    <CloseButton onClick={returnToMain}><Icon name='close' /></CloseButton>
     <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
-    <div>
-      <h3>Email alias</h3>
-      <div className='generated-email-container row'>
-        <div>{viewState?.alias?.email}</div>
-        {mode == ViewMode.Create && <span title='Suggest another email alias' className='clickable'
+    <ModalSectionCol style={{}}>
+      <h3 style={{margin: '0.25em'}}>Email alias</h3>
+      <GeneratedEmailContainer>
+        <div>{viewState?.alias?.email ?? 'blah'}</div>
+        {mode == ViewMode.Create &&
+        <Button title='Suggest another email alias'
           onClick= {async () => {
             const newEmailAlias = await Data.generateNewAlias()
             onViewChange({ mode: viewState.mode, alias: { email: newEmailAlias }})
-          }}><Icon name="refresh" /></span>}
-      </div>
-      <div className='fine-print'>{`Emails will be forwarded to ${email}.`}
-        {mode == ViewMode.Create && <span> Custom aliases are a premium feature. <a href='https://support.brave.com'>Learn more</a>`</span>}
-      </div>
-    </div>
-    <div className='col'>
-      <h3>Note</h3>
-      <div className='note-input-container col'>
-        {!startedNote && <div className='note-input note-input-modal'>Enter a note for your new address</div>}
-        <input className='note-input' id='note-input'
-               type='text'
-               defaultValue={viewState.alias?.note}
-               autoFocus
-               ref={noteInputRef}
-               onChange={() => setStartedNote(true)}>
-      </input>
-      </div>
+          }}
+          kind="plain" style='flex-grow: 0; padding: 0px'>
+          <Icon name="refresh" />
+        </Button>}
+      </GeneratedEmailContainer>
+      <div className='fine-print'>{`Emails will be forwarded to ${email}.`}</div>
+    </ModalSectionCol>
+    <ModalSectionCol>
+      <h3 style={{margin: '0.25em'}}>Note</h3>
+      <Input id='note-input'
+              type='text'
+              placeholder={notePlaceholder}
+              value={viewState.alias?.note ?? ''}
+              ref={noteInputRef}
+              style='margin: 0.25em 0em'>
+      </Input>
       {mode == ViewMode.Edit && viewState.alias?.domains && <div className='fine-print'>Used by {viewState.alias?.domains?.join(', ')}</div>}
-    </div>
-    <div className='modal-buttons row'>
-      <button className='cancel-button' onClick={returnToMain}>Cancel</button>
-      <button
+    </ModalSectionCol>
+    <ButtonRow>
+      <Button onClick={returnToMain} kind='plain' style='flex-grow: 0;'>
+        Cancel
+      </Button>
+      <Button
+        style='flex-grow: 0; margin-inline-start: 1em;'
+        kind='filled'
         onClick={async () => {
         const aliasEmail = viewState?.alias?.email
         if (aliasEmail) {
@@ -249,13 +372,24 @@ const EmailAliasModal = (
           onViewChange({mode: ViewMode.Main})
         }
       }
-      }>{mode == ViewMode.Create ? 'Create' : 'Save'}</button>
-    </div>
-  </div>)
+      }>{mode == ViewMode.Create ? 'Create' : 'Save'}
+      </Button>
+    </ButtonRow>
+  </Modal>)
 }
 
 //     <div className='col' style={{ padding: spacing.l }}>
 
+
+const GrayOverlay = styled.div`
+  background-color: rgb(50,50,50,0.5);
+  position: fixed;
+  z-index: 1;
+  left: 0em;
+  right: 0em;
+  top: 0em;
+  bottom: 0em;
+`
 
 export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main})
@@ -268,8 +402,7 @@ export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
       <AliasList aliases={aliasesState} onViewChange={setViewState}
                  onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>
     {mode == ViewMode.Main ? undefined :
-      <div className='grey-out' onClick={returnToMain}>&nbsp;
-    </div>}
+      <GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>}
     {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
      <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
                       onListChange={() => Data.updateAliasList(setAliasesState)}

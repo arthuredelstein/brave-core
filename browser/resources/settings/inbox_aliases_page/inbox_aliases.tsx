@@ -325,6 +325,17 @@ const AliasList = ({ aliases, onViewChange, onListChange }: { aliases: Alias[], 
 )
 
 
+const RefreshButton = ( {mode, onViewChange} : { mode: ViewMode, onViewChange: Function }) => (
+  <Button title='Suggest another email alias'
+    onClick={async () => {
+      const newEmailAlias = await Data.generateNewAlias()
+      onViewChange({ mode, alias: { email: newEmailAlias } })
+    }}
+    kind="plain" style='flex-grow: 0; padding: 0px'>
+    <Icon name="refresh" />
+  </Button>
+)
+
 const EmailAliasModal = (
   { returnToMain, viewState, email, onViewChange, onListChange }:
     { returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function }
@@ -341,15 +352,7 @@ const EmailAliasModal = (
       <h3 style={{ margin: '0.25em' }}>Email alias</h3>
       <GeneratedEmailContainer>
         <div>{viewState?.alias?.email ?? 'blah'}</div>
-        {mode == ViewMode.Create &&
-          <Button title='Suggest another email alias'
-            onClick={async () => {
-              const newEmailAlias = await Data.generateNewAlias()
-              onViewChange({ mode: viewState.mode, alias: { email: newEmailAlias } })
-            }}
-            kind="plain" style='flex-grow: 0; padding: 0px'>
-            <Icon name="refresh" />
-          </Button>}
+        {mode == ViewMode.Create && <RefreshButton {...{mode, onViewChange}} />}
       </GeneratedEmailContainer>
       <div className='fine-print'>{`Emails will be forwarded to ${email}.`}</div>
     </ModalSectionCol>

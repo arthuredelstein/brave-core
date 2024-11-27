@@ -264,7 +264,7 @@ Or change later at <ph name="SETTINGS_EXTENIONS_LINK">$2<ex>brave://settings/ext
         <ph name="SITE_NAME">$1<ex>google.com</ex></ph> is asking you to
       </message>
       <message name="IDS_SHOW_INBOX_ALIASES" desc="The show Inbox Aliases menu in the app menu">
-        Inbox Aliases
+        Email Aliases
       </message>
 
       <!-- Autoplay -->
@@ -356,7 +356,7 @@ Or change later at <ph name="SETTINGS_EXTENIONS_LINK">$2<ex>brave://settings/ext
 
       <!-- Adblock contenxt menu -->
       <message name="IDS_NEW_INBOX_ALIAS" desc="Message for context menu that enables the Inbox Alias generator UI for the page">
-        New Inbox Alias
+        New Email Alias
       </message>
 
       <message name="IDS_LOCATION_BAR_ONION_AVAILABLE" desc="Button in location bar to indicate onion available site to open a new tab in tor window.">

@@ -17,6 +17,8 @@ class InboxAliasesPage extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' })
 
+    console.log("Hello from InboxAliasesPage")
+
     import('/inbox_aliases.bundle.js' as any)
       .then(() => (window as any).mountInboxAliases(this.shadowRoot))
       .catch(() => {})

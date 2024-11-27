@@ -49,6 +49,7 @@ class BraveAdBlockHandler : public settings::SettingsPageUIHandler,
   void DeleteSubscription(const base::Value::List& args);
   void ViewSubscriptionSource(const base::Value::List& args);
   void UpdateCustomFilters(const base::Value::List& args);
+  void GenerateNewAlias(const base::Value::List& args);
 
   void RefreshSubscriptionsList();
 

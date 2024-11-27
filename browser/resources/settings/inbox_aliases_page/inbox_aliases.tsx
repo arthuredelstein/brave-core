@@ -1,9 +1,6 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 
-// import '../../../../../../../ui/webui/resources/cr_elements/cr_shared_style.css'
-// /Users/arthur/brave-browser/src/chrome/browser/resources/app_settings/app_management_shared_style.css
-//import './index.css'
 import {Alias} from './types'
 import * as Data from './data'
 import Icon from '@brave/leo/react/icon'
@@ -12,6 +9,7 @@ import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variable
 import Button from '@brave/leo/react/button'
 import Input from '@brave/leo/react/input'
 import ButtonMenu from '@brave/leo/react/buttonMenu'
+import Tooltip  from '@brave/leo/react/tooltip'
 
 export type InboxAliasesManagementState = {
   email: string,
@@ -112,41 +110,6 @@ const MenuButton = styled(Button)`
   flex-grow: 0;
 `
 
-const Introduction = ({email} : { email: string }) => (
-  <Card id='introduction'>
-    <h2>Keep your personal email address private</h2>
-    <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
-    <AccountRow>
-      <Row>
-        <BraveIcon/>
-        <MainEmailTextContainer>
-          <MainEmail>{email}</MainEmail>
-          <MainEmailDescription>Brave Account</MainEmailDescription>
-        </MainEmailTextContainer>
-      </Row>
-      <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
-        <Icon name="launch"  />
-        <span style={{ margin: '0.5em' }}>Manage Brave account</span>
-      </ManageAccountLink>
-    </AccountRow>
-  </Card>
-)
-
-/*
-const CopiedNotification = () => (
-  <div>Copied!</div>
-)
-*/
-
-const copyEmailToClipboard = (
-  email: string
-) => {
-  navigator.clipboard.writeText(email)
-}
-
-//const autoFocus = (element: HTMLElement|null) => element?.focus();
-
-
 const copyTitle = 'Click to copy alias email to clipboard';
 
 const AliasItemRow = styled(Row)`
@@ -169,6 +132,94 @@ const AliasControls = styled(Row)`
   user-select: none;
 `
 
+const AliasListIntro = styled(Row)`
+  margin-bottom: 20px;
+  justify-content: space-between;
+`
+
+const Introduction = ({email} : { email: string }) => (
+  <Card id='introduction'>
+    <h2>Keep your personal email address private</h2>
+    <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
+    <AccountRow>
+      <Row>
+        <BraveIcon/>
+        <MainEmailTextContainer>
+          <MainEmail>{email}</MainEmail>
+          <MainEmailDescription>Brave Account</MainEmailDescription>
+        </MainEmailTextContainer>
+      </Row>
+      <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
+        <Icon name="launch"  />
+        <span style={{ margin: '0.5em' }}>Manage Brave account</span>
+      </ManageAccountLink>
+    </AccountRow>
+  </Card>
+)
+
+const copyEmailToClipboard = (
+  email: string
+) => {
+  navigator.clipboard.writeText(email)
+}
+
+
+const Modal = styled(Col)`
+  border-radius: var(--cr-card-border-radius);
+  background-color: white;
+  z-index: 2;
+  border: none;
+  opacity: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 45em;
+  padding: 1em 2em;
+  justify-content: flex-start;
+`
+
+const CloseButton = styled.span`
+  cursor: pointer;
+  position: absolute;
+  top: 1.75em;
+  right: 1.75em;
+`
+
+const EmailContainer = styled.div`
+  cursor: pointer;
+`
+
+const GeneratedEmailContainer = styled(Row)`
+  font-size: 135%;
+  background-color: #f4f4f4;
+  border-radius: 0.5em;
+  padding: 0em 0em 0em 0.75em;
+  margin: 0.25em 0em;
+  justify-content: space-between;
+  height: 2.6em;
+`
+
+const ButtonRow = styled(Row)`
+  justify-content: end;
+  margin: 1em 0em;
+`
+
+const ModalSectionCol = styled(Col)`
+  justify-content: flex-start;
+  margin: 1em 0em;
+`
+
+const GrayOverlay = styled.div`
+  background-color: rgb(50,50,50,0.5);
+  position: fixed;
+  z-index: 1;
+  left: 0em;
+  right: 0em;
+  top: 0em;
+  bottom: 0em;
+`
+
 const AliasMenuItem = ({onClick, iconName, text} :
                        {onClick: EventListener, iconName: string, text: string}) => (
   <leo-menu-item
@@ -180,14 +231,29 @@ const AliasMenuItem = ({onClick, iconName, text} :
 </leo-menu-item>
 )
 
+const CopyToast = ({ children }: React.PropsWithChildren) => {
+  const [copied, setCopied] = React.useState<boolean>(false)
+  return (<div onClick={() => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1000)
+  }}>
+    <Tooltip text="Copied ✔" mode="mini" visible={copied}>
+      {children}
+    </Tooltip>
+  </div>
+  )
+}
+
 const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, onDelete: Function}) => {
   return (
     <AliasItemRow>
       <div className='email-container'>
-        <div title={copyTitle} className="alias-item-email clickable"
+        <CopyToast>
+          <EmailContainer title='Click to copy address'
             onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(alias.email)}>
-          {alias.email}
-        </div>
+            {alias.email}
+          </EmailContainer>
+        </CopyToast>
         {((alias.note || alias.domains) &&
           <AliasAnnotation>
             {(alias.note && <span>{alias.note}</span>)}
@@ -197,13 +263,17 @@ const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, 
         )}
       </div>
       <AliasControls>
-        <Button size='medium'
-          style='width: 1.5em;'
-          kind='plain'
-          title={copyTitle}
-          onClick={() => copyEmailToClipboard(alias.email)}>
-          <Icon name="copy" />
+        <CopyToast>
+          <Button size='medium'
+            style='width: 1.5em;'
+            kind='plain'
+            title={copyTitle}
+            onClick={() => {
+              copyEmailToClipboard(alias.email)
+            }}>
+            <Icon name="copy" />
           </Button>
+        </CopyToast>
         <ButtonMenu>
           <MenuButton slot='anchor-content' kind='plain-faint' size="medium" style='width: 1.5em;'>
             <Icon name="more-vertical" />
@@ -224,11 +294,6 @@ const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, 
     </AliasItemRow>
   )
 }
-
-const AliasListIntro = styled(Row)`
-  margin-bottom: 20px;
-  justify-content: space-between;
-`
 
 const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onViewChange:Function, onListChange:Function}) => (
   <Card className='card alias-list col' style={{ borderTop: `1px solid ${color.legacy.divider1}`}}>
@@ -259,46 +324,6 @@ const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onV
   </Card>
 )
 
-const Modal = styled(Col)`
-  border-radius: var(--cr-card-border-radius);
-  background-color: white;
-  z-index: 2;
-  border: none;
-  opacity: 100%;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  width: 45em;
-  padding: 1em 2em;
-  justify-content: flex-start;
-`
-
-const CloseButton = styled.span`
-  cursor: pointer;
-  position: absolute;
-  top: 1.75em;
-  right: 1.75em;
-`
-
-const GeneratedEmailContainer = styled(Row)`
-  font-size: 135%;
-  background-color: #f4f4f4;
-  border-radius: 0.5em;
-  padding: 0em 0em 0em 0.75em;
-  margin: 0.25em 0em;
-  justify-content: space-between;
-`
-
-const ButtonRow = styled(Row)`
-  justify-content: end;
-  margin: 1em 0em;
-`
-
-const ModalSectionCol = styled(Col)`
-  justify-content: flex-start;
-  margin: 1em 0em;
-`
 
 const EmailAliasModal = (
   {returnToMain, viewState, email, onViewChange, onListChange} :
@@ -361,19 +386,6 @@ const EmailAliasModal = (
     </ButtonRow>
   </Modal>)
 }
-
-//     <div className='col' style={{ padding: spacing.l }}>
-
-
-const GrayOverlay = styled.div`
-  background-color: rgb(50,50,50,0.5);
-  position: fixed;
-  z-index: 1;
-  left: 0em;
-  right: 0em;
-  top: 0em;
-  bottom: 0em;
-`
 
 export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main})

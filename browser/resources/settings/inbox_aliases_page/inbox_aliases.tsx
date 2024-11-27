@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 
-import {Alias} from './types'
+import { Alias } from './types'
 import * as Data from './data'
 import Icon from '@brave/leo/react/icon'
 import styled, { StyleSheetManager } from 'styled-components'
@@ -9,7 +9,7 @@ import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variable
 import Button from '@brave/leo/react/button'
 import Input from '@brave/leo/react/input'
 import ButtonMenu from '@brave/leo/react/buttonMenu'
-import Tooltip  from '@brave/leo/react/tooltip'
+import Tooltip from '@brave/leo/react/tooltip'
 
 export type InboxAliasesManagementState = {
   email: string,
@@ -137,20 +137,20 @@ const AliasListIntro = styled(Row)`
   justify-content: space-between;
 `
 
-const Introduction = ({email} : { email: string }) => (
+const Introduction = ({ email }: { email: string }) => (
   <Card id='introduction'>
     <h2>Keep your personal email address private</h2>
-    <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com"  target='_blank'>Learn more</a></div>
+    <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com" target='_blank'>Learn more</a></div>
     <AccountRow>
       <Row>
-        <BraveIcon/>
+        <BraveIcon />
         <MainEmailTextContainer>
           <MainEmail>{email}</MainEmail>
           <MainEmailDescription>Brave Account</MainEmailDescription>
         </MainEmailTextContainer>
       </Row>
       <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
-        <Icon name="launch"  />
+        <Icon name="launch" />
         <span style={{ margin: '0.5em' }}>Manage Brave account</span>
       </ManageAccountLink>
     </AccountRow>
@@ -220,15 +220,15 @@ const GrayOverlay = styled.div`
   bottom: 0em;
 `
 
-const AliasMenuItem = ({onClick, iconName, text} :
-                       {onClick: EventListener, iconName: string, text: string}) => (
+const AliasMenuItem = ({ onClick, iconName, text }:
+  { onClick: EventListener, iconName: string, text: string }) => (
   <leo-menu-item
-  onClick={onClick}>
-  <Row style={{fontSize: '90%'}}>
-    <Icon name={iconName} />
-    <span style={{marginInlineStart: '0.5em'}}>{text}</span>
-  </Row>
-</leo-menu-item>
+    onClick={onClick}>
+    <Row style={{ fontSize: '90%' }}>
+      <Icon name={iconName} />
+      <span style={{ marginInlineStart: '0.5em' }}>{text}</span>
+    </Row>
+  </leo-menu-item>
 )
 
 const CopyToast = ({ children }: React.PropsWithChildren) => {
@@ -244,7 +244,7 @@ const CopyToast = ({ children }: React.PropsWithChildren) => {
   )
 }
 
-const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, onDelete: Function}) => {
+const AliasItem = ({ alias, onEdit, onDelete }: { alias: Alias, onEdit: Function, onDelete: Function }) => {
   return (
     <AliasItemRow>
       <div className='email-container'>
@@ -295,8 +295,8 @@ const AliasItem = ({alias, onEdit, onDelete} : {alias: Alias, onEdit: Function, 
   )
 }
 
-const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onViewChange:Function, onListChange:Function}) => (
-  <Card className='card alias-list col' style={{ borderTop: `1px solid ${color.legacy.divider1}`}}>
+const AliasList = ({ aliases, onViewChange, onListChange }: { aliases: Alias[], onViewChange: Function, onListChange: Function }) => (
+  <Card className='card alias-list col' style={{ borderTop: `1px solid ${color.legacy.divider1}` }}>
     <AliasListIntro>
       <Col>
         <h2>Your email aliases</h2>
@@ -304,30 +304,30 @@ const AliasList = ({aliases, onViewChange, onListChange} : {aliases:Alias[], onV
           Create up to 10 free email aliases to protect your real email address.
         </div>
       </Col>
-    <Button style='flex-grow: 0;'
-            title='Create a new alias email'
-            id='add-alias'
-            onClick={
-              async () => {
-                onViewChange({mode: ViewMode.Create})
-                const newEmailAlias = await Data.generateNewAlias()
-                onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias }})
-              }
-            }>
-      New alias
-    </Button>
+      <Button style='flex-grow: 0;'
+        title='Create a new alias email'
+        id='add-alias'
+        onClick={
+          async () => {
+            onViewChange({ mode: ViewMode.Create })
+            const newEmailAlias = await Data.generateNewAlias()
+            onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias } })
+          }
+        }>
+        New alias
+      </Button>
     </AliasListIntro>
     {aliases.map(
       alias => <AliasItem alias={alias}
-                          onEdit={() => onViewChange({mode: ViewMode.Edit, alias: alias})}
-                          onDelete={onListChange}></AliasItem>)}
+        onEdit={() => onViewChange({ mode: ViewMode.Edit, alias: alias })}
+        onDelete={onListChange}></AliasItem>)}
   </Card>
 )
 
 
 const EmailAliasModal = (
-  {returnToMain, viewState, email, onViewChange, onListChange} :
-  {returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function}
+  { returnToMain, viewState, email, onViewChange, onListChange }:
+    { returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function }
 ) => {
   const mode = viewState.mode
   const noteInputRef = React.useRef<HTMLInputElement>(null)
@@ -338,29 +338,29 @@ const EmailAliasModal = (
     <CloseButton onClick={returnToMain}><Icon name='close' /></CloseButton>
     <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
     <ModalSectionCol style={{}}>
-      <h3 style={{margin: '0.25em'}}>Email alias</h3>
+      <h3 style={{ margin: '0.25em' }}>Email alias</h3>
       <GeneratedEmailContainer>
         <div>{viewState?.alias?.email ?? 'blah'}</div>
         {mode == ViewMode.Create &&
-        <Button title='Suggest another email alias'
-          onClick= {async () => {
-            const newEmailAlias = await Data.generateNewAlias()
-            onViewChange({ mode: viewState.mode, alias: { email: newEmailAlias }})
-          }}
-          kind="plain" style='flex-grow: 0; padding: 0px'>
-          <Icon name="refresh" />
-        </Button>}
+          <Button title='Suggest another email alias'
+            onClick={async () => {
+              const newEmailAlias = await Data.generateNewAlias()
+              onViewChange({ mode: viewState.mode, alias: { email: newEmailAlias } })
+            }}
+            kind="plain" style='flex-grow: 0; padding: 0px'>
+            <Icon name="refresh" />
+          </Button>}
       </GeneratedEmailContainer>
       <div className='fine-print'>{`Emails will be forwarded to ${email}.`}</div>
     </ModalSectionCol>
     <ModalSectionCol>
-      <h3 style={{margin: '0.25em'}}>Note</h3>
+      <h3 style={{ margin: '0.25em' }}>Note</h3>
       <Input id='note-input'
-              type='text'
-              placeholder={notePlaceholder}
-              value={viewState.alias?.note ?? ''}
-              ref={noteInputRef}
-              style='margin: 0.25em 0em'>
+        type='text'
+        placeholder={notePlaceholder}
+        value={viewState.alias?.note ?? ''}
+        ref={noteInputRef}
+        style='margin: 0.25em 0em'>
       </Input>
       {mode == ViewMode.Edit && viewState.alias?.domains && <div className='fine-print'>Used by {viewState.alias?.domains?.join(', ')}</div>}
     </ModalSectionCol>
@@ -372,39 +372,42 @@ const EmailAliasModal = (
         style='flex-grow: 0; margin-inline-start: 1em;'
         kind='filled'
         onClick={async () => {
-        const aliasEmail = viewState?.alias?.email
-        if (aliasEmail) {
-          await Data.createAliasWithNotes(
-            {email: aliasEmail,
-             note: noteInputRef?.current?.value})
-          onListChange()
-          onViewChange({mode: ViewMode.Main})
+          const aliasEmail = viewState?.alias?.email
+          if (aliasEmail) {
+            await Data.createAliasWithNotes(
+              {
+                email: aliasEmail,
+                note: noteInputRef?.current?.value
+              })
+            onListChange()
+            onViewChange({ mode: ViewMode.Main })
+          }
         }
-      }
-      }>{mode == ViewMode.Create ? 'Create' : 'Save'}
+        }>{mode == ViewMode.Create ? 'Create' : 'Save'}
       </Button>
     </ButtonRow>
   </Modal>)
 }
 
-export const ManagePage = ({email, aliases} : InboxAliasesManagementState) => {
-  const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main})
-  const returnToMain = () => setViewState({ mode: ViewMode.Main})
+export const ManagePage = ({ email, aliases }: InboxAliasesManagementState) => {
+  const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main })
+  const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const [aliasesState, setAliasesState] = React.useState<Alias[]>(aliases);
   const mode = viewState.mode
   return (
-  <div className='app col' style={{ padding: spacing.l }}>
+    <div className='app col' style={{ padding: spacing.l }}>
       <Introduction email={email}></Introduction>
       <AliasList aliases={aliasesState} onViewChange={setViewState}
-                 onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>
-    {mode == ViewMode.Main ? undefined :
-      <GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>}
-    {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
-     <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
-                      onListChange={() => Data.updateAliasList(setAliasesState)}
-                      onViewChange={setViewState}></EmailAliasModal>}
-  </div>
-)}
+        onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>
+      {mode == ViewMode.Main ? undefined :
+        <GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>}
+      {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
+        <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
+          onListChange={() => Data.updateAliasList(setAliasesState)}
+          onViewChange={setViewState}></EmailAliasModal>}
+    </div>
+  )
+}
 
 export const mount = (at: HTMLElement) => {
   render(
@@ -415,4 +418,4 @@ export const mount = (at: HTMLElement) => {
   )
 }
 
-;(window as any).mountInboxAliases = mount
+  ; (window as any).mountInboxAliases = mount

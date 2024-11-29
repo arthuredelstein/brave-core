@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 
+#include "brave/components/inbox_aliases/browser/inbox_aliases_service.h"
 #include "brave/components/services/bat_ads/bat_ads_service_impl.h"
 #include "brave/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
 #include "brave/components/services/bat_rewards/public/interfaces/rewards_engine_factory.mojom.h"
@@ -61,6 +62,12 @@ auto RunBraveWalletUtilsService(
       std::move(receiver));
 }
 
+/*
+auto RunInboxAliasesService(
+  mojo::PendingReceiver<inbox_aliases::mojom::InboxAliasesService> receiver) {
+    return std::make_unique<inbox_aliases::InboxAliasesService>(std::move(receiver));
+  }
+  */
 }  // namespace
 
 BraveContentUtilityClient::BraveContentUtilityClient() = default;
@@ -82,5 +89,7 @@ void BraveContentUtilityClient::RegisterMainThreadServices(
 
   services.Add(RunBraveWalletUtilsService);
 
+  //services.Add(RunInboxAliasesService);
+  //
   return ChromeContentUtilityClient::RegisterMainThreadServices(services);
 }

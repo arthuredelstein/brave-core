@@ -86,11 +86,6 @@ void BraveAdBlockHandler::RegisterMessages() {
       "brave_adblock.updateCustomFilters",
       base::BindRepeating(&BraveAdBlockHandler::UpdateCustomFilters,
                           base::Unretained(this)));
-
-  web_ui()->RegisterMessageCallback(
-    "email_aliases.generateNewAlias",
-    base::BindRepeating(&BraveAdBlockHandler::GenerateNewAlias,
-                        base::Unretained(this)));
 }
 
 void BraveAdBlockHandler::OnJavascriptAllowed() {
@@ -323,9 +318,4 @@ void BraveAdBlockHandler::OnFilterListsUpdated(std::string callback_id,
   } else {
     RejectJavascriptCallback(base::Value(callback_id), base::Value());
   }
-}
-
-void BraveAdBlockHandler::GenerateNewAlias(const base::Value::List& args) {
-  AllowJavascript();
-  ResolveJavascriptCallback(args[0], base::Value("fakey-fakey-email@gmail.com"));
 }

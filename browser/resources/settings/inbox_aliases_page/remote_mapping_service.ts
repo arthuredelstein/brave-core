@@ -19,6 +19,6 @@ export class RemoteMappingService implements MappingService {
     return Promise.resolve()
   }
   generateAlias (): Promise<string> {
-    return sendWithPromise('email_aliases.generateNewAlias')
+    return sendWithPromise('inbox_aliases.generateNewAlias')
   }
 }

@@ -1,28 +1,10 @@
 import {Alias} from './types'
-//import '//resources/js/cr.js'
-
-/*
-import {
-  InboxAliasesServiceRemote
-} from 'gen/brave/components/inbox_aliases/common/inbox_aliases.mojom.m.js'
-*/
-/*
-try {
-  await import('chrome://resources/cr_elements/icons.html.js');
-  await import('chrome://resources/js/cr.js');
-} catch (e) {
-  console.log(e)
-}
-*/
-
-
 const ENDPOINT = 'http://localhost:8090';
 
-export const generateNewAlias = async (): Promise<string> => {
-  //const remote = new InboxAliasesServiceRemote();
-  //const x = await remote.generateNewAlias();//sendWithPromise('email_aliases.generateNewAlias')
-  //return x + result.email
-  return "asd;flkjasdf"
+export const generateNewAlias = async () => {
+  const response = await fetch(`${ENDPOINT}/generate`)
+  const result = await response.json()
+  return result.email
 }
 
 const createAlias = async (alias: string): Promise<void> => {

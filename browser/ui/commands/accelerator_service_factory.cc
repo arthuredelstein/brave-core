@@ -5,8 +5,6 @@
 
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
 
-#include "base/logging.h"
-
 #include <memory>
 #include <utility>
 
@@ -33,7 +31,6 @@ AcceleratorServiceFactory* AcceleratorServiceFactory::GetInstance() {
 // static
 AcceleratorService* AcceleratorServiceFactory::GetForContext(
     content::BrowserContext* context) {
-  base::debug::StackTrace().Print();
   return static_cast<AcceleratorService*>(
       GetInstance()->GetServiceForBrowserContext(context, true));
 }

@@ -51,7 +51,6 @@
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/ui/bookmark/bookmark_prefs_service_factory.h"
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
-#include "brave/browser/ui/inbox_aliases/inbox_aliases_service_factory.h"
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/browser/ui/tabs/shared_pinned_tab_service_factory.h"
 #include "brave/components/commands/common/features.h"
@@ -136,9 +135,6 @@ void EnsureBrowserContextKeyedServiceFactoriesBuilt() {
   if (base::FeatureList::IsEnabled(commands::features::kBraveCommands)) {
     commands::AcceleratorServiceFactory::GetInstance();
   }
-
-  std::cout << "hello there!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-  inbox_aliases::InboxAliasesServiceFactory::GetInstance();
 #endif
 
 #if BUILDFLAG(ENABLE_COMMANDER)

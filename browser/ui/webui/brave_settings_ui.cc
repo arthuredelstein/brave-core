@@ -24,7 +24,6 @@
 #include "brave/browser/resources/settings/shortcuts_page/grit/commands_generated_map.h"
 #include "brave/browser/resources/settings/inbox_aliases_page/grit/inbox_aliases_generated_map.h"
 #include "brave/browser/shell_integrations/buildflags/buildflags.h"
-#include "brave/browser/ui/inbox_aliases/inbox_aliases_service_factory.h"
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/browser/ui/webui/navigation_bar_data_provider.h"
@@ -58,8 +57,6 @@
 #include "content/public/common/content_features.h"
 #include "extensions/buildflags/buildflags.h"
 #include "net/base/features.h"
-
-#include "base/logging.h"
 
 #if BUILDFLAG(ENABLE_PIN_SHORTCUT)
 #include "brave/browser/ui/webui/settings/pin_shortcut_handler.h"
@@ -231,13 +228,6 @@ bool& BraveSettingsUI::ShouldExposeElementsForTesting() {
 void BraveSettingsUI::BindInterface(
     mojo::PendingReceiver<commands::mojom::CommandsService> pending_receiver) {
   commands::AcceleratorServiceFactory::GetForContext(
-      web_ui()->GetWebContents()->GetBrowserContext())
-      ->BindInterface(std::move(pending_receiver));
-}
-
-void BraveSettingsUI::BindInterface(
-    mojo::PendingReceiver<inbox_aliases::mojom::InboxAliasesService> pending_receiver) {
-  inbox_aliases::InboxAliasesServiceFactory::GetForContext(
       web_ui()->GetWebContents()->GetBrowserContext())
       ->BindInterface(std::move(pending_receiver));
 }

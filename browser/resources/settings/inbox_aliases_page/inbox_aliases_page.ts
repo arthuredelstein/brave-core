@@ -4,8 +4,7 @@
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import { loadTimeData } from "chrome://resources/js/load_time_data.js"
-
-//import { ManagePage } from "./inbox_aliases"
+import { RemoteMappingService } from "./remote_mapping_service.js"
 
 // Unfortunately, our current WebPack build does not support ESModule output and
 // it expects loadTimeData to be on the globalThis. The settings page has been
@@ -16,11 +15,10 @@ import { loadTimeData } from "chrome://resources/js/load_time_data.js"
 class InboxAliasesPage extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' })
-
     console.log("Hello from InboxAliasesPage")
 
     import('/inbox_aliases.bundle.js' as any)
-      .then(() => (window as any).mountInboxAliases(this.shadowRoot))
+      .then(() => (window as any).mountInboxAliases(this.shadowRoot, new RemoteMappingService))
       .catch(() => {})
   }
 }

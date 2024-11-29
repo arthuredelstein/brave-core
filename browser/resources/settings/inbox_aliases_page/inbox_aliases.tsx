@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 
-import { Alias } from './types'
-import * as Data from './data'
+import { Alias, MappingService } from './types'
+import * as Data from './inbox_aliases_browser_proxy'
 import Icon from '@brave/leo/react/icon'
 import styled, { StyleSheetManager } from 'styled-components'
 import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variables'
@@ -295,7 +295,7 @@ const AliasItem = ({ alias, onEdit, onDelete }: { alias: Alias, onEdit: Function
   )
 }
 
-const AliasList = ({ aliases, onViewChange, onListChange }: { aliases: Alias[], onViewChange: Function, onListChange: Function }) => (
+const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { mappingService: MappingService, aliases: Alias[], onViewChange: Function, onListChange: Function }) => (
   <Card className='card alias-list col' style={{ borderTop: `1px solid ${color.legacy.divider1}` }}>
     <AliasListIntro>
       <Col>
@@ -310,7 +310,7 @@ const AliasList = ({ aliases, onViewChange, onListChange }: { aliases: Alias[], 
         onClick={
           async () => {
             onViewChange({ mode: ViewMode.Create })
-            const newEmailAlias = await Data.generateNewAlias()
+            const newEmailAlias = await mappingService.generateAlias()
             onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias } })
           }
         }>
@@ -325,10 +325,10 @@ const AliasList = ({ aliases, onViewChange, onListChange }: { aliases: Alias[], 
 )
 
 
-const RefreshButton = ( {mode, onViewChange} : { mode: ViewMode, onViewChange: Function }) => (
+const RefreshButton = ( {mode, onViewChange, mappingService} : { mappingService: MappingService, mode: ViewMode, onViewChange: Function }) => (
   <Button title='Suggest another email alias'
     onClick={async () => {
-      const newEmailAlias = await Data.generateNewAlias()
+      const newEmailAlias = await mappingService.generateAlias()
       onViewChange({ mode, alias: { email: newEmailAlias } })
     }}
     kind="plain" style='flex-grow: 0; padding: 0px'>
@@ -337,8 +337,8 @@ const RefreshButton = ( {mode, onViewChange} : { mode: ViewMode, onViewChange: F
 )
 
 const EmailAliasModal = (
-  { returnToMain, viewState, email, onViewChange, onListChange }:
-    { returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function }
+  { returnToMain, viewState, email, onViewChange, onListChange, mappingService }:
+    { returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function, mappingService: MappingService }
 ) => {
   const mode = viewState.mode
   const noteInputRef = React.useRef<HTMLInputElement>(null)
@@ -352,7 +352,7 @@ const EmailAliasModal = (
       <h3 style={{ margin: '0.25em' }}>Email alias</h3>
       <GeneratedEmailContainer>
         <div>{viewState?.alias?.email ?? 'blah'}</div>
-        {mode == ViewMode.Create && <RefreshButton {...{mode, onViewChange}} />}
+        {mode == ViewMode.Create && <RefreshButton {...{mappingService, mode, onViewChange}} />}
       </GeneratedEmailContainer>
       <div className='fine-print'>{`Emails will be forwarded to ${email}.`}</div>
     </ModalSectionCol>
@@ -392,7 +392,8 @@ const EmailAliasModal = (
   </Modal>)
 }
 
-export const ManagePage = ({ email, aliases }: InboxAliasesManagementState) => {
+export const ManagePage = ({ email, aliases, mappingService }:
+  { email: string, aliases: Alias[], mappingService: MappingService, }) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main })
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const [aliasesState, setAliasesState] = React.useState<Alias[]>(aliases);
@@ -401,21 +402,23 @@ export const ManagePage = ({ email, aliases }: InboxAliasesManagementState) => {
     <div className='app col' style={{ padding: spacing.l }}>
       <Introduction email={email}></Introduction>
       <AliasList aliases={aliasesState} onViewChange={setViewState}
+        mappingService={mappingService}
         onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>
       {mode == ViewMode.Main ? undefined :
         <GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
         <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
           onListChange={() => Data.updateAliasList(setAliasesState)}
+          mappingService={mappingService}
           onViewChange={setViewState}></EmailAliasModal>}
     </div>
   )
 }
 
-export const mount = (at: HTMLElement) => {
+export const mount = (at: HTMLElement, mappingService: MappingService) => {
   render(
     <StyleSheetManager target={at}>
-      <ManagePage email={'arthuredelstein@gmail.com'} aliases={[]} />
+      <ManagePage email={'arthuredelstein@gmail.com'} aliases={[]} {...{mappingService}}/>
     </StyleSheetManager>,
     at
   )

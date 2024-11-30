@@ -5,9 +5,7 @@
 
 #include "brave/browser/ui/webui/settings/brave_inbox_aliases_handler.h"
 
-#include <memory>
 #include <string>
-#include <utility>
 
 #include "base/functional/bind.h"
 #include "base/json/values_util.h"
@@ -17,6 +15,29 @@
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser_finder.h"
 #include "content/public/browser/web_ui.h"
+#include "net/http/http_request_headers.h"
+#include "net/traffic_annotation/network_traffic_annotation.h"
+#include "services/network/public/cpp/resource_request.h"
+#include "services/network/public/cpp/simple_url_loader.h"
+#include "services/network/public/cpp/shared_url_loader_factory.h"
+#include "url/gurl.h"
+
+#define MAX_EMAIL_LENGTH 320
+
+const net::NetworkTrafficAnnotationTag traffic_annotation =
+    net::DefineNetworkTrafficAnnotation("email_aliases_mapping_service", R"(
+    semantics {
+      sender: "Email Aliases service"
+      description:
+        "Call Email Aliases Mapping Service API"
+      trigger:
+        "When the user connects to the Email Mapping Service, to "
+        "Generate, Create, Read, Update, or Delete Email Aliases. "
+      destination: BRAVE_OWNED_SERVICE
+    }
+    policy {
+      cookies_allowed: YES
+    })");
 
 BraveInboxAliasesHandler::BraveInboxAliasesHandler() = default;
 
@@ -32,5 +53,21 @@ void BraveInboxAliasesHandler::RegisterMessages() {
 
 void BraveInboxAliasesHandler::GenerateNewAlias(const base::Value::List& args) {
   AllowJavascript();
-  ResolveJavascriptCallback(args[0], base::Value("tweedledum-tweedledee@gmail.com"));
+  CHECK_EQ(1U, args.size());
+  const std::string& callback_id = args[0].GetString();
+  auto resource_request = std::make_unique<network::ResourceRequest>();
+  resource_request->url = GURL("http://localhost:3000/generate");
+  resource_request->method = net::HttpRequestHeaders::kGetMethod;
+  simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
+  simple_url_loader_->DownloadToString(
+    profile_->GetURLLoaderFactory().get(),
+    base::BindOnce(
+        &BraveInboxAliasesHandler::OnGenerateNewAliasResponse,
+        weak_factory_.GetWeakPtr(), callback_id),
+        MAX_EMAIL_LENGTH);
+}
+
+void BraveInboxAliasesHandler::OnGenerateNewAliasResponse(
+    const std::string callback_id, std::optional<std::string> response_body) {
+  ResolveJavascriptCallback(base::Value(callback_id), response_body ? response_body.value() : std::string());
 }

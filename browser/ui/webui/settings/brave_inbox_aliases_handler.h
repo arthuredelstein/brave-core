@@ -6,6 +6,7 @@
 #ifndef BRAVE_BROWSER_UI_WEBUI_SETTINGS_BRAVE_INBOX_ALIASES_HANDLER_H_
 #define BRAVE_BROWSER_UI_WEBUI_SETTINGS_BRAVE_INBOX_ALIASES_HANDLER_H_
 
+#include <optional>
 #include <string>
 
 #include "base/memory/raw_ptr.h"
@@ -13,6 +14,10 @@
 #include "chrome/browser/ui/webui/settings/settings_page_ui_handler.h"
 
 class Profile;
+
+namespace network {
+  class SimpleURLLoader;
+}
 
 class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
  public:
@@ -22,6 +27,8 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
   ~BraveInboxAliasesHandler() override;
 
   void GenerateNewAlias(const base::Value::List& args);
+  void OnGenerateNewAliasResponse(
+    const std::string callback_id, std::optional<std::string> response_body);
 
  private:
   // SettingsPageUIHandler overrides
@@ -31,6 +38,8 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
   void OnJavascriptDisallowed() override {}
 
   raw_ptr<Profile> profile_ = nullptr;
+
+  std::unique_ptr<network::SimpleURLLoader> simple_url_loader_;
 
   base::WeakPtrFactory<BraveInboxAliasesHandler> weak_factory_{this};
 };

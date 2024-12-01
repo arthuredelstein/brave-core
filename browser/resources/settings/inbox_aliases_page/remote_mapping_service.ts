@@ -1,22 +1,22 @@
-import { MappingService } from './types'
+import { Alias, MappingService } from './types'
 import { sendWithPromise} from 'chrome://resources/js/cr.js';
 
 export class RemoteMappingService implements MappingService {
-  createAlias (email: string): Promise<void> {
+  async createAlias (email: string): Promise<void> {
     console.log("createAlias", email)
-    return Promise.resolve()
+    sendWithPromise('inbox_aliases.createAlias')
   }
-  getAliases (): Promise<string[]> {
+  async getAliases (): Promise<Alias[]> {
     console.log("getAliases")
-    return Promise.resolve(["abc", "def"])
+    return sendWithPromise('inbox_aliases.getAliases')
   }
-  updateAlias (email: string, status: boolean): Promise<void> {
+  async updateAlias (email: string, note:string, status: boolean): Promise<void> {
     console.log("updateAlias", email, status)
-    return Promise.resolve()
+    sendWithPromise('inbox_aliases.updateAlias', email, note)
   }
-  deleteAlias (email: string): Promise<void> {
+  async deleteAlias (email: string): Promise<void> {
     console.log("deleteAlias", email)
-    return Promise.resolve()
+    sendWithPromise('inbox_aliases.deleteAlias')
   }
   generateAlias (): Promise<string> {
     return sendWithPromise('inbox_aliases.generateNewAlias')

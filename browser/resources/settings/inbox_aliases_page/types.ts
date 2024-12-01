@@ -5,9 +5,9 @@ export type Alias = {
 }
 
 export interface MappingService {
-  createAlias(email: string): Promise<void>
-  getAliases(): Promise<string[]>
-  updateAlias(email: string, status: boolean): Promise<void>
+  createAlias(email: string, note: string): Promise<void>
+  getAliases(): Promise<Alias[]>
+  updateAlias(email: string, note: string, status: boolean): Promise<void>
   deleteAlias(email: string): Promise<void>
   generateAlias(): Promise<string>
 }

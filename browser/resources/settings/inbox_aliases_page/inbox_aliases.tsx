@@ -2,7 +2,6 @@ import * as React from 'react'
 import { render } from 'react-dom'
 
 import { Alias, MappingService } from './types'
-import * as Data from './inbox_aliases_browser_proxy'
 import Icon from '@brave/leo/react/icon'
 import styled, { StyleSheetManager } from 'styled-components'
 import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variables'
@@ -20,7 +19,8 @@ enum ViewMode {
   Main,
   Create,
   Edit,
-  Delete
+  Delete,
+  SignUp
 }
 
 type ViewState = {
@@ -285,10 +285,7 @@ const AliasItem = ({ alias, onEdit, onDelete }: { alias: Alias, onEdit: Function
           <AliasMenuItem
             iconName="trash"
             text="Delete"
-            onClick={() => async () => {
-              await Data.deleteAliasWithNotes(alias)
-              onDelete()
-            }} />
+            onClick={() => onDelete(alias)} />
         </ButtonMenu>
       </AliasControls>
     </AliasItemRow>
@@ -320,7 +317,10 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
     {aliases.map(
       alias => <AliasItem alias={alias}
         onEdit={() => onViewChange({ mode: ViewMode.Edit, alias: alias })}
-        onDelete={onListChange}></AliasItem>)}
+        onDelete={async (alias: Alias) => {
+          await mappingService.deleteAlias(alias.email)
+          onListChange()
+        }}></AliasItem>)}
   </Card>
 )
 
@@ -377,11 +377,7 @@ const EmailAliasModal = (
         onClick={async () => {
           const aliasEmail = viewState?.alias?.email
           if (aliasEmail) {
-            await Data.createAliasWithNotes(
-              {
-                email: aliasEmail,
-                note: noteInputRef?.current?.value
-              })
+            await mappingService.updateAlias(aliasEmail, noteInputRef?.current?.value ?? "", true)
             onListChange()
             onViewChange({ mode: ViewMode.Main })
           }
@@ -392,23 +388,36 @@ const EmailAliasModal = (
   </Modal>)
 }
 
-export const ManagePage = ({ email, aliases, mappingService }:
+
+
+export const ManagePage = ({ email, mappingService }:
   { email: string, aliases: Alias[], mappingService: MappingService, }) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main })
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
-  const [aliasesState, setAliasesState] = React.useState<Alias[]>(aliases);
   const mode = viewState.mode
+  const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
+  const onListChange = async () => {
+    console.log("onListChange")
+    const aliases = await mappingService.getAliases()
+    setAliasesState(aliases)
+  }
+  React.useEffect(() => {
+    onListChange();
+  }, [] /* Only run at mount. */)
   return (
     <div className='app col' style={{ padding: spacing.l }}>
       <Introduction email={email}></Introduction>
-      <AliasList aliases={aliasesState} onViewChange={setViewState}
+      {viewState.mode === ViewMode.SignUp ?
+      (<div>Hello</div>)
+      :
+      (<AliasList aliases={aliasesState} onViewChange={setViewState}
         mappingService={mappingService}
-        onListChange={() => Data.updateAliasList(setAliasesState)}></AliasList>
+        onListChange={onListChange}></AliasList>)}
       {mode == ViewMode.Main ? undefined :
         <GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
         <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
-          onListChange={() => Data.updateAliasList(setAliasesState)}
+          onListChange={onListChange}
           mappingService={mappingService}
           onViewChange={setViewState}></EmailAliasModal>}
     </div>

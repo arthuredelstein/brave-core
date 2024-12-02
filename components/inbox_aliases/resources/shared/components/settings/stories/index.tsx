@@ -5,10 +5,10 @@
 
 import * as React from 'react'
 import { ManagePage, InboxAliasesManagementState } from '../../../../../../../browser/resources/settings/inbox_aliases_page/inbox_aliases'
-import { Alias, MappingService } from '../../../../../../../browser/resources/settings/inbox_aliases_page/types'
+import { Alias, ViewMode, MappingService } from '../../../../../../../browser/resources/settings/inbox_aliases_page/types'
 
 export default {
-  title: 'Inbox Aliases/Main',
+  title: 'Email Aliases',
 }
 
 const demoData: InboxAliasesManagementState = {
@@ -54,14 +54,37 @@ class MockMappingService implements MappingService {
     this.aliases_.delete(email)
   }
   async generateAlias (): Promise<string> {
-    return "mock-" + Math.random().toString().slice(2,8) + "@gmail.com"
+    let generated: string = ''
+    do {
+      generated = "mock-" + Math.random().toString().slice(2,6) + "@bravealias.com"
+    } while (this.aliases_.has(generated))
+    return generated
   }
 }
 
 export const Manage = () => {
   const [mockMappingService] = React.useState(new MockMappingService());
   return (
-    <ManagePage mappingService={mockMappingService}
-                email={demoData.email} aliases={demoData.aliases}></ManagePage>
+    <ManagePage initMode={ViewMode.Main}
+                mappingService={mockMappingService}
+                email={demoData.email}></ManagePage>
+  )
+}
+
+export const SignUp = () => {
+  const [mockMappingService] = React.useState(new MockMappingService());
+  return (
+    <ManagePage initMode={ViewMode.SignUp}
+                mappingService={mockMappingService}
+                email={demoData.email}></ManagePage>
+  )
+}
+
+export const AwaitAuth = () => {
+  const [mockMappingService] = React.useState(new MockMappingService());
+  return (
+    <ManagePage initMode={ViewMode.AwaitingAuthorization}
+                mappingService={mockMappingService}
+                email={demoData.email}></ManagePage>
   )
 }

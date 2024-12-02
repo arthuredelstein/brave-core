@@ -11,3 +11,12 @@ export interface MappingService {
   deleteAlias(email: string): Promise<void>
   generateAlias(): Promise<string>
 }
+
+export enum ViewMode {
+  Main,
+  Create,
+  Edit,
+  Delete,
+  SignUp,
+  AwaitingAuthorization
+}

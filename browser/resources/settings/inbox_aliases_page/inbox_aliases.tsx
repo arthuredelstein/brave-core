@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 
-import { Alias, MappingService } from './types'
+import { Alias, MappingService, ViewMode } from './types'
 import Icon from '@brave/leo/react/icon'
 import styled, { StyleSheetManager } from 'styled-components'
 import { color, /*font, radius,*/ spacing } from '@brave/leo/tokens/css/variables'
@@ -13,14 +13,6 @@ import Tooltip from '@brave/leo/react/tooltip'
 export type InboxAliasesManagementState = {
   email: string,
   aliases: Alias[]
-}
-
-enum ViewMode {
-  Main,
-  Create,
-  Edit,
-  Delete,
-  SignUp
 }
 
 type ViewState = {
@@ -36,10 +28,11 @@ const BraveIconCircle = styled.div`
   border-radius: 50%;
   border: #E3E3E8 1px solid;
   display: flex;
-  height: 4.5em;
+  min-height: 4.5em;
   justify-content: center;
   margin-inline-end: 1.5em;
-  width: 4.5em;
+  min-width: 4.5em;
+  flex-grow: 0;
 `
 
 const BraveIconWrapper = styled.div`
@@ -54,8 +47,8 @@ const Card = styled.div`
   padding: ${spacing.l} ;
 `
 
-const BraveIcon = () => (
-  <BraveIconCircle>
+const BraveIcon = ({style}: {style?: React.CSSProperties | undefined}) => (
+  <BraveIconCircle style={{...style, flexGrow: 0}}>
     <BraveIconWrapper>
       <Icon name='brave-icon-release-color' />
     </BraveIconWrapper>
@@ -74,12 +67,15 @@ const Col = styled.div`
 `
 
 const AccountRow = styled(Row)`
-  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 0px 20px;
 `
 
+const SignupRow = styled(Row)`
+  justify-content: space-between;
+  align-items: start;
+`
 const MainEmailTextContainer = styled(Col)`
   justify-content: center;
   cursor: default;
@@ -137,24 +133,29 @@ const AliasListIntro = styled(Row)`
   justify-content: space-between;
 `
 
-const Introduction = ({ email }: { email: string }) => (
+const Introduction = () => (
   <Card id='introduction'>
     <h2>Keep your personal email address private</h2>
     <div className='text'>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com" target='_blank'>Learn more</a></div>
-    <AccountRow>
-      <Row>
-        <BraveIcon />
-        <MainEmailTextContainer>
-          <MainEmail>{email}</MainEmail>
-          <MainEmailDescription>Brave Account</MainEmailDescription>
-        </MainEmailTextContainer>
-      </Row>
-      <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
-        <Icon name="launch" />
-        <span style={{ margin: '0.5em' }}>Manage Brave account</span>
-      </ManageAccountLink>
-    </AccountRow>
   </Card>
+)
+
+const MainEmailDisplay = ({ email }: { email: string }) => (
+  <Card id='main-email-display'>
+    <AccountRow>
+    <Row>
+      <BraveIcon />
+      <MainEmailTextContainer>
+        <MainEmail>{email}</MainEmail>
+        <MainEmailDescription>Brave Account</MainEmailDescription>
+      </MainEmailTextContainer>
+    </Row>
+    <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
+      <Icon name="launch" />
+      <span style={{ margin: '0.5em' }}>Manage Brave account</span>
+    </ManageAccountLink>
+  </AccountRow>
+</Card>
 )
 
 const copyEmailToClipboard = (
@@ -388,11 +389,40 @@ const EmailAliasModal = (
   </Modal>)
 }
 
+const BeforeSendingEmailForm = () => (
+  <Col>
+    <h3>To get started, sign in or create a Brave account</h3>
+    <div style={{ marginBottom: '1em' }}>Enter your email address to get a secure login link sent to your email. Clicking this link will either create or access a Brave Account and let you use the free Email Aliases service.</div>
+    <Row>
+      <Input style='flex-grow: 4; margin-inline-end: 1em;' type='text' placeholder='Email address'></Input>
+      <Button style='flex-grow: 1' kind='filled'>Get login link</Button>
+    </Row>
+  </Col>
+)
 
 
-export const ManagePage = ({ email, mappingService }:
-  { email: string, aliases: Alias[], mappingService: MappingService, }) => {
-  const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Main })
+const AfterSendingEmailMessage = () => (
+  <Col style={{flexGrow: 1}}>
+    <h3>A login email is on the way</h3>
+    <div style={{ marginBottom: '1em' }}>Click on the secure login link in the email to access your account.</div>
+    <div style={{ marginBottom: '1em' }}>Don't see the email? Check your spam folder or try again.</div>
+  </Col>
+)
+
+const MainEmailEntryForm = ({viewState} : {viewState:ViewState}) => (
+  <Card id='main-email-entry-form'>
+    <SignupRow>
+      <BraveIcon style={{marginTop: '1em'}}/>
+      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm/>) : (<AfterSendingEmailMessage/>)}
+    </SignupRow>
+  </Card>
+)
+
+export const ManagePage = ({ email, mappingService, initMode }:
+  { email: string,
+    mappingService: MappingService,
+    initMode: ViewMode }) => {
+  const [viewState, setViewState] = React.useState<ViewState>({ mode: initMode })
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const mode = viewState.mode
   const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
@@ -406,20 +436,19 @@ export const ManagePage = ({ email, mappingService }:
   }, [] /* Only run at mount. */)
   return (
     <div className='app col' style={{ padding: spacing.l }}>
-      <Introduction email={email}></Introduction>
-      {viewState.mode === ViewMode.SignUp ?
-      (<div>Hello</div>)
-      :
-      (<AliasList aliases={aliasesState} onViewChange={setViewState}
+      <Introduction />
+      {viewState.mode === ViewMode.SignUp || viewState.mode === ViewMode.AwaitingAuthorization ?
+      (<MainEmailEntryForm viewState={viewState} />) :
+      (<span><MainEmailDisplay email={email} />
+      <AliasList aliases={aliasesState} onViewChange={setViewState}
         mappingService={mappingService}
-        onListChange={onListChange}></AliasList>)}
-      {mode == ViewMode.Main ? undefined :
-        <GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>}
+        onListChange={onListChange}></AliasList></span>)}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
+        (<span><GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>
         <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
           onListChange={onListChange}
           mappingService={mappingService}
-          onViewChange={setViewState}></EmailAliasModal>}
+          onViewChange={setViewState}></EmailAliasModal></span>)}
     </div>
   )
 }
@@ -427,7 +456,9 @@ export const ManagePage = ({ email, mappingService }:
 export const mount = (at: HTMLElement, mappingService: MappingService) => {
   render(
     <StyleSheetManager target={at}>
-      <ManagePage email={'arthuredelstein@gmail.com'} aliases={[]} {...{mappingService}}/>
+      <ManagePage initMode={ViewMode.Main}
+                  email={'arthuredelstein@gmail.com'}
+                  {...{mappingService}}/>
     </StyleSheetManager>,
     at
   )

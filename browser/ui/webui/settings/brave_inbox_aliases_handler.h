@@ -13,6 +13,7 @@
 #include "base/memory/weak_ptr.h"
 #include "chrome/browser/ui/webui/settings/settings_page_ui_handler.h"
 
+class GURL;
 class Profile;
 
 namespace network {
@@ -29,6 +30,14 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
   void GenerateNewAlias(const base::Value::List& args);
   void OnGenerateNewAliasResponse(
     const std::string callback_id, std::optional<std::string> response_body);
+  void GetAliases(const base::Value::List& args);
+  void OnGetAliasesResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void CreateAlias(const base::Value::List& args);
+  void OnCreateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void UpdateAlias(const base::Value::List& args);
+  void OnUpdateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void DeleteAlias(const base::Value::List& args);
+  void OnDeleteAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
 
  private:
   // SettingsPageUIHandler overrides
@@ -36,6 +45,13 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
 
   void OnJavascriptAllowed() override {}
   void OnJavascriptDisallowed() override {}
+
+  void MakeMappingServiceRequest(
+    const std::string& callback_id,
+    const GURL& url,
+    const char* method,
+    const std::optional<std::string>& body,
+    void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
 
   raw_ptr<Profile> profile_ = nullptr;
 

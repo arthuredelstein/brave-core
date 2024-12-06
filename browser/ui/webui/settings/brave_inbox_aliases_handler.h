@@ -27,9 +27,8 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
   BraveInboxAliasesHandler& operator=(const BraveInboxAliasesHandler&) = delete;
   ~BraveInboxAliasesHandler() override;
 
-  void GenerateNewAlias(const base::Value::List& args);
-  void OnGenerateNewAliasResponse(
-    const std::string callback_id, std::optional<std::string> response_body);
+  void GenerateAlias(const base::Value::List& args);
+  void OnGenerateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
   void GetAliases(const base::Value::List& args);
   void OnGetAliasesResponse(const std::string callback_id, std::optional<std::string> response_body);
   void CreateAlias(const base::Value::List& args);
@@ -52,6 +51,12 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
     const char* method,
     const std::optional<std::string>& body,
     void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
+
+void SingleArgumentCommand(
+  const std::string& callback_id,
+  const std::string& alias_email,
+  const char* method,
+  void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
 
   raw_ptr<Profile> profile_ = nullptr;
 

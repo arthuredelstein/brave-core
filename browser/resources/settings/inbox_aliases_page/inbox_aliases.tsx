@@ -242,7 +242,11 @@ const EmailAliasModal = (
         onClick={async () => {
           const aliasEmail = viewState?.alias?.email
           if (aliasEmail) {
-            await mappingService.updateAlias(aliasEmail, noteInputRef?.current?.value ?? "", true)
+            if (mode === ViewMode.Create) {
+              await mappingService.createAlias(aliasEmail, noteInputRef?.current?.value ?? "")
+            } else {
+              await mappingService.updateAlias(aliasEmail, noteInputRef?.current?.value ?? "", true)
+            }
             onListChange()
             onViewChange({ mode: ViewMode.Main })
           }

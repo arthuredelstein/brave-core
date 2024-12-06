@@ -8,7 +8,8 @@
 #include <string>
 
 #include "base/functional/bind.h"
-#include "base/json/values_util.h"
+#include "base/json/json_reader.h"
+#include "base/json/json_writer.h"
 #include "base/values.h"
 #include "brave/browser/brave_browser_process.h"
 #include "chrome/browser/browser_process.h"
@@ -25,7 +26,8 @@
 
 #define MAX_RESPONSE_LENGTH 32768
 
-const std::string kMappingServiceURL = "https://nbw40ecdu9.execute-api.us-west-2.amazonaws.com/Stage/manage";
+const std::string kMappingServiceManageURL = "https://aliases.bsg.bravesoftware.com/manage";
+const std::string kMappingServiceGenerateURL = "https://aliases.bsg.bravesoftware.com/generate";
 
 const net::NetworkTrafficAnnotationTag traffic_annotation =
     net::DefineNetworkTrafficAnnotation("email_aliases_mapping_service", R"(
@@ -49,27 +51,27 @@ BraveInboxAliasesHandler::~BraveInboxAliasesHandler() = default;
 void BraveInboxAliasesHandler::RegisterMessages() {
   profile_ = Profile::FromWebUI(web_ui());
   web_ui()->RegisterMessageCallback(
-      "inbox_aliases.generateNewAlias",
-      base::BindRepeating(&BraveInboxAliasesHandler::GenerateNewAlias,
+      "email_aliases.generateAlias",
+      base::BindRepeating(&BraveInboxAliasesHandler::GenerateAlias,
                           base::Unretained(this)));
 
   web_ui()->RegisterMessageCallback(
-      "inbox_aliases.getAliases",
+      "email_aliases.getAliases",
       base::BindRepeating(&BraveInboxAliasesHandler::GetAliases,
                           base::Unretained(this)));
 
   web_ui()->RegisterMessageCallback(
-      "inbox_aliases.createAlias",
+      "email_aliases.createAlias",
       base::BindRepeating(&BraveInboxAliasesHandler::CreateAlias,
                           base::Unretained(this)));
 
   web_ui()->RegisterMessageCallback(
-      "inbox_aliases.updateAlias",
+      "email_aliases.updateAlias",
       base::BindRepeating(&BraveInboxAliasesHandler::UpdateAlias,
                           base::Unretained(this)));
 
   web_ui()->RegisterMessageCallback(
-      "inbox_aliases.deleteAlias",
+      "email_aliases.deleteAlias",
       base::BindRepeating(&BraveInboxAliasesHandler::DeleteAlias,
                           base::Unretained(this)));
 }
@@ -84,7 +86,12 @@ void BraveInboxAliasesHandler::MakeMappingServiceRequest(
   auto resource_request = std::make_unique<network::ResourceRequest>();
   resource_request->url = url;
   resource_request->method = method;
+  resource_request->headers.SetHeader("Authorization", "Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6MSwidHlwIjoiSldUIn0.eyJpYXQiOjE3MzM1MTMyMzcsInNlc3Npb25faWQiOiIwMTkzOWQ3MC1kMmRhLTc1M2ItOTc5Mi05ZWY0ZWM5MDJmMzEifQ.PspbaYEATiOsvTJSgy8wotag4aQHmStzga8HxAIdcw6qgCbv4IdkkxpFBZgv55vsvEh1djQAJnsWzwzHkKb9Mg");
+  resource_request->headers.SetHeader("X-API-key", "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK");
   simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
+  if (body) {
+    simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
+  }
   simple_url_loader_->DownloadToString(
     profile_->GetURLLoaderFactory().get(),
     base::BindOnce(
@@ -93,32 +100,51 @@ void BraveInboxAliasesHandler::MakeMappingServiceRequest(
         MAX_RESPONSE_LENGTH);
 }
 
-void BraveInboxAliasesHandler::GenerateNewAlias(const base::Value::List& args) {
-  AllowJavascript();
-  CHECK_EQ(1U, args.size());
-  const std::string& callback_id = args[0].GetString();
-  auto resource_request = std::make_unique<network::ResourceRequest>();
-  resource_request->url = GURL("http://localhost:3000/generate");
-  resource_request->method = net::HttpRequestHeaders::kGetMethod;
-  simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
-  simple_url_loader_->DownloadToString(
-    profile_->GetURLLoaderFactory().get(),
-    base::BindOnce(
-        &BraveInboxAliasesHandler::OnGenerateNewAliasResponse,
-        weak_factory_.GetWeakPtr(), callback_id),
-        MAX_RESPONSE_LENGTH);
+void BraveInboxAliasesHandler::SingleArgumentCommand(
+  const std::string& callback_id,
+  const std::string& alias_email,
+  const char* method,
+  void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>)) {
+  auto bodyValue = base::Value::Dict().Set("alias", alias_email);
+  auto body = base::WriteJson(bodyValue);
+  if (!body) {
+    RejectJavascriptCallback(base::Value(callback_id), base::Value("json generation failed"));
+    return;
+  }
+  MakeMappingServiceRequest(
+    callback_id,
+    GURL(kMappingServiceManageURL),
+    method,
+    body.value(),
+    httpResponseCallbackPtr
+  );
 }
 
-void BraveInboxAliasesHandler::OnGenerateNewAliasResponse(
+void BraveInboxAliasesHandler::GenerateAlias(const base::Value::List& args) {
+  CHECK_EQ(1U, args.size());
+  MakeMappingServiceRequest(
+    args[0].GetString(),
+    GURL(kMappingServiceGenerateURL),
+    net::HttpRequestHeaders::kGetMethod,
+    std::nullopt,
+    &BraveInboxAliasesHandler::OnGenerateAliasResponse
+  );
+}
+
+void BraveInboxAliasesHandler::OnGenerateAliasResponse(
     const std::string callback_id, std::optional<std::string> response_body) {
-  ResolveJavascriptCallback(base::Value(callback_id), response_body ? response_body.value() : std::string());
+  if (response_body) {
+    ResolveJavascriptCallback(base::Value(callback_id), response_body.value());
+  } else {
+    RejectJavascriptCallback(base::Value(callback_id), base::Value("alias generation failed"));
+  }
 }
 
 void BraveInboxAliasesHandler::GetAliases(const base::Value::List& args) {
   CHECK_EQ(1U, args.size());
   MakeMappingServiceRequest(
     args[0].GetString(),
-    GURL(kMappingServiceURL),
+    GURL(kMappingServiceManageURL + "?status=active"),
     net::HttpRequestHeaders::kGetMethod,
     std::nullopt,
     &BraveInboxAliasesHandler::OnGetAliasesResponse
@@ -127,19 +153,36 @@ void BraveInboxAliasesHandler::GetAliases(const base::Value::List& args) {
 
 void BraveInboxAliasesHandler::OnGetAliasesResponse(
     const std::string callback_id, std::optional<std::string> response_body) {
-  ResolveJavascriptCallback(base::Value(callback_id), response_body ? response_body.value() : std::string());
+  if (!response_body) {
+    RejectJavascriptCallback(base::Value(callback_id), base::Value("no response body"));
+    return;
+  }
+  std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
+  if (response_value && response_value.value().is_list()) {
+    auto alias_list = base::Value::List();
+    for (auto& item : response_value.value().GetList()) {
+      if (item.is_dict()) {
+        auto& item_dict = item.GetDict();
+        auto* email_value_ptr = item_dict.FindString("alias");
+        auto* status_value_ptr = item_dict.FindString("status");
+        alias_list.Append(
+          base::Value::Dict()
+            .Set("email", email_value_ptr ? *email_value_ptr : "")
+            .Set("status", status_value_ptr ? *status_value_ptr : ""));
+      }
+    }
+    ResolveJavascriptCallback(base::Value(callback_id), alias_list);
+  } else {
+    RejectJavascriptCallback(base::Value(callback_id), base::Value("bad response"));
+  }
 }
 
 void BraveInboxAliasesHandler::CreateAlias(const base::Value::List& args) {
-  CHECK_EQ(2U, args.size());
-  const std::string body = "{\"alias\":\"" + args[1].GetString() + "\"}";
-  MakeMappingServiceRequest(
-    args[0].GetString(),
-    GURL(kMappingServiceURL),
-    net::HttpRequestHeaders::kPostMethod,
-    body,
-    &BraveInboxAliasesHandler::OnCreateAliasResponse
-  );
+  CHECK_EQ(3U, args.size());
+  const auto callback_id = args[0].GetString();
+  const auto alias_email = args[1].GetString();
+  SingleArgumentCommand(callback_id, alias_email, net::HttpRequestHeaders::kPostMethod,
+                        &BraveInboxAliasesHandler::OnCreateAliasResponse);
 }
 
 void BraveInboxAliasesHandler::OnCreateAliasResponse(
@@ -147,13 +190,37 @@ void BraveInboxAliasesHandler::OnCreateAliasResponse(
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
 
+void BraveInboxAliasesHandler::DeleteAlias(const base::Value::List& args) {
+  CHECK_EQ(2U, args.size());
+  const auto callback_id = args[0].GetString();
+  const auto alias_email = args[1].GetString();
+  SingleArgumentCommand(callback_id, alias_email, net::HttpRequestHeaders::kDeleteMethod,
+                        &BraveInboxAliasesHandler::OnDeleteAliasResponse);
+}
+
+void BraveInboxAliasesHandler::OnDeleteAliasResponse(
+  const std::string callback_id, std::optional<std::string> response_body) {
+  ResolveJavascriptCallback(base::Value(callback_id), base::Value());
+}
 
 void BraveInboxAliasesHandler::UpdateAlias(const base::Value::List& args) {
-  CHECK_EQ(3U, args.size());
-  const std::string body = "{\"alias\":\"" + args[1].GetString() + "\"}";
+  CHECK_EQ(4U, args.size());
+    const auto callback_id = args[0].GetString();
+  if (!args[1].is_string() || !args[2].is_string() || !args[3].is_bool()) {
+    RejectJavascriptCallback(base::Value(callback_id), base::Value("unexpected values"));
+    return;
+  }
+  auto bodyValue = base::Value::Dict()
+    .Set("alias", args[1].GetString())
+    .Set("status", args[3].GetBool() ? "active" : "paused");
+  auto body = base::WriteJson(bodyValue);
+  if (!body) {
+    RejectJavascriptCallback(base::Value(callback_id), base::Value("data error"));
+    return;
+  }
   MakeMappingServiceRequest(
-    args[0].GetString(),
-    GURL(kMappingServiceURL),
+    callback_id,
+    GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kPutMethod,
     body,
     &BraveInboxAliasesHandler::OnUpdateAliasResponse
@@ -165,19 +232,3 @@ void BraveInboxAliasesHandler::OnUpdateAliasResponse(
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
 
-void BraveInboxAliasesHandler::DeleteAlias(const base::Value::List& args) {
-  CHECK_EQ(2U, args.size());
-  const std::string body = "{\"alias\":\"" + args[1].GetString() + "\"}";
-  MakeMappingServiceRequest(
-    args[0].GetString(),
-    GURL(kMappingServiceURL),
-    net::HttpRequestHeaders::kDeleteMethod,
-    body,
-    &BraveInboxAliasesHandler::OnDeleteAliasResponse
-  );
-}
-
-void BraveInboxAliasesHandler::OnDeleteAliasResponse(
-    const std::string callback_id, std::optional<std::string> response_body) {
-  ResolveJavascriptCallback(base::Value(callback_id), base::Value());
-}

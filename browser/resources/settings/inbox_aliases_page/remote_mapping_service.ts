@@ -2,23 +2,25 @@ import { Alias, MappingService } from './types'
 import { sendWithPromise} from 'chrome://resources/js/cr.js';
 
 export class RemoteMappingService implements MappingService {
-  async createAlias (email: string): Promise<void> {
-    console.log("createAlias", email)
-    sendWithPromise('inbox_aliases.createAlias')
-  }
   async getAliases (): Promise<Alias[]> {
-    console.log("getAliases")
-    return sendWithPromise('inbox_aliases.getAliases')
+    const result = await sendWithPromise('email_aliases.getAliases')
+    return result
   }
-  async updateAlias (email: string, note:string, status: boolean): Promise<void> {
-    console.log("updateAlias", email, status)
-    sendWithPromise('inbox_aliases.updateAlias', email, note)
+  async createAlias (email: string, note: string): Promise<void> {
+    console.log("createAlias called")
+    await sendWithPromise('email_aliases.createAlias', email, note)
+  }
+  async updateAlias (email: string, note: string, status: boolean): Promise<void> {
+    await sendWithPromise('email_aliases.updateAlias', email, note, status)
   }
   async deleteAlias (email: string): Promise<void> {
-    console.log("deleteAlias", email)
-    sendWithPromise('inbox_aliases.deleteAlias')
+    await sendWithPromise('email_aliases.deleteAlias', email)
   }
-  generateAlias (): Promise<string> {
-    return sendWithPromise('inbox_aliases.generateNewAlias')
+  /*
+  async generateAlias (): Promise<string> {
+    return sendWithPromise('email_aliases.generateAlias')
+  }*/
+  async generateAlias (): Promise<string> {
+    return "mock-" + Math.random().toString().slice(2,6) + "@bravealias.com"
   }
 }

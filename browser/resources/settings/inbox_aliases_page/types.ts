@@ -10,6 +10,9 @@ export interface MappingService {
   updateAlias(email: string, note: string, status: boolean): Promise<void>
   deleteAlias(email: string): Promise<void>
   generateAlias(): Promise<string>
+  getAccountEmail (): Promise<string | undefined>
+  submitAccountEmail (accountEmail: string): Promise<void>
+  getAccountState (): Promise<AccountState>
 }
 
 export enum ViewMode {
@@ -19,4 +22,10 @@ export enum ViewMode {
   Delete,
   SignUp,
   AwaitingAuthorization
+}
+
+export enum AccountState {
+  NoAccount,
+  AwaitingAccount,
+  AccountReady
 }

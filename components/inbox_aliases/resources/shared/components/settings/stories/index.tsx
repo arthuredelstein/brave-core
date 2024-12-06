@@ -4,14 +4,14 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
-import { ManagePage, InboxAliasesManagementState } from '../../../../../../../browser/resources/settings/inbox_aliases_page/inbox_aliases'
-import { Alias, ViewMode, MappingService } from '../../../../../../../browser/resources/settings/inbox_aliases_page/types'
+import { ManagePage } from '../../../../../../../browser/resources/settings/inbox_aliases_page/inbox_aliases'
+import { AccountState, Alias, ViewMode, MappingService } from '../../../../../../../browser/resources/settings/inbox_aliases_page/types'
 
 export default {
   title: 'Email Aliases',
 }
 
-const demoData: InboxAliasesManagementState = {
+const demoData = {
   email: 'aruiz@brave.com',
   aliases: [
     {
@@ -31,7 +31,10 @@ const demoData: InboxAliasesManagementState = {
 }
 
 class MockMappingService implements MappingService {
+  accountEmail_: string
   aliases_ : Map<string, Alias>
+  accountState_ : AccountState = AccountState.NoAccount
+
   constructor() {
     this.aliases_ = new Map<string, Alias>();
     for (const alias of demoData.aliases) {
@@ -59,6 +62,19 @@ class MockMappingService implements MappingService {
       generated = "mock-" + Math.random().toString().slice(2,6) + "@bravealias.com"
     } while (this.aliases_.has(generated))
     return generated
+  }
+  async getAccountEmail (): Promise<string | undefined> {
+    return this.accountEmail_
+  }
+  async submitAccountEmail (accountEmail: string): Promise<void> {
+    this.accountState_ = AccountState.AwaitingAccount
+    window.setTimeout(() => {
+      this.accountEmail_ = accountEmail
+      this.accountState_ = AccountState.AccountReady
+    }, 2000);
+  }
+  async getAccountState (): Promise<AccountState> {
+    return this.accountState_
   }
 }
 

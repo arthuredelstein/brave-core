@@ -1,7 +1,16 @@
-import { Alias, MappingService } from './types'
+import { AccountState, Alias, MappingService } from './types'
 import { sendWithPromise} from 'chrome://resources/js/cr.js';
 
 export class RemoteMappingService implements MappingService {
+  async getAccountEmail (): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async submitAccountEmail (accountEmail: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  async getAccountState (): Promise<AccountState> {
+    throw new Error('Method not implemented.');
+  }
   async getAliases (): Promise<Alias[]> {
     const result = await sendWithPromise('email_aliases.getAliases')
     return result

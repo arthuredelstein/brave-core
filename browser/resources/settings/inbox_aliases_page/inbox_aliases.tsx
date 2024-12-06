@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import Button from '@brave/leo/react/button'
 import { color, spacing } from '@brave/leo/tokens/css/variables'
 import { Alias, MappingService, ViewMode } from './types'
@@ -35,11 +35,6 @@ import {
 } from './styles'
 
 export const copyTitle = 'Click to copy alias email to clipboard';
-
-export type InboxAliasesManagementState = {
-  email: string,
-  aliases: Alias[]
-}
 
 type ViewState = {
   mode: ViewMode,
@@ -287,9 +282,11 @@ const MainEmailEntryForm = ({viewState} : {viewState:ViewState}) => (
 )
 
 export const ManagePage = ({ email, mappingService, initMode }:
-  { email: string,
+  {
+    email: string,
     mappingService: MappingService,
-    initMode: ViewMode }) => {
+    initMode: ViewMode
+  }) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: initMode })
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const mode = viewState.mode
@@ -306,29 +303,29 @@ export const ManagePage = ({ email, mappingService, initMode }:
     <Col style={{ padding: spacing.l }}>
       <Introduction />
       {viewState.mode === ViewMode.SignUp || viewState.mode === ViewMode.AwaitingAuthorization ?
-      (<MainEmailEntryForm viewState={viewState} />) :
-      (<span><MainEmailDisplay email={email} />
-      <AliasList aliases={aliasesState} onViewChange={setViewState}
-        mappingService={mappingService}
-        onListChange={onListChange}></AliasList></span>)}
+        (<MainEmailEntryForm viewState={viewState} />) :
+        (<span><MainEmailDisplay email={email} />
+          <AliasList aliases={aliasesState} onViewChange={setViewState}
+            mappingService={mappingService}
+            onListChange={onListChange}></AliasList></span>)}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
         (<span><GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>
-        <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
-          onListChange={onListChange}
-          mappingService={mappingService}
-          onViewChange={setViewState}></EmailAliasModal></span>)}
+          <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
+            onListChange={onListChange}
+            mappingService={mappingService}
+            onViewChange={setViewState}></EmailAliasModal></span>)}
     </Col>
   )
 }
 
 export const mount = (at: HTMLElement, mappingService: MappingService) => {
-  render(
+  const root = createRoot(at);
+  root.render(
     <StyleSheetManager target={at}>
       <ManagePage initMode={ViewMode.Main}
                   email={'arthuredelstein@gmail.com'}
                   {...{mappingService}}/>
-    </StyleSheetManager>,
-    at
+    </StyleSheetManager>
   )
 }
 

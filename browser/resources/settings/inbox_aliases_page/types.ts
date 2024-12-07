@@ -11,7 +11,7 @@ export interface MappingService {
   deleteAlias(email: string): Promise<void>
   generateAlias(): Promise<string>
   getAccountEmail (): Promise<string | undefined>
-  submitAccountEmail (accountEmail: string): Promise<void>
+  requestAccount (accountEmail: string): Promise<void>
   getAccountState (): Promise<AccountState>
 }
 

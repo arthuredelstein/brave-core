@@ -5,8 +5,8 @@ export class RemoteMappingService implements MappingService {
   async getAccountEmail (): Promise<string | undefined> {
     throw new Error('Method not implemented.');
   }
-  async submitAccountEmail (accountEmail: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async requestAccount (accountEmail: string): Promise<void> {
+    await sendWithPromise('email_aliases.requestAccount', accountEmail)
   }
   async getAccountState (): Promise<AccountState> {
     throw new Error('Method not implemented.');

@@ -26,8 +26,12 @@
 
 #define MAX_RESPONSE_LENGTH 32768
 
+const std::string kAccountsServiceRequestURL = "https://accounts.bsg.bravesoftware.com/v2/verify/init";
+const std::string kAccountsServiceVerifyURL = "https://accounts.bsg.bravesoftware.com/v2/verify/result";
 const std::string kMappingServiceManageURL = "https://aliases.bsg.bravesoftware.com/manage";
 const std::string kMappingServiceGenerateURL = "https://aliases.bsg.bravesoftware.com/generate";
+const std::string kBraveApiKey = "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK";
+const std::string kTempSessionKey = "eyJhbGciOiJFUzI1NiIsImtpZCI6MSwidHlwIjoiSldUIn0.eyJpYXQiOjE3MzM1MTMyMzcsInNlc3Npb25faWQiOiIwMTkzOWQ3MC1kMmRhLTc1M2ItOTc5Mi05ZWY0ZWM5MDJmMzEifQ.PspbaYEATiOsvTJSgy8wotag4aQHmStzga8HxAIdcw6qgCbv4IdkkxpFBZgv55vsvEh1djQAJnsWzwzHkKb9Mg";
 
 const net::NetworkTrafficAnnotationTag traffic_annotation =
     net::DefineNetworkTrafficAnnotation("email_aliases_mapping_service", R"(
@@ -43,6 +47,8 @@ const net::NetworkTrafficAnnotationTag traffic_annotation =
     policy {
       cookies_allowed: YES
     })");
+
+
 
 BraveInboxAliasesHandler::BraveInboxAliasesHandler() = default;
 
@@ -74,6 +80,11 @@ void BraveInboxAliasesHandler::RegisterMessages() {
       "email_aliases.deleteAlias",
       base::BindRepeating(&BraveInboxAliasesHandler::DeleteAlias,
                           base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "email_aliases.requestAccount",
+      base::BindRepeating(&BraveInboxAliasesHandler::RequestAccount,
+                          base::Unretained(this)));
 }
 
 void BraveInboxAliasesHandler::MakeMappingServiceRequest(
@@ -86,8 +97,8 @@ void BraveInboxAliasesHandler::MakeMappingServiceRequest(
   auto resource_request = std::make_unique<network::ResourceRequest>();
   resource_request->url = url;
   resource_request->method = method;
-  resource_request->headers.SetHeader("Authorization", "Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6MSwidHlwIjoiSldUIn0.eyJpYXQiOjE3MzM1MTMyMzcsInNlc3Npb25faWQiOiIwMTkzOWQ3MC1kMmRhLTc1M2ItOTc5Mi05ZWY0ZWM5MDJmMzEifQ.PspbaYEATiOsvTJSgy8wotag4aQHmStzga8HxAIdcw6qgCbv4IdkkxpFBZgv55vsvEh1djQAJnsWzwzHkKb9Mg");
-  resource_request->headers.SetHeader("X-API-key", "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK");
+  resource_request->headers.SetHeader("Authorization", std::string("Bearer ") + kTempSessionKey);
+  resource_request->headers.SetHeader("X-API-key", kBraveApiKey);
   simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
   if (body) {
     simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
@@ -232,3 +243,41 @@ void BraveInboxAliasesHandler::OnUpdateAliasResponse(
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
 
+void BraveInboxAliasesHandler::RequestAccount(const base::Value::List& args) {
+  CHECK_EQ(2U, args.size());
+  const auto callback_id = args[0].GetString();
+  const auto account_email = args[1].GetString();
+  AllowJavascript();
+  auto resource_request = std::make_unique<network::ResourceRequest>();
+  resource_request->url = GURL(kAccountsServiceRequestURL);
+  resource_request->method = net::HttpRequestHeaders::kPostMethod;
+  const auto bodyValue = base::Value::Dict()
+    .Set("email", account_email)
+    .Set("intent", "auth_token")
+    .Set("service", "inbox-aliases");
+  simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
+  const auto body = base::WriteJson(bodyValue);
+  if (body) {
+    simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
+  }
+  simple_url_loader_->DownloadToString(
+    profile_->GetURLLoaderFactory().get(),
+    base::BindOnce(
+        &BraveInboxAliasesHandler::OnRequestAccountResponse,
+        weak_factory_.GetWeakPtr(), callback_id),
+        MAX_RESPONSE_LENGTH);
+}
+
+void BraveInboxAliasesHandler::OnRequestAccountResponse(
+    const std::string callback_id, std::optional<std::string> response_body) {
+  std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
+  if (response_value && response_value->is_dict()) {
+    const auto* verification_token = response_value->GetDict().Find("verificationToken");
+    if (verification_token && verification_token->is_string()) {
+      verification_token_ = verification_token->GetString();
+      ResolveJavascriptCallback(base::Value(callback_id), base::Value());
+      return;
+    }
+  }
+  RejectJavascriptCallback(base::Value(callback_id), base::Value("no verification token"));
+}

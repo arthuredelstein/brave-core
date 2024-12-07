@@ -66,7 +66,7 @@ class MockMappingService implements MappingService {
   async getAccountEmail (): Promise<string | undefined> {
     return this.accountEmail_
   }
-  async submitAccountEmail (accountEmail: string): Promise<void> {
+  async requestAccount (accountEmail: string): Promise<void> {
     this.accountState_ = AccountState.AwaitingAccount
     window.setTimeout(() => {
       this.accountEmail_ = accountEmail

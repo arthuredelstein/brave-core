@@ -37,6 +37,8 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
   void OnUpdateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
   void DeleteAlias(const base::Value::List& args);
   void OnDeleteAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void RequestAccount(const base::Value::List& args);
+  void OnRequestAccountResponse(const std::string callback_id, std::optional<std::string> response_body);
 
  private:
   // SettingsPageUIHandler overrides
@@ -52,14 +54,15 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
     const std::optional<std::string>& body,
     void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
 
-void SingleArgumentCommand(
-  const std::string& callback_id,
-  const std::string& alias_email,
-  const char* method,
-  void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
+  void SingleArgumentCommand(
+    const std::string& callback_id,
+    const std::string& alias_email,
+    const char* method,
+    void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
 
-  raw_ptr<Profile> profile_ = nullptr;
-
+  std::string verification_token_;
+  std::string session_token_;
+    raw_ptr<Profile> profile_ = nullptr;
   std::unique_ptr<network::SimpleURLLoader> simple_url_loader_;
 
   base::WeakPtrFactory<BraveInboxAliasesHandler> weak_factory_{this};

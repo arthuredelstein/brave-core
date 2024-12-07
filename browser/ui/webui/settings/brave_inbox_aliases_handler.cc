@@ -274,7 +274,9 @@ void BraveInboxAliasesHandler::OnRequestAccountResponse(
   if (response_value && response_value->is_dict()) {
     const auto* verification_token = response_value->GetDict().Find("verificationToken");
     if (verification_token && verification_token->is_string()) {
+      // Store the verification token while we wait for confirmation.
       verification_token_ = verification_token->GetString();
+      // Acknowledge success to the caller.
       ResolveJavascriptCallback(base::Value(callback_id), base::Value());
       return;
     }

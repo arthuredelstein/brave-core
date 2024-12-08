@@ -67,6 +67,8 @@ source_set("ui") {
   sources = [
     "brave_ui_features.cc",
     "brave_ui_features.h",
+    "views/inbox_aliases_bubble_view.cc",
+    "views/inbox_aliases_bubble_view.h",
     "webui/ai_chat/ai_chat_ui.cc",
     "webui/ai_chat/ai_chat_ui.h",
     "webui/ai_chat/ai_chat_ui_page_handler.cc",

@@ -6,7 +6,6 @@
 #ifndef BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_INBOX_ALIASES_PREFS_H_
 #define BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_INBOX_ALIASES_PREFS_H_
 
-class PrefService;
 class PrefRegistrySimple;
 
 namespace inbox_aliases {

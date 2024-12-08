@@ -8,21 +8,23 @@
 #include <string>
 
 #include "base/functional/bind.h"
+#include "base/functional/callback.h"
 #include "base/json/json_reader.h"
 #include "base/json/json_writer.h"
 #include "base/values.h"
 #include "brave/browser/brave_browser_process.h"
+#include "brave/components/inbox_aliases/browser/pref_names.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser_finder.h"
+#include "components/prefs/pref_service.h"
 #include "content/public/browser/web_ui.h"
 #include "net/http/http_request_headers.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "services/network/public/cpp/resource_request.h"
-#include "services/network/public/cpp/simple_url_loader.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
+#include "services/network/public/cpp/simple_url_loader.h"
 #include "url/gurl.h"
-#include "base/functional/callback.h"
 
 #define MAX_RESPONSE_LENGTH 32768
 
@@ -48,14 +50,14 @@ const net::NetworkTrafficAnnotationTag traffic_annotation =
       cookies_allowed: YES
     })");
 
-
-
-BraveInboxAliasesHandler::BraveInboxAliasesHandler() = default;
+BraveInboxAliasesHandler::BraveInboxAliasesHandler() {
+  profile_ = Profile::FromWebUI(web_ui());
+  verification_token_ = profile_->GetPrefs()->GetString(kEmailAliasesVerificationToken);
+}
 
 BraveInboxAliasesHandler::~BraveInboxAliasesHandler() = default;
 
 void BraveInboxAliasesHandler::RegisterMessages() {
-  profile_ = Profile::FromWebUI(web_ui());
   web_ui()->RegisterMessageCallback(
       "email_aliases.generateAlias",
       base::BindRepeating(&BraveInboxAliasesHandler::GenerateAlias,
@@ -276,6 +278,7 @@ void BraveInboxAliasesHandler::OnRequestAccountResponse(
     if (verification_token && verification_token->is_string()) {
       // Store the verification token while we wait for confirmation.
       verification_token_ = verification_token->GetString();
+      profile_->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token_);
       // Acknowledge success to the caller.
       ResolveJavascriptCallback(base::Value(callback_id), base::Value());
       return;

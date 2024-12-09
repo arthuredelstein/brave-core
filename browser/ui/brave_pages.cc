@@ -93,8 +93,8 @@ void ShowAppsPage(Browser* browser) {
   ShowSingletonTabOverwritingNTP(browser, GURL(chrome::kChromeUIAppsURL));
 }
 
-void ShowInboxAliases(Browser* browser) {
-  ShowSingletonTabOverwritingNTP(browser, GURL(kInboxAliasesSettingsURL));
+void ShowEmailAliases(Browser* browser) {
+  ShowSingletonTabOverwritingNTP(browser, GURL(kEmailAliasesSettingsURL));
 }
 
 }  // namespace brave

@@ -14,15 +14,15 @@
 //#include "mojo/public/cpp/bindings/pending_receiver.h"
 
 
-namespace inbox_aliases {
+namespace email_aliases {
 
-class InboxAliasesPageUI : public content::WebUIController {
+class EmailAliasesPageUI : public content::WebUIController {
  public:
-  explicit InboxAliasesPageUI(content::WebUI* web_ui,
+  explicit EmailAliasesPageUI(content::WebUI* web_ui,
                                 const std::string& host);
-  InboxAliasesPageUI(const InboxAliasesPageUI&) = delete;
-  InboxAliasesPageUI& operator=(const InboxAliasesPageUI&) = delete;
-  ~InboxAliasesPageUI() override;
+  EmailAliasesPageUI(const EmailAliasesPageUI&) = delete;
+  EmailAliasesPageUI& operator=(const EmailAliasesPageUI&) = delete;
+  ~EmailAliasesPageUI() override;
 
   //void BindInterface(
   //    mojo::PendingReceiver<brave_news::mojom::BraveNewsController> receiver);
@@ -33,6 +33,6 @@ class InboxAliasesPageUI : public content::WebUIController {
   //WEB_UI_CONTROLLER_TYPE_DECL();
 };
 
-}  // namespace inbox_aliases
+}  // namespace email_aliases
 
 #endif  // BRAVE_BROWSER_UI_WEBUI_INBOX_ALIASES_PAGE_UI_H_

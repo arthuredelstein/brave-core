@@ -714,7 +714,7 @@ bool BraveBrowserCommandController::ExecuteBraveCommandWithDisposition(
       brave::SwapTabsInTile(&*browser_);
       break;
     case IDC_SHOW_INBOX_ALIASES:
-      brave::ShowInboxAliases(&*browser_);
+      brave::ShowEmailAliases(&*browser_);
       break;
     default:
       LOG(WARNING) << "Received Unimplemented Command: " << id;

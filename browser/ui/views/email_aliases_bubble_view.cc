@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "brave/browser/ui/views/inbox_aliases_bubble_view.h"
+#include "brave/browser/ui/views/email_aliases_bubble_view.h"
 
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_window.h"
@@ -13,30 +13,32 @@
 #include "ui/views/controls/webview/webview.h"
 #include "chrome/browser/profiles/profile.h"
 #include "url/gurl.h"
+#include "ui/views/layout/fill_layout.h"
+
 
 // static
-void InboxAliasesBubbleView::Show(Browser* browser) {
+void EmailAliasesBubbleView::Show(Browser* browser) {
   auto* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
   views::View* anchor_view = browser_view->GetLocationBarView();
   views::Widget* const widget = views::BubbleDialogDelegateView::CreateBubble(
-      std::make_unique<InboxAliasesBubbleView>(anchor_view, browser->profile()));
+      std::make_unique<EmailAliasesBubbleView>(anchor_view));
   widget->Show();
 }
 
-InboxAliasesBubbleView::InboxAliasesBubbleView(views::View* anchor_view, content::BrowserContext* browser_context)
+EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view)
     : BubbleDialogDelegateView(anchor_view, views::BubbleBorder::TOP_RIGHT) {
-    auto* web_view = new views::WebView(browser_context);
-    web_view->LoadInitialURL(GURL("https://example.com"));
-    AddChildView(web_view);
+  auto* web_view = new views::WebView();
+  web_view->LoadInitialURL(GURL("https://example.com"));
+  AddChildView(web_view);
 }
 
-InboxAliasesBubbleView::~InboxAliasesBubbleView() {
+EmailAliasesBubbleView::~EmailAliasesBubbleView() {
 }
 
-void InboxAliasesBubbleView::OnWidgetVisibilityChanged(views::Widget* widget,
+void EmailAliasesBubbleView::OnWidgetVisibilityChanged(views::Widget* widget,
                                                          bool visible) {
   BubbleDialogDelegateView::OnWidgetVisibilityChanged(widget, visible);
 }
 
-BEGIN_METADATA(InboxAliasesBubbleView)
+BEGIN_METADATA(EmailAliasesBubbleView)
 END_METADATA

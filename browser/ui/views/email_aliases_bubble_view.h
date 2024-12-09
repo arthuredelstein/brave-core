@@ -16,15 +16,14 @@ class WebContents;
 
 class Browser;
 
-class InboxAliasesBubbleView : public views::BubbleDialogDelegateView {
-  METADATA_HEADER(InboxAliasesBubbleView, views::BubbleDialogDelegateView)
+class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
+  METADATA_HEADER(EmailAliasesBubbleView, views::BubbleDialogDelegateView)
 
  public:
   static void Show(Browser* browser);
 
-  InboxAliasesBubbleView(views::View* anchor_view,
-                         content::BrowserContext* browser_context);
-  ~InboxAliasesBubbleView() override;
+  EmailAliasesBubbleView(views::View* anchor_view);
+  ~EmailAliasesBubbleView() override;
 
   // views::BubbleDialogDelegateView override;
   void OnWidgetVisibilityChanged(views::Widget* widget, bool visible) override;

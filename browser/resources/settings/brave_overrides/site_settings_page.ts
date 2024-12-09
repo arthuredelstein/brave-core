@@ -175,19 +175,19 @@ RegisterPolymerComponentReplacement(
               }
               lists_.permissionsAdvanced.splice(currentIndex, 0, solanaItem)
             }
-            const isInboxAliasesEnabled = true
-            if (isInboxAliasesEnabled) {
+            const isEmailAliasesEnabled = true
+            if (isEmailAliasesEnabled) {
               currentIndex++
-              const inboxAliasesItem = {
+              const emailAliasesItem = {
                 route: routes.INBOX_ALIASES,
-                id: 'braveInboxAliases',
-                label: 'siteSettingsInboxAliases',
-                icon: 'product-inbox-aliases',
-                enabledLabel: 'siteSettingsInboxAliasesAsk',
-                disabledLabel: 'siteSettingsInboxAliasesBlock'
+                id: 'braveEmailAliases',
+                label: 'siteSettingsEmailAliases',
+                icon: 'product-email-aliases',
+                enabledLabel: 'siteSettingsEmailAliasesAsk',
+                disabledLabel: 'siteSettingsEmailAliasesBlock'
               }
               lists_.permissionsAdvanced.splice(currentIndex, 0,
-                inboxAliasesItem)
+                emailAliasesItem)
             }
           }
         }

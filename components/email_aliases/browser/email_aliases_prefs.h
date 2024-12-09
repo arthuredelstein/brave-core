@@ -8,10 +8,10 @@
 
 class PrefRegistrySimple;
 
-namespace inbox_aliases {
+namespace email_aliases {
 
 void RegisterProfilePrefs(PrefRegistrySimple* registry);
 
-}  // namespace inbox_aliases
+}  // namespace email_aliases
 
 #endif  // BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_INBOX_ALIASES_PREFS_H_

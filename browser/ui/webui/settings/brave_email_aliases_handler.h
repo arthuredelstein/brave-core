@@ -20,12 +20,12 @@ namespace network {
   class SimpleURLLoader;
 }
 
-class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
+class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
  public:
-  BraveInboxAliasesHandler();
-  BraveInboxAliasesHandler(const BraveInboxAliasesHandler&) = delete;
-  BraveInboxAliasesHandler& operator=(const BraveInboxAliasesHandler&) = delete;
-  ~BraveInboxAliasesHandler() override;
+  BraveEmailAliasesHandler();
+  BraveEmailAliasesHandler(const BraveEmailAliasesHandler&) = delete;
+  BraveEmailAliasesHandler& operator=(const BraveEmailAliasesHandler&) = delete;
+  ~BraveEmailAliasesHandler() override;
 
   void GenerateAlias(const base::Value::List& args);
   void OnGenerateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
@@ -52,20 +52,20 @@ class BraveInboxAliasesHandler : public settings::SettingsPageUIHandler {
     const GURL& url,
     const char* method,
     const std::optional<std::string>& body,
-    void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
+    void (BraveEmailAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
 
   void SingleArgumentCommand(
     const std::string& callback_id,
     const std::string& alias_email,
     const char* method,
-    void (BraveInboxAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
+    void (BraveEmailAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
 
   std::string verification_token_;
   std::string session_token_;
     raw_ptr<Profile> profile_ = nullptr;
   std::unique_ptr<network::SimpleURLLoader> simple_url_loader_;
 
-  base::WeakPtrFactory<BraveInboxAliasesHandler> weak_factory_{this};
+  base::WeakPtrFactory<BraveEmailAliasesHandler> weak_factory_{this};
 };
 
 #endif  // BRAVE_BROWSER_UI_WEBUI_SETTINGS_BRAVE_INBOX_ALIASES_HANDLER_H_

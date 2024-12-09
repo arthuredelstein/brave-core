@@ -22,7 +22,7 @@
 #include "brave/browser/resources/settings/grit/brave_settings_resources.h"
 #include "brave/browser/resources/settings/grit/brave_settings_resources_map.h"
 #include "brave/browser/resources/settings/shortcuts_page/grit/commands_generated_map.h"
-#include "brave/browser/resources/settings/inbox_aliases_page/grit/inbox_aliases_generated_map.h"
+#include "brave/browser/resources/settings/email_aliases_page/grit/email_aliases_generated_map.h"
 #include "brave/browser/shell_integrations/buildflags/buildflags.h"
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
 #include "brave/browser/ui/tabs/features.h"
@@ -30,7 +30,7 @@
 #include "brave/browser/ui/webui/settings/brave_adblock_handler.h"
 #include "brave/browser/ui/webui/settings/brave_appearance_handler.h"
 #include "brave/browser/ui/webui/settings/brave_default_extensions_handler.h"
-#include "brave/browser/ui/webui/settings/brave_inbox_aliases_handler.h"
+#include "brave/browser/ui/webui/settings/brave_email_aliases_handler.h"
 #include "brave/browser/ui/webui/settings/brave_privacy_handler.h"
 #include "brave/browser/ui/webui/settings/brave_settings_leo_assistant_handler.h"
 #include "brave/browser/ui/webui/settings/brave_sync_handler.h"
@@ -101,7 +101,7 @@ BraveSettingsUI::BraveSettingsUI(content::WebUI* web_ui) : SettingsUI(web_ui) {
   web_ui->AddMessageHandler(std::make_unique<BraveSyncHandler>());
   web_ui->AddMessageHandler(std::make_unique<BraveWalletHandler>());
   web_ui->AddMessageHandler(std::make_unique<BraveAdBlockHandler>());
-  web_ui->AddMessageHandler(std::make_unique<BraveInboxAliasesHandler>());
+  web_ui->AddMessageHandler(std::make_unique<BraveEmailAliasesHandler>());
 #if BUILDFLAG(ENABLE_TOR)
   web_ui->AddMessageHandler(std::make_unique<BraveTorHandler>());
 #endif
@@ -146,10 +146,10 @@ void BraveSettingsUI::AddResources(content::WebUIDataSource* html_source,
     }
   }
 
-  for (size_t i = 0; i < kInboxAliasesGeneratedSize; ++i) {
-    std::cout << "-------------------------" << kInboxAliasesGenerated[i].path << std::endl;
-    html_source->AddResourcePath(kInboxAliasesGenerated[i].path,
-                                  kInboxAliasesGenerated[i].id);
+  for (size_t i = 0; i < kEmailAliasesGeneratedSize; ++i) {
+    std::cout << "-------------------------" << kEmailAliasesGenerated[i].path << std::endl;
+    html_source->AddResourcePath(kEmailAliasesGenerated[i].path,
+                                  kEmailAliasesGenerated[i].id);
   }
 
   html_source->AddBoolean("isSyncDisabled", !syncer::IsSyncAllowedByFlag());

@@ -83,12 +83,12 @@ inline constexpr char kChatUIHost[] = "chat";
 
 inline constexpr char kRewriterUIURL[] = "chrome://rewriter/";
 inline constexpr char kRewriterUIHost[] = "rewriter";
-inline constexpr char kInboxAliasesPageURL[] = "chrome://inbox-aliases";
-inline constexpr char kInboxAliasPageHost[] = "inbox-aliases";
+inline constexpr char kEmailAliasesPageURL[] = "chrome://email-aliases";
+inline constexpr char kInboxAliasPageHost[] = "email-aliases";
 
 inline constexpr char16_t kTransactionSimulationLearnMoreURL[] =
     u"https://github.com/brave/brave-browser/wiki/Transaction-Simulation";
-inline constexpr char kInboxAliasesHost[] = "inbox-aliases";
-inline constexpr char kInboxAliasesSettingsURL[] = "brave://settings/inbox-aliases";
+inline constexpr char kEmailAliasesHost[] = "email-aliases";
+inline constexpr char kEmailAliasesSettingsURL[] = "brave://settings/email-aliases";
 
 #endif  // BRAVE_COMPONENTS_CONSTANTS_WEBUI_URL_CONSTANTS_H_

@@ -3,7 +3,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "brave/browser/ui/webui/inbox_aliases/inbox_aliases_page_ui.h"
+#include "brave/browser/ui/webui/email_aliases/email_aliases_page_ui.h"
 
 #include <string>
 #include <utility>
@@ -17,9 +17,9 @@
 #include "content/public/browser/web_ui_data_source.h"
 #include "components/grit/brave_components_resources.h"
 
-namespace inbox_aliases {
+namespace email_aliases {
 
-InboxAliasesPageUI::InboxAliasesPageUI(content::WebUI* web_ui,
+EmailAliasesPageUI::EmailAliasesPageUI(content::WebUI* web_ui,
                                        const std::string& host)
     : content::WebUIController(web_ui) {
   auto* source = content::WebUIDataSource::CreateAndAdd(
@@ -28,10 +28,10 @@ InboxAliasesPageUI::InboxAliasesPageUI(content::WebUI* web_ui,
   DCHECK(source);
 }
 
-InboxAliasesPageUI::~InboxAliasesPageUI() = default;
-//WEB_UI_CONTROLLER_TYPE_IMPL(InboxAliasesPageUI)
+EmailAliasesPageUI::~EmailAliasesPageUI() = default;
+//WEB_UI_CONTROLLER_TYPE_IMPL(EmailAliasesPageUI)
 /*
-void InboxAliasesPageUI::BindInterface(
+void EmailAliasesPageUI::BindInterface(
     mojo::PendingReceiver<brave_news::mojom::BraveNewsController> receiver) {
   auto* profile = Profile::FromWebUI(web_ui());
   auto* controller =
@@ -43,7 +43,7 @@ void InboxAliasesPageUI::BindInterface(
   controller->Bind(std::move(receiver));
 }
 
-void InboxAliasesPageUI::BindInterface(
+void EmailAliasesPageUI::BindInterface(
     mojo::PendingReceiver<brave_news::mojom::BraveNewsInternals> receiver) {
   auto* profile = Profile::FromWebUI(web_ui());
   auto* controller =
@@ -57,4 +57,4 @@ void InboxAliasesPageUI::BindInterface(
 */
 
 
-}  // namespace inbox_aliases
+}  // namespace email_aliases

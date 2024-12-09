@@ -329,4 +329,4 @@ export const mount = (at: HTMLElement, mappingService: MappingService) => {
   )
 }
 
-  ; (window as any).mountInboxAliases = mount
+  ; (window as any).mountEmailAliases = mount

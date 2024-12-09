@@ -12,15 +12,15 @@ import { RemoteMappingService } from "./remote_mapping_service.js"
 // now, this provides a shim between the old and the new system.
 (window as any).loadTimeData = loadTimeData
 
-class InboxAliasesPage extends HTMLElement {
+class EmailAliasesPage extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' })
-    console.log("Hello from InboxAliasesPage")
+    console.log("Hello from EmailAliasesPage")
 
-    import('/inbox_aliases.bundle.js' as any)
-      .then(() => (window as any).mountInboxAliases(this.shadowRoot, new RemoteMappingService))
+    import('/email_aliases.bundle.js' as any)
+      .then(() => (window as any).mountEmailAliases(this.shadowRoot, new RemoteMappingService))
       .catch(() => {})
   }
 }
 
-customElements.define('settings-inbox-aliases-page', InboxAliasesPage)
+customElements.define('settings-email-aliases-page', EmailAliasesPage)

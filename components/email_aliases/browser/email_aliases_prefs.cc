@@ -4,14 +4,14 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 
-#include "brave/components/inbox_aliases/browser/pref_names.h"
+#include "brave/components/email_aliases/browser/pref_names.h"
 #include "components/prefs/pref_registry_simple.h"
 
-namespace inbox_aliases {
+namespace email_aliases {
 
 void RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterStringPref(kEmailAliasesVerificationToken, std::string());
   registry->RegisterStringPref(kEmailAliasesAuthToken, std::string());
 }
 
-}  // namespace inbox_aliases
+}  // namespace email_aliases

@@ -229,7 +229,7 @@
     "META": {"sizes": {"includes": [100]}},
     "includes": [34700],
   },
-  "<(SHARED_INTERMEDIATE_DIR)/brave/web-ui-inbox_aliases/inbox_aliases.grd": {
+  "<(SHARED_INTERMEDIATE_DIR)/brave/web-ui-email_aliases/email_aliases.grd": {
     "META": {"sizes": {"includes": [100]}},
     "includes": [34800],
   },

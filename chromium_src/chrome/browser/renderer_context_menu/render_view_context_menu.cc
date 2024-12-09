@@ -35,6 +35,7 @@
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/paint_vector_icon.h"
+#include "brave/browser/ui/views/email_aliases_bubble_view.h"
 #include "url/origin.h"
 
 #if BUILDFLAG(ENABLE_TOR)
@@ -502,7 +503,7 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
           source_web_contents_);
       break;
     case IDC_NEW_INBOX_ALIAS:
-      // Do something here
+      EmailAliasesBubbleView::Show(GetBrowser());
       break;
     default:
       RenderViewContextMenu_Chromium::ExecuteCommand(id, event_flags);

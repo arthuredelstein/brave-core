@@ -13,7 +13,7 @@
 namespace chrome {
 
 inline constexpr char kPerformanceSubPage[] = "system";
-inline constexpr char kInboxAliasesSubPage[] = "inbox-aliases";
+inline constexpr char kEmailAliasesSubPage[] = "email-aliases";
 
 }  // namespace chrome
 

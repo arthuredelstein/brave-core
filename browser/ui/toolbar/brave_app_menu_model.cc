@@ -250,7 +250,7 @@ void BraveAppMenuModel::BuildAutofillSubMenu() {
           GetSubmenuModelAt(GetIndexOfCommandId(IDC_PASSWORDS_AND_AUTOFILL_MENU).value()));
   DCHECK(autofill_menu_model);
 
-  // Create inbox Aliases menu item
+  // Create email Aliases menu item
   if (const auto index = autofill_menu_model->GetIndexOfCommandId(IDC_SHOW_PASSWORD_MANAGER)) {
     autofill_menu_model->InsertItemWithStringIdAt(
         *index + 1, IDC_SHOW_INBOX_ALIASES, IDS_SHOW_INBOX_ALIASES);

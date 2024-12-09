@@ -4,8 +4,8 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
-import { ManagePage } from '../../../../../../../browser/resources/settings/inbox_aliases_page/inbox_aliases'
-import { AccountState, Alias, ViewMode, MappingService } from '../../../../../../../browser/resources/settings/inbox_aliases_page/types'
+import { ManagePage } from '../../../../../../../browser/resources/settings/email_aliases_page/email_aliases'
+import { AccountState, Alias, ViewMode, MappingService } from '../../../../../../../browser/resources/settings/email_aliases_page/types'
 
 export default {
   title: 'Email Aliases',

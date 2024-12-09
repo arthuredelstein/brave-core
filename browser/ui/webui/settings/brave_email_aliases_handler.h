@@ -12,13 +12,10 @@
 #include "base/memory/raw_ptr.h"
 #include "base/memory/weak_ptr.h"
 #include "chrome/browser/ui/webui/settings/settings_page_ui_handler.h"
+#include "services/network/public/cpp/simple_url_loader.h"
 
 class GURL;
 class Profile;
-
-namespace network {
-  class SimpleURLLoader;
-}
 
 class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
  public:
@@ -28,17 +25,17 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   ~BraveEmailAliasesHandler() override;
 
   void GenerateAlias(const base::Value::List& args);
-  void OnGenerateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void OnGenerateAliasResponse(const std::string& callback_id, std::optional<std::string> response_body);
   void GetAliases(const base::Value::List& args);
-  void OnGetAliasesResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void OnGetAliasesResponse(const std::string& callback_id, std::optional<std::string> response_body);
   void CreateAlias(const base::Value::List& args);
-  void OnCreateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void OnCreateAliasResponse(const std::string& callback_id, const std::string& alias_email, const std::string& note, std::optional<std::string> response_body);
   void UpdateAlias(const base::Value::List& args);
-  void OnUpdateAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void OnUpdateAliasResponse(const std::string& callback_id, const std::string& alias_email, const std::string& note, std::optional<std::string> response_body);
   void DeleteAlias(const base::Value::List& args);
-  void OnDeleteAliasResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void OnDeleteAliasResponse(const std::string& callback_id, const std::string& alias_email, std::optional<std::string> response_body);
   void RequestAccount(const base::Value::List& args);
-  void OnRequestAccountResponse(const std::string callback_id, std::optional<std::string> response_body);
+  void OnRequestAccountResponse(const std::string& callback_id, std::optional<std::string> response_body);
 
  private:
   // SettingsPageUIHandler overrides
@@ -47,22 +44,19 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void OnJavascriptAllowed() override {}
   void OnJavascriptDisallowed() override {}
 
-  void MakeMappingServiceRequest(
-    const std::string& callback_id,
+  void MakeMappingServiceURLLoader(
     const GURL& url,
     const char* method,
     const std::optional<std::string>& body,
-    void (BraveEmailAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
+    network::SimpleURLLoader::BodyAsStringCallback download_to_string_callback);
 
-  void SingleArgumentCommand(
-    const std::string& callback_id,
-    const std::string& alias_email,
-    const char* method,
-    void (BraveEmailAliasesHandler::*httpResponseCallbackPtr)(const std::string, std::optional<std::string>));
+  void SetNote(const std::string& alias_email, const std::string& note);
+  void DeleteNote(const std::string& alias_email);
+  std::optional<std::string> GetNote(const std::string& alias_email);
 
   std::string verification_token_;
   std::string session_token_;
-    raw_ptr<Profile> profile_ = nullptr;
+  raw_ptr<Profile> profile_ = nullptr;
   std::unique_ptr<network::SimpleURLLoader> simple_url_loader_;
 
   base::WeakPtrFactory<BraveEmailAliasesHandler> weak_factory_{this};

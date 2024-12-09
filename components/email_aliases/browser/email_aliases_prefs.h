@@ -10,6 +10,7 @@ class PrefRegistrySimple;
 
 namespace email_aliases {
 
+void RegisterLocalStatePrefs(PrefRegistrySimple* registry);
 void RegisterProfilePrefs(PrefRegistrySimple* registry);
 
 }  // namespace email_aliases

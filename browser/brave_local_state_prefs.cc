@@ -27,6 +27,7 @@
 #include "brave/components/brave_wallet/browser/brave_wallet_prefs.h"
 #include "brave/components/constants/pref_names.h"
 #include "brave/components/decentralized_dns/core/utils.h"
+#include "brave/components/email_aliases/browser/email_aliases_prefs.h"
 #include "brave/components/l10n/common/prefs.h"
 #include "brave/components/misc_metrics/general_browser_usage.h"
 #include "brave/components/misc_metrics/page_metrics.h"
@@ -171,6 +172,7 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
   misc_metrics::GeneralBrowserUsage::RegisterPrefs(registry);
 
   playlist::PlaylistServiceFactory::RegisterLocalStatePrefs(registry);
+  email_aliases::RegisterLocalStatePrefs(registry);
 }
 
 }  // namespace brave

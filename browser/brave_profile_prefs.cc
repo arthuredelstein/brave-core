@@ -396,7 +396,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   }
 
   // Email Aliases
-  email_aliases::RegisterProfilePrefs(registry);
+  email_aliases::RegisterLocalStatePrefs(registry);
 
   // Restore default behaviour for Android until we figure out if we want this
   // option there.
@@ -495,6 +495,8 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
                                 base::Value(false));
 
   webcompat_reporter::prefs::RegisterProfilePrefs(registry);
+
+  email_aliases::RegisterProfilePrefs(registry);
 }
 
 }  // namespace brave

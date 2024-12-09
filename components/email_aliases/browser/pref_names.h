@@ -12,4 +12,7 @@ inline constexpr char kEmailAliasesVerificationToken[] =
 inline constexpr char kEmailAliasesAuthToken[] =
     "brave.email_aliases.auth_token";
 
+inline constexpr char kEmailAliasesNotes[] =
+    "brave.email_aliases.notes";
+
 #endif  // BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_PREF_NAMES_H_

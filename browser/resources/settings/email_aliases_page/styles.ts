@@ -99,6 +99,7 @@ export const AliasAnnotation = styled.div`
 export const AliasControls = styled(Row)`
   height: 1.5em;
   user-select: none;
+  align-items: top;
 `
 
 export const AliasListIntro = styled(Row)`
@@ -161,4 +162,14 @@ export const GrayOverlay = styled.div`
   right: 0em;
   top: 0em;
   bottom: 0em;
+`
+
+export const CopyButtonWrapper = styled.div`
+  cursor: pointer;
+  color: #666;
+  &:hover {
+    background-color: #EEE;
+  }
+  padding: 0.25em;
+  border-radius: 0.5em;
 `

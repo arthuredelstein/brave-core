@@ -20,6 +20,7 @@ import {
   Card,
   CloseButton,
   Col,
+  CopyButtonWrapper,
   EmailContainer,
   GeneratedEmailContainer,
   GrayOverlay,
@@ -132,18 +133,16 @@ const AliasItem = ({ alias, onEdit, onDelete }: { alias: Alias, onEdit: Function
       </Col>
       <AliasControls>
         <CopyToast>
-          <Button size='medium'
-            style='width: 1.5em;'
-            kind='plain'
+          <CopyButtonWrapper
             title={copyTitle}
             onClick={() => {
               copyEmailToClipboard(alias.email)
             }}>
-            <Icon name="copy" />
-          </Button>
+            <Icon name="copy" style={{color: color.text.secondary}}/>
+          </CopyButtonWrapper>
         </CopyToast>
         <ButtonMenu>
-          <MenuButton slot='anchor-content' kind='plain-faint' size="medium" style='width: 1.5em;'>
+          <MenuButton slot='anchor-content' kind='plain-faint' size="large" style='width: 1.5em;'>
             <Icon name="more-vertical" />
           </MenuButton>
           <AliasMenuItem

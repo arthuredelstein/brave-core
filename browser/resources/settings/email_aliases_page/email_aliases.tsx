@@ -158,7 +158,7 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
       <Col>
         <h2>Your email aliases</h2>
         <div>
-          Create up to 10 free email aliases to protect your real email address.
+          Create up to 5 free email aliases to protect your real email address.
         </div>
       </Col>
       <Button style='flex-grow: 0;'
@@ -252,32 +252,39 @@ const EmailAliasModal = (
   </Modal>)
 }
 
-const BeforeSendingEmailForm = ({ onSubmit }: { onSubmit: Function }) => {
-  const [email, setEmail] = React.useState<string>("")
+const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, onSubmit: Function }) => {
+  const [email, setEmail] = React.useState<string>(initEmail)
   return (<Col>
     <h3>To get started, sign in or create a Brave account</h3>
     <div style={{ marginBottom: '1em' }}>Enter your email address to get a secure login link sent to your email. Clicking this link will either create or access a Brave Account and let you use the free Email Aliases service.</div>
       <Row>
-        <Input onChange={(detail: InputEventDetail) => setEmail(detail.value)} name='email' style='flex-grow: 4; margin-inline-end: 1em;' type='text' placeholder='Email address'></Input>
+        <Input autofocus={true}
+          onChange={(detail: InputEventDetail) => setEmail(detail.value)}
+          name='email'
+          style='flex-grow: 4; margin-inline-end: 1em;'
+          type='text'
+          placeholder='Email address'
+          value={email || ''}
+        ></Input>
         <Button onClick={() => onSubmit(email)} type='submit' style='flex-grow: 1' kind='filled'>Get login link</Button>
       </Row>
   </Col>
   )
 }
 
-const AfterSendingEmailMessage = () => (
+const AfterSendingEmailMessage = ({tryAgain}: {tryAgain: Function}) => (
   <Col style={{flexGrow: 1}}>
     <h3>A login email is on the way</h3>
     <div style={{ marginBottom: '1em' }}>Click on the secure login link in the email to access your account.</div>
-    <div style={{ marginBottom: '1em' }}>Don't see the email? Check your spam folder or try again.</div>
+    <div style={{ marginBottom: '1em' }}>Don't see the email? Check your spam folder or <a href='#' onClick={(e) => { e.preventDefault(); tryAgain()}}>try again.</a></div>
   </Col>
 )
 
-const MainEmailEntryForm = ({viewState, onEmailSubmitted} : {viewState:ViewState, onEmailSubmitted: Function}) => (
+const MainEmailEntryForm = ({viewState, mainEmail, onEmailSubmitted, restart} : {viewState:ViewState, mainEmail: string, onEmailSubmitted: Function, restart: Function}) => (
   <Card id='main-email-entry-form'>
     <SignupRow>
       <BraveIcon style={{marginTop: '1em'}}/>
-      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm onSubmit={onEmailSubmitted}/>) : (<AfterSendingEmailMessage/>)}
+      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm initEmail={mainEmail} onSubmit={onEmailSubmitted}/>) : (<AfterSendingEmailMessage tryAgain={restart}/>)}
     </SignupRow>
   </Card>
 )
@@ -289,7 +296,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
     initMode: ViewMode
   }) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: initMode })
-  const [mainEmail] = React.useState<string>(email)
+  const [mainEmail, setMainEmail] = React.useState<string>(email)
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const mode = viewState.mode
   const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
@@ -299,8 +306,12 @@ export const ManagePage = ({ email, mappingService, initMode }:
     setAliasesState(aliases)
   }
   const onMainEmailSubmitted = async (email: string) => {
+    setMainEmail(email)
     await mappingService.requestAccount(email)
     setViewState({ mode: ViewMode.AwaitingAuthorization })
+  }
+  const restart = () => {
+    setViewState({ mode: ViewMode.SignUp })
   }
   React.useEffect(() => {
     onListChange();
@@ -309,7 +320,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
     <Col style={{ padding: spacing.l }}>
       <Introduction />
       {viewState.mode === ViewMode.SignUp || viewState.mode === ViewMode.AwaitingAuthorization ?
-        (<MainEmailEntryForm viewState={viewState} onEmailSubmitted={onMainEmailSubmitted} />) :
+        (<MainEmailEntryForm viewState={viewState} mainEmail={mainEmail} onEmailSubmitted={onMainEmailSubmitted} restart={restart}/>) :
         (<span><MainEmailDisplay email={mainEmail} />
           <AliasList aliases={aliasesState} onViewChange={setViewState}
             mappingService={mappingService}

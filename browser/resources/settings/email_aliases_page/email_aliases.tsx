@@ -75,7 +75,7 @@ const MainEmailDisplay = ({ email, onLogout }: { email: string, onLogout: Functi
         <MainEmailDescription>Brave Account</MainEmailDescription>
       </MainEmailTextContainer>
     </Row>
-    <ManageAccountLink title='Logout of Email Aliases' href='#' onClick={(e) => { e.preventDefault(); onLogout() }}>
+    <ManageAccountLink title='Sign out of Email Aliases' href='#' onClick={(e) => { e.preventDefault(); onLogout() }}>
       <Icon name="outside" />
       <span style={{ margin: '0.25em' }}>Sign out</span>
     </ManageAccountLink>
@@ -182,7 +182,9 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
       </Button>
     </AliasListIntro>
     {aliases.map(
-      alias => <AliasItem alias={alias}
+      alias => <AliasItem
+        key={alias.email}
+        alias={alias}
         onEdit={() => onViewChange({ mode: ViewMode.Edit, alias: alias })}
         onDelete={async (alias: Alias) => {
           await mappingService.deleteAlias(alias.email)

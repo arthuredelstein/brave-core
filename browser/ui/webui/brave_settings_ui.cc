@@ -147,7 +147,6 @@ void BraveSettingsUI::AddResources(content::WebUIDataSource* html_source,
   }
 
   for (size_t i = 0; i < kEmailAliasesGeneratedSize; ++i) {
-    std::cout << "-------------------------" << kEmailAliasesGenerated[i].path << std::endl;
     html_source->AddResourcePath(kEmailAliasesGenerated[i].path,
                                   kEmailAliasesGenerated[i].id);
   }

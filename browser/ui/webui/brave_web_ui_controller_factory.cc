@@ -37,6 +37,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/url_utils.h"
 #include "url/gurl.h"
+#include "brave/browser/brave_browser_features.h"
 
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/brave_wallet/brave_wallet_context_utils.h"
@@ -161,7 +162,7 @@ WebUIController* NewWebUI(WebUI* web_ui, const GURL& url) {
       return new ai_rewriter::AIRewriterUI(web_ui);
     }
 #endif
-  } else if (host == kEmailAliasesHost) {
+  } else if (host == kEmailAliasesHost && base::FeatureList::IsEnabled(features::kBraveEmailAliases)) {
     return new email_aliases::EmailAliasesPageUI(web_ui, url.host());
   }
   return nullptr;

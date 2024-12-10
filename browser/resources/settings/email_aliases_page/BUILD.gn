@@ -18,5 +18,4 @@ pack_web_resources("generated_resources") {
   resource_name = "email_aliases"
   output_dir = "$root_gen_dir/brave/browser/resources/settings/email_aliases_page"
   deps = [ ":email_aliases_ui" ]
-  
 }

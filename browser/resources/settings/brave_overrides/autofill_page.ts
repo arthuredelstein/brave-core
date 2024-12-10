@@ -20,6 +20,8 @@ RegisterPolymerComponentReplacement(
 
 RegisterPolymerTemplateModifications({
   'settings-autofill-page': (templateContent) => {
+    const isEmailAliasesFeatureEnabled = loadTimeData.getBoolean('isEmailAliasesFeatureEnabled')
+    if (isEmailAliasesFeatureEnabled) {
     const parentManagerButton = templateContent.getElementById('paymentManagerButton')
     parentManagerButton.parentNode.insertBefore(html`
       <cr-link-row id="emailAliasesButton"
@@ -28,6 +30,7 @@ RegisterPolymerTemplateModifications({
           on-click="onEmailAliasesClicked_"
           role-description="$i18n{subpageArrowRoleDescription}"></cr-link-row>
     `, parentManagerButton)
+    }
     templateContent.appendChild(html`
         <settings-toggle-button
           class="hr"
@@ -38,6 +41,7 @@ RegisterPolymerTemplateModifications({
           hidden=[[!isAutofillPage_]]
         </settings-toggle-button>
       `)
+    if (isEmailAliasesFeatureEnabled) {
     const pages = templateContent.getElementById('pages')
     pages.appendChild(html`
       <template is="dom-if" route-path="/email-aliases">
@@ -49,6 +53,7 @@ RegisterPolymerTemplateModifications({
         </settings-subpage>
       </template>
     `)
+    }
   },
 }
 )

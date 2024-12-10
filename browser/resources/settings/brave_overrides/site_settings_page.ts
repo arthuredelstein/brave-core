@@ -175,11 +175,11 @@ RegisterPolymerComponentReplacement(
               }
               lists_.permissionsAdvanced.splice(currentIndex, 0, solanaItem)
             }
-            const isEmailAliasesEnabled = true
+            const isEmailAliasesEnabled = loadTimeData.getBoolean('isEmailAliasesFeatureEnabled')
             if (isEmailAliasesEnabled) {
               currentIndex++
               const emailAliasesItem = {
-                route: routes.INBOX_ALIASES,
+                route: routes.EMAIL_ALIASES,
                 id: 'braveEmailAliases',
                 label: 'siteSettingsEmailAliases',
                 icon: 'product-email-aliases',

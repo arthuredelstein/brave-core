@@ -37,6 +37,8 @@
 #include "ui/gfx/paint_vector_icon.h"
 #include "brave/browser/ui/views/email_aliases_bubble_view.h"
 #include "url/origin.h"
+#include "base/feature_list.h"
+#include "brave/browser/brave_browser_features.h"
 
 #if BUILDFLAG(ENABLE_TOR)
 #include "brave/browser/tor/tor_profile_manager.h"
@@ -733,7 +735,8 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
     }
   }
 
-  if (params_.form_control_type &&
+  if (base::FeatureList::IsEnabled(features::kBraveEmailAliases) &&
+      params_.form_control_type &&
         params_.form_control_type.value() ==
           blink::mojom::FormControlType::kInputEmail) {
     menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);

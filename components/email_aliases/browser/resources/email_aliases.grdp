@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grit-part>
-    <include name="IDR_BRAVE_INBOX_ALIASES_PAGE_HTML" file="../email_aliases/browser/resources/internals.html" type="BINDATA" />
+    <include name="IDR_BRAVE_EMAIL_ALIASES_PAGE_HTML" file="../email_aliases/browser/resources/internals.html" type="BINDATA" />
 </grit-part>

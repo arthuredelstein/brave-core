@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_BROWSER_UI_VIEWS_INBOX_ALIASES_BUBBLE_VIEW_H_
-#define BRAVE_BROWSER_UI_VIEWS_INBOX_ALIASES_BUBBLE_VIEW_H_
+#ifndef BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_
+#define BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_
 
 #include "base/memory/weak_ptr.h"
 #include "ui/views/bubble/bubble_dialog_delegate_view.h"
@@ -29,4 +29,4 @@ class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
   void OnWidgetVisibilityChanged(views::Widget* widget, bool visible) override;
 };
 
-#endif  // BRAVE_BROWSER_UI_VIEWS_INBOX_ALIASES_BUBBLE_VIEW_H_
+#endif  // BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_

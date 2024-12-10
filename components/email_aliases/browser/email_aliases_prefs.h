@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_INBOX_ALIASES_PREFS_H_
-#define BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_INBOX_ALIASES_PREFS_H_
+#ifndef BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_
+#define BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_
 
 class PrefRegistrySimple;
 
@@ -15,4 +15,4 @@ void RegisterProfilePrefs(PrefRegistrySimple* registry);
 
 }  // namespace email_aliases
 
-#endif  // BRAVE_COMPONENTS_INBOX_ALIASES_BROWSER_INBOX_ALIASES_PREFS_H_
+#endif  // BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_

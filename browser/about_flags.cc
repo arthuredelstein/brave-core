@@ -973,8 +973,8 @@
       {                                                                        \
           "brave-email-aliases",                                               \
           "Enable Email Aliases",                                              \
-          "Enables the email aliases feature, which allows you to keep your "  \
-          "real email address private while you use the web.",                 \
+          "Enables the Email Aliases feature, which allows you to hide your "  \
+          "real email address behind an alias email address.",                 \
           kOsWin | kOsLinux | kOsMac,                                          \
           FEATURE_VALUE_TYPE(features::kBraveEmailAliases),                    \
       })                                                                       \

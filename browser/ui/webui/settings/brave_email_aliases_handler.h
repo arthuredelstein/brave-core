@@ -40,6 +40,7 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
  private:
   // SettingsPageUIHandler overrides
   void RegisterMessages() override;
+  Profile* GetProfile();
 
   void OnJavascriptAllowed() override {}
   void OnJavascriptDisallowed() override {}
@@ -54,9 +55,9 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void DeleteNote(const std::string& alias_email);
   std::optional<std::string> GetNote(const std::string& alias_email);
 
+  raw_ptr<Profile> profile_ = nullptr;
   std::string verification_token_;
   std::string session_token_;
-  raw_ptr<Profile> profile_ = nullptr;
   std::unique_ptr<network::SimpleURLLoader> simple_url_loader_;
 
   base::WeakPtrFactory<BraveEmailAliasesHandler> weak_factory_{this};

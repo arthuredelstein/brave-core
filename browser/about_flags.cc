@@ -969,6 +969,14 @@
           "corners, padding, and a drop shadow",                               \
           kOsWin | kOsLinux | kOsMac,                                          \
           FEATURE_VALUE_TYPE(features::kBraveWebViewRoundedCorners),           \
+      },                                                                       \
+      {                                                                        \
+          "brave-email-aliases",                                               \
+          "Enable Email Aliases",                                              \
+          "Enables the email aliases feature, which allows you to keep your "  \
+          "real email address private while you use the web.",                 \
+          kOsWin | kOsLinux | kOsMac,                                          \
+          FEATURE_VALUE_TYPE(features::kBraveEmailAliases),                    \
       })                                                                       \
   BRAVE_NATIVE_WALLET_FEATURE_ENTRIES                                          \
   BRAVE_NEWS_FEATURE_ENTRIES                                                   \

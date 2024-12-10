@@ -56,10 +56,14 @@ BraveEmailAliasesHandler::BraveEmailAliasesHandler() = default;
 
 BraveEmailAliasesHandler::~BraveEmailAliasesHandler() = default;
 
-void BraveEmailAliasesHandler::RegisterMessages() {
-  profile_ = Profile::FromWebUI(web_ui());
-  verification_token_ = profile_->GetPrefs()->GetString(kEmailAliasesVerificationToken);
+Profile* BraveEmailAliasesHandler::GetProfile() {
+  if (!profile_) {
+    profile_ = Profile::FromWebUI(web_ui());
+  }
+  return profile_;
+}
 
+void BraveEmailAliasesHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback(
       "email_aliases.generateAlias",
       base::BindRepeating(&BraveEmailAliasesHandler::GenerateAlias,
@@ -92,17 +96,17 @@ void BraveEmailAliasesHandler::RegisterMessages() {
 }
 
 void BraveEmailAliasesHandler::SetNote(const std::string& alias_email, const std::string& note) {
-  ScopedDictPrefUpdate update(profile_->GetPrefs(), kEmailAliasesNotes);
+  ScopedDictPrefUpdate update(GetProfile()->GetPrefs(), kEmailAliasesNotes);
   update->Set(alias_email, note);
 }
 
 void BraveEmailAliasesHandler::DeleteNote(const std::string& alias_email) {
-  ScopedDictPrefUpdate update(profile_->GetPrefs(), kEmailAliasesNotes);
+  ScopedDictPrefUpdate update(GetProfile()->GetPrefs(), kEmailAliasesNotes);
   update->Remove(alias_email);
 }
 
 std::optional<std::string> BraveEmailAliasesHandler::GetNote(const std::string& alias_email) {
-  const auto* note = profile_->GetPrefs()->GetDict(kEmailAliasesNotes).FindString(alias_email);
+  const auto* note = GetProfile()->GetPrefs()->GetDict(kEmailAliasesNotes).FindString(alias_email);
   return note ? std::optional<std::string>(*note) : std::nullopt;
 }
 
@@ -121,7 +125,7 @@ void BraveEmailAliasesHandler::MakeMappingServiceURLLoader(
     simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
   }
   simple_url_loader_->DownloadToString(
-    profile_->GetURLLoaderFactory().get(),
+    GetProfile()->GetURLLoaderFactory().get(),
     std::move(download_to_string_callback),
     MAX_RESPONSE_LENGTH);
 }
@@ -305,7 +309,7 @@ void BraveEmailAliasesHandler::RequestAccount(const base::Value::List& args) {
     simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
   }
   simple_url_loader_->DownloadToString(
-    profile_->GetURLLoaderFactory().get(),
+    GetProfile()->GetURLLoaderFactory().get(),
     base::BindOnce(
         &BraveEmailAliasesHandler::OnRequestAccountResponse,
         weak_factory_.GetWeakPtr(), callback_id),
@@ -318,9 +322,8 @@ void BraveEmailAliasesHandler::OnRequestAccountResponse(
   if (response_value && response_value->is_dict()) {
     const auto* verification_token = response_value->GetDict().Find("verificationToken");
     if (verification_token && verification_token->is_string()) {
-      // Store the verification token while we wait for confirmation.
-      verification_token_ = verification_token->GetString();
-      profile_->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token_);
+      // Store the verification token while we wait for session confirmation.
+      GetProfile()->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token->GetString());
       // Acknowledge success to the caller.
       ResolveJavascriptCallback(base::Value(callback_id), base::Value());
       return;

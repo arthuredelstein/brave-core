@@ -5,7 +5,7 @@ import { color, spacing } from '@brave/leo/tokens/css/variables'
 import { Alias, MappingService, ViewMode } from './types'
 import Icon from '@brave/leo/react/icon'
 import { StyleSheetManager } from 'styled-components'
-import Input from '@brave/leo/react/input'
+import Input, { InputEventDetail } from '@brave/leo/react/input'
 import ButtonMenu from '@brave/leo/react/buttonMenu'
 import Tooltip from '@brave/leo/react/tooltip'
 import {
@@ -252,17 +252,18 @@ const EmailAliasModal = (
   </Modal>)
 }
 
-const BeforeSendingEmailForm = () => (
-  <Col>
+const BeforeSendingEmailForm = ({ onSubmit }: { onSubmit: Function }) => {
+  const [email, setEmail] = React.useState<string>("")
+  return (<Col>
     <h3>To get started, sign in or create a Brave account</h3>
     <div style={{ marginBottom: '1em' }}>Enter your email address to get a secure login link sent to your email. Clicking this link will either create or access a Brave Account and let you use the free Email Aliases service.</div>
-    <Row>
-      <Input style='flex-grow: 4; margin-inline-end: 1em;' type='text' placeholder='Email address'></Input>
-      <Button style='flex-grow: 1' kind='filled'>Get login link</Button>
-    </Row>
+      <Row>
+        <Input onChange={(detail: InputEventDetail) => setEmail(detail.value)} name='email' style='flex-grow: 4; margin-inline-end: 1em;' type='text' placeholder='Email address'></Input>
+        <Button onClick={() => onSubmit(email)} type='submit' style='flex-grow: 1' kind='filled'>Get login link</Button>
+      </Row>
   </Col>
-)
-
+  )
+}
 
 const AfterSendingEmailMessage = () => (
   <Col style={{flexGrow: 1}}>
@@ -272,11 +273,11 @@ const AfterSendingEmailMessage = () => (
   </Col>
 )
 
-const MainEmailEntryForm = ({viewState} : {viewState:ViewState}) => (
+const MainEmailEntryForm = ({viewState, onEmailSubmitted} : {viewState:ViewState, onEmailSubmitted: Function}) => (
   <Card id='main-email-entry-form'>
     <SignupRow>
       <BraveIcon style={{marginTop: '1em'}}/>
-      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm/>) : (<AfterSendingEmailMessage/>)}
+      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm onSubmit={onEmailSubmitted}/>) : (<AfterSendingEmailMessage/>)}
     </SignupRow>
   </Card>
 )
@@ -288,6 +289,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
     initMode: ViewMode
   }) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: initMode })
+  const [mainEmail] = React.useState<string>(email)
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const mode = viewState.mode
   const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
@@ -296,6 +298,10 @@ export const ManagePage = ({ email, mappingService, initMode }:
     const aliases = await mappingService.getAliases()
     setAliasesState(aliases)
   }
+  const onMainEmailSubmitted = async (email: string) => {
+    await mappingService.requestAccount(email)
+    setViewState({ mode: ViewMode.AwaitingAuthorization })
+  }
   React.useEffect(() => {
     onListChange();
   }, [] /* Only run at mount. */)
@@ -303,14 +309,14 @@ export const ManagePage = ({ email, mappingService, initMode }:
     <Col style={{ padding: spacing.l }}>
       <Introduction />
       {viewState.mode === ViewMode.SignUp || viewState.mode === ViewMode.AwaitingAuthorization ?
-        (<MainEmailEntryForm viewState={viewState} />) :
-        (<span><MainEmailDisplay email={email} />
+        (<MainEmailEntryForm viewState={viewState} onEmailSubmitted={onMainEmailSubmitted} />) :
+        (<span><MainEmailDisplay email={mainEmail} />
           <AliasList aliases={aliasesState} onViewChange={setViewState}
             mappingService={mappingService}
             onListChange={onListChange}></AliasList></span>)}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
         (<span><GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>
-          <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={email}
+          <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={mainEmail}
             onListChange={onListChange}
             mappingService={mappingService}
             onViewChange={setViewState}></EmailAliasModal></span>)}

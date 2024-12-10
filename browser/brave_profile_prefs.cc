@@ -395,9 +395,6 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
     brave_search::BraveSearchDefaultHost::RegisterProfilePrefs(registry);
   }
 
-  // Email Aliases
-  email_aliases::RegisterLocalStatePrefs(registry);
-
   // Restore default behaviour for Android until we figure out if we want this
   // option there.
 #if BUILDFLAG(IS_ANDROID)

@@ -41,6 +41,14 @@ type ViewState = {
   alias?: Alias
 }
 
+const onEnterKey = (onSubmit: Function) => 
+  (e: InputEventDetail) => {
+    const innerEvent = e.innerEvent as unknown as KeyboardEvent
+    if (innerEvent.key === 'Enter') {
+      onSubmit()
+    }
+  }
+
 const BraveIcon = ({style}: {style?: React.CSSProperties | undefined}) => (
   <BraveIconCircle style={{...style, flexGrow: 0}}>
     <BraveIconWrapper>
@@ -205,6 +213,18 @@ const EmailAliasModal = (
   const notePlaceholder = mode === ViewMode.Create ?
     'Enter a note for your new address (optional)' :
     'Enter a note for your address (optional)'
+  const createOrSave = async () => {
+    const aliasEmail = viewState?.alias?.email
+    if (aliasEmail) {
+      if (mode === ViewMode.Create) {
+        await mappingService.createAlias(aliasEmail, noteInputRef?.current?.value ?? "")
+      } else {
+        await mappingService.updateAlias(aliasEmail, noteInputRef?.current?.value ?? "", true)
+      }
+      onListChange()
+      onViewChange({ mode: ViewMode.Main })
+    }
+  }
   return (<Modal>
     <CloseButton onClick={returnToMain}><Icon name='close' /></CloseButton>
     <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
@@ -223,6 +243,7 @@ const EmailAliasModal = (
         placeholder={notePlaceholder}
         value={viewState.alias?.note ?? ''}
         ref={noteInputRef}
+        onKeyDown={onEnterKey(createOrSave)}
         style='margin: 0.25em 0em'>
       </Input>
       {mode == ViewMode.Edit && viewState.alias?.domains && <div>Used by {viewState.alias?.domains?.join(', ')}</div>}
@@ -234,19 +255,8 @@ const EmailAliasModal = (
       <Button
         style='flex-grow: 0; margin-inline-start: 1em;'
         kind='filled'
-        onClick={async () => {
-          const aliasEmail = viewState?.alias?.email
-          if (aliasEmail) {
-            if (mode === ViewMode.Create) {
-              await mappingService.createAlias(aliasEmail, noteInputRef?.current?.value ?? "")
-            } else {
-              await mappingService.updateAlias(aliasEmail, noteInputRef?.current?.value ?? "", true)
-            }
-            onListChange()
-            onViewChange({ mode: ViewMode.Main })
-          }
-        }
-        }>{mode == ViewMode.Create ? 'Create' : 'Save'}
+        onClick={createOrSave}>
+        {mode == ViewMode.Create ? 'Create' : 'Save'}
       </Button>
     </ButtonRow>
   </Modal>)
@@ -260,6 +270,7 @@ const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, on
       <Row>
         <Input autofocus={true}
           onChange={(detail: InputEventDetail) => setEmail(detail.value)}
+          onKeyDown={onEnterKey(() => onSubmit(email))}
           name='email'
           style='flex-grow: 4; margin-inline-end: 1em;'
           type='text'
@@ -272,9 +283,9 @@ const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, on
   )
 }
 
-const AfterSendingEmailMessage = ({tryAgain}: {tryAgain: Function}) => (
+const AfterSendingEmailMessage = ({mainEmail, tryAgain}: {mainEmail: string, tryAgain: Function}) => (
   <Col style={{flexGrow: 1}}>
-    <h3>A login email is on the way</h3>
+    <h3>A login email is on the way to {mainEmail}</h3>
     <div style={{ marginBottom: '1em' }}>Click on the secure login link in the email to access your account.</div>
     <div style={{ marginBottom: '1em' }}>Don't see the email? Check your spam folder or <a href='#' onClick={(e) => { e.preventDefault(); tryAgain()}}>try again.</a></div>
   </Col>
@@ -284,7 +295,7 @@ const MainEmailEntryForm = ({viewState, mainEmail, onEmailSubmitted, restart} : 
   <Card id='main-email-entry-form'>
     <SignupRow>
       <BraveIcon style={{marginTop: '1em'}}/>
-      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm initEmail={mainEmail} onSubmit={onEmailSubmitted}/>) : (<AfterSendingEmailMessage tryAgain={restart}/>)}
+      {viewState.mode === ViewMode.SignUp ? (<BeforeSendingEmailForm initEmail={mainEmail} onSubmit={onEmailSubmitted}/>) : (<AfterSendingEmailMessage mainEmail={mainEmail} tryAgain={restart}/>)}
     </SignupRow>
   </Card>
 )
@@ -309,6 +320,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
     setMainEmail(email)
     await mappingService.requestAccount(email)
     setViewState({ mode: ViewMode.AwaitingAuthorization })
+    //await mappingService.onAccountReady()
   }
   const restart = () => {
     setViewState({ mode: ViewMode.SignUp })

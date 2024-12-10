@@ -72,6 +72,7 @@ export const ManageAccountLink = styled.a`
   align-items: center;
   font-size: 120%;
   align-items: center;
+  color: ${color.text.secondary};
   text-decoration: none;
 `
 

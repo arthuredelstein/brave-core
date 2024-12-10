@@ -64,7 +64,7 @@ const Introduction = () => (
   </Card>
 )
 
-const MainEmailDisplay = ({ email }: { email: string }) => (
+const MainEmailDisplay = ({ email, onLogout }: { email: string, onLogout: Function }) => (
   <Card id='main-email-display'>
     <AccountRow>
     <Row>
@@ -74,9 +74,9 @@ const MainEmailDisplay = ({ email }: { email: string }) => (
         <MainEmailDescription>Brave Account</MainEmailDescription>
       </MainEmailTextContainer>
     </Row>
-    <ManageAccountLink title='Manage Brave account' href='https://account.brave.com' target='_blank'>
-      <Icon name="launch" />
-      <span style={{ margin: '0.5em' }}>Manage Brave account</span>
+    <ManageAccountLink title='Logout of Email Aliases' href='#' onClick={(e) => { e.preventDefault(); onLogout() }}>
+      <Icon name="outside" />
+      <span style={{ margin: '0.25em' }}>Sign out</span>
     </ManageAccountLink>
   </AccountRow>
 </Card>
@@ -322,6 +322,9 @@ export const ManagePage = ({ email, mappingService, initMode }:
     setViewState({ mode: ViewMode.AwaitingAuthorization })
     //await mappingService.onAccountReady()
   }
+  const onLogout = () => {
+    setViewState({ mode: ViewMode.SignUp })
+  }
   const restart = () => {
     setViewState({ mode: ViewMode.SignUp })
   }
@@ -333,7 +336,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
       <Introduction />
       {viewState.mode === ViewMode.SignUp || viewState.mode === ViewMode.AwaitingAuthorization ?
         (<MainEmailEntryForm viewState={viewState} mainEmail={mainEmail} onEmailSubmitted={onMainEmailSubmitted} restart={restart}/>) :
-        (<span><MainEmailDisplay email={mainEmail} />
+        (<span><MainEmailDisplay onLogout={onLogout} email={mainEmail} />
           <AliasList aliases={aliasesState} onViewChange={setViewState}
             mappingService={mappingService}
             onListChange={onListChange}></AliasList></span>)}

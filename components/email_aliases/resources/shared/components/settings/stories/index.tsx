@@ -76,11 +76,11 @@ class MockMappingService implements MappingService {
   async getAccountState (): Promise<AccountState> {
     return this.accountState_
   }
-  async onAccountReady (): Promise<boolean> {
+  async onAccountReady (): Promise<string | undefined> {
     while (this.accountState_ === AccountState.AwaitingAccount) {
       await new Promise(resolve => setTimeout(resolve, 250));
     }
-    return this.accountState_ === AccountState.AccountReady
+    return this.accountState_ === AccountState.AccountReady ? this.accountEmail_ : undefined
   }
   async cancelAccountRequest (): Promise<void> {
     this.accountState_ = AccountState.NoAccount

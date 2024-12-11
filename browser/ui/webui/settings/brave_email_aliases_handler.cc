@@ -302,7 +302,7 @@ void BraveEmailAliasesHandler::RequestAccount(const base::Value::List& args) {
   const auto bodyValue = base::Value::Dict()
     .Set("email", account_email)
     .Set("intent", "auth_token")
-    .Set("service", "inbox-aliases");
+    .Set("service", "email-aliases");
   simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
   const auto body = base::WriteJson(bodyValue);
   if (body) {

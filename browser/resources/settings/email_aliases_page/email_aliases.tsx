@@ -320,8 +320,8 @@ export const ManagePage = ({ email, mappingService, initMode }:
     setMainEmail(email)
     await mappingService.requestAccount(email)
     setViewState({ mode: ViewMode.AwaitingAuthorization })
-    const emailReady = await mappingService.onAccountReady()
-    if (emailReady === email) {
+    const accountReady = await mappingService.onAccountReady()
+    if (accountReady) {
       setViewState({ mode: ViewMode.Main })
     }
   }

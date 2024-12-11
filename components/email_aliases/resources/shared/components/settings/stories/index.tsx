@@ -34,7 +34,7 @@ class MockMappingService implements MappingService {
   accountEmail_: string
   aliases_ : Map<string, Alias>
   accountState_ : AccountState = AccountState.NoAccount
-
+  accountRequestId_ : number
   constructor() {
     this.aliases_ = new Map<string, Alias>();
     for (const alias of demoData.aliases) {
@@ -68,7 +68,7 @@ class MockMappingService implements MappingService {
   }
   async requestAccount (accountEmail: string): Promise<void> {
     this.accountState_ = AccountState.AwaitingAccount
-    window.setTimeout(() => {
+    this.accountRequestId_ = window.setTimeout(() => {
       this.accountEmail_ = accountEmail
       this.accountState_ = AccountState.AccountReady
     }, 5000);
@@ -76,14 +76,15 @@ class MockMappingService implements MappingService {
   async getAccountState (): Promise<AccountState> {
     return this.accountState_
   }
-  async onAccountReady (): Promise<string | undefined> {
+  async onAccountReady (): Promise<boolean> {
     while (this.accountState_ === AccountState.AwaitingAccount) {
       await new Promise(resolve => setTimeout(resolve, 250));
     }
-    return this.accountState_ === AccountState.AccountReady ? this.accountEmail_ : undefined
+    return this.accountState_ === AccountState.AccountReady
   }
   async cancelAccountRequest (): Promise<void> {
     this.accountState_ = AccountState.NoAccount
+    window.clearTimeout(this.accountRequestId_)
   }
 }
 

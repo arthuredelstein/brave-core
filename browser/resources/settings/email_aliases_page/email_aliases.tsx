@@ -313,7 +313,6 @@ export const ManagePage = ({ email, mappingService, initMode }:
   const mode = viewState.mode
   const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
   const onListChange = async () => {
-    console.log("onListChange")
     const aliases = await mappingService.getAliases()
     setAliasesState(aliases)
   }
@@ -321,12 +320,16 @@ export const ManagePage = ({ email, mappingService, initMode }:
     setMainEmail(email)
     await mappingService.requestAccount(email)
     setViewState({ mode: ViewMode.AwaitingAuthorization })
-    //await mappingService.onAccountReady()
+    const isReady = await mappingService.onAccountReady()
+    if (isReady) {
+      setViewState({ mode: ViewMode.Main })
+    }
   }
   const onLogout = () => {
     setViewState({ mode: ViewMode.SignUp })
   }
-  const restart = () => {
+  const restart = async () => {
+    await mappingService.cancelAccountRequest()
     setViewState({ mode: ViewMode.SignUp })
   }
   React.useEffect(() => {

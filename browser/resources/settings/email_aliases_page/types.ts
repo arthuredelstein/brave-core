@@ -13,6 +13,8 @@ export interface MappingService {
   getAccountEmail (): Promise<string | undefined>
   requestAccount (accountEmail: string): Promise<void>
   getAccountState (): Promise<AccountState>
+  onAccountReady (): Promise<boolean>
+  cancelAccountRequest (): Promise<void>
 }
 
 export enum ViewMode {

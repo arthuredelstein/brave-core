@@ -35,7 +35,6 @@ const std::string kAccountsServiceVerifyURL = "https://accounts.bsg.bravesoftwar
 const std::string kMappingServiceManageURL = "https://aliases.bsg.bravesoftware.com/manage";
 const std::string kMappingServiceGenerateURL = "https://aliases.bsg.bravesoftware.com/generate";
 const std::string kBraveApiKey = "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK";
-const std::string kTempSessionKey = "eyJhbGciOiJFUzI1NiIsImtpZCI6MSwidHlwIjoiSldUIn0.eyJpYXQiOjE3MzM1MTMyMzcsInNlc3Npb25faWQiOiIwMTkzOWQ3MC1kMmRhLTc1M2ItOTc5Mi05ZWY0ZWM5MDJmMzEifQ.PspbaYEATiOsvTJSgy8wotag4aQHmStzga8HxAIdcw6qgCbv4IdkkxpFBZgv55vsvEh1djQAJnsWzwzHkKb9Mg";
 
 const net::NetworkTrafficAnnotationTag traffic_annotation =
     net::DefineNetworkTrafficAnnotation("email_aliases_mapping_service", R"(
@@ -61,6 +60,20 @@ Profile* BraveEmailAliasesHandler::GetProfile() {
     profile_ = Profile::FromWebUI(web_ui());
   }
   return profile_;
+}
+
+std::string BraveEmailAliasesHandler::GetSessionToken() {
+  if (session_token_.empty()) {
+    session_token_ = GetProfile()->GetPrefs()->GetString(kEmailAliasesAuthToken);
+  }
+  return session_token_;
+}
+
+std::string BraveEmailAliasesHandler::GetVerificationToken() {
+  if (verification_token_.empty()) {
+    verification_token_ = GetProfile()->GetPrefs()->GetString(kEmailAliasesVerificationToken);
+  }
+  return verification_token_;
 }
 
 void BraveEmailAliasesHandler::RegisterMessages() {
@@ -93,6 +106,11 @@ void BraveEmailAliasesHandler::RegisterMessages() {
       "email_aliases.requestAccount",
       base::BindRepeating(&BraveEmailAliasesHandler::RequestAccount,
                           base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "email_aliases.getSession",
+      base::BindRepeating(&BraveEmailAliasesHandler::GetSession,
+                          base::Unretained(this)));
 }
 
 void BraveEmailAliasesHandler::SetNote(const std::string& alias_email, const std::string& note) {
@@ -110,18 +128,23 @@ std::optional<std::string> BraveEmailAliasesHandler::GetNote(const std::string& 
   return note ? std::optional<std::string>(*note) : std::nullopt;
 }
 
-void BraveEmailAliasesHandler::MakeMappingServiceURLLoader(
+void BraveEmailAliasesHandler::ApiFetch(
   const GURL& url,
   const char* method,
-  const std::optional<std::string>& body,
+  const std::optional<std::string>& bearer_token,
+  const base::Value::Dict& bodyValue,
   network::SimpleURLLoader::BodyAsStringCallback download_to_string_callback) {
   auto resource_request = std::make_unique<network::ResourceRequest>();
   resource_request->url = url;
   resource_request->method = method;
-  resource_request->headers.SetHeader("Authorization", std::string("Bearer ") + kTempSessionKey);
+  if (bearer_token) {
+    resource_request->headers.SetHeader("Authorization", std::string("Bearer ") + bearer_token.value());
+  }
   resource_request->headers.SetHeader("X-API-key", kBraveApiKey);
   simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
-  if (body) {
+  if (!bodyValue.empty() && method != net::HttpRequestHeaders::kGetMethod && method != net::HttpRequestHeaders::kHeadMethod) {
+    auto body = base::WriteJson(bodyValue);
+    CHECK(body);
     simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
   }
   simple_url_loader_->DownloadToString(
@@ -134,10 +157,11 @@ void BraveEmailAliasesHandler::GenerateAlias(const base::Value::List& args) {
   AllowJavascript();
   CHECK_EQ(1U, args.size());
   const auto callback_id = args[0].GetString();
-  MakeMappingServiceURLLoader(
+  ApiFetch(
     GURL(kMappingServiceGenerateURL),
     net::HttpRequestHeaders::kGetMethod,
-    std::nullopt,
+    GetSessionToken(),
+    base::Value::Dict(),
     base::BindOnce(
       &BraveEmailAliasesHandler::OnGenerateAliasResponse,
       weak_factory_.GetWeakPtr(), callback_id));
@@ -156,10 +180,11 @@ void BraveEmailAliasesHandler::GetAliases(const base::Value::List& args) {
   AllowJavascript();
   CHECK_EQ(1U, args.size());
   const auto callback_id = args[0].GetString();
-  MakeMappingServiceURLLoader(
+  ApiFetch(
     GURL(kMappingServiceManageURL + "?status=active"),
     net::HttpRequestHeaders::kGetMethod,
-    std::nullopt,
+    GetSessionToken(),
+    base::Value::Dict(),
     base::BindOnce(
       &BraveEmailAliasesHandler::OnGetAliasesResponse,
       weak_factory_.GetWeakPtr(), callback_id));
@@ -201,16 +226,11 @@ void BraveEmailAliasesHandler::CreateAlias(const base::Value::List& args) {
   const auto note = args[2].GetString();
   auto bodyValue = base::Value::Dict()
     .Set("alias", alias_email);
-  auto body = base::WriteJson(bodyValue);
-  if (!body) {
-    RejectJavascriptCallback(base::Value(callback_id), base::Value("json generation failed"));
-    return;
-  }
-  std::cout << "body: " << body.value() << std::endl;
-  MakeMappingServiceURLLoader(
+  ApiFetch(
     GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kPostMethod,
-    body.value(),
+    GetSessionToken(),
+    bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnCreateAliasResponse,
       weak_factory_.GetWeakPtr(), callback_id, alias_email, note));
@@ -232,15 +252,11 @@ void BraveEmailAliasesHandler::DeleteAlias(const base::Value::List& args) {
   const auto alias_email = args[1].GetString();
   auto bodyValue = base::Value::Dict()
     .Set("alias", alias_email);
-  auto body = base::WriteJson(bodyValue);
-  if (!body) {
-    RejectJavascriptCallback(base::Value(callback_id), base::Value("json generation failed"));
-    return;
-  }
-  MakeMappingServiceURLLoader(
+  ApiFetch(
     GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kDeleteMethod,
-    body,
+    GetSessionToken(),
+    bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnDeleteAliasResponse,
       weak_factory_.GetWeakPtr(), callback_id, alias_email));
@@ -268,15 +284,11 @@ void BraveEmailAliasesHandler::UpdateAlias(const base::Value::List& args) {
   auto bodyValue = base::Value::Dict()
     .Set("alias", alias_email)
     .Set("status", status);
-  auto body = base::WriteJson(bodyValue);
-  if (!body) {
-    RejectJavascriptCallback(base::Value(callback_id), base::Value("data error"));
-    return;
-  }
-  MakeMappingServiceURLLoader(
+  ApiFetch(
     GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kPutMethod,
-    body,
+    GetSessionToken(),
+    bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnUpdateAliasResponse,
       weak_factory_.GetWeakPtr(), callback_id, alias_email, note));
@@ -291,42 +303,73 @@ void BraveEmailAliasesHandler::OnUpdateAliasResponse(
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
 
+void BraveEmailAliasesHandler::GetSession(const base::Value::List& args) {
+  AllowJavascript();
+  CHECK_EQ(1U, args.size());
+  const auto callback_id = args[0].GetString();
+  auto bodyValue = base::Value::Dict()
+    .Set("wait", true);
+  ApiFetch(
+    GURL(kAccountsServiceVerifyURL),
+    net::HttpRequestHeaders::kPostMethod,
+    GetVerificationToken(),
+    bodyValue,
+    base::BindOnce(
+      &BraveEmailAliasesHandler::OnGetSessionResponse,
+      weak_factory_.GetWeakPtr(), callback_id));
+}
+
+void BraveEmailAliasesHandler::OnGetSessionResponse(
+    const std::string& callback_id, std::optional<std::string> response_body) {
+  if (response_body) {
+    std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
+    if (response_value && response_value->is_dict()) {
+      const auto* session_token = response_value->GetDict().Find("authToken");
+      if (session_token && session_token->is_string()) {
+        // Store the session token for long-term use.
+      session_token_ = session_token->GetString();
+      GetProfile()->GetPrefs()->SetString(kEmailAliasesAuthToken, session_token->GetString());
+      // Acknowledge success to the caller.
+      ResolveJavascriptCallback(base::Value(callback_id), base::Value());
+      return;
+      }
+    }
+  }
+  RejectJavascriptCallback(base::Value(callback_id), base::Value("no session token"));
+}
+
 void BraveEmailAliasesHandler::RequestAccount(const base::Value::List& args) {
   CHECK_EQ(2U, args.size());
   const auto callback_id = args[0].GetString();
   const auto account_email = args[1].GetString();
   AllowJavascript();
-  auto resource_request = std::make_unique<network::ResourceRequest>();
-  resource_request->url = GURL(kAccountsServiceRequestURL);
-  resource_request->method = net::HttpRequestHeaders::kPostMethod;
   const auto bodyValue = base::Value::Dict()
     .Set("email", account_email)
     .Set("intent", "auth_token")
     .Set("service", "email-aliases");
-  simple_url_loader_ = network::SimpleURLLoader::Create(std::move(resource_request), traffic_annotation);
-  const auto body = base::WriteJson(bodyValue);
-  if (body) {
-    simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
-  }
-  simple_url_loader_->DownloadToString(
-    GetProfile()->GetURLLoaderFactory().get(),
+  ApiFetch(
+    GURL(kAccountsServiceRequestURL),
+    net::HttpRequestHeaders::kPostMethod,
+    std::nullopt,
+    bodyValue,
     base::BindOnce(
-        &BraveEmailAliasesHandler::OnRequestAccountResponse,
-        weak_factory_.GetWeakPtr(), callback_id),
-        MAX_RESPONSE_LENGTH);
+      &BraveEmailAliasesHandler::OnRequestAccountResponse,
+      weak_factory_.GetWeakPtr(), callback_id));  
 }
 
 void BraveEmailAliasesHandler::OnRequestAccountResponse(
-    const std::string& callback_id, std::optional<std::string> response_body) {
-  std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
-  if (response_value && response_value->is_dict()) {
-    const auto* verification_token = response_value->GetDict().Find("verificationToken");
-    if (verification_token && verification_token->is_string()) {
-      // Store the verification token while we wait for session confirmation.
-      GetProfile()->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token->GetString());
-      // Acknowledge success to the caller.
-      ResolveJavascriptCallback(base::Value(callback_id), base::Value());
-      return;
+  const std::string& callback_id, std::optional<std::string> response_body) {
+  if (response_body) {
+    std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
+    if (response_value && response_value->is_dict()) {
+      const auto* verification_token = response_value->GetDict().Find("verificationToken");
+      if (verification_token && verification_token->is_string()) {
+        // Store the verification token while we wait for session confirmation.
+        GetProfile()->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token->GetString());
+        // Acknowledge success to the caller.
+        ResolveJavascriptCallback(base::Value(callback_id), base::Value());
+        return;
+      }
     }
   }
   RejectJavascriptCallback(base::Value(callback_id), base::Value("no verification token"));

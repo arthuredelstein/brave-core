@@ -36,19 +36,24 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void OnDeleteAliasResponse(const std::string& callback_id, const std::string& alias_email, std::optional<std::string> response_body);
   void RequestAccount(const base::Value::List& args);
   void OnRequestAccountResponse(const std::string& callback_id, std::optional<std::string> response_body);
+  void GetSession(const base::Value::List& args);
+  void OnGetSessionResponse(const std::string& callback_id, std::optional<std::string> response_body);
 
  private:
   // SettingsPageUIHandler overrides
   void RegisterMessages() override;
-  Profile* GetProfile();
-
   void OnJavascriptAllowed() override {}
   void OnJavascriptDisallowed() override {}
 
-  void MakeMappingServiceURLLoader(
+  Profile* GetProfile();
+  std::string GetSessionToken();
+  std::string GetVerificationToken();
+
+  void ApiFetch(
     const GURL& url,
     const char* method,
-    const std::optional<std::string>& body,
+    const std::optional<std::string>& bearer_token,
+    const base::Value::Dict& bodyValue,
     network::SimpleURLLoader::BodyAsStringCallback download_to_string_callback);
 
   void SetNote(const std::string& alias_email, const std::string& note);

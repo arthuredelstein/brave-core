@@ -9,12 +9,9 @@
 
 namespace email_aliases {
 
-void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
+void RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterStringPref(kEmailAliasesVerificationToken, std::string());
   registry->RegisterStringPref(kEmailAliasesAuthToken, std::string());
-}
-
-void RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterDictionaryPref(kEmailAliasesNotes);
 }
 

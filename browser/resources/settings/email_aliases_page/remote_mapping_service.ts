@@ -2,6 +2,8 @@ import { AccountState, Alias, MappingService } from './types'
 import { sendWithPromise} from 'chrome://resources/js/cr.js';
 
 export class RemoteMappingService implements MappingService {
+  private pending_cancellation_ = false
+
   async getAccountEmail (): Promise<string | undefined> {
     throw new Error('Method not implemented.');
   }
@@ -31,5 +33,19 @@ export class RemoteMappingService implements MappingService {
   }*/
   async generateAlias (): Promise<string> {
     return "mock-" + Math.random().toString().slice(2,6) + "@bravealias.com"
+  }
+  async onAccountReady(): Promise<boolean> {
+    while (!this.pending_cancellation_) {
+      try {
+        await sendWithPromise('email_aliases.getSession')
+        return true
+      } catch (e) {
+        // ignore
+      }
+    }
+    return false
+  }
+  async cancelAccountRequest(): Promise<void> {
+    this.pending_cancellation_ = true
   }
 }

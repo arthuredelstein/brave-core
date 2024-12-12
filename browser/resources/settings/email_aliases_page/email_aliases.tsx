@@ -194,12 +194,9 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
 )
 
 
-const RefreshButton = ( {mode, onViewChange, mappingService} : { mappingService: MappingService, mode: ViewMode, onViewChange: Function }) => (
+const RefreshButton = ( { onClicked } : { onClicked: Function }) => (
   <Button title='Suggest another email alias'
-    onClick={async () => {
-      const newEmailAlias = await mappingService.generateAlias()
-      onViewChange({ mode, alias: { email: newEmailAlias } })
-    }}
+    onClick={() => onClicked()}
     kind="plain" style='flex-grow: 0; padding: 0px'>
     <Icon name="refresh" />
   </Button>
@@ -207,7 +204,12 @@ const RefreshButton = ( {mode, onViewChange, mappingService} : { mappingService:
 
 const EmailAliasModal = (
   { returnToMain, viewState, email, onViewChange, onListChange, mappingService }:
-    { returnToMain: any, viewState: ViewState, email: string, onViewChange: Function, onListChange: Function, mappingService: MappingService }
+    { returnToMain: Function,
+      viewState: ViewState,
+      email: string,
+      onViewChange: Function,
+      onListChange: Function,
+      mappingService: MappingService }
 ) => {
   const mode = viewState.mode
   const noteInputRef = React.useRef<HTMLInputElement>(null)
@@ -226,14 +228,18 @@ const EmailAliasModal = (
       onViewChange({ mode: ViewMode.Main })
     }
   }
+  const onRefreshClicked = async () => {
+    const newEmailAlias = await mappingService.generateAlias()
+    onViewChange({ mode, alias: { email: newEmailAlias } })
+  }
   return (<Modal>
-    <CloseButton onClick={returnToMain}><Icon name='close' /></CloseButton>
+    <CloseButton onClick={() => returnToMain()}><Icon name='close' /></CloseButton>
     <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
     <ModalSectionCol style={{}}>
       <h3 style={{ margin: '0.25em' }}>Email alias</h3>
       <GeneratedEmailContainer>
         <div>{viewState?.alias?.email ?? 'blah'}</div>
-        {mode == ViewMode.Create && <RefreshButton {...{mappingService, mode, onViewChange}} />}
+        {mode == ViewMode.Create && <RefreshButton onClicked={onRefreshClicked} />}
       </GeneratedEmailContainer>
       <div>{`Emails will be forwarded to ${email}.`}</div>
     </ModalSectionCol>
@@ -250,13 +256,13 @@ const EmailAliasModal = (
       {mode == ViewMode.Edit && viewState.alias?.domains && <div>Used by {viewState.alias?.domains?.join(', ')}</div>}
     </ModalSectionCol>
     <ButtonRow>
-      <Button onClick={returnToMain} kind='plain' style='flex-grow: 0;'>
+      <Button onClick={() => returnToMain()} kind='plain' style='flex-grow: 0;'>
         Cancel
       </Button>
       <Button
         style='flex-grow: 0; margin-inline-start: 1em;'
         kind='filled'
-        onClick={createOrSave}>
+        onClick={() => createOrSave()}>
         {mode == ViewMode.Create ? 'Create' : 'Save'}
       </Button>
     </ButtonRow>

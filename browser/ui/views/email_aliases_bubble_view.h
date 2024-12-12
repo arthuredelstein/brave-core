@@ -22,11 +22,14 @@ class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
  public:
   static void Show(Browser* browser);
 
-  EmailAliasesBubbleView(views::View* anchor_view);
+  EmailAliasesBubbleView(views::View* anchor_view, Browser* browser);
   ~EmailAliasesBubbleView() override;
 
   // views::BubbleDialogDelegateView override;
   void OnWidgetVisibilityChanged(views::Widget* widget, bool visible) override;
+
+private:
+  raw_ptr<Browser> browser_;
 };
 
 #endif  // BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_

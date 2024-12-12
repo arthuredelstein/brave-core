@@ -21,15 +21,20 @@ void EmailAliasesBubbleView::Show(Browser* browser) {
   auto* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
   views::View* anchor_view = browser_view->GetLocationBarView();
   views::Widget* const widget = views::BubbleDialogDelegateView::CreateBubble(
-      std::make_unique<EmailAliasesBubbleView>(anchor_view));
+      std::make_unique<EmailAliasesBubbleView>(anchor_view, browser));
   widget->Show();
 }
 
-EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view)
-    : BubbleDialogDelegateView(anchor_view, views::BubbleBorder::TOP_RIGHT) {
-  auto* web_view = new views::WebView();
-  web_view->LoadInitialURL(GURL("https://example.com"));
+EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view, Browser* browser)
+    : BubbleDialogDelegateView(anchor_view, views::BubbleBorder::TOP_RIGHT), browser_(browser) {
+  SetLayoutManager(std::make_unique<views::FillLayout>());
+  
+  auto* web_view = new views::WebView(browser->profile());
+  web_view->SetPreferredSize(gfx::Size(300, 400));  // Set reasonable default size
   AddChildView(web_view);
+  
+  // Load URL after adding to view hierarchy
+  web_view->LoadInitialURL(GURL("https://example.com"));
 }
 
 EmailAliasesBubbleView::~EmailAliasesBubbleView() {

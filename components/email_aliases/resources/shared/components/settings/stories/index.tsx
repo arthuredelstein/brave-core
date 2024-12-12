@@ -4,8 +4,8 @@
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 import * as React from 'react'
-import { ManagePage } from '../../../../../../../browser/resources/settings/email_aliases_page/email_aliases'
-import { AccountState, Alias, MappingService } from '../../../../../../../browser/resources/settings/email_aliases_page/types'
+import { ManagePage, EmailAliasModal } from '../../../../../../../browser/resources/settings/email_aliases_page/email_aliases'
+import { AccountState, Alias, MappingService, ViewMode } from '../../../../../../../browser/resources/settings/email_aliases_page/types'
 
 export default {
   title: 'Email Aliases',
@@ -91,9 +91,22 @@ class MockMappingService implements MappingService {
   }
 }
 
-export const Manage = () => {
-  const [mockMappingService] = React.useState(new MockMappingService());
+const mockMappingServiceSingleton = new MockMappingService()
+
+export const SettingsPage = () => {
   return (
-    <ManagePage mappingService={mockMappingService}></ManagePage>
+    <ManagePage mappingService={mockMappingServiceSingleton}></ManagePage>
+  )
+}
+
+export const Bubble = () => {
+  return (
+    <EmailAliasModal
+      returnToMain={() => {}}
+      viewState={{ mode: ViewMode.Create }}
+      email={demoData.email}
+      onSave={() => { console.log("save") }}
+      mappingService={mockMappingServiceSingleton}
+    />
   )
 }

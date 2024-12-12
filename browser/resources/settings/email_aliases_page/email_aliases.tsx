@@ -202,44 +202,55 @@ const RefreshButton = ( { onClicked } : { onClicked: Function }) => (
   </Button>
 )
 
-const EmailAliasModal = (
-  { returnToMain, viewState, email, onViewChange, onListChange, mappingService }:
+const ModalWithCloseButton = ({ children, returnToMain }: React.PropsWithChildren & { returnToMain: Function }) => (
+  <Modal>
+    <CloseButton onClick={() => returnToMain()}><Icon name='close' /></CloseButton>
+    {children}
+  </Modal>
+)
+
+export const EmailAliasModal = (
+  { returnToMain, viewState, email, onSave, mappingService }:
     { returnToMain: Function,
       viewState: ViewState,
       email: string,
-      onViewChange: Function,
-      onListChange: Function,
+      onSave: Function,
       mappingService: MappingService }
 ) => {
+  const [proposedAlias, setProposedAlias] = React.useState<string>(viewState.alias?.email ?? '')
+  const [proposedNote, setProposedNote] = React.useState<string>(viewState.alias?.note ?? '')
   const mode = viewState.mode
   const noteInputRef = React.useRef<HTMLInputElement>(null)
   const notePlaceholder = mode === ViewMode.Create ?
     'Enter a note for your new address (optional)' :
     'Enter a note for your address (optional)'
   const createOrSave = async () => {
-    const aliasEmail = viewState?.alias?.email
-    if (aliasEmail) {
+    if (proposedAlias !== '') {
       if (mode === ViewMode.Create) {
-        await mappingService.createAlias(aliasEmail, noteInputRef?.current?.value ?? "")
+        await mappingService.createAlias(proposedAlias, proposedNote)
       } else {
-        await mappingService.updateAlias(aliasEmail, noteInputRef?.current?.value ?? "", true)
+        await mappingService.updateAlias(proposedAlias, proposedNote, true)
       }
-      onListChange()
-      onViewChange({ mode: ViewMode.Main })
+      onSave()
     }
   }
-  const onRefreshClicked = async () => {
+  const regenerateAlias = async () => {
     const newEmailAlias = await mappingService.generateAlias()
-    onViewChange({ mode, alias: { email: newEmailAlias } })
+    setProposedAlias(newEmailAlias)
   }
-  return (<Modal>
-    <CloseButton onClick={() => returnToMain()}><Icon name='close' /></CloseButton>
-    <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
-    <ModalSectionCol style={{}}>
-      <h3 style={{ margin: '0.25em' }}>Email alias</h3>
+  React.useEffect(() => {
+    if (mode == ViewMode.Create) {
+      regenerateAlias()
+    }
+  }, [mode])
+  return (
+    <span>
+      <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
+      <ModalSectionCol style={{}}>
+        <h3 style={{ margin: '0.25em' }}>Email alias</h3>
       <GeneratedEmailContainer>
-        <div>{viewState?.alias?.email ?? 'blah'}</div>
-        {mode == ViewMode.Create && <RefreshButton onClicked={onRefreshClicked} />}
+        <div>{proposedAlias}</div>
+        {mode == ViewMode.Create && <RefreshButton onClicked={regenerateAlias} />}
       </GeneratedEmailContainer>
       <div>{`Emails will be forwarded to ${email}.`}</div>
     </ModalSectionCol>
@@ -248,7 +259,8 @@ const EmailAliasModal = (
       <Input id='note-input'
         type='text'
         placeholder={notePlaceholder}
-        value={viewState.alias?.note ?? ''}
+        value={proposedNote}
+        onChange={(detail: InputEventDetail) => setProposedNote(detail.value)}
         ref={noteInputRef}
         onKeyDown={onEnterKey(createOrSave)}
         style='margin: 0.25em 0em'>
@@ -264,9 +276,10 @@ const EmailAliasModal = (
         kind='filled'
         onClick={() => createOrSave()}>
         {mode == ViewMode.Create ? 'Create' : 'Save'}
-      </Button>
-    </ButtonRow>
-  </Modal>)
+        </Button>
+      </ButtonRow>
+    </span>
+  )
 }
 
 const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, onSubmit: Function }) => {
@@ -364,10 +377,18 @@ export const ManagePage = ({ mappingService }:
           </span>))}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
         (<span><GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>
-          <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={mainEmail}
-            onListChange={onListChange}
-            mappingService={mappingService}
-            onViewChange={setViewState}></EmailAliasModal></span>)}
+          <ModalWithCloseButton returnToMain={returnToMain}>
+            <EmailAliasModal
+              returnToMain={returnToMain}
+              viewState={viewState}
+              email={mainEmail}
+              onSave={() => {
+                setViewState({ mode: ViewMode.Main })
+                onListChange()
+              }}
+              mappingService={mappingService} />
+          </ModalWithCloseButton>
+        </span>)}
     </Col>
   )
 }

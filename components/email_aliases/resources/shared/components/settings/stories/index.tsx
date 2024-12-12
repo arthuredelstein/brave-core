@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 import { ManagePage } from '../../../../../../../browser/resources/settings/email_aliases_page/email_aliases'
-import { AccountState, Alias, ViewMode, MappingService } from '../../../../../../../browser/resources/settings/email_aliases_page/types'
+import { AccountState, Alias, MappingService } from '../../../../../../../browser/resources/settings/email_aliases_page/types'
 
 export default {
   title: 'Email Aliases',
@@ -86,31 +86,14 @@ class MockMappingService implements MappingService {
     this.accountState_ = AccountState.NoAccount
     window.clearTimeout(this.accountRequestId_)
   }
+  async logout (): Promise<void> {
+    this.accountState_ = AccountState.NoAccount
+  }
 }
 
 export const Manage = () => {
   const [mockMappingService] = React.useState(new MockMappingService());
   return (
-    <ManagePage initMode={ViewMode.Main}
-                mappingService={mockMappingService}
-                email={demoData.email}></ManagePage>
-  )
-}
-
-export const SignUp = () => {
-  const [mockMappingService] = React.useState(new MockMappingService());
-  return (
-    <ManagePage initMode={ViewMode.SignUp}
-                mappingService={mockMappingService}
-                email={demoData.email}></ManagePage>
-  )
-}
-
-export const AwaitAuth = () => {
-  const [mockMappingService] = React.useState(new MockMappingService());
-  return (
-    <ManagePage initMode={ViewMode.AwaitingAuthorization}
-                mappingService={mockMappingService}
-                email={demoData.email}></ManagePage>
+    <ManagePage mappingService={mockMappingService}></ManagePage>
   )
 }

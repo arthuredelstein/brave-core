@@ -71,7 +71,7 @@ const MainEmailDisplay = ({ email, onLogout }: { email: string, onLogout: Functi
     <Row>
       <BraveIcon />
       <MainEmailTextContainer>
-        <MainEmail>{email}</MainEmail>
+        <MainEmail>{email === '' ? 'Connecting to Brave Account...' : email}</MainEmail>
         <MainEmailDescription>Brave Account</MainEmailDescription>
       </MainEmailTextContainer>
     </Row>
@@ -301,17 +301,20 @@ const MainEmailEntryForm = ({viewState, mainEmail, onEmailSubmitted, restart} : 
   </Card>
 )
 
-export const ManagePage = ({ email, mappingService, initMode }:
+export const ManagePage = ({ mappingService }:
   {
-    email: string,
-    mappingService: MappingService,
-    initMode: ViewMode
+    mappingService: MappingService
   }) => {
-  const [viewState, setViewState] = React.useState<ViewState>({ mode: initMode })
-  const [mainEmail, setMainEmail] = React.useState<string>(email)
+  const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Startup })
+  const [mainEmail, setMainEmail] = React.useState<string>('')
   const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const mode = viewState.mode
   const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
+  const onEmailChange = async () => {
+    const email = await mappingService.getAccountEmail()
+    setMainEmail(email ?? '')
+    setViewState({ mode: email ? ViewMode.Main : ViewMode.SignUp })
+  }
   const onListChange = async () => {
     const aliases = await mappingService.getAliases()
     setAliasesState(aliases)
@@ -326,6 +329,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
     }
   }
   const onLogout = () => {
+    mappingService.logout()
     setViewState({ mode: ViewMode.SignUp })
   }
   const restart = async () => {
@@ -333,6 +337,7 @@ export const ManagePage = ({ email, mappingService, initMode }:
     setViewState({ mode: ViewMode.SignUp })
   }
   React.useEffect(() => {
+    onEmailChange();
     onListChange();
   }, [] /* Only run at mount. */)
   return (
@@ -340,10 +345,16 @@ export const ManagePage = ({ email, mappingService, initMode }:
       <Introduction />
       {viewState.mode === ViewMode.SignUp || viewState.mode === ViewMode.AwaitingAuthorization ?
         (<MainEmailEntryForm viewState={viewState} mainEmail={mainEmail} onEmailSubmitted={onMainEmailSubmitted} restart={restart}/>) :
-        (<span><MainEmailDisplay onLogout={onLogout} email={mainEmail} />
-          <AliasList aliases={aliasesState} onViewChange={setViewState}
-            mappingService={mappingService}
-            onListChange={onListChange}></AliasList></span>)}
+        (viewState.mode === ViewMode.Startup ?
+          (<Row style={{margin: '1em', flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}><Icon name='loading-spinner' />
+            <h3 style={{margin: '0.25em'}}>Connecting to Brave Account...</h3>
+           </Row>) :
+          (<span>
+            <MainEmailDisplay onLogout={onLogout} email={mainEmail} />
+            <AliasList aliases={aliasesState} onViewChange={setViewState}
+              mappingService={mappingService}
+              onListChange={onListChange}></AliasList>
+          </span>))}
       {(mode == ViewMode.Create || mode == ViewMode.Edit) &&
         (<span><GrayOverlay onClick={returnToMain}>&nbsp;</GrayOverlay>
           <EmailAliasModal returnToMain={returnToMain} viewState={viewState} email={mainEmail}
@@ -358,9 +369,7 @@ export const mount = (at: HTMLElement, mappingService: MappingService) => {
   const root = createRoot(at);
   root.render(
     <StyleSheetManager target={at}>
-      <ManagePage initMode={ViewMode.Main}
-                  email={'arthuredelstein@gmail.com'}
-                  {...{mappingService}}/>
+      <ManagePage {...{mappingService}}/>
     </StyleSheetManager>
   )
 }

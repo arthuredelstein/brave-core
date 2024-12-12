@@ -15,9 +15,11 @@ export interface MappingService {
   getAccountState (): Promise<AccountState>
   onAccountReady (): Promise<boolean>
   cancelAccountRequest (): Promise<void>
+  logout (): Promise<void>
 }
 
 export enum ViewMode {
+  Startup,
   Main,
   Create,
   Edit,

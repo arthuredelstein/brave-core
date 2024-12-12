@@ -111,6 +111,16 @@ void BraveEmailAliasesHandler::RegisterMessages() {
       "email_aliases.getSession",
       base::BindRepeating(&BraveEmailAliasesHandler::GetSession,
                           base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "email_aliases.getAccountEmail",
+      base::BindRepeating(&BraveEmailAliasesHandler::GetAccountEmail,
+                          base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "email_aliases.logout",
+      base::BindRepeating(&BraveEmailAliasesHandler::Logout,
+                          base::Unretained(this)));
 }
 
 void BraveEmailAliasesHandler::SetNote(const std::string& alias_email, const std::string& note) {
@@ -321,6 +331,7 @@ void BraveEmailAliasesHandler::GetSession(const base::Value::List& args) {
 
 void BraveEmailAliasesHandler::OnGetSessionResponse(
     const std::string& callback_id, std::optional<std::string> response_body) {
+  AllowJavascript();
   if (response_body) {
     std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
     if (response_value && response_value->is_dict()) {
@@ -354,17 +365,21 @@ void BraveEmailAliasesHandler::RequestAccount(const base::Value::List& args) {
     bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnRequestAccountResponse,
-      weak_factory_.GetWeakPtr(), callback_id));  
+      weak_factory_.GetWeakPtr(), callback_id, account_email));  
 }
 
 void BraveEmailAliasesHandler::OnRequestAccountResponse(
-  const std::string& callback_id, std::optional<std::string> response_body) {
+  const std::string& callback_id,
+  const std::string& account_email,
+  std::optional<std::string> response_body) {
+  AllowJavascript();
   if (response_body) {
     std::optional<base::Value> response_value = base::JSONReader::Read(response_body.value());
     if (response_value && response_value->is_dict()) {
       const auto* verification_token = response_value->GetDict().Find("verificationToken");
       if (verification_token && verification_token->is_string()) {
         // Store the verification token while we wait for session confirmation.
+        GetProfile()->GetPrefs()->SetString(kEmailAliasesAccountEmail, account_email);
         GetProfile()->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token->GetString());
         // Acknowledge success to the caller.
         ResolveJavascriptCallback(base::Value(callback_id), base::Value());
@@ -373,4 +388,20 @@ void BraveEmailAliasesHandler::OnRequestAccountResponse(
     }
   }
   RejectJavascriptCallback(base::Value(callback_id), base::Value("no verification token"));
+}
+
+void BraveEmailAliasesHandler::GetAccountEmail(const base::Value::List& args) {
+  AllowJavascript();
+  CHECK_EQ(1U, args.size());
+  const auto callback_id = args[0].GetString();
+  const auto account_email = GetProfile()->GetPrefs()->GetString(kEmailAliasesAccountEmail);
+  ResolveJavascriptCallback(base::Value(callback_id), base::Value(account_email));
+}
+
+void BraveEmailAliasesHandler::Logout(const base::Value::List& args) {
+  AllowJavascript();
+  GetProfile()->GetPrefs()->ClearPref(kEmailAliasesAccountEmail);
+  GetProfile()->GetPrefs()->ClearPref(kEmailAliasesVerificationToken);
+  GetProfile()->GetPrefs()->ClearPref(kEmailAliasesAuthToken);
+  ResolveJavascriptCallback(base::Value(args[0].GetString()), base::Value());
 }

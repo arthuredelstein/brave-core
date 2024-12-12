@@ -35,9 +35,11 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void DeleteAlias(const base::Value::List& args);
   void OnDeleteAliasResponse(const std::string& callback_id, const std::string& alias_email, std::optional<std::string> response_body);
   void RequestAccount(const base::Value::List& args);
-  void OnRequestAccountResponse(const std::string& callback_id, std::optional<std::string> response_body);
+  void OnRequestAccountResponse(const std::string& callback_id, const std::string& account_email, std::optional<std::string> response_body);
   void GetSession(const base::Value::List& args);
   void OnGetSessionResponse(const std::string& callback_id, std::optional<std::string> response_body);
+  void GetAccountEmail(const base::Value::List& args);
+  void Logout(const base::Value::List& args);
 
  private:
   // SettingsPageUIHandler overrides

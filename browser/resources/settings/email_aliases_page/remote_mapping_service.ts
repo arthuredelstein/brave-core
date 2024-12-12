@@ -5,7 +5,10 @@ export class RemoteMappingService implements MappingService {
   private pending_cancellation_ = false
 
   async getAccountEmail (): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    return sendWithPromise('email_aliases.getAccountEmail')
+  }
+  async logout (): Promise<void> {
+    await sendWithPromise('email_aliases.logout')
   }
   async requestAccount (accountEmail: string): Promise<void> {
     await sendWithPromise('email_aliases.requestAccount', accountEmail)
@@ -18,7 +21,6 @@ export class RemoteMappingService implements MappingService {
     return result
   }
   async createAlias (email: string, note: string): Promise<void> {
-    console.log("createAlias called")
     await sendWithPromise('email_aliases.createAlias', email, note)
   }
   async updateAlias (email: string, note: string, status: boolean): Promise<void> {
@@ -35,6 +37,7 @@ export class RemoteMappingService implements MappingService {
     return "mock-" + Math.random().toString().slice(2,6) + "@bravealias.com"
   }
   async onAccountReady(): Promise<boolean> {
+    this.pending_cancellation_ = false
     while (!this.pending_cancellation_) {
       try {
         await sendWithPromise('email_aliases.getSession')

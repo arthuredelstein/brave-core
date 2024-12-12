@@ -12,6 +12,7 @@ namespace email_aliases {
 void RegisterProfilePrefs(PrefRegistrySimple* registry) {
   registry->RegisterStringPref(kEmailAliasesVerificationToken, std::string());
   registry->RegisterStringPref(kEmailAliasesAuthToken, std::string());
+  registry->RegisterStringPref(kEmailAliasesAccountEmail, std::string());
   registry->RegisterDictionaryPref(kEmailAliasesNotes);
 }
 

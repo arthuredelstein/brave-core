@@ -48,8 +48,9 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void OnJavascriptDisallowed() override {}
 
   Profile* GetProfile();
-  std::string GetSessionToken();
-  std::string GetVerificationToken();
+  std::string GetStringPref(const std::string& pref_name);
+  void SetStringPref(const std::string& pref_name, const std::string& value);
+  void ClearPref(const std::string& pref_name);
 
   void ApiFetch(
     const GURL& url,

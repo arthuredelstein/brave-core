@@ -43,7 +43,7 @@ export class RemoteMappingService implements MappingService {
         await sendWithPromise('email_aliases.getSession')
         return true
       } catch (e) {
-        // ignore
+        console.error(e)
       }
     }
     return false

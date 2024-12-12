@@ -62,18 +62,16 @@ Profile* BraveEmailAliasesHandler::GetProfile() {
   return profile_;
 }
 
-std::string BraveEmailAliasesHandler::GetSessionToken() {
-  if (session_token_.empty()) {
-    session_token_ = GetProfile()->GetPrefs()->GetString(kEmailAliasesAuthToken);
-  }
-  return session_token_;
+std::string BraveEmailAliasesHandler::GetStringPref(const std::string& pref_name) {
+  return GetProfile()->GetPrefs()->GetString(pref_name);
 }
 
-std::string BraveEmailAliasesHandler::GetVerificationToken() {
-  if (verification_token_.empty()) {
-    verification_token_ = GetProfile()->GetPrefs()->GetString(kEmailAliasesVerificationToken);
-  }
-  return verification_token_;
+void BraveEmailAliasesHandler::SetStringPref(const std::string& pref_name, const std::string& value) {
+  GetProfile()->GetPrefs()->SetString(pref_name, value);
+}
+
+void BraveEmailAliasesHandler::ClearPref(const std::string& pref_name) {
+  GetProfile()->GetPrefs()->ClearPref(pref_name);
 }
 
 void BraveEmailAliasesHandler::RegisterMessages() {
@@ -170,7 +168,7 @@ void BraveEmailAliasesHandler::GenerateAlias(const base::Value::List& args) {
   ApiFetch(
     GURL(kMappingServiceGenerateURL),
     net::HttpRequestHeaders::kGetMethod,
-    GetSessionToken(),
+    GetStringPref(kEmailAliasesAuthToken),
     base::Value::Dict(),
     base::BindOnce(
       &BraveEmailAliasesHandler::OnGenerateAliasResponse,
@@ -193,7 +191,7 @@ void BraveEmailAliasesHandler::GetAliases(const base::Value::List& args) {
   ApiFetch(
     GURL(kMappingServiceManageURL + "?status=active"),
     net::HttpRequestHeaders::kGetMethod,
-    GetSessionToken(),
+    GetStringPref(kEmailAliasesAuthToken),
     base::Value::Dict(),
     base::BindOnce(
       &BraveEmailAliasesHandler::OnGetAliasesResponse,
@@ -239,7 +237,7 @@ void BraveEmailAliasesHandler::CreateAlias(const base::Value::List& args) {
   ApiFetch(
     GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kPostMethod,
-    GetSessionToken(),
+    GetStringPref(kEmailAliasesAuthToken),
     bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnCreateAliasResponse,
@@ -265,7 +263,7 @@ void BraveEmailAliasesHandler::DeleteAlias(const base::Value::List& args) {
   ApiFetch(
     GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kDeleteMethod,
-    GetSessionToken(),
+    GetStringPref(kEmailAliasesAuthToken),
     bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnDeleteAliasResponse,
@@ -297,7 +295,7 @@ void BraveEmailAliasesHandler::UpdateAlias(const base::Value::List& args) {
   ApiFetch(
     GURL(kMappingServiceManageURL),
     net::HttpRequestHeaders::kPutMethod,
-    GetSessionToken(),
+    GetStringPref(kEmailAliasesAuthToken),
     bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnUpdateAliasResponse,
@@ -322,7 +320,7 @@ void BraveEmailAliasesHandler::GetSession(const base::Value::List& args) {
   ApiFetch(
     GURL(kAccountsServiceVerifyURL),
     net::HttpRequestHeaders::kPostMethod,
-    GetVerificationToken(),
+    GetStringPref(kEmailAliasesVerificationToken),
     bodyValue,
     base::BindOnce(
       &BraveEmailAliasesHandler::OnGetSessionResponse,
@@ -337,12 +335,12 @@ void BraveEmailAliasesHandler::OnGetSessionResponse(
     if (response_value && response_value->is_dict()) {
       const auto* session_token = response_value->GetDict().Find("authToken");
       if (session_token && session_token->is_string()) {
-        // Store the session token for long-term use.
-      session_token_ = session_token->GetString();
-      GetProfile()->GetPrefs()->SetString(kEmailAliasesAuthToken, session_token->GetString());
-      // Acknowledge success to the caller.
-      ResolveJavascriptCallback(base::Value(callback_id), base::Value());
-      return;
+          // Store the session token for long-term use.
+        session_token_ = session_token->GetString();
+        GetProfile()->GetPrefs()->SetString(kEmailAliasesAuthToken, session_token->GetString());
+        // Acknowledge success to the caller.
+        ResolveJavascriptCallback(base::Value(callback_id), base::Value());
+        return;
       }
     }
   }
@@ -379,8 +377,8 @@ void BraveEmailAliasesHandler::OnRequestAccountResponse(
       const auto* verification_token = response_value->GetDict().Find("verificationToken");
       if (verification_token && verification_token->is_string()) {
         // Store the verification token while we wait for session confirmation.
-        GetProfile()->GetPrefs()->SetString(kEmailAliasesAccountEmail, account_email);
-        GetProfile()->GetPrefs()->SetString(kEmailAliasesVerificationToken, verification_token->GetString());
+        SetStringPref(kEmailAliasesAccountEmail, account_email);
+        SetStringPref(kEmailAliasesVerificationToken, verification_token->GetString());
         // Acknowledge success to the caller.
         ResolveJavascriptCallback(base::Value(callback_id), base::Value());
         return;
@@ -394,14 +392,14 @@ void BraveEmailAliasesHandler::GetAccountEmail(const base::Value::List& args) {
   AllowJavascript();
   CHECK_EQ(1U, args.size());
   const auto callback_id = args[0].GetString();
-  const auto account_email = GetProfile()->GetPrefs()->GetString(kEmailAliasesAccountEmail);
+  const auto account_email = GetStringPref(kEmailAliasesAccountEmail);
   ResolveJavascriptCallback(base::Value(callback_id), base::Value(account_email));
 }
 
 void BraveEmailAliasesHandler::Logout(const base::Value::List& args) {
   AllowJavascript();
-  GetProfile()->GetPrefs()->ClearPref(kEmailAliasesAccountEmail);
-  GetProfile()->GetPrefs()->ClearPref(kEmailAliasesVerificationToken);
-  GetProfile()->GetPrefs()->ClearPref(kEmailAliasesAuthToken);
+  ClearPref(kEmailAliasesAccountEmail);
+  ClearPref(kEmailAliasesVerificationToken);
+  ClearPref(kEmailAliasesAuthToken);
   ResolveJavascriptCallback(base::Value(args[0].GetString()), base::Value());
 }

@@ -326,6 +326,7 @@ export const ManagePage = ({ mappingService }:
     const accountReady = await mappingService.onAccountReady()
     if (accountReady) {
       setViewState({ mode: ViewMode.Main })
+      await onListChange()
     }
   }
   const onLogout = () => {

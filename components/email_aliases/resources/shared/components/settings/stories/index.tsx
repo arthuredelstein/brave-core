@@ -105,7 +105,7 @@ export const Bubble = () => {
       returnToMain={() => {}}
       viewState={{ mode: ViewMode.Create }}
       email={demoData.email}
-      onSave={() => { console.log("save") }}
+      mode={ViewMode.Create}
       mappingService={mockMappingServiceSingleton}
     />
   )

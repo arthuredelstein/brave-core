@@ -210,16 +210,16 @@ const ModalWithCloseButton = ({ children, returnToMain }: React.PropsWithChildre
 )
 
 export const EmailAliasModal = (
-  { returnToMain, viewState, email, onSave, mappingService }:
+  { returnToMain, viewState, email, mode, mappingService }:
     { returnToMain: Function,
-      viewState: ViewState,
+      viewState?: ViewState,
+      mode: ViewMode
       email: string,
-      onSave: Function,
       mappingService: MappingService }
 ) => {
-  const [proposedAlias, setProposedAlias] = React.useState<string>(viewState.alias?.email ?? '')
-  const [proposedNote, setProposedNote] = React.useState<string>(viewState.alias?.note ?? '')
-  const mode = viewState.mode
+  const [mainEmail, setMainEmail] = React.useState<string>(email)
+  const [proposedAlias, setProposedAlias] = React.useState<string>(viewState?.alias?.email ?? '')
+  const [proposedNote, setProposedNote] = React.useState<string>(viewState?.alias?.note ?? '')
   const noteInputRef = React.useRef<HTMLInputElement>(null)
   const notePlaceholder = mode === ViewMode.Create ?
     'Enter a note for your new address (optional)' :
@@ -231,7 +231,7 @@ export const EmailAliasModal = (
       } else {
         await mappingService.updateAlias(proposedAlias, proposedNote, true)
       }
-      onSave()
+      returnToMain()
     }
   }
   const regenerateAlias = async () => {
@@ -242,7 +242,8 @@ export const EmailAliasModal = (
     if (mode == ViewMode.Create) {
       regenerateAlias()
     }
-  }, [mode])
+    mappingService.getAccountEmail().then(email => setMainEmail(email ?? ''))
+  }, [])
   return (
     <span>
       <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
@@ -252,7 +253,7 @@ export const EmailAliasModal = (
         <div>{proposedAlias}</div>
         {mode == ViewMode.Create && <RefreshButton onClicked={regenerateAlias} />}
       </GeneratedEmailContainer>
-      <div>{`Emails will be forwarded to ${email}.`}</div>
+      <div>{`Emails will be forwarded to ${mainEmail}.`}</div>
     </ModalSectionCol>
     <ModalSectionCol>
       <h3 style={{ margin: '0.25em' }}>Note</h3>
@@ -265,7 +266,7 @@ export const EmailAliasModal = (
         onKeyDown={onEnterKey(createOrSave)}
         style='margin: 0.25em 0em'>
       </Input>
-      {mode == ViewMode.Edit && viewState.alias?.domains && <div>Used by {viewState.alias?.domains?.join(', ')}</div>}
+      {mode == ViewMode.Edit && viewState?.alias?.domains && <div>Used by {viewState?.alias?.domains?.join(', ')}</div>}
     </ModalSectionCol>
     <ButtonRow>
       <Button onClick={() => returnToMain()} kind='plain' style='flex-grow: 0;'>
@@ -326,7 +327,6 @@ export const ManagePage = ({ mappingService }:
   }) => {
   const [viewState, setViewState] = React.useState<ViewState>({ mode: ViewMode.Startup })
   const [mainEmail, setMainEmail] = React.useState<string>('')
-  const returnToMain = () => setViewState({ mode: ViewMode.Main })
   const mode = viewState.mode
   const [aliasesState, setAliasesState] = React.useState<Alias[]>([]);
   const onEmailChange = async () => {
@@ -356,6 +356,10 @@ export const ManagePage = ({ mappingService }:
     await mappingService.cancelAccountRequest()
     setViewState({ mode: ViewMode.SignUp })
   }
+  const returnToMain = () => {
+    setViewState({ mode: ViewMode.Main })
+    onListChange()
+  }
   React.useEffect(() => {
     onEmailChange();
     onListChange();
@@ -382,10 +386,7 @@ export const ManagePage = ({ mappingService }:
               returnToMain={returnToMain}
               viewState={viewState}
               email={mainEmail}
-              onSave={() => {
-                setViewState({ mode: ViewMode.Main })
-                onListChange()
-              }}
+              mode={mode}
               mappingService={mappingService} />
           </ModalWithCloseButton>
         </span>)}
@@ -401,5 +402,14 @@ export const mount = (at: HTMLElement, mappingService: MappingService) => {
     </StyleSheetManager>
   )
 }
-
+/*
+export const mountBubble = (at: HTMLElement, mappingService: MappingService) => {
+  const root = createRoot(at);
+  root.render(
+    <StyleSheetManager target={at}>
+      <EmailAliasModal {...{returnToMain, viewState, email, onSave, mappingService}}/>
+    </StyleSheetManager>
+  )
+}
+*/
   ; (window as any).mountEmailAliases = mount

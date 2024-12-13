@@ -6,11 +6,13 @@
 #ifndef BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_
 #define BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_
 
-class PrefRegistrySimple;
+namespace user_prefs {  
+class PrefRegistrySyncable;
+}
 
 namespace email_aliases {
 
-void RegisterProfilePrefs(PrefRegistrySimple* registry);
+void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry);
 
 }  // namespace email_aliases
 

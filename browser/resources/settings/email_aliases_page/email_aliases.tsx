@@ -220,7 +220,7 @@ export const EmailAliasModal = (
   const [mainEmail, setMainEmail] = React.useState<string>(email)
   const [proposedAlias, setProposedAlias] = React.useState<string>(viewState?.alias?.email ?? '')
   const [proposedNote, setProposedNote] = React.useState<string>(viewState?.alias?.note ?? '')
-  const noteInputRef = React.useRef<HTMLInputElement>(null)
+ // const noteInputRef = React.useRef<HTMLInputElement>(null)
   const notePlaceholder = mode === ViewMode.Create ?
     'Enter a note for your new address (optional)' :
     'Enter a note for your address (optional)'
@@ -262,7 +262,6 @@ export const EmailAliasModal = (
         placeholder={notePlaceholder}
         value={proposedNote}
         onChange={(detail: InputEventDetail) => setProposedNote(detail.value)}
-        ref={noteInputRef}
         onKeyDown={onEnterKey(createOrSave)}
         style='margin: 0.25em 0em'>
       </Input>

@@ -1,60 +1,48 @@
-// Copyright (c) 2023 The Brave Authors. All rights reserved.
+// Copyright (c) 2024 The Brave Authors. All rights reserved.
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "brave/browser/ui/webui/email_aliases/email_aliases_page_ui.h"
+#include "brave/browser/ui/webui/email_aliases/email_aliases_bubble_ui.h"
 
 #include <string>
 #include <utility>
 
-//#include "brave/browser/brave_news/brave_news_controller_factory.h"
 #include "brave/browser/ui/webui/brave_webui_source.h"
-//#include "brave/components/brave_news/browser/brave_news_controller.h"
-//#include "brave/components/brave_news/browser/resources/grit/brave_news_internals_generated_map.h"
-//#include "brave/components/brave_news/common/brave_news.mojom.h"
 #include "chrome/browser/profiles/profile.h"
-#include "content/public/browser/web_ui_data_source.h"
 #include "components/grit/brave_components_resources.h"
+#include "brave/components/constants/webui_url_constants.h"
+#include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
 
 namespace email_aliases {
 
-EmailAliasesPageUI::EmailAliasesPageUI(content::WebUI* web_ui,
-                                       const std::string& host)
+EmailAliasesBubbleUI::EmailAliasesBubbleUI(content::WebUI* web_ui)
     : content::WebUIController(web_ui) {
-  auto* source = content::WebUIDataSource::CreateAndAdd(
-      Profile::FromWebUI(web_ui), host/*, kInboxAliasInternalsGenerated,
-      kInboxAliasInternalsGeneratedSize, IDR_INBOX_ALIAS_PAGE_HTML*/);
+  auto* source = CreateAndAddWebUIDataSource(
+      web_ui,
+      kEmailAliasesBubbleHost,
+      kEmailAliasesBubbleGeneratedResources,
+      kEmailAliasesBubbleGeneratedResourcesSize,
+      IDR_EMAIL_ALIASES_BUBBLE_HTML);
   DCHECK(source);
 }
 
-EmailAliasesPageUI::~EmailAliasesPageUI() = default;
-//WEB_UI_CONTROLLER_TYPE_IMPL(EmailAliasesPageUI)
-/*
-void EmailAliasesPageUI::BindInterface(
-    mojo::PendingReceiver<brave_news::mojom::BraveNewsController> receiver) {
-  auto* profile = Profile::FromWebUI(web_ui());
-  auto* controller =
-      brave_news::BraveNewsControllerFactory::GetForBrowserContext(profile);
-  if (!controller) {
-    return;
-  }
+EmailAliasesBubbleUI::~EmailAliasesBubbleUI() = default;
 
-  controller->Bind(std::move(receiver));
+std::string EmailAliasesBubbleUI::GetWebUIName() {
+  return kEmailAliasesBubbleHost;
 }
 
-void EmailAliasesPageUI::BindInterface(
-    mojo::PendingReceiver<brave_news::mojom::BraveNewsInternals> receiver) {
-  auto* profile = Profile::FromWebUI(web_ui());
-  auto* controller =
-      brave_news::BraveNewsControllerFactory::GetForBrowserContext(profile);
-  if (!controller) {
-    return;
-  }
+EmailAliasesBubbleUIConfig::EmailAliasesBubbleUIConfig()
+    : DefaultTopChromeWebUIConfig(kEmailAliasesBubbleHost,
+                                  kEmailAliasesBubbleGeneratedResources) {}
 
-  controller->Bind(std::move(receiver));
+bool EmailAliasesBubbleUIConfig::IsWebUIEnabled(content::BrowserContext* browser_context) {
+  return true;
+} 
+
+bool EmailAliasesBubbleUIConfig::ShouldAutoResizeHost() {
+  return true;
 }
-*/
-
 
 }  // namespace email_aliases

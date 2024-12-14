@@ -12,7 +12,9 @@
 #include "chrome/browser/profiles/profile.h"
 #include "components/grit/brave_components_resources.h"
 #include "brave/components/constants/webui_url_constants.h"
+#include "content/public/common/url_constants.h"
 #include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
+#include "brave/browser/resources/settings/email_aliases_page/grit/email_aliases_generated_map.h"
 
 namespace email_aliases {
 
@@ -21,8 +23,8 @@ EmailAliasesBubbleUI::EmailAliasesBubbleUI(content::WebUI* web_ui)
   auto* source = CreateAndAddWebUIDataSource(
       web_ui,
       kEmailAliasesBubbleHost,
-      kEmailAliasesBubbleGeneratedResources,
-      kEmailAliasesBubbleGeneratedResourcesSize,
+      kEmailAliasesGenerated,
+      kEmailAliasesGeneratedSize,
       IDR_EMAIL_ALIASES_BUBBLE_HTML);
   DCHECK(source);
 }
@@ -34,8 +36,8 @@ std::string EmailAliasesBubbleUI::GetWebUIName() {
 }
 
 EmailAliasesBubbleUIConfig::EmailAliasesBubbleUIConfig()
-    : DefaultTopChromeWebUIConfig(kEmailAliasesBubbleHost,
-                                  kEmailAliasesBubbleGeneratedResources) {}
+    : DefaultTopChromeWebUIConfig(content::kChromeUIScheme,
+                                  kEmailAliasesBubbleHost) {}
 
 bool EmailAliasesBubbleUIConfig::IsWebUIEnabled(content::BrowserContext* browser_context) {
   return true;
@@ -45,4 +47,7 @@ bool EmailAliasesBubbleUIConfig::ShouldAutoResizeHost() {
   return true;
 }
 
+WEB_UI_CONTROLLER_TYPE_IMPL(EmailAliasesBubbleUI)
+
 }  // namespace email_aliases
+

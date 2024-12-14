@@ -14,7 +14,7 @@
 #include "chrome/browser/profiles/profile.h"
 #include "url/gurl.h"
 #include "ui/views/layout/fill_layout.h"
-
+#include "brave/components/constants/webui_url_constants.h"
 
 // static
 void EmailAliasesBubbleView::Show(Browser* browser) {
@@ -34,7 +34,7 @@ EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view, Browser
   AddChildView(web_view);
   
   // Load URL after adding to view hierarchy
-  web_view->LoadInitialURL(GURL("https://example.com"));
+  web_view->LoadInitialURL(GURL(kEmailAliasesBubbleURL));
 }
 
 EmailAliasesBubbleView::~EmailAliasesBubbleView() {

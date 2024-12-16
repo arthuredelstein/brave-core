@@ -31,9 +31,9 @@ EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view, Browser
   SetLayoutManager(std::make_unique<views::FillLayout>());
   
   auto* web_view = new views::WebView(browser->profile());
+  SetButtons(static_cast<int>(ui::mojom::DialogButton::kNone));
   web_view->SetPreferredSize(gfx::Size(350, 300));
   AddChildView(web_view);
-  SetButtons(static_cast<int>(ui::mojom::DialogButton::kNone));
 
   // Load URL after adding to view hierarchy
   web_view->LoadInitialURL(GURL(kEmailAliasesBubbleURL));

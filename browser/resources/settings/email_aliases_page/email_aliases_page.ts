@@ -15,8 +15,6 @@ import { RemoteMappingService } from "./remote_mapping_service.js"
 class EmailAliasesPage extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: 'open' })
-    console.log("Hello from EmailAliasesPage")
-
     import('/email_aliases.bundle.js' as any)
       .then(() => (window as any).mountEmailAliases(this.shadowRoot, new RemoteMappingService))
       .catch(() => {})

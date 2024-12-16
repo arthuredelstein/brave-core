@@ -42,7 +42,6 @@ class MockMappingService implements MappingService {
     for (const alias of demoData.aliases) {
       this.aliases_.set(alias.email, alias)
     }
-    this.accountEmail_ = demoData.email
   }
   async createAlias (email: string, note: string): Promise<void> {
     const alias = { email, note }

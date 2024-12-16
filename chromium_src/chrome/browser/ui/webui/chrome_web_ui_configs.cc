@@ -82,5 +82,4 @@ void RegisterChromeWebUIConfigs() {
 #endif  // !BUILDFLAG(IS_ANDROID)
   map.AddWebUIConfig(std::make_unique<BraveAdblockUIConfig>());
   map.AddWebUIConfig(std::make_unique<BraveAdblockInternalsUIConfig>());
-  //map.AddWebUIConfig(std::make_unique<BraveEmailAliasesHandlerConfig>());
 }

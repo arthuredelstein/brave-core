@@ -15,6 +15,8 @@
 #include "content/public/common/url_constants.h"
 #include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
 #include "brave/components/email_aliases/browser/resources/grit/email_aliases_bubble_generated_map.h"
+#include "brave/browser/ui/webui/settings/brave_email_aliases_handler.h" 
+#include "content/public/common/url_constants.h"
 
 namespace email_aliases {
 
@@ -26,6 +28,7 @@ EmailAliasesBubbleUI::EmailAliasesBubbleUI(content::WebUI* web_ui)
       kEmailAliasesBubbleGenerated,
       kEmailAliasesBubbleGeneratedSize,
       IDR_EMAIL_ALIASES_BUBBLE_HTML);
+  web_ui->AddMessageHandler(std::make_unique<BraveEmailAliasesHandler>());
   DCHECK(source);
 }
 
@@ -34,10 +37,6 @@ EmailAliasesBubbleUI::~EmailAliasesBubbleUI() = default;
 std::string EmailAliasesBubbleUI::GetWebUIName() {
   return kEmailAliasesBubbleHost;
 }
-
-EmailAliasesBubbleUIConfig::EmailAliasesBubbleUIConfig()
-    : DefaultTopChromeWebUIConfig(content::kChromeUIScheme,
-                                  kEmailAliasesBubbleHost) {}
 
 bool EmailAliasesBubbleUIConfig::IsWebUIEnabled(content::BrowserContext* browser_context) {
   return true;

@@ -99,6 +99,8 @@ source_set("ui") {
     "webui/brave_web_ui_controller_factory.h",
     "webui/brave_webui_source.cc",
     "webui/brave_webui_source.h",
+    "webui/email_aliases_bubble_ui.cc",
+    "webui/email_aliases_bubble_ui.h",
     "webui/skus_internals_ui.cc",
     "webui/skus_internals_ui.h",
   ]
@@ -1255,8 +1257,6 @@ source_set("ui") {
       "views/wallet_bubble_focus_observer.h",
       "wallet_bubble_manager_delegate_impl.cc",
       "wallet_bubble_manager_delegate_impl.h",
-      "webui/email_aliases/email_aliases_bubble_ui.cc",
-      "webui/email_aliases/email_aliases_bubble_ui.h",
       "webui/brave_wallet/ledger/ledger_ui.cc",
       "webui/brave_wallet/ledger/ledger_ui.h",
       "webui/brave_wallet/page_handler/wallet_page_handler.cc",

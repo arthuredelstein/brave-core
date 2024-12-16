@@ -401,6 +401,15 @@ export const mount = (at: HTMLElement, mappingService: MappingService) => {
     </StyleSheetManager>
   )
 }
+
+export const mountModal = (at: HTMLElement, mappingService: MappingService) => {
+  const root = createRoot(at);
+  root.render(
+    <StyleSheetManager target={at}>
+      <EmailAliasModal {...{returnToMain: () => {}, mode: ViewMode.Create, email: 'test@test.com', onSave: () => {}, mappingService}}/>
+    </StyleSheetManager>
+  )
+}
 /*
 export const mountBubble = (at: HTMLElement, mappingService: MappingService) => {
   const root = createRoot(at);
@@ -412,3 +421,4 @@ export const mountBubble = (at: HTMLElement, mappingService: MappingService) => 
 }
 */
   ; (window as any).mountEmailAliases = mount
+  ; (window as any).mountModal = mountModal

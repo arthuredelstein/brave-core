@@ -14,7 +14,7 @@
 #include "brave/components/constants/webui_url_constants.h"
 #include "content/public/common/url_constants.h"
 #include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
-#include "brave/browser/resources/settings/email_aliases_page/grit/email_aliases_generated_map.h"
+#include "brave/components/email_aliases/browser/resources/grit/email_aliases_bubble_generated_map.h"
 
 namespace email_aliases {
 
@@ -23,8 +23,8 @@ EmailAliasesBubbleUI::EmailAliasesBubbleUI(content::WebUI* web_ui)
   auto* source = CreateAndAddWebUIDataSource(
       web_ui,
       kEmailAliasesBubbleHost,
-      kEmailAliasesGenerated,
-      kEmailAliasesGeneratedSize,
+      kEmailAliasesBubbleGenerated,
+      kEmailAliasesBubbleGeneratedSize,
       IDR_EMAIL_ALIASES_BUBBLE_HTML);
   DCHECK(source);
 }

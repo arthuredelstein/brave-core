@@ -5,23 +5,17 @@
 
 import("//brave/components/common/typescript.gni")
 
-#transpile_web_ui("email_aliases") {
-#  entry_points = [ [
-#        "brave_news_internals",
-#        rebase_path("internals.tsx"),
-#      ] ]
+transpile_web_ui("email_aliases_bubble") {
+  entry_points = [ [
+        "email_aliases_bubble",
+        rebase_path("email_aliases_bubble.ts"),
+      ] ]
 
-#  deps = [
-#    "//brave/components/brave_news/common",
-#    "//brave/components/brave_news/common:mojom",
-#    "//brave/components/brave_news/common:mojom_js",
-#  ]
-#
-#  resource_name = "email_aliases"
-#}
+  resource_name = "email_aliases_bubble"
+}
 
 pack_web_resources("generated_resources") {
-  resource_name = "email_aliases"
+  resource_name = "email_aliases_bubble"
   output_dir = "$root_gen_dir/brave/components/email_aliases/browser/resources"
-  deps = [ ":email_aliases" ]
+  deps = [ ":email_aliases_bubble" ]
 }

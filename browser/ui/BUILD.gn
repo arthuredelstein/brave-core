@@ -954,6 +954,7 @@ source_set("ui") {
       "//brave/components/brave_webtorrent:static_resources",
       "//brave/components/webcompat_reporter/browser",
       "//brave/components/webcompat_reporter/ui:generated_resources",
+      "//brave/components/email_aliases/browser/resources:generated_resources",
     ]
   }
 

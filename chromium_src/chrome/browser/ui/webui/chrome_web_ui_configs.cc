@@ -24,6 +24,7 @@
 #include "brave/browser/ui/webui/private_new_tab_page/brave_private_new_tab_ui.h"
 #include "brave/browser/ui/webui/speedreader/speedreader_toolbar_ui.h"
 #include "brave/browser/ui/webui/webcompat_reporter/webcompat_reporter_ui.h"
+#include "brave/browser/ui/webui/settings/brave_email_aliases_handler.h"
 #endif  // !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/ui/webui/brave_adblock_internals_ui.h"
 #include "brave/browser/ui/webui/brave_adblock_ui.h"
@@ -81,4 +82,5 @@ void RegisterChromeWebUIConfigs() {
 #endif  // !BUILDFLAG(IS_ANDROID)
   map.AddWebUIConfig(std::make_unique<BraveAdblockUIConfig>());
   map.AddWebUIConfig(std::make_unique<BraveAdblockInternalsUIConfig>());
+  //map.AddWebUIConfig(std::make_unique<BraveEmailAliasesHandlerConfig>());
 }

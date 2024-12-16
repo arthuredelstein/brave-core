@@ -13,6 +13,9 @@
 #include "base/memory/weak_ptr.h"
 #include "chrome/browser/ui/webui/settings/settings_page_ui_handler.h"
 #include "services/network/public/cpp/simple_url_loader.h"
+#include "brave/components/constants/webui_url_constants.h"
+#include "content/public/browser/webui_config.h"
+#include "content/public/common/url_constants.h"
 
 class GURL;
 class Profile;
@@ -71,4 +74,12 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   base::WeakPtrFactory<BraveEmailAliasesHandler> weak_factory_{this};
 };
 
+/*
+class BraveEmailAliasesHandlerConfig
+    : public content::DefaultWebUIConfig<BraveEmailAliasesHandler> {
+ public:
+  BraveEmailAliasesHandlerConfig()
+      : DefaultWebUIConfig(content::kChromeUIScheme, kEmailAliasesBubbleHost) {}
+};
+*/
 #endif  // BRAVE_BROWSER_UI_WEBUI_SETTINGS_BRAVE_EMAIL_ALIASES_HANDLER_H_

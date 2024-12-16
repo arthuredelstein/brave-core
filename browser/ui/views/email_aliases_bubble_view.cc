@@ -15,6 +15,7 @@
 #include "url/gurl.h"
 #include "ui/views/layout/fill_layout.h"
 #include "brave/components/constants/webui_url_constants.h"
+#include "ui/base/mojom/dialog_button.mojom.h"
 
 // static
 void EmailAliasesBubbleView::Show(Browser* browser) {
@@ -26,13 +27,14 @@ void EmailAliasesBubbleView::Show(Browser* browser) {
 }
 
 EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view, Browser* browser)
-    : BubbleDialogDelegateView(anchor_view, views::BubbleBorder::TOP_RIGHT), browser_(browser) {
+    : BubbleDialogDelegateView(anchor_view, views::BubbleBorder::TOP_CENTER), browser_(browser) {
   SetLayoutManager(std::make_unique<views::FillLayout>());
   
   auto* web_view = new views::WebView(browser->profile());
-  web_view->SetPreferredSize(gfx::Size(300, 400));  // Set reasonable default size
+  web_view->SetPreferredSize(gfx::Size(350, 300));
   AddChildView(web_view);
-  
+  SetButtons(static_cast<int>(ui::mojom::DialogButton::kNone));
+
   // Load URL after adding to view hierarchy
   web_view->LoadInitialURL(GURL(kEmailAliasesBubbleURL));
 }

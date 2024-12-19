@@ -406,7 +406,11 @@ export const mountModal = (at: HTMLElement, mappingService: MappingService) => {
   const root = createRoot(at);
   root.render(
     <StyleSheetManager target={at}>
-      <EmailAliasModal {...{returnToMain: () => {}, mode: ViewMode.Create, email: 'test@test.com', onSave: () => {}, mappingService}}/>
+      <EmailAliasModal
+       returnToMain={() => mappingService.closeBubble()}
+       mode={ViewMode.Create}
+       email={'test@test.com'}
+       mappingService={mappingService}/>
     </StyleSheetManager>
   )
 }

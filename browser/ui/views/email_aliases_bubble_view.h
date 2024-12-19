@@ -21,6 +21,7 @@ class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
 
  public:
   static void Show(Browser* browser);
+  static void Close();
 
   EmailAliasesBubbleView(views::View* anchor_view, Browser* browser);
   ~EmailAliasesBubbleView() override;

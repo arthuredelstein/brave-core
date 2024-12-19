@@ -16,6 +16,7 @@ export interface MappingService {
   onAccountReady (): Promise<boolean>
   cancelAccountRequest (): Promise<void>
   logout (): Promise<void>
+  closeBubble (): Promise<void>
 }
 
 export enum ViewMode {

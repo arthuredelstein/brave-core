@@ -5,6 +5,8 @@
 
 #include "brave/browser/ui/views/email_aliases_bubble_view.h"
 
+#include <memory>
+
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_window.h"
 #include "chrome/browser/ui/views/frame/browser_view.h"
@@ -16,14 +18,26 @@
 #include "ui/views/layout/fill_layout.h"
 #include "brave/components/constants/webui_url_constants.h"
 #include "ui/base/mojom/dialog_button.mojom.h"
+#include "ui/views/widget/widget.h"
 
 // static
+
+std::unique_ptr<views::Widget> widget_ptr_;
+
 void EmailAliasesBubbleView::Show(Browser* browser) {
   auto* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
   views::View* anchor_view = browser_view->GetLocationBarView();
-  views::Widget* const widget = views::BubbleDialogDelegateView::CreateBubble(
-      std::make_unique<EmailAliasesBubbleView>(anchor_view, browser));
+  std::unique_ptr<views::Widget> widget(views::BubbleDialogDelegateView::CreateBubble(
+      std::make_unique<EmailAliasesBubbleView>(anchor_view, browser),
+      views::Widget::InitParams::CLIENT_OWNS_WIDGET));
   widget->Show();
+  widget_ptr_ = std::move(widget);
+}
+
+void EmailAliasesBubbleView::Close() {
+  if (widget_ptr_) {
+    widget_ptr_.reset();
+  }
 }
 
 EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view, Browser* browser)
@@ -32,7 +46,7 @@ EmailAliasesBubbleView::EmailAliasesBubbleView(views::View* anchor_view, Browser
   
   auto* web_view = new views::WebView(browser->profile());
   SetButtons(static_cast<int>(ui::mojom::DialogButton::kNone));
-  web_view->SetPreferredSize(gfx::Size(350, 300));
+  web_view->SetPreferredSize(gfx::Size(450, 300));
   AddChildView(web_view);
 
   // Load URL after adding to view hierarchy

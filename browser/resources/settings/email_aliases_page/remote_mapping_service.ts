@@ -51,4 +51,7 @@ export class RemoteMappingService implements MappingService {
   async cancelAccountRequest(): Promise<void> {
     this.pending_cancellation_ = true
   }
+  async closeBubble(): Promise<void> {
+    await sendWithPromise('email_aliases.closeBubble')
+  }
 }

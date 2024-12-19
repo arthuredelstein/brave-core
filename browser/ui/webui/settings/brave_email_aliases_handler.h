@@ -16,6 +16,7 @@
 #include "brave/components/constants/webui_url_constants.h"
 #include "content/public/browser/webui_config.h"
 #include "content/public/common/url_constants.h"
+#include "content/public/browser/web_contents.h"
 
 class GURL;
 class Profile;
@@ -43,6 +44,7 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void OnGetSessionResponse(const std::string& callback_id, std::optional<std::string> response_body);
   void GetAccountEmail(const base::Value::List& args);
   void Logout(const base::Value::List& args);
+  void CloseBubble(const base::Value::List& args);
 
  private:
   // SettingsPageUIHandler overrides

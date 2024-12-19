@@ -27,6 +27,7 @@
 #include "services/network/public/cpp/simple_url_loader.h"
 #include "url/gurl.h"
 #include "components/prefs/scoped_user_pref_update.h"
+#include "brave/browser/ui/views/email_aliases_bubble_view.h"
 
 #define MAX_RESPONSE_LENGTH 32768
 
@@ -118,6 +119,11 @@ void BraveEmailAliasesHandler::RegisterMessages() {
   web_ui()->RegisterMessageCallback(
       "email_aliases.logout",
       base::BindRepeating(&BraveEmailAliasesHandler::Logout,
+                          base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "email_aliases.closeBubble",
+      base::BindRepeating(&BraveEmailAliasesHandler::CloseBubble,
                           base::Unretained(this)));
 }
 
@@ -402,4 +408,9 @@ void BraveEmailAliasesHandler::Logout(const base::Value::List& args) {
   ClearPref(kEmailAliasesVerificationToken);
   ClearPref(kEmailAliasesAuthToken);
   ResolveJavascriptCallback(base::Value(args[0].GetString()), base::Value());
+}
+
+void BraveEmailAliasesHandler::CloseBubble(const base::Value::List& args) {
+  CHECK_EQ(1U, args.size());
+  EmailAliasesBubbleView::Close();
 }

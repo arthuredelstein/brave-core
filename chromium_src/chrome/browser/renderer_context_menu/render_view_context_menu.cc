@@ -430,7 +430,7 @@ bool BraveRenderViewContextMenu::IsCommandIdEnabled(int id) const {
       return CanOpenSplitViewForWebContents(source_web_contents_->GetWeakPtr());
     case IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS:
       return true;
-    case IDC_NEW_INBOX_ALIAS:
+    case IDC_NEW_EMAIL_ALIAS:
       return true;
     default:
       return RenderViewContextMenu_Chromium::IsCommandIdEnabled(id);
@@ -504,8 +504,10 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
       cosmetic_filters::CosmeticFiltersTabHelper::LaunchContentPicker(
           source_web_contents_);
       break;
-    case IDC_NEW_INBOX_ALIAS:
-      EmailAliasesBubbleView::Show(GetBrowser());
+    case IDC_NEW_EMAIL_ALIAS:
+      if (params_.form_control_type.value() == blink::mojom::FormControlType::kInputEmail || params_.is_content_editable_for_autofill) {
+        EmailAliasesBubbleView::Show(GetBrowser(), params_.field_renderer_id);
+      }
       break;
     default:
       RenderViewContextMenu_Chromium::ExecuteCommand(id, event_flags);
@@ -740,8 +742,8 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
         params_.form_control_type.value() ==
           blink::mojom::FormControlType::kInputEmail) {
     menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
-    menu_model_.AddItemWithStringId(IDC_NEW_INBOX_ALIAS,
-                                    IDS_NEW_INBOX_ALIAS);
+    menu_model_.AddItemWithStringId(IDC_NEW_EMAIL_ALIAS,
+                                    IDS_NEW_EMAIL_ALIAS);
   }
 }
 

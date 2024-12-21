@@ -443,8 +443,8 @@
   <message name="IDS_IDC_SHOW_WAYBACK_MACHINE_BUBBLE">
     Show Wayback Machine bubble
   </message>
-  <message name="IDS_IDC_NEW_INBOX_ALIAS">
-    New Inbox Alias
+  <message name="IDS_IDC_NEW_EMAIL_ALIAS">
+    New Email Alias
   </message>
 
   <!-- Commander composite commands -->

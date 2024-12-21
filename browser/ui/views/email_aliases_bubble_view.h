@@ -20,17 +20,21 @@ class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
   METADATA_HEADER(EmailAliasesBubbleView, views::BubbleDialogDelegateView)
 
  public:
-  static void Show(Browser* browser);
+  static void Show(Browser* browser, uint64_t field_renderer_id);
   static void Close();
+  static void FillFieldWithNewAlias(const std::string& value);
 
-  EmailAliasesBubbleView(views::View* anchor_view, Browser* browser);
+  EmailAliasesBubbleView(views::View* anchor_view, Browser* browser, uint64_t field_renderer_id);
   ~EmailAliasesBubbleView() override;
 
   // views::BubbleDialogDelegateView override;
   void OnWidgetVisibilityChanged(views::Widget* widget, bool visible) override;
 
+  void FillField(const std::string& value);
+
 private:
   raw_ptr<Browser> browser_;
+  uint64_t field_renderer_id_;
 };
 
 #endif  // BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_

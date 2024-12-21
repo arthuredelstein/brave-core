@@ -54,4 +54,7 @@ export class RemoteMappingService implements MappingService {
   async closeBubble(): Promise<void> {
     await sendWithPromise('email_aliases.closeBubble')
   }
+  async fillField(fieldValue: string): Promise<void> {
+    await sendWithPromise('email_aliases.fillField', fieldValue)
+  }
 }

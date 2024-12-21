@@ -45,6 +45,7 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
   void GetAccountEmail(const base::Value::List& args);
   void Logout(const base::Value::List& args);
   void CloseBubble(const base::Value::List& args);
+  void FillField(const base::Value::List& args);
 
  private:
   // SettingsPageUIHandler overrides

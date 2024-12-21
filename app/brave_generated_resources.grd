@@ -355,8 +355,8 @@ Or change later at <ph name="SETTINGS_EXTENIONS_LINK">$2<ex>brave://settings/ext
       </message>
 
       <!-- Adblock contenxt menu -->
-      <message name="IDS_NEW_INBOX_ALIAS" desc="Message for context menu that enables the Inbox Alias generator UI for the page">
-        New Inbox Alias
+      <message name="IDS_NEW_EMAIL_ALIAS" desc="Message for context menu that enables the Email Alias generator UI for the page">
+        New Email Alias
       </message>
 
       <message name="IDS_LOCATION_BAR_ONION_AVAILABLE" desc="Button in location bar to indicate onion available site to open a new tab in tor window.">

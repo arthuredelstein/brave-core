@@ -228,6 +228,7 @@ export const EmailAliasModal = (
     if (proposedAlias !== '') {
       if (mode === ViewMode.Create) {
         await mappingService.createAlias(proposedAlias, proposedNote)
+        await mappingService.fillField(proposedAlias)
       } else {
         await mappingService.updateAlias(proposedAlias, proposedNote, true)
       }

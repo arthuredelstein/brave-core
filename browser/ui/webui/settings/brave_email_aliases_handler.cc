@@ -125,6 +125,11 @@ void BraveEmailAliasesHandler::RegisterMessages() {
       "email_aliases.closeBubble",
       base::BindRepeating(&BraveEmailAliasesHandler::CloseBubble,
                           base::Unretained(this)));
+
+  web_ui()->RegisterMessageCallback(
+      "email_aliases.fillField",
+      base::BindRepeating(&BraveEmailAliasesHandler::FillField,
+                          base::Unretained(this)));
 }
 
 void BraveEmailAliasesHandler::SetNote(const std::string& alias_email, const std::string& note) {
@@ -413,4 +418,13 @@ void BraveEmailAliasesHandler::Logout(const base::Value::List& args) {
 void BraveEmailAliasesHandler::CloseBubble(const base::Value::List& args) {
   CHECK_EQ(1U, args.size());
   EmailAliasesBubbleView::Close();
+}
+
+void BraveEmailAliasesHandler::FillField(const base::Value::List& args) {
+  CHECK_EQ(2U, args.size());
+  AllowJavascript();
+  const auto callback_id = args[0].GetString();
+  const auto field_value = args[1].GetString();
+  EmailAliasesBubbleView::FillFieldWithNewAlias(field_value);
+  ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }

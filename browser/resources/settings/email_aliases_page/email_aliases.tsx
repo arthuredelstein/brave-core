@@ -13,6 +13,7 @@ import { StyleSheetManager } from 'styled-components'
 import Input, { InputEventDetail } from '@brave/leo/react/input'
 import ButtonMenu from '@brave/leo/react/buttonMenu'
 import Tooltip from '@brave/leo/react/tooltip'
+import { loadTimeData } from '$web-common/loadTimeData'
 import {
   AccountRow,
   AliasAnnotation,
@@ -65,8 +66,10 @@ const BraveIcon = ({style}: {style?: React.CSSProperties | undefined}) => (
 
 const Introduction = () => (
   <Card id='introduction'>
-    <h2>Keep your personal email address private</h2>
-    <div>Create unique, random addresses that forward to your Brave account email and can be deleted at any time. Keep your actual email address from being disclosed or used by advertisers. <a href="https://support.brave.com" target='_blank'>Learn more</a></div>
+    <h2>{loadTimeData.getString('emailAliasesShortDescription')}</h2>
+    <div>{loadTimeData.getString('emailAliasesDescription')}
+      <a href="https://support.brave.com" target='_blank'>{loadTimeData.getString('emailAliasesLearnMore')}</a>
+    </div>
   </Card>
 )
 
@@ -76,13 +79,13 @@ const MainEmailDisplay = ({ email, onLogout }: { email: string, onLogout: Functi
     <Row>
       <BraveIcon />
       <MainEmailTextContainer>
-        <MainEmail>{email === '' ? 'Connecting to Brave Account...' : email}</MainEmail>
-        <MainEmailDescription>Brave Account</MainEmailDescription>
+        <MainEmail>{email === '' ? loadTimeData.getString('emailAliasesConnectingToBraveAccount') : email}</MainEmail>
+        <MainEmailDescription>{loadTimeData.getString('emailAliasesBraveAccount')}</MainEmailDescription>
       </MainEmailTextContainer>
     </Row>
-    <ManageAccountLink title='Sign out of Email Aliases' href='#' onClick={(e) => { e.preventDefault(); onLogout() }}>
+    <ManageAccountLink title={loadTimeData.getString('emailAliasesSignOutTitle')} href='#' onClick={(e) => { e.preventDefault(); onLogout() }}>
       <Icon name="outside" />
-      <span style={{ margin: '0.25em' }}>Sign out</span>
+      <span style={{ margin: '0.25em' }}>{loadTimeData.getString('emailAliasesSignOut')}</span>
     </ManageAccountLink>
   </AccountRow>
 </Card>
@@ -111,7 +114,7 @@ const CopyToast = ({ children }: React.PropsWithChildren) => {
     setCopied(true)
     setTimeout(() => setCopied(false), 1000)
   }}>
-    <Tooltip text="✔ Copied to clipboard" mode="mini" visible={copied}>
+    <Tooltip text={copied ? loadTimeData.getString('emailAliasesCopiedToClipboard') : ''} mode="mini" visible={copied}>
       {children}
     </Tooltip>
   </div>
@@ -123,7 +126,7 @@ const AliasItem = ({ alias, onEdit, onDelete }: { alias: Alias, onEdit: Function
     <AliasItemRow>
       <Col>
         <CopyToast>
-          <EmailContainer title='Click to copy address'
+          <EmailContainer title={loadTimeData.getString('emailAliasesClickToCopyAddress')}
             onClick={(event: React.MouseEvent<HTMLElement>) => copyEmailToClipboard(alias.email)}>
             {alias.email}
           </EmailContainer>
@@ -152,11 +155,11 @@ const AliasItem = ({ alias, onEdit, onDelete }: { alias: Alias, onEdit: Function
           </MenuButton>
           <AliasMenuItem
             iconName="edit-pencil"
-            text="Edit"
+            text={loadTimeData.getString('emailAliasesEdit')}
             onClick={() => onEdit()} />
           <AliasMenuItem
             iconName="trash"
-            text="Delete"
+            text={loadTimeData.getString('emailAliasesDelete')}
             onClick={() => onDelete(alias)} />
         </ButtonMenu>
       </AliasControls>
@@ -168,13 +171,13 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
   <Card style={{ borderTop: `1px solid ${color.legacy.divider1}` }}>
     <AliasListIntro>
       <Col>
-        <h2>Your email aliases</h2>
+        <h2>{loadTimeData.getString('emailAliasesListTitle')}</h2>
         <div>
-          Create up to 5 free email aliases to protect your real email address.
+          {loadTimeData.getString('emailAliasesCreateDescription')}
         </div>
       </Col>
       <Button style='flex-grow: 0;'
-        title='Create a new alias email'
+        title={loadTimeData.getString('emailAliasesCreateAliasTitle')}
         id='add-alias'
         onClick={
           async () => {
@@ -183,7 +186,7 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
             onViewChange({ mode: ViewMode.Create, alias: { email: newEmailAlias } })
           }
         }>
-        New alias
+        {loadTimeData.getString('emailAliasesCreateAliasLabel')}
       </Button>
     </AliasListIntro>
     {aliases.map(
@@ -200,7 +203,7 @@ const AliasList = ({ aliases, onViewChange, onListChange, mappingService }: { ma
 
 
 const RefreshButton = ( { onClicked } : { onClicked: Function }) => (
-  <Button title='Suggest another email alias'
+  <Button title={loadTimeData.getString('emailAliasesRefreshButtonTitle')}
     onClick={() => onClicked()}
     kind="plain" style='flex-grow: 0; padding: 0px'>
     <Icon name="refresh" />
@@ -226,9 +229,6 @@ export const EmailAliasModal = (
   const [proposedAlias, setProposedAlias] = React.useState<string>(viewState?.alias?.email ?? '')
   const [proposedNote, setProposedNote] = React.useState<string>(viewState?.alias?.note ?? '')
  // const noteInputRef = React.useRef<HTMLInputElement>(null)
-  const notePlaceholder = mode === ViewMode.Create ?
-    'Enter a note for your new address (optional)' :
-    'Enter a note for your address (optional)'
   const createOrSave = async () => {
     if (proposedAlias !== '') {
       if (mode === ViewMode.Create) {
@@ -252,9 +252,9 @@ export const EmailAliasModal = (
   }, [])
   return (
     <span>
-      <h2>{mode == ViewMode.Create ? 'New email alias' : 'Edit email alias'}</h2>
+      <h2>{mode == ViewMode.Create ? loadTimeData.getString('emailAliasesCreateAliasTitle') : loadTimeData.getString('emailAliasesEditAliasTitle')}</h2>
       <ModalSectionCol style={{}}>
-        <h3 style={{ margin: '0.25em' }}>Email alias</h3>
+        <h3 style={{ margin: '0.25em' }}>{loadTimeData.getString('emailAliasesAliasLabel')}</h3>
       <GeneratedEmailContainer>
         <div>{proposedAlias}</div>
         {mode == ViewMode.Create && <RefreshButton onClicked={regenerateAlias} />}
@@ -265,7 +265,7 @@ export const EmailAliasModal = (
       <h3 style={{ margin: '0.25em' }}>Note</h3>
       <Input id='note-input'
         type='text'
-        placeholder={notePlaceholder}
+        placeholder={loadTimeData.getString('emailAliasesEditNotePlaceholder')}
         value={proposedNote}
         onChange={(detail: InputEventDetail) => setProposedNote(detail.value)}
         onKeyDown={onEnterKey(createOrSave)}
@@ -281,7 +281,7 @@ export const EmailAliasModal = (
         style='flex-grow: 0; margin-inline-start: 1em;'
         kind='filled'
         onClick={() => createOrSave()}>
-        {mode == ViewMode.Create ? 'Create' : 'Save'}
+        {mode == ViewMode.Create ? loadTimeData.getString('emailAliasesCreateAliasButton') : loadTimeData.getString('emailAliasesSaveAliasButton')}
         </Button>
       </ButtonRow>
     </span>
@@ -291,8 +291,8 @@ export const EmailAliasModal = (
 const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, onSubmit: Function }) => {
   const [email, setEmail] = React.useState<string>(initEmail)
   return (<Col>
-    <h3>To get started, sign in or create a Brave account</h3>
-    <div style={{ marginBottom: '1em' }}>Enter your email address to get a secure login link sent to your email. Clicking this link will either create or access a Brave Account and let you use the free Email Aliases service.</div>
+    <h3>{loadTimeData.getString('emailAliasesSignInOrCreateAccount')}</h3>
+    <div style={{ marginBottom: '1em' }}>{loadTimeData.getString('emailAliasesEnterEmailToGetLoginLink')}</div>
       <Row>
         <Input autofocus={true}
           onChange={(detail: InputEventDetail) => setEmail(detail.value)}
@@ -300,10 +300,10 @@ const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, on
           name='email'
           style='flex-grow: 4; margin-inline-end: 1em;'
           type='text'
-          placeholder='Email address'
+          placeholder={loadTimeData.getString('emailAliasesEmailAddressPlaceholder')}
           value={email || ''}
         ></Input>
-        <Button onClick={() => onSubmit(email)} type='submit' style='flex-grow: 1' kind='filled'>Get login link</Button>
+        <Button onClick={() => onSubmit(email)} type='submit' style='flex-grow: 1' kind='filled'>{loadTimeData.getString('emailAliasesGetLoginLinkButton')}</Button>
       </Row>
   </Col>
   )
@@ -311,9 +311,11 @@ const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, on
 
 const AfterSendingEmailMessage = ({mainEmail, tryAgain}: {mainEmail: string, tryAgain: Function}) => (
   <Col style={{flexGrow: 1}}>
-    <h3>A login email is on the way to {mainEmail}</h3>
-    <div style={{ marginBottom: '1em' }}>Click on the secure login link in the email to access your account.</div>
-    <div style={{ marginBottom: '1em' }}>Don't see the email? Check your spam folder or <a href='#' onClick={(e) => { e.preventDefault(); tryAgain()}}>try again.</a></div>
+    <h3>{loadTimeData.getString('emailAliasesLoginEmailOnTheWay')}</h3>
+    <div style={{ marginBottom: '1em' }}>{loadTimeData.getString('emailAliasesClickOnSecureLogin')}</div>
+    <div style={{ marginBottom: '1em' }}>{loadTimeData.getString('emailAliasesDontSeeEmail')}
+      <a href='#' onClick={(e) => { e.preventDefault(); tryAgain()}}>{loadTimeData.getString('emailAliasesTryAgain')}</a>
+    </div>
   </Col>
 )
 
@@ -376,7 +378,7 @@ export const ManagePage = ({ mappingService }:
         (<MainEmailEntryForm viewState={viewState} mainEmail={mainEmail} onEmailSubmitted={onMainEmailSubmitted} restart={restart}/>) :
         (viewState.mode === ViewMode.Startup ?
           (<Row style={{margin: '1em', flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}><Icon name='loading-spinner' />
-            <h3 style={{margin: '0.25em'}}>Connecting to Brave Account...</h3>
+            <h3 style={{margin: '0.25em'}}>{loadTimeData.getString('emailAliasesConnectingToBraveAccount')}</h3>
            </Row>) :
           (<span>
             <MainEmailDisplay onLogout={onLogout} email={mainEmail} />
@@ -420,15 +422,6 @@ export const mountModal = (at: HTMLElement, mappingService: MappingService) => {
     </StyleSheetManager>
   )
 }
-/*
-export const mountBubble = (at: HTMLElement, mappingService: MappingService) => {
-  const root = createRoot(at);
-  root.render(
-    <StyleSheetManager target={at}>
-      <EmailAliasModal {...{returnToMain, viewState, email, onSave, mappingService}}/>
-    </StyleSheetManager>
-  )
-}
-*/
+
   ; (window as any).mountEmailAliases = mount
   ; (window as any).mountModal = mountModal

@@ -47,7 +47,7 @@ RegisterPolymerTemplateModifications({
       <template is="dom-if" route-path="/email-aliases">
         <settings-subpage
             associated-control="[[$$('#paymentManagerButton')]]"
-            page-title="Email Aliases"
+            page-title="${loadTimeData.getString('emailAliasesLabel')}"
             learn-more-url="$i18n{addressesAndPaymentMethodsLearnMoreURL}">
           <settings-email-aliases-page id="emailAliasesSection" prefs="{{prefs}}" />
         </settings-subpage>

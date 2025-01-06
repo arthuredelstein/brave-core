@@ -214,7 +214,7 @@ void BraveEmailAliasesHandler::GetAliases(const base::Value::List& args) {
   AllowJavascript();
   CHECK_EQ(1U, args.size());
   const auto callback_id = args[0].GetString();
-  ApiFetch(GURL(kMappingServiceManageURL + "?status=active"),
+  ApiFetch(GURL(kMappingServiceManageURL + std::string("?status=active")),
            net::HttpRequestHeaders::kGetMethod,
            GetStringPref(kEmailAliasesAuthToken), base::Value::Dict(),
            base::BindOnce(&BraveEmailAliasesHandler::OnGetAliasesResponse,

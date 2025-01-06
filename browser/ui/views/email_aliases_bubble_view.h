@@ -9,11 +9,6 @@
 #include "base/memory/weak_ptr.h"
 #include "ui/views/bubble/bubble_dialog_delegate_view.h"
 
-namespace content {
-class BrowserContext;
-class WebContents;
-}  // namespace content
-
 class Browser;
 
 class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {

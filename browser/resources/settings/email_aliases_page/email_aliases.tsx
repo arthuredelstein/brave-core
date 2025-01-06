@@ -259,7 +259,7 @@ export const EmailAliasModal = (
         <div>{proposedAlias}</div>
         {mode == ViewMode.Create && <RefreshButton onClicked={regenerateAlias} />}
       </GeneratedEmailContainer>
-      <div>{`Emails will be forwarded to ${mainEmail}.`}</div>
+      <div>{loadTimeData.getStringF('emailAliasesEmailsWillBeForwardedTo', mainEmail)}</div>
     </ModalSectionCol>
     <ModalSectionCol>
       <h3 style={{ margin: '0.25em' }}>Note</h3>

@@ -391,6 +391,9 @@
   <message name="IDS_SETTINGS_EMAIL_ALIASES_ALIAS_LABEL" desc="The label for the alias">
     Email alias
   </message>
+  <message name="IDS_SETTINGS_EMAIL_ALIASES_EMAILS_WILL_BE_FORWARDED_TO" desc="The label explaining where emails will be forwarded">
+    Emails will be forwarded to <ph name="MAIN_EMAIL">$1<ex>address@example.com</ex></ph>
+  </message>
   <message name="IDS_SETTINGS_EMAIL_ALIASES_EDIT_ALIAS_TITLE" desc="The title for the edit alias">
     Edit email alias
   </message>

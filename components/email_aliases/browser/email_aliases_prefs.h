@@ -6,7 +6,7 @@
 #ifndef BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_
 #define BRAVE_COMPONENTS_EMAIL_ALIASES_BROWSER_EMAIL_ALIASES_PREFS_H_
 
-namespace user_prefs {  
+namespace user_prefs {
 class PrefRegistrySyncable;
 }
 

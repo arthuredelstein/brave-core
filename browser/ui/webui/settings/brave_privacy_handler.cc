@@ -5,8 +5,10 @@
 
 #include "brave/browser/ui/webui/settings/brave_privacy_handler.h"
 
+#include "base/feature_list.h"
 #include "base/functional/bind.h"
 #include "base/values.h"
+#include "brave/browser/brave_browser_features.h"
 #include "brave/components/ai_chat/core/browser/utils.h"
 #include "brave/components/ai_chat/core/common/features.h"
 #include "brave/components/brave_shields/core/common/features.h"
@@ -23,8 +25,6 @@
 #include "content/public/browser/web_ui.h"
 #include "content/public/browser/web_ui_data_source.h"
 #include "third_party/blink/public/common/peerconnection/webrtc_ip_handling_policy.h"
-#include "base/feature_list.h"
-#include "brave/browser/brave_browser_features.h"
 
 #if BUILDFLAG(ENABLE_REQUEST_OTR)
 #include "brave/components/request_otr/common/features.h"

@@ -19,9 +19,9 @@
 #include "brave/browser/brave_rewards/rewards_util.h"
 #include "brave/browser/brave_wallet/brave_wallet_context_utils.h"
 #include "brave/browser/ntp_background/view_counter_service_factory.h"
+#include "brave/browser/resources/settings/email_aliases_page/grit/email_aliases_generated_map.h"
 #include "brave/browser/resources/settings/grit/brave_settings_resources_map.h"
 #include "brave/browser/resources/settings/shortcuts_page/grit/commands_generated_map.h"
-#include "brave/browser/resources/settings/email_aliases_page/grit/email_aliases_generated_map.h"
 #include "brave/browser/shell_integrations/buildflags/buildflags.h"
 #include "brave/browser/ui/commands/accelerator_service_factory.h"
 #include "brave/browser/ui/tabs/features.h"
@@ -151,7 +151,7 @@ void BraveSettingsUI::AddResources(content::WebUIDataSource* html_source,
 
   for (size_t i = 0; i < kEmailAliasesGeneratedSize; ++i) {
     html_source->AddResourcePath(kEmailAliasesGenerated[i].path,
-                                  kEmailAliasesGenerated[i].id);
+                                 kEmailAliasesGenerated[i].id);
   }
 
   html_source->AddBoolean("isSyncDisabled", !syncer::IsSyncAllowedByFlag());

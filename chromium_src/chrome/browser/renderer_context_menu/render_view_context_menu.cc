@@ -12,6 +12,7 @@
 #include "base/feature_list.h"
 #include "base/strings/string_util.h"
 #include "brave/browser/autocomplete/brave_autocomplete_scheme_classifier.h"
+#include "brave/browser/brave_browser_features.h"
 #include "brave/browser/brave_shields/brave_shields_tab_helper.h"
 #include "brave/browser/cosmetic_filters/cosmetic_filters_tab_helper.h"
 #include "brave/browser/renderer_context_menu/brave_spelling_options_submenu_observer.h"
@@ -19,6 +20,7 @@
 #include "brave/browser/ui/browser_commands.h"
 #include "brave/browser/ui/browser_dialogs.h"
 #include "brave/browser/ui/tabs/features.h"
+#include "brave/browser/ui/views/email_aliases_bubble_view.h"
 #include "brave/components/ai_rewriter/common/buildflags/buildflags.h"
 #include "brave/components/tor/buildflags/buildflags.h"
 #include "brave/grit/brave_theme_resources.h"
@@ -35,10 +37,7 @@
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/paint_vector_icon.h"
-#include "brave/browser/ui/views/email_aliases_bubble_view.h"
 #include "url/origin.h"
-#include "base/feature_list.h"
-#include "brave/browser/brave_browser_features.h"
 
 #if BUILDFLAG(ENABLE_TOR)
 #include "brave/browser/tor/tor_profile_manager.h"
@@ -507,7 +506,9 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
           source_web_contents_);
       break;
     case IDC_NEW_EMAIL_ALIAS:
-      if (params_.form_control_type.value() == blink::mojom::FormControlType::kInputEmail || params_.is_content_editable_for_autofill) {
+      if (params_.form_control_type.value() ==
+              blink::mojom::FormControlType::kInputEmail ||
+          params_.is_content_editable_for_autofill) {
         EmailAliasesBubbleView::Show(GetBrowser(), params_.field_renderer_id);
       }
       break;
@@ -743,11 +744,10 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
 
   if (base::FeatureList::IsEnabled(features::kBraveEmailAliases) &&
       params_.form_control_type &&
-        params_.form_control_type.value() ==
+      params_.form_control_type.value() ==
           blink::mojom::FormControlType::kInputEmail) {
     menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
-    menu_model_.AddItemWithStringId(IDC_NEW_EMAIL_ALIAS,
-                                    IDS_NEW_EMAIL_ALIAS);
+    menu_model_.AddItemWithStringId(IDC_NEW_EMAIL_ALIAS, IDS_NEW_EMAIL_ALIAS);
   }
 }
 

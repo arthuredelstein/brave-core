@@ -9,13 +9,12 @@
 #include <utility>
 
 #include "brave/browser/ui/webui/brave_webui_source.h"
-#include "chrome/browser/profiles/profile.h"
-#include "components/grit/brave_components_resources.h"
+#include "brave/browser/ui/webui/settings/brave_email_aliases_handler.h"
 #include "brave/components/constants/webui_url_constants.h"
-#include "content/public/common/url_constants.h"
-#include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
 #include "brave/components/email_aliases/browser/resources/grit/email_aliases_bubble_generated_map.h"
-#include "brave/browser/ui/webui/settings/brave_email_aliases_handler.h" 
+#include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"
+#include "components/grit/brave_components_resources.h"
 #include "content/public/common/url_constants.h"
 
 namespace email_aliases {
@@ -23,11 +22,8 @@ namespace email_aliases {
 EmailAliasesBubbleUI::EmailAliasesBubbleUI(content::WebUI* web_ui)
     : content::WebUIController(web_ui) {
   auto* source = CreateAndAddWebUIDataSource(
-      web_ui,
-      kEmailAliasesBubbleHost,
-      kEmailAliasesBubbleGenerated,
-      kEmailAliasesBubbleGeneratedSize,
-      IDR_EMAIL_ALIASES_BUBBLE_HTML);
+      web_ui, kEmailAliasesBubbleHost, kEmailAliasesBubbleGenerated,
+      kEmailAliasesBubbleGeneratedSize, IDR_EMAIL_ALIASES_BUBBLE_HTML);
   web_ui->AddMessageHandler(std::make_unique<BraveEmailAliasesHandler>());
   DCHECK(source);
 }
@@ -38,9 +34,10 @@ std::string EmailAliasesBubbleUI::GetWebUIName() {
   return kEmailAliasesBubbleHost;
 }
 
-bool EmailAliasesBubbleUIConfig::IsWebUIEnabled(content::BrowserContext* browser_context) {
+bool EmailAliasesBubbleUIConfig::IsWebUIEnabled(
+    content::BrowserContext* browser_context) {
   return true;
-} 
+}
 
 bool EmailAliasesBubbleUIConfig::ShouldAutoResizeHost() {
   return true;
@@ -49,4 +46,3 @@ bool EmailAliasesBubbleUIConfig::ShouldAutoResizeHost() {
 WEB_UI_CONTROLLER_TYPE_IMPL(EmailAliasesBubbleUI)
 
 }  // namespace email_aliases
-

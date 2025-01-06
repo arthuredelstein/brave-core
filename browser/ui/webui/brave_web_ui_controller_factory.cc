@@ -12,6 +12,7 @@
 #include "base/memory/ptr_util.h"
 #include "base/no_destructor.h"
 #include "brave/browser/brave_ads/ads_service_factory.h"
+#include "brave/browser/brave_browser_features.h"
 #include "brave/browser/brave_news/brave_news_controller_factory.h"
 #include "brave/browser/brave_rewards/rewards_util.h"
 #include "brave/browser/ethereum_remote_client/buildflags/buildflags.h"
@@ -39,7 +40,6 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/url_utils.h"
 #include "url/gurl.h"
-#include "brave/browser/brave_browser_features.h"
 
 #if !BUILDFLAG(IS_ANDROID)
 #include "brave/browser/brave_wallet/brave_wallet_context_utils.h"
@@ -169,7 +169,8 @@ WebUIController* NewWebUI(WebUI* web_ui, const GURL& url) {
       return new ai_rewriter::AIRewriterUI(web_ui);
     }
 #endif
-  } else if (host == kEmailAliasesHost && base::FeatureList::IsEnabled(features::kBraveEmailAliases)) {
+  } else if (host == kEmailAliasesHost &&
+             base::FeatureList::IsEnabled(features::kBraveEmailAliases)) {
     return new email_aliases::EmailAliasesBubbleUI(web_ui);
   }
   return nullptr;

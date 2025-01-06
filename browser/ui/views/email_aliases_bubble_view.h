@@ -24,7 +24,9 @@ class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
   static void Close();
   static void FillFieldWithNewAlias(const std::string& value);
 
-  EmailAliasesBubbleView(views::View* anchor_view, Browser* browser, uint64_t field_renderer_id);
+  EmailAliasesBubbleView(views::View* anchor_view,
+                         Browser* browser,
+                         uint64_t field_renderer_id);
   ~EmailAliasesBubbleView() override;
 
   // views::BubbleDialogDelegateView override;
@@ -32,7 +34,7 @@ class EmailAliasesBubbleView : public views::BubbleDialogDelegateView {
 
   void FillField(const std::string& value);
 
-private:
+ private:
   raw_ptr<Browser> browser_;
   uint64_t field_renderer_id_;
 };

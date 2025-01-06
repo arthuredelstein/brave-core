@@ -1,12 +1,14 @@
-/* Copyright (c) 2024 The Brave Authors. All rights reserved.
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this file,
- * You can obtain one at http://mozilla.org/MPL/2.0/. */
+// Copyright (c) 2025 The Brave Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this file,
+// You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "brave/browser/ui/webui/settings/brave_email_aliases_handler.h"
 
 #include <iostream>
+#include <memory>
 #include <string>
+#include <utility>
 
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
@@ -31,15 +33,15 @@
 
 #define MAX_RESPONSE_LENGTH 32768
 
-const std::string kAccountsServiceRequestURL =
+const char kAccountsServiceRequestURL[] =
     "https://accounts.bsg.bravesoftware.com/v2/verify/init";
-const std::string kAccountsServiceVerifyURL =
+const char kAccountsServiceVerifyURL[] =
     "https://accounts.bsg.bravesoftware.com/v2/verify/result";
-const std::string kMappingServiceManageURL =
+const char kMappingServiceManageURL[] =
     "https://aliases.bsg.bravesoftware.com/manage";
-const std::string kMappingServiceGenerateURL =
+const char kMappingServiceGenerateURL[] =
     "https://aliases.bsg.bravesoftware.com/generate";
-const std::string kBraveApiKey = "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK";
+const char kBraveApiKey[] = "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK";
 
 const net::NetworkTrafficAnnotationTag traffic_annotation =
     net::DefineNetworkTrafficAnnotation("email_aliases_mapping_service", R"(

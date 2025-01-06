@@ -41,21 +41,26 @@ class MockMappingService implements MappingService {
       this.aliases_.set(alias.email, alias)
     }
   }
+
   async createAlias (email: string, note: string): Promise<void> {
     const alias = { email, note }
     this.aliases_.set(email, alias)
   }
+
   async getAliases (): Promise<Alias[]> {
     return [...this.aliases_.values()]
   }
+
   async updateAlias (email: string, note: string, status: boolean): Promise<void> {
     const alias = { email, note }
     this.aliases_.set(email, alias)
   }
+
   async deleteAlias (email: string): Promise<void> {
     console.log("attempting to delete!!!")
     this.aliases_.delete(email)
   }
+
   async generateAlias (): Promise<string> {
     let generated: string = ''
     do {
@@ -63,9 +68,11 @@ class MockMappingService implements MappingService {
     } while (this.aliases_.has(generated))
     return generated
   }
+
   async getAccountEmail (): Promise<string | undefined> {
     return this.accountEmail_
   }
+
   async requestAccount (accountEmail: string): Promise<void> {
     this.accountState_ = AccountState.AwaitingAccount
     this.accountRequestId_ = window.setTimeout(() => {
@@ -73,19 +80,23 @@ class MockMappingService implements MappingService {
       this.accountState_ = AccountState.AccountReady
     }, 5000);
   }
+
   async getAccountState (): Promise<AccountState> {
     return this.accountState_
   }
+
   async onAccountReady (): Promise<boolean> {
     while (this.accountState_ === AccountState.AwaitingAccount) {
       await new Promise(resolve => setTimeout(resolve, 250));
     }
     return this.accountState_ === AccountState.AccountReady
   }
+
   async cancelAccountRequest (): Promise<void> {
     this.accountState_ = AccountState.NoAccount
     window.clearTimeout(this.accountRequestId_)
   }
+
   async logout (): Promise<void> {
     this.accountState_ = AccountState.NoAccount
   }

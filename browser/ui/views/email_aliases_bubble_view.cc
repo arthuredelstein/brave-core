@@ -6,6 +6,8 @@
 #include "brave/browser/ui/views/email_aliases_bubble_view.h"
 
 #include <memory>
+#include <string>
+#include <utility>
 
 #include "brave/components/constants/webui_url_constants.h"
 #include "chrome/browser/profiles/profile.h"

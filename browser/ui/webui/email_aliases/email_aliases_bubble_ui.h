@@ -6,6 +6,8 @@
 #ifndef BRAVE_BROWSER_UI_WEBUI_EMAIL_ALIASES_EMAIL_ALIASES_BUBBLE_UI_H_
 #define BRAVE_BROWSER_UI_WEBUI_EMAIL_ALIASES_EMAIL_ALIASES_BUBBLE_UI_H_
 
+#include <string>
+
 #include "base/memory/raw_ptr.h"
 #include "brave/components/constants/webui_url_constants.h"
 #include "chrome/browser/ui/webui/top_chrome/top_chrome_webui_config.h"

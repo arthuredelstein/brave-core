@@ -22,14 +22,14 @@ RegisterPolymerTemplateModifications({
   'settings-autofill-page': (templateContent) => {
     const isEmailAliasesFeatureEnabled = loadTimeData.getBoolean('isEmailAliasesFeatureEnabled')
     if (isEmailAliasesFeatureEnabled) {
-    const parentManagerButton = templateContent.getElementById('paymentManagerButton')
-    parentManagerButton.parentNode.insertBefore(html`
-      <cr-link-row id="emailAliasesButton"
-          start-icon="email-shield"
-          label="${loadTimeData.getString('emailAliasesLabel')}"
-          on-click="onEmailAliasesClicked_"
-          role-description="$i18n{subpageArrowRoleDescription}"></cr-link-row>
-    `, parentManagerButton)
+      const parentManagerButton = templateContent.getElementById('paymentManagerButton')
+      parentManagerButton.parentNode.insertBefore(html`
+        <cr-link-row id="emailAliasesButton"
+            start-icon="email-shield"
+            label="${loadTimeData.getString('emailAliasesLabel')}"
+            on-click="onEmailAliasesClicked_"
+            role-description="$i18n{subpageArrowRoleDescription}"></cr-link-row>
+      `, parentManagerButton)
     }
     templateContent.appendChild(html`
         <settings-toggle-button

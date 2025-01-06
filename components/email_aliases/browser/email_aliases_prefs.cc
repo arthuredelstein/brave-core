@@ -3,9 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "brave/components/email_aliases/browser/email_aliases_prefs.h"
+
+#include <string>
+
 #include "brave/components/email_aliases/browser/pref_names.h"
 #include "components/prefs/pref_registry_simple.h"
 #include "components/sync_preferences/pref_service_syncable.h"
+
 namespace email_aliases {
 
 using user_prefs::PrefRegistrySyncable;

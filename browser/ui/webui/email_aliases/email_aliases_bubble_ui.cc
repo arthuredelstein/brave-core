@@ -5,6 +5,7 @@
 
 #include "brave/browser/ui/webui/email_aliases/email_aliases_bubble_ui.h"
 
+#include <memory>
 #include <string>
 #include <utility>
 

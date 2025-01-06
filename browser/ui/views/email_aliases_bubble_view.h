@@ -6,6 +6,8 @@
 #ifndef BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_
 #define BRAVE_BROWSER_UI_VIEWS_EMAIL_ALIASES_BUBBLE_VIEW_H_
 
+#include <string>
+
 #include "base/memory/weak_ptr.h"
 #include "ui/views/bubble/bubble_dialog_delegate_view.h"
 

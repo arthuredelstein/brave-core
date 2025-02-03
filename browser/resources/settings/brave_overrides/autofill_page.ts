@@ -17,6 +17,7 @@ RegisterPolymerComponentReplacement(
   'settings-autofill-page', BraveSettingsAutofillPageElement
 )
 
+
 RegisterPolymerTemplateModifications({
   'settings-autofill-page': (templateContent) => {
     const isEmailAliasesFeatureEnabled = loadTimeData.getBoolean('isEmailAliasesFeatureEnabled')

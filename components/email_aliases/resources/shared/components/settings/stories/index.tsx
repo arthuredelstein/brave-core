@@ -100,6 +100,14 @@ class MockMappingService implements MappingService {
   async logout (): Promise<void> {
     this.accountState_ = AccountState.NoAccount
   }
+
+  async closeBubble (): Promise<void> {
+    console.log("closing bubble")
+  }
+
+  async fillField (value: string): Promise<void> {
+    console.log("filling field", value)
+  }
 }
 
 const mockMappingServiceSingleton = new MockMappingService()

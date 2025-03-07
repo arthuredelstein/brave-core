@@ -235,6 +235,18 @@ export const EmailAliasModal = (
         setLimitReached(aliases.length >= MAX_ALIASES)
       })
     }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        returnToMain()
+      }
+      if (event.key === 'Enter') {
+        createOrSave()
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [])
   return (
     <S.InnerModal>
@@ -259,7 +271,6 @@ export const EmailAliasModal = (
               maxlength={255}
               value={proposedNote}
               onChange={(detail: InputEventDetail) => setProposedNote(detail.value)}
-              onKeyDown={onEnterKey(createOrSave)}
               style='margin: 0.25em 0em'>
             </Input>
             {mode == ViewMode.Edit && viewState?.alias?.domains && <div>getLocale('emailAliasesUsedBy', viewState?.alias?.domains?.join(', '))</div>}
@@ -273,7 +284,10 @@ export const EmailAliasModal = (
           </Button>}
         </span>
         <span>
-          <Button onClick={() => returnToMain()} kind='plain' style='flex-grow: 0;'>
+          <Button onClick={() => returnToMain()}
+            kind='plain'
+            style='flex-grow: 0;'
+            type='reset'>
             {getLocale('emailAliasesCancelButton')}
           </Button>
           <Button
@@ -291,6 +305,15 @@ export const EmailAliasModal = (
 
 const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, onSubmit: Function }) => {
   const [email, setEmail] = React.useState<string>(initEmail)
+  const [error, setError] = React.useState<string | undefined>(undefined)
+  const attemptSubmit = async (email: string) => {
+    try {
+      setError(undefined)
+      await onSubmit(email)
+    } catch (e) {
+      setError(e.message)
+    }
+  }
   return (<S.Col>
     <h3>{getLocale('emailAliasesSignInOrCreateAccount')}</h3>
     <div style={{ marginBottom: '1em' }}>{getLocale('emailAliasesEnterEmailToGetLoginLink')}</div>
@@ -304,8 +327,14 @@ const BeforeSendingEmailForm = ({ initEmail, onSubmit }: { initEmail: string, on
           placeholder={getLocale('emailAliasesEmailAddressPlaceholder')}
           value={email || ''}
         ></Input>
-        <Button onClick={() => onSubmit(email)} type='submit' style='flex-grow: 1' kind='filled'>{getLocale('emailAliasesGetLoginLinkButton')}</Button>
+        <Button onClick={() => attemptSubmit(email)}
+          type='submit'
+          style='flex-grow: 1'
+          kind='filled'>
+          {getLocale('emailAliasesGetLoginLinkButton')}
+        </Button>
       </S.Row>
+      {error && <S.ErrorMessage>{getLocale('emailAliasesFailedToGetLoginLink')}</S.ErrorMessage>}
   </S.Col>
   )
 }

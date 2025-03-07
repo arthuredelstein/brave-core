@@ -181,3 +181,7 @@ export const CopyButtonWrapper = styled.div`
   padding: 0.25em;
   border-radius: 0.5em;
 `
+
+export const ErrorMessage = styled.div`
+  color: var(--leo-color-systemfeedback-error-text);
+`

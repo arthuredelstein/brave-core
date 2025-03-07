@@ -30,6 +30,8 @@
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
 #include "url/gurl.h"
+#include "services/network/public/mojom/url_response_head.mojom.h"
+#include "net/http/http_status_code.h"
 
 #define MAX_RESPONSE_LENGTH 32768
 
@@ -193,6 +195,29 @@ void BraveEmailAliasesHandler::ApiFetch(
       std::move(download_to_string_callback), MAX_RESPONSE_LENGTH);
 }
 
+bool BraveEmailAliasesHandler::HandleNetError(const std::string& callback_id,
+                                              std::optional<std::string> response_body) {
+  bool error_found = false;
+  std::string error_message = "";
+  auto net_error = simple_url_loader_->NetError();
+  if (net_error != net::OK) {
+    error_found = true;
+    error_message = "Net Error: " + std::to_string(net_error);
+  }
+  auto http_error = simple_url_loader_->ResponseInfo()->headers->response_code();
+  if (http_error != net::HTTP_OK) {
+    // May override a net_error message; http error is more specific
+    error_message = "HTTP Error: " + std::to_string(http_error);
+    error_found = true;
+  }
+  if (error_found) {
+    DLOG(ERROR) << error_message << " " << response_body.value_or("");
+    RejectJavascriptCallback(base::Value(callback_id),
+                             base::Value(error_message));
+  }
+  return error_found;
+}
+
 void BraveEmailAliasesHandler::GenerateAlias(const base::Value::List& args) {
   AllowJavascript();
   CHECK_EQ(1U, args.size());
@@ -207,6 +232,9 @@ void BraveEmailAliasesHandler::GenerateAlias(const base::Value::List& args) {
 void BraveEmailAliasesHandler::OnGenerateAliasResponse(
     const std::string& callback_id,
     std::optional<std::string> response_body) {
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   if (response_body) {
     ResolveJavascriptCallback(base::Value(callback_id), response_body.value());
   } else {
@@ -229,6 +257,9 @@ void BraveEmailAliasesHandler::GetAliases(const base::Value::List& args) {
 void BraveEmailAliasesHandler::OnGetAliasesResponse(
     const std::string& callback_id,
     std::optional<std::string> response_body) {
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   if (!response_body) {
     RejectJavascriptCallback(base::Value(callback_id),
                              base::Value("no response body"));
@@ -278,6 +309,9 @@ void BraveEmailAliasesHandler::OnCreateAliasResponse(
     const std::string& alias_email,
     const std::string& note,
     std::optional<std::string> response_body) {
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   SetNote(alias_email, note);
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
@@ -299,6 +333,9 @@ void BraveEmailAliasesHandler::OnDeleteAliasResponse(
     const std::string& callback_id,
     const std::string& alias_email,
     std::optional<std::string> response_body) {
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   DeleteNote(alias_email);
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
@@ -329,6 +366,9 @@ void BraveEmailAliasesHandler::OnUpdateAliasResponse(
     const std::string& alias_email,
     const std::string& note,
     std::optional<std::string> response_body) {
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   SetNote(alias_email, note);
   ResolveJavascriptCallback(base::Value(callback_id), base::Value());
 }
@@ -349,6 +389,9 @@ void BraveEmailAliasesHandler::OnGetSessionResponse(
     const std::string& callback_id,
     std::optional<std::string> response_body) {
   AllowJavascript();
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   if (response_body) {
     std::optional<base::Value> response_value =
         base::JSONReader::Read(response_body.value());
@@ -388,6 +431,9 @@ void BraveEmailAliasesHandler::OnRequestAccountResponse(
     const std::string& account_email,
     std::optional<std::string> response_body) {
   AllowJavascript();
+  if (!HandleNetError(callback_id, response_body)) {
+    return;
+  }
   if (response_body) {
     std::optional<base::Value> response_value =
         base::JSONReader::Read(response_body.value());

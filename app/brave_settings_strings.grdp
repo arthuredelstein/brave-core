@@ -427,6 +427,9 @@
   <message name="IDS_SETTINGS_EMAIL_ALIASES_ENTER_EMAIL_TO_GET_LOGIN_LINK" desc="The label for the enter email to get login link">
     Enter your email address to get a secure login link sent to your email. Clicking this link will either create or access a Brave Account and let you use the free Email Aliases service.
   </message>
+  <message name="IDS_SETTINGS_EMAIL_ALIASES_FAILED_TO_GET_LOGIN_LINK" desc="The error message when attempting to get a login link fails">
+    Failed to get login link
+  </message>
   <message name="IDS_SETTINGS_EMAIL_ALIASES_GET_LOGIN_LINK_BUTTON" desc="The label for the get login link button">
     Get login link
   </message>

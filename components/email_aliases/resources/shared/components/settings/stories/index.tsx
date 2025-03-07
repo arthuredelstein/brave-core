@@ -38,6 +38,7 @@ provideStrings({
   emailAliasesSaveAliasButton: 'Save',
   emailAliasesSignInOrCreateAccount: 'To get started, sign in or create a Brave account',
   emailAliasesEnterEmailToGetLoginLink: 'Enter your email address to get a secure login link sent to your email. Clicking this link will either create or access a Brave Account and let you use the free Email Aliases service.',
+  emailAliasesFailedToGetLoginLink: 'Failed to get login link',
   emailAliasesGetLoginLinkButton: 'Get login link',
   emailAliasesEmailAddressPlaceholder: 'Email address',
   emailAliasesLoginEmailOnTheWay: 'A login email is on the way to $1',

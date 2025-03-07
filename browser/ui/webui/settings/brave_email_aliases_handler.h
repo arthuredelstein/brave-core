@@ -80,6 +80,8 @@ class BraveEmailAliasesHandler : public settings::SettingsPageUIHandler {
                 const std::optional<std::string>& bearer_token,
                 const base::Value::Dict& bodyValue,
                 BodyAsStringCallback download_to_string_callback);
+  bool HandleNetError(const std::string& callback_id,
+                     std::optional<std::string> response_body);
 
   void SetNote(const std::string& alias_email, const std::string& note);
   void DeleteNote(const std::string& alias_email);

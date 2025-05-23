@@ -13,6 +13,18 @@ import {
 } from 'gen/brave/components/email_aliases/email_aliases.mojom.m'
 import { clickLeoButton } from './test_utils'
 
+jest.mock('$web-common/locale', () => ({
+  getLocale: (key: string) => {
+    return key
+  },
+  formatMessage: (key: string) => {
+    return key
+  },
+  formatLocale: (key: string) => {
+    return key
+  }
+}))
+
 const mockEmailAliasesService: EmailAliasesServiceInterface = {
   requestAuthentication: jest.fn(),
   cancelAuthenticationOrLogout: jest.fn(),
@@ -30,7 +42,8 @@ describe('MainEmailEntryForm', () => {
     render(<MainEmailEntryForm
       authState={
         { status: AuthenticationStatus.kUnauthenticated,
-        email: mockAuthEmail }}
+          email: mockAuthEmail,
+          errorMessage: undefined }}
       emailAliasesService={mockEmailAliasesService} />)
 
     const signUpButton = screen.getByText('emailAliasesGetLoginLinkButton')
@@ -42,4 +55,17 @@ describe('MainEmailEntryForm', () => {
       .toHaveBeenCalledWith(mockAuthEmail)
   })
 
+  it('handles error when requesting authentication', async () => {
+    const mockAuthEmail = 'test@example.com'
+
+    render(<MainEmailEntryForm
+      authState={{
+        status: AuthenticationStatus.kAuthenticating,
+        email: mockAuthEmail,
+        errorMessage: 'mockErrorMessage'
+      }}
+      emailAliasesService={mockEmailAliasesService} />)
+
+    expect(screen.getByText(/mockErrorMessage/i)).toBeInTheDocument()
+  })
 })

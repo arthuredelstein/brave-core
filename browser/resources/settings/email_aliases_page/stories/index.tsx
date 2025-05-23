@@ -64,6 +64,8 @@ provideStrings({
     'email to access your account.',
   emailAliasesDontSeeEmail: 'Don\'t see the email? Check your spam folder ' +
     'or $1try again$2.',
+  emailAliasesAuthError: 'Error authenticating with Brave Account.',
+  emailAliasesAuthTryAgain: 'Please $1try again$2.',
   emailAliasesBubbleDescription: 'Create a random email address that ' +
     'forwards to your inbox while keeping your personal email private.',
   emailAliasesBubbleLimitReached: 'You have reached the limit of 5 free ' +
@@ -157,14 +159,20 @@ class StubEmailAliasesService implements EmailAliasesServiceInterface {
     this.observers.forEach(observer => {
       observer.onAuthStateChanged({
         status: AuthenticationStatus.kAuthenticating,
-        email: email
+        email: email,
+        errorMessage: undefined
       })
     })
     this.accountRequestId = window.setTimeout(() => {
       this.observers.forEach(observer => {
-        observer.onAuthStateChanged({
+        observer.onAuthStateChanged(Math.random() < 0.3 ? {
           status: AuthenticationStatus.kAuthenticated,
-          email: email
+          email: email,
+          errorMessage: undefined
+        } : {
+          status: AuthenticationStatus.kAuthenticating,
+          email: '',
+          errorMessage: getLocale('emailAliasesAuthError')
         })
       })
     }, 5000);
@@ -175,7 +183,8 @@ class StubEmailAliasesService implements EmailAliasesServiceInterface {
     this.observers.forEach(observer => {
       observer.onAuthStateChanged({
         status: AuthenticationStatus.kUnauthenticated,
-        email: ''
+        email: '',
+        errorMessage: undefined
       })
     })
   }

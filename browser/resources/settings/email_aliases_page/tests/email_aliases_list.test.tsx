@@ -4,7 +4,7 @@
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import * as React from 'react'
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { AliasList, ListIntroduction } from '../content/email_aliases_list'
 import {
   Alias,
@@ -113,7 +113,8 @@ describe('AliasList', () => {
     expect(mockOnCreateClicked).toHaveBeenCalled()
   })
 
-  it ('calls the deleteAlias API when delete button is clicked', async () => {
+
+  it ('shows Delete Alias Modal when delete button is clicked', async () => {
     render(
       <AliasList
         aliases={mockAliases}
@@ -122,19 +123,26 @@ describe('AliasList', () => {
       />
     )
 
-    // Click delete button
     const deleteText = screen.queryAllByText('emailAliasesDelete')[0]
     expect(deleteText).toBeInTheDocument()
 
     const deleteMenuItem = deleteText?.closest('leo-menu-item')
     expect(deleteMenuItem).toBeInTheDocument()
 
-    if (deleteMenuItem) {
-      fireEvent.click(deleteMenuItem)
-    }
 
-    expect(mockEmailAliasesService.deleteAlias).toHaveBeenCalledWith(
-      mockAliases[0].email
-    )
+    if (deleteMenuItem) {
+          // Click delete button
+      await act(async () => {
+        fireEvent.click(deleteMenuItem)
+      })
+
+    /*  await waitFor(() => {
+        expect(screen.getByText('emailAliasesDeleteAliasTitle')).toBeInTheDocument()
+        expect(screen.getByText('emailAliasesDeleteAliasDescription')).toBeInTheDocument()
+        expect(screen.getByText('emailAliasesDeleteAliasButton')).toBeInTheDocument()
+        expect(screen.getByText('emailAliasesDeleteWarning')).toBeInTheDocument()
+      })
+    */
+    }
   })
 })

@@ -25,3 +25,11 @@ static_library("features") {
 
   public_deps = [ "//base" ]
 }
+
+component("common") {
+  deps = ["mojom"]
+  sources = [
+    "email_aliases_service.cc",
+    "email_aliases_service.h",
+  ]
+}

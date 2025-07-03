@@ -22,6 +22,7 @@
 #include "brave/browser/net/global_privacy_control_network_delegate_helper.h"
 #include "brave/browser/net/search_ads_header_network_delegate_helper.h"
 #include "brave/components/brave_shields/core/common/features.h"
+#include "brave/components/brave_user_agent/common/features.h"
 #include "brave/components/constants/pref_names.h"
 #include "chrome/browser/browser_process.h"
 #include "content/public/browser/browser_task_traits.h"
@@ -32,6 +33,7 @@
 #include "net/base/features.h"
 #include "net/base/net_errors.h"
 #include "third_party/blink/public/common/features.h"
+#include "brave/browser/net/brave_user_agent_network_delegate_helper.h"
 
 static bool IsInternalScheme(std::shared_ptr<brave::BraveRequestInfo> ctx) {
   DCHECK(ctx);
@@ -75,6 +77,12 @@ void BraveRequestHandler::SetupCallbacks() {
   brave::OnBeforeStartTransactionCallback start_transaction_callback =
       base::BindRepeating(brave::OnBeforeStartTransaction_SiteHacksWork);
   before_start_transaction_callbacks_.push_back(start_transaction_callback);
+
+  if (base::FeatureList::IsEnabled(brave_user_agent::features::kUseBraveUserAgent)) {
+    start_transaction_callback =
+        base::BindRepeating(brave::OnBeforeStartTransaction_UserAgentWork);
+    before_start_transaction_callbacks_.push_back(start_transaction_callback);
+  }
 
   if (base::FeatureList::IsEnabled(
           blink::features::kBraveGlobalPrivacyControl)) {

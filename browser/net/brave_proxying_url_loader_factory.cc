@@ -35,6 +35,8 @@
 #include "services/network/public/cpp/url_loader_factory_builder.h"
 #include "services/network/public/mojom/early_hints.mojom.h"
 #include "url/origin.h"
+#include "brave/components/brave_user_agent/browser/brave_user_agent_exceptions.h"
+#include "base/strings/string_util.h"
 
 namespace {
 
@@ -150,6 +152,7 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::RestartInternal() {
   redirect_url_ = GURL();
   ctx_ = brave::BraveRequestInfo::MakeCTX(request_, frame_tree_node_id_,
                                           request_id_, browser_context_, ctx_);
+
   int result = factory_->request_handler_->OnBeforeURLRequest(
       ctx_, continuation, &redirect_url_);
 
@@ -320,6 +323,27 @@ void BraveProxyingURLLoaderFactory::InProgressRequest::
   if (error_code != net::OK) {
     OnRequestError(network::URLLoaderCompletionStatus(error_code));
     return;
+  }
+
+  if (ctx_) {
+    auto* exceptions = brave_user_agent::BraveUserAgentExceptions::GetInstance();
+    if (exceptions) {
+      bool show_brave = exceptions->CanShowBrave(ctx_->tab_origin);
+      std::string brand = show_brave ? "qqBrave" : "qqGoogle Chrome";
+      std::cout << "ContinueToBeforeSendHeaders request url:" << request_.url.spec() << ", tab origin: " << ctx_->tab_origin.spec() << std::endl;
+      std::cout << "CanShowBrave:" << (show_brave ? "true" : "false") << ", brand: " << brand << std::endl;
+      if (!show_brave) {
+        std::optional<std::string> sec_ch_ua = request_.headers.GetHeader("Sec-CH-UA");
+        std::cout << "Sec-CH-UA:" << sec_ch_ua.value_or("not found") << std::endl;
+        if (sec_ch_ua.has_value()) {
+          std::string sec_ch_ua_value = sec_ch_ua.value();
+          base::ReplaceFirstSubstringAfterOffset(
+              &sec_ch_ua_value, /*start_offset=*/0, "\"Brave\"", "\"Google Chrome\"");
+          request_.headers.SetHeader("Sec-CH-UA", sec_ch_ua_value);
+          std::cout << "Sec-CH-UA fixed:" << sec_ch_ua_value << std::endl;
+        }
+      }
+    }
   }
 
   if (!redirect_url_.is_empty()) {

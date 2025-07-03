@@ -19,7 +19,8 @@ int OnBeforeStartTransaction_UserAgentWork(
     const ResponseCallback& next_callback,
     std::shared_ptr<BraveRequestInfo> ctx) {
   if (ctx) {
-    auto* exceptions = brave_user_agent::BraveUserAgentExceptions::GetInstance();
+    auto* exceptions =
+        brave_user_agent::BraveUserAgentExceptions::GetInstance();
     if (exceptions) {
       bool show_brave = exceptions->CanShowBrave(ctx->tab_origin);
       if (!show_brave) {
@@ -27,7 +28,8 @@ int OnBeforeStartTransaction_UserAgentWork(
         if (sec_ch_ua) {
           std::string sec_ch_ua_value = sec_ch_ua.value();
           base::ReplaceFirstSubstringAfterOffset(
-              &sec_ch_ua_value, /*start_offset=*/0, "\"Brave\"", "\"Google Chrome\"");
+              &sec_ch_ua_value, /*start_offset=*/0, "\"Brave\"",
+              "\"Google Chrome\"");
           headers->SetHeader("Sec-CH-UA", sec_ch_ua_value);
         }
       }

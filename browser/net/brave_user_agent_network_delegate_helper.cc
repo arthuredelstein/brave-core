@@ -6,6 +6,7 @@
 #include "brave/browser/net/brave_user_agent_network_delegate_helper.h"
 
 #include <memory>
+#include <string>
 
 #include "base/strings/string_util.h"
 #include "brave/components/brave_user_agent/browser/brave_user_agent_exceptions.h"

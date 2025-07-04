@@ -13,6 +13,10 @@
 #include "net/base/net_errors.h"
 #include "net/http/http_request_headers.h"
 
+constexpr char kHeaderSecCHUA[] = "Sec-CH-UA";
+constexpr char kBraveBrand[] = "\"Brave\"";
+constexpr char kGoogleChromeBrand[] = "\"Google Chrome\"";
+
 namespace brave {
 
 int OnBeforeStartTransaction_UserAgentWork(
@@ -25,13 +29,14 @@ int OnBeforeStartTransaction_UserAgentWork(
     if (exceptions) {
       bool show_brave = exceptions->CanShowBrave(ctx->tab_origin);
       if (!show_brave) {
-        std::optional<std::string> sec_ch_ua = headers->GetHeader("Sec-CH-UA");
+        std::optional<std::string> sec_ch_ua =
+            headers->GetHeader(kHeaderSecCHUA);
         if (sec_ch_ua) {
           std::string sec_ch_ua_value = sec_ch_ua.value();
           base::ReplaceFirstSubstringAfterOffset(
-              &sec_ch_ua_value, /*start_offset=*/0, "\"Brave\"",
-              "\"Google Chrome\"");
-          headers->SetHeader("Sec-CH-UA", sec_ch_ua_value);
+              &sec_ch_ua_value, /*start_offset=*/0, kBraveBrand,
+              kGoogleChromeBrand);
+          headers->SetHeader(kHeaderSecCHUA, sec_ch_ua_value);
         }
       }
     }

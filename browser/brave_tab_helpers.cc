@@ -104,11 +104,14 @@
 #include "brave/browser/ui/sidebar/sidebar_tab_helper.h"
 #endif
 
+#include "brave/browser/user_agent/user_agent_observer.h"
+
 namespace brave {
 
 void AttachTabHelpers(content::WebContents* web_contents) {
   brave_shields::BraveShieldsWebContentsObserver::CreateForWebContents(
       web_contents);
+ // brave::UserAgentObserver::CreateForWebContents(web_contents);
 #if BUILDFLAG(IS_ANDROID)
   YouTubeScriptInjectorTabHelper::CreateForWebContents(web_contents);
 #else

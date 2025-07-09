@@ -151,6 +151,9 @@
 #include "third_party/blink/public/mojom/webpreferences/web_preferences.mojom.h"
 #include "third_party/widevine/cdm/buildflags.h"
 #include "ui/base/l10n/l10n_util.h"
+#include "services/network/public/cpp/url_loader_factory_builder.h"
+#include "brave/browser/user_agent/brave_user_agent_throttle.h"
+#include "services/network/public/mojom/network_context.mojom.h"
 
 #if BUILDFLAG(ENABLE_REQUEST_OTR)
 #include "brave/browser/request_otr/request_otr_service_factory.h"
@@ -271,6 +274,8 @@ using extensions::ChromeContentBrowserClientExtensionsPart;
 #if BUILDFLAG(IS_WIN)
 #include "brave/components/windows_recall/windows_recall.h"
 #endif
+
+#include "brave/browser/user_agent/user_agent_navigation_throttle.h"
 
 namespace {
 
@@ -1012,6 +1017,15 @@ void BraveContentBrowserClient::WillCreateURLLoaderFactory(
     bool* disable_secure_dns,
     network::mojom::URLLoaderFactoryOverridePtr* factory_override,
     scoped_refptr<base::SequencedTaskRunner> navigation_response_task_runner) {
+
+    // Wrap the original factoryReceiver into our throttled factory
+    *factory_override = network::mojom::URLLoaderFactoryOverride::New();
+    factory_override->overriding_factory = std::move(*factory_override); // original receiver
+    std::vector<std::unique_ptr<blink::URLLoaderThrottle>> throttles;
+    throttles.push_back(std::make_unique<brave::BraveUserAgentThrottle>());
+
+    (*factory_override)->throttles = std::move(throttles);
+
   // TODO(iefremov): Skip proxying for certain requests?
   BraveProxyingURLLoaderFactory::MaybeProxyRequest(
       browser_context, frame, factory_builder, navigation_response_task_runner);
@@ -1151,6 +1165,8 @@ void BraveContentBrowserClient::CreateThrottlesForNavigation(
   // inserting the navigation throttle at the fist position before any java
   // navigation happens
   brave_rewards::RewardsProtocolNavigationThrottle::MaybeCreateAndAdd(registry);
+
+  brave::UserAgentNavigationThrottle::MaybeCreateAndAdd(registry);
 
   ChromeContentBrowserClient::CreateThrottlesForNavigation(registry);
 

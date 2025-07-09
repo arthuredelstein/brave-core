@@ -5,12 +5,24 @@
 
 #include "components/embedder_support/user_agent_utils.h"
 
+#include <iostream>
+#include <unistd.h>
+
 #include "base/strings/strcat.h"
 #include "base/system/sys_info.h"
+#include "base/debug/stack_trace.h"
 
 namespace {
 
 constexpr char kBraveBrandNameForCHUA[] = "Brave";
+
+std::string GetBrandNameForCHUA() {
+  static int count = 0;
+  std::cout << "GetBrandNameForCHUA --- " << count++ << std::endl;
+  std::cout << "PID: " << getpid() << std::endl;
+  std::cout << base::debug::StackTrace().ToString() << std::endl;
+  return std::string(kBraveBrandNameForCHUA) + " " + std::to_string(count);
+}
 
 }  // namespace
 
@@ -29,7 +41,7 @@ std::string BuildModelInfo() {
 // IDS_PRODUCT_NAME from app/chromium_strings.grd (brave_strings.grd) in
 // constructing the UA in brave/browser/brave_content_browser_client.cc, but we
 // can't use it here in the //components.
-#define BRAVE_GET_USER_AGENT_BRAND_LIST brand = kBraveBrandNameForCHUA;
+#define BRAVE_GET_USER_AGENT_BRAND_LIST brand = GetBrandNameForCHUA();
 
 #define BRAVE_BRAND_VERSION_OVERRIDE_FOR_FULL_BRAND_VERSION_TYPE \
   base::StrCat({major_version, ".0.0.0"})

@@ -32,15 +32,6 @@ struct HeaderCapture {
   std::optional<std::string> sec_ch_ua_full_version_list;
 };
 
-std::unique_ptr<::net::test_server::HttpResponse> CreateBasicHttpResponse(
-    const std::string& content,
-    const std::string& content_type) {
-  auto* basic = new ::net::test_server::BasicHttpResponse();
-  basic->set_content(content);
-  basic->set_content_type(content_type);
-  return std::unique_ptr<::net::test_server::HttpResponse>(basic);
-}
-
 class BraveUserAgentNetworkDelegateBrowserTest
     : public InProcessBrowserTest,
       public ::testing::WithParamInterface<bool> {
@@ -122,10 +113,21 @@ void BraveUserAgentNetworkDelegateBrowserTest::RegisterImagePageHandler() {
   https_server_.RegisterRequestHandler(base::BindRepeating(
       [](const net::test_server::HttpRequest& request)
           -> std::unique_ptr<::net::test_server::HttpResponse> {
-        if (request.relative_url == "/page_with_image.html") {
+        if (request.relative_url == "/excepted_page_with_unexcepted_image.html") {
           auto* response = new ::net::test_server::BasicHttpResponse();
           response->set_content(
-              "<html><body><img src=\"https://b.test/image.png\" "
+              "<html><body><img src=\"https://b.test:" +
+              std::to_string(request.GetURL().EffectiveIntPort()) + "/image.png\" "
+              "/></body></html>");
+          response->set_content_type("text/html");
+          response->AddCustomHeader("Accept-CH", "Sec-CH-UA-Full-Version-List");
+          return std::unique_ptr<::net::test_server::HttpResponse>(response);
+        }
+        if (request.relative_url == "/unexcepted_page_with_excepted_image.html") {
+          auto* response = new ::net::test_server::BasicHttpResponse();
+          response->set_content(
+              "<html><body><img src=\"https://a.test:" +
+              std::to_string(request.GetURL().EffectiveIntPort()) + "/image.png\" "
               "/></body></html>");
           response->set_content_type("text/html");
           response->AddCustomHeader("Accept-CH", "Sec-CH-UA-Full-Version-List");
@@ -139,7 +141,11 @@ void BraveUserAgentNetworkDelegateBrowserTest::RegisterImagePageHandler() {
           return std::unique_ptr<::net::test_server::HttpResponse>(response);
         }
         if (request.relative_url == "/image.png") {
-          return CreateBasicHttpResponse("fake image", "image/png");
+          auto* response = new ::net::test_server::BasicHttpResponse();
+          response->set_content("fake image");
+          response->set_content_type("image/png");
+          response->AddCustomHeader("Accept-CH", "Sec-CH-UA-Full-Version-List");
+          return std::unique_ptr<::net::test_server::HttpResponse>(response);
         }
         return nullptr;
       }));
@@ -203,13 +209,18 @@ void BraveUserAgentNetworkDelegateBrowserTest::RunBrandHeaderTest(
 }
 
 IN_PROC_BROWSER_TEST_P(BraveUserAgentNetworkDelegateBrowserTest,
-                       SecCHUAHeadersBrandCheck) {
+                       BrandCheckSimplePage) {
   RunBrandHeaderTest("a.test", "/simple.html");
 }
 
 IN_PROC_BROWSER_TEST_P(BraveUserAgentNetworkDelegateBrowserTest,
-                       SecCHUAHeadersBrandCheckOnThirdPartyRequest) {
-  RunBrandHeaderTest("a.test", "/page_with_image.html");
+                       BrandCheckExceptedPageWithUnexceptedImage) {
+  RunBrandHeaderTest("a.test", "/excepted_page_with_unexcepted_image.html");
+}
+
+IN_PROC_BROWSER_TEST_P(BraveUserAgentNetworkDelegateBrowserTest,
+                       BrandCheckUnexceptedPageWithExceptedImage) {
+  RunBrandHeaderTest("b.test", "/unexcepted_page_with_excepted_image.html");
 }
 
 INSTANTIATE_TEST_SUITE_P(FeatureFlag,

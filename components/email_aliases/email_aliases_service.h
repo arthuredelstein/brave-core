@@ -59,6 +59,7 @@ class EmailAliasesService : public KeyedService,
   void OnRequestAuthenticationResponse(
       RequestAuthenticationCallback callback,
       std::optional<std::string> response_body);
+  void OnRequestSessionResponse(std::optional<std::string> response_body);
 
   // Binds the mojom interface to this service
   void BindInterface(
@@ -70,11 +71,16 @@ class EmailAliasesService : public KeyedService,
                 const std::optional<std::string>& bearer_token,
                 const base::Value::Dict& bodyValue,
                 BodyAsStringCallback download_to_string_callback);
+  void RequestSession();
+  void NotifyObserversAuthStateChanged(mojom::AuthenticationStatus status);
 
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
   mojo::RemoteSet<mojom::EmailAliasesServiceObserver> observers_;
+  std::string verification_token_;
   std::string auth_token_;
+  std::string auth_email_;
   scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
+  std::unique_ptr<network::SimpleURLLoader> simple_url_loader_;
   base::WeakPtrFactory<EmailAliasesService> weak_factory_{this};
 };
 

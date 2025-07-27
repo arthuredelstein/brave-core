@@ -37,5 +37,8 @@ static_library("service") {
     "//brave/components/email_aliases:features",
     "//components/keyed_service/core",
     "//mojo/public/cpp/bindings",
+    "//net",
+    "//services/network/public/cpp",
+    "//services/network/public/mojom",
   ]
 }

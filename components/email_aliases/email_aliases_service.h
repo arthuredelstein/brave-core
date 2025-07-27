@@ -13,13 +13,29 @@
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/bindings/receiver_set.h"
 #include "mojo/public/cpp/bindings/remote_set.h"
+#include "base/memory/weak_ptr.h"
+#include "net/traffic_annotation/network_traffic_annotation.h"
+#include "base/values.h"
+
+
+namespace network {
+class SharedURLLoaderFactory;
+class SimpleURLLoader;
+}  // namespace network
+
+class GURL;
+class Profile;
+
+using BodyAsStringCallback =
+    base::OnceCallback<void(std::optional<std::string> response_body)>;
 
 namespace email_aliases {
 
 class EmailAliasesService : public KeyedService,
                             public mojom::EmailAliasesService {
  public:
-  EmailAliasesService();
+  EmailAliasesService(
+    scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory);
   ~EmailAliasesService() override;
 
   // KeyedService:
@@ -39,13 +55,27 @@ class EmailAliasesService : public KeyedService,
   void AddObserver(mojo::PendingRemote<mojom::EmailAliasesServiceObserver>
                        observer) override;
 
+  // Response handlers
+  void OnRequestAuthenticationResponse(
+      RequestAuthenticationCallback callback,
+      std::optional<std::string> response_body);
+
   // Binds the mojom interface to this service
   void BindInterface(
       mojo::PendingReceiver<mojom::EmailAliasesService> receiver);
 
  private:
+  void ApiFetch(const GURL& url,
+                const char* method,
+                const std::optional<std::string>& bearer_token,
+                const base::Value::Dict& bodyValue,
+                BodyAsStringCallback download_to_string_callback);
+
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
   mojo::RemoteSet<mojom::EmailAliasesServiceObserver> observers_;
+  std::string auth_token_;
+  scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
+  base::WeakPtrFactory<EmailAliasesService> weak_factory_{this};
 };
 
 }  // namespace email_aliases

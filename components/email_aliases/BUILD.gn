@@ -37,5 +37,20 @@ static_library("service") {
     "//brave/components/email_aliases:features",
     "//components/keyed_service/core",
     "//mojo/public/cpp/bindings",
+    "//net",
+    "//services/network/public/cpp",
+  ]
+}
+
+executable("email_aliases_service_unittest") {
+  testonly = true
+  sources = [ "email_aliases_service_unittest.cc" ]
+  deps = [
+    ":features",
+    ":service",
+    "//base",
+    "//base/test:test_support",
+    "//services/network:test_support",
+    "//testing/gtest",
   ]
 }

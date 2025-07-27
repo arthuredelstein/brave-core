@@ -1,3 +1,5 @@
 include_rules = [
   "+components/keyed_service/core",
+  "+services/network/public/cpp",
+  "+services/network/test",
 ]

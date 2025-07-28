@@ -186,7 +186,8 @@ void EmailAliasesService::OnRequestSessionResponse(
   }
   const auto* auth_token_ptr = response_body_dict->GetDict().FindString("authToken");
   if (!auth_token_ptr) {
-    LOG(ERROR) << "OnRequestSessionResponse: No auth token";
+    LOG(ERROR) << "OnRequestSessionResponse: No auth token; trying again";
+    RequestSession();
     return;
   }
   auth_token_ = *auth_token_ptr;

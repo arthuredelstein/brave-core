@@ -193,6 +193,8 @@ const Config = function () {
   ])
   this.braveServicesDevDomain = getEnvConfig(['brave_services_dev_domain'])
   this.braveGoogleApiKey = getEnvConfig(['brave_google_api_key'])
+  this.braveAccountApiEndpoint = getEnvConfig(['brave_account_api_endpoint'])
+  this.braveAccountApiKey = getEnvConfig(['brave_account_api_key'])
   this.googleApiEndpoint = getEnvConfig(['brave_google_api_endpoint'])
   this.googleDefaultClientId = getEnvConfig(['google_default_client_id'])
   this.googleDefaultClientSecret = getEnvConfig([
@@ -455,6 +457,8 @@ Config.prototype.buildArgs = function () {
     brave_channel: this.channel,
     brave_google_api_key: this.braveGoogleApiKey,
     brave_google_api_endpoint: this.googleApiEndpoint,
+    brave_account_api_endpoint: this.braveAccountApiEndpoint,
+    brave_account_api_key: this.braveAccountApiKey,
     google_default_client_id: this.googleDefaultClientId,
     google_default_client_secret: this.googleDefaultClientSecret,
     brave_infura_project_id: this.infuraProjectId,

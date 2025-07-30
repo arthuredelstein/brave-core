@@ -24,11 +24,31 @@ namespace email_aliases {
 
 namespace {
 
-const char kAccountsServiceRequestURL[] =
-    "https://accounts.bsg.bravesoftware.com/v2/verify/init";
-const char kAccountsServiceVerifyURL[] =
-    "https://accounts.bsg.bravesoftware.com/v2/verify/result";
-const char kBraveApiKey[] = "px6zQ7rIMGaS8FE6cmpUp45WQTFJYXgo7ZlBhrFK";
+const char* GetAccountsServiceBaseURL() {
+#if defined(BRAVE_ACCOUNT_API_ENDPOINT)
+  return BRAVE_ACCOUNT_API_ENDPOINT;
+#else
+  return "https://accounts.bsg.bravesoftware.com/v2";
+#endif
+}
+
+const char kAccountsServiceRequestPath[] = "/verify/init";
+const char kAccountsServiceVerifyPath[] = "/verify/result";
+
+std::string GetAccountsServiceRequestURL() {
+  return std::string(GetAccountsServiceBaseURL()) + kAccountsServiceRequestPath;
+}
+std::string GetAccountsServiceVerifyURL() {
+  return std::string(GetAccountsServiceBaseURL()) + kAccountsServiceVerifyPath;
+}
+
+const char* GetBraveApiKey() {
+#if defined(BRAVE_ACCOUNT_API_KEY)
+  return BRAVE_ACCOUNT_API_KEY;
+#else
+  return "";
+#endif
+}
 
 const net::NetworkTrafficAnnotationTag traffic_annotation =
     net::DefineNetworkTrafficAnnotation("email_aliases_mapping_service", R"(
@@ -89,7 +109,7 @@ void EmailAliasesService::ApiFetch(
     resource_request->headers.SetHeader(
         "Authorization", std::string("Bearer ") + bearer_token.value());
   }
-  resource_request->headers.SetHeader("X-API-key", kBraveApiKey);
+  resource_request->headers.SetHeader("X-API-key", GetBraveApiKey());
   simple_url_loader_ = network::SimpleURLLoader::Create(
       std::move(resource_request), traffic_annotation);
   if (!bodyValue.empty() && method != net::HttpRequestHeaders::kGetMethod &&
@@ -117,7 +137,7 @@ void EmailAliasesService::RequestAuthentication(
                               .Set("email", auth_email)
                               .Set("intent", "auth_token")
                               .Set("service", "email-aliases");
-  ApiFetch(GURL(kAccountsServiceRequestURL),
+  ApiFetch(GURL(GetAccountsServiceRequestURL()),
            net::HttpRequestHeaders::kPostMethod, std::nullopt, body_value,
            base::BindOnce(&EmailAliasesService::OnRequestAuthenticationResponse,
                           weak_factory_.GetWeakPtr(), std::move(callback)));
@@ -158,7 +178,7 @@ void EmailAliasesService::OnRequestAuthenticationResponse(
 void EmailAliasesService::RequestSession() {
   LOG(ERROR) << "RequestSession called";
   auto body_value = base::Value::Dict().Set("wait", true);
-  ApiFetch(GURL(kAccountsServiceVerifyURL),
+  ApiFetch(GURL(GetAccountsServiceVerifyURL()),
            net::HttpRequestHeaders::kPostMethod, verification_token_,
            body_value,
            base::BindOnce(&EmailAliasesService::OnRequestSessionResponse,

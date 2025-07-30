@@ -101,7 +101,6 @@ void EmailAliasesService::ApiFetch(
     const std::optional<std::string>& bearer_token,
     const base::Value::Dict& bodyValue,
     BodyAsStringCallback download_to_string_callback) {
-  LOG(ERROR) << "ApiFetch called with url: " << url.spec();
   auto resource_request = std::make_unique<network::ResourceRequest>();
   resource_request->url = url;
   resource_request->method = method;
@@ -126,10 +125,8 @@ void EmailAliasesService::ApiFetch(
 void EmailAliasesService::RequestAuthentication(
     const std::string& auth_email,
     RequestAuthenticationCallback callback) {
-  LOG(ERROR) << "RequestAuthentication called with email: " << auth_email;
   auth_email_ = auth_email;
   if (auth_email.empty()) {
-    LOG(ERROR) << "RequestAuthentication: empty email, returning error";
     std::move(callback).Run("No email provided");
     return;
   }
@@ -146,37 +143,29 @@ void EmailAliasesService::RequestAuthentication(
 void EmailAliasesService::OnRequestAuthenticationResponse(
     RequestAuthenticationCallback callback,
     std::optional<std::string> response_body) {
-  LOG(ERROR) << "OnRequestAuthenticationResponse called";
   if (!response_body) {
-    LOG(ERROR) << "OnRequestAuthenticationResponse: No response body";
     std::move(callback).Run("No response body");
     return;
   }
   const auto response_body_dict = base::JSONReader::Read(*response_body);
   if (!response_body_dict || !response_body_dict->is_dict()) {
-    LOG(ERROR) << "OnRequestAuthenticationResponse: Invalid response body";
     std::move(callback).Run("Invalid response body");
     return;
   }
-  LOG(ERROR) << "OnRequestAuthenticationResponse: Response body: "
-             << *response_body;
   const auto* verification_token_ptr =
       response_body_dict->GetDict().FindString("verificationToken");
   if (!verification_token_ptr) {
-    LOG(ERROR) << "OnRequestAuthenticationResponse: No verification token";
     std::move(callback).Run("No verification token");
     return;
   }
   // Success
   verification_token_ = *verification_token_ptr;
-  LOG(ERROR) << "OnRequestAuthenticationResponse: Success, token set";
   NotifyObserversAuthStateChanged(mojom::AuthenticationStatus::kAuthenticating);
   std::move(callback).Run(std::nullopt);
   RequestSession();
 }
 
 void EmailAliasesService::RequestSession() {
-  LOG(ERROR) << "RequestSession called";
   auto body_value = base::Value::Dict().Set("wait", true);
   ApiFetch(GURL(GetAccountsServiceVerifyURL()),
            net::HttpRequestHeaders::kPostMethod, verification_token_,
@@ -187,19 +176,16 @@ void EmailAliasesService::RequestSession() {
 
 void EmailAliasesService::OnRequestSessionResponse(
     std::optional<std::string> response_body) {
-  LOG(ERROR) << "OnRequestSessionResponse called";
   if (!response_body) {
-    LOG(ERROR) << "OnRequestSessionResponse: No response body";
+    return;
   }
   const auto response_body_dict = base::JSONReader::Read(*response_body);
   if (!response_body_dict || !response_body_dict->is_dict()) {
-    LOG(ERROR) << "OnRequestSessionResponse: Invalid response body";
     return;
   }
   const auto* auth_token_ptr =
       response_body_dict->GetDict().FindString("authToken");
   if (!auth_token_ptr) {
-    LOG(ERROR) << "OnRequestSessionResponse: No auth token; trying again";
     RequestSession();
     return;
   }
@@ -209,7 +195,6 @@ void EmailAliasesService::OnRequestSessionResponse(
 
 void EmailAliasesService::CancelAuthenticationOrLogout(
     CancelAuthenticationOrLogoutCallback callback) {
-  LOG(ERROR) << "CancelAuthenticationOrLogout called";
   verification_token_.clear();
   NotifyObserversAuthStateChanged(
       mojom::AuthenticationStatus::kUnauthenticated);
@@ -217,7 +202,6 @@ void EmailAliasesService::CancelAuthenticationOrLogout(
 }
 
 void EmailAliasesService::GenerateAlias(GenerateAliasCallback callback) {
-  LOG(ERROR) << "GenerateAlias called";
   mojom::GenerateAliasResultPtr result =
       mojom::GenerateAliasResult::NewErrorMessage("Not implemented");
   std::move(callback).Run(std::move(result));
@@ -226,26 +210,21 @@ void EmailAliasesService::GenerateAlias(GenerateAliasCallback callback) {
 void EmailAliasesService::UpdateAlias(const std::string& alias_email,
                                       const std::optional<std::string>& note,
                                       UpdateAliasCallback callback) {
-  LOG(ERROR) << "UpdateAlias called for alias: " << alias_email;
   // TODO: Implement alias update logic
   std::move(callback).Run("Not implemented");
 }
 
 void EmailAliasesService::DeleteAlias(const std::string& alias_email,
                                       DeleteAliasCallback callback) {
-  LOG(ERROR) << "DeleteAlias called for alias: " << alias_email;
   // TODO: Implement alias deletion logic
   std::move(callback).Run("Not implemented");
 }
 
 void EmailAliasesService::AddObserver(
     mojo::PendingRemote<mojom::EmailAliasesServiceObserver> observer) {
-  LOG(ERROR) << "AddObserver called";
   auto id = observers_.Add(std::move(observer));
   auto* remote = observers_.Get(id);
   if (remote) {
-    LOG(ERROR)
-        << "AddObserver: Notifying new observer of unauthenticated state";
     remote->OnAuthStateChanged(mojom::AuthState::New(
         mojom::AuthenticationStatus::kUnauthenticated, "", std::nullopt));
   }

@@ -26,26 +26,25 @@ class EmailAliasesServiceTest : public ::testing::Test {
     service_ = std::make_unique<EmailAliasesService>(url_loader_factory_);
   }
 
-  void RunLoop() { task_environment_.RunUntilIdle(); }
-
   void CallRequestAuthenticationAndCheck(
       const std::string& email,
       const std::string& response_body,
       const std::optional<std::string>& expected_error = std::nullopt) {
-    static constexpr char kVerifyInitUrl[] =
-        "https://accounts.bsg.bravesoftware.com/v2/verify/init";
+    static constexpr char kVerifyInitUrl[] = "https://accounts.bsg.bravesoftware.com/v2/verify/init";
     bool called = false;
     std::optional<std::string> error;
     test_url_loader_factory_.AddResponse(kVerifyInitUrl, response_body);
+    base::RunLoop run_loop;
     service_->RequestAuthentication(
-        email, base::BindOnce(
-                   [](bool* called, std::optional<std::string>* error,
-                      const std::optional<std::string>& result) {
-                     *called = true;
-                     *error = result;
-                   },
-                   &called, &error));
-    RunLoop();
+        email,
+        base::BindOnce(
+            [](bool* called, std::optional<std::string>* error, base::RunLoop* run_loop, const std::optional<std::string>& result) {
+                *called = true;
+                *error = result;
+                run_loop->Quit();
+            },
+            &called, &error, &run_loop));
+    run_loop.Run();
     EXPECT_TRUE(called);
     if (expected_error) {
       ASSERT_TRUE(error.has_value());

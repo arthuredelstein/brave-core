@@ -7,8 +7,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "base/test/scoped_feature_list.h"
 #include "brave/components/email_aliases/features.h"
-#include "services/network/test/test_shared_url_loader_factory.h"
+#include "services/network/test/test_url_loader_factory.h"
+#include "services/network/public/cpp/weak_wrapper_shared_url_loader_factory.h"
 #include "base/test/task_environment.h"
+#include "base/functional/bind.h"
+#include "base/test/bind.h"
 
 namespace email_aliases {
 
@@ -16,18 +19,46 @@ class EmailAliasesServiceTest : public ::testing::Test {
  protected:
   EmailAliasesServiceTest() {
     feature_list_.InitAndEnableFeature(email_aliases::kEmailAliases);
-    url_loader_factory_ = base::MakeRefCounted<network::TestSharedURLLoaderFactory>();
+    url_loader_factory_ = base::MakeRefCounted<network::WeakWrapperSharedURLLoaderFactory>(&test_url_loader_factory_);
     service_ = std::make_unique<EmailAliasesService>(url_loader_factory_);
   }
 
-  void RunLoop() { task_environment_.RunUntilIdle(); }
+  void RunLoop() {
+    task_environment_.RunUntilIdle();
+  }
+
+  void CallRequestAuthenticationAndCheck(
+      const std::string& email,
+      const std::string& response_body,
+      const std::optional<std::string>& expected_error = std::nullopt) {
+    static constexpr char kVerifyInitUrl[] = "https://accounts.bsg.bravesoftware.com/v2/verify/init";
+    bool called = false;
+    std::optional<std::string> error;
+    test_url_loader_factory_.AddResponse(kVerifyInitUrl, response_body);
+    service_->RequestAuthentication(
+        email,
+        base::BindOnce(
+            [](bool* called, std::optional<std::string>* error, const std::optional<std::string>& result) {
+                *called = true;
+                *error = result;
+            },
+            &called, &error));
+    RunLoop();
+    EXPECT_TRUE(called);
+    if (expected_error) {
+      ASSERT_TRUE(error.has_value());
+      EXPECT_EQ(*error, *expected_error);
+    } else {
+      EXPECT_FALSE(error.has_value());
+    }
+  }
 
   base::test::ScopedFeatureList feature_list_;
-  scoped_refptr<network::TestSharedURLLoaderFactory> url_loader_factory_;
+  network::TestURLLoaderFactory test_url_loader_factory_;
+  scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
   std::unique_ptr<EmailAliasesService> service_;
   base::test::TaskEnvironment task_environment_;
 };
-
 
 
 TEST_F(EmailAliasesServiceTest, ConstructAndShutdown) {
@@ -35,10 +66,31 @@ TEST_F(EmailAliasesServiceTest, ConstructAndShutdown) {
   service_->Shutdown();
 }
 
-TEST_F(EmailAliasesServiceTest, RequestAuthenticationPlaceholder) {
-  // TODO: Implement a real test with a mock/fake network response.
-  // This is a placeholder to show test structure.
-  EXPECT_TRUE(service_);
+TEST_F(EmailAliasesServiceTest, RequestAuthentication_EmptyEmail) {
+  CallRequestAuthenticationAndCheck(
+      "",  // empty email
+      "dummy body",
+      "No email provided");
+}
+
+TEST_F(EmailAliasesServiceTest, RequestAuthentication_InvalidJson) {
+  CallRequestAuthenticationAndCheck(
+      "test@example.com",
+      "not a json",
+      "Invalid response body");
+}
+
+TEST_F(EmailAliasesServiceTest, RequestAuthentication_NoVerificationToken) {
+  CallRequestAuthenticationAndCheck(
+      "test@example.com",
+      "{\"foo\":\"bar\"}",
+      "No verification token");
+}
+
+TEST_F(EmailAliasesServiceTest, RequestAuthentication_Success) {
+  CallRequestAuthenticationAndCheck(
+      "test@example.com",
+      "{\"verificationToken\":\"token123\"}");
 }
 
 }  // namespace email_aliases

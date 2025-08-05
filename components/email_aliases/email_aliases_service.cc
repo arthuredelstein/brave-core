@@ -230,4 +230,8 @@ void EmailAliasesService::AddObserver(
   }
 }
 
+std::string EmailAliasesService::GetAuthTokenForTesting() const {
+  return auth_token_;
+}
+
 }  // namespace email_aliases

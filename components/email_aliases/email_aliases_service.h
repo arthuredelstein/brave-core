@@ -64,6 +64,8 @@ class EmailAliasesService : public KeyedService,
   void BindInterface(
       mojo::PendingReceiver<mojom::EmailAliasesService> receiver);
 
+  std::string GetAuthTokenForTesting() const;
+
  private:
   void ApiFetch(const GURL& url,
                 const char* method,

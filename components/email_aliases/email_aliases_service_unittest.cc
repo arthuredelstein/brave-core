@@ -14,9 +14,11 @@
 #include "base/test/scoped_feature_list.h"
 #include "base/test/task_environment.h"
 #include "brave/components/email_aliases/features.h"
+#include "components/grit/brave_components_strings.h"
 #include "services/network/public/cpp/weak_wrapper_shared_url_loader_factory.h"
 #include "services/network/test/test_url_loader_factory.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "ui/base/l10n/l10n_util.h"
 
 namespace email_aliases {
 
@@ -155,21 +157,22 @@ class EmailAliasesServiceTest : public ::testing::Test {
 };
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_EmptyEmail) {
-  CallRequestAuthenticationAndCheck("", "dummy body",
-                                    AuthenticationStatus::kUnauthenticated,
-                                    "No email provided");
+  CallRequestAuthenticationAndCheck(
+      "", "dummy body", AuthenticationStatus::kUnauthenticated,
+      l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_EMAIL_PROVIDED));
 }
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_InvalidJson) {
-  CallRequestAuthenticationAndCheck("test@example.com", "not a json",
-                                    AuthenticationStatus::kUnauthenticated,
-                                    "Invalid response body");
+  CallRequestAuthenticationAndCheck(
+      "test@example.com", "not a json", AuthenticationStatus::kUnauthenticated,
+      l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_INVALID_RESPONSE_BODY));
 }
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_NoVerificationToken) {
-  CallRequestAuthenticationAndCheck("test@example.com", "{\"foo\":\"bar\"}",
-                                    AuthenticationStatus::kUnauthenticated,
-                                    "No verification token");
+  CallRequestAuthenticationAndCheck(
+      "test@example.com", "{\"foo\":\"bar\"}",
+      AuthenticationStatus::kUnauthenticated,
+      l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_VERIFICATION_TOKEN));
 }
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_Success) {
@@ -212,8 +215,17 @@ TEST_F(EmailAliasesServiceTest,
   // Now log out
   CancelAuthenticationOrLogout();
 
-  // Remove debug printing of states
   // Auth token should be cleared
+  EXPECT_EQ(service_->GetAuthTokenForTesting(), "");
+}
+
+TEST_F(EmailAliasesServiceTest, CancelAuthenticationOrLogout_WhileAuthenticating) {
+  RunRequestSessionTest(
+      {"{\"authentication\":\"pending\"}"},
+      email_aliases::mojom::AuthenticationStatus::kAuthenticating);
+
+  CancelAuthenticationOrLogout();
+
   EXPECT_EQ(service_->GetAuthTokenForTesting(), "");
 }
 

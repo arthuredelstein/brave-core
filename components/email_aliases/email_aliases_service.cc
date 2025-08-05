@@ -13,12 +13,14 @@
 #include "base/json/json_writer.h"
 #include "base/logging.h"
 #include "brave/components/email_aliases/email_aliases.mojom.h"
+#include "components/grit/brave_components_strings.h"
 #include "brave/components/email_aliases/features.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/cpp/simple_url_loader.h"
+#include "ui/base/l10n/l10n_util.h"
 
 namespace email_aliases {
 
@@ -127,7 +129,8 @@ void EmailAliasesService::RequestAuthentication(
     RequestAuthenticationCallback callback) {
   auth_email_ = auth_email;
   if (auth_email.empty()) {
-    std::move(callback).Run("No email provided");
+    std::move(callback).Run(
+        l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_EMAIL_PROVIDED));
     return;
   }
   const auto body_value = base::Value::Dict()
@@ -144,18 +147,21 @@ void EmailAliasesService::OnRequestAuthenticationResponse(
     RequestAuthenticationCallback callback,
     std::optional<std::string> response_body) {
   if (!response_body) {
-    std::move(callback).Run("No response body");
+    std::move(callback).Run(
+        l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_RESPONSE_BODY));
     return;
   }
   const auto response_body_dict = base::JSONReader::Read(*response_body);
   if (!response_body_dict || !response_body_dict->is_dict()) {
-    std::move(callback).Run("Invalid response body");
+    std::move(callback).Run(l10n_util::GetStringUTF8(
+        IDS_EMAIL_ALIASES_ERROR_INVALID_RESPONSE_BODY));
     return;
   }
   const auto* verification_token_ptr =
       response_body_dict->GetDict().FindString("verificationToken");
   if (!verification_token_ptr) {
-    std::move(callback).Run("No verification token");
+    std::move(callback).Run(l10n_util::GetStringUTF8(
+        IDS_EMAIL_ALIASES_ERROR_NO_VERIFICATION_TOKEN));
     return;
   }
   // Success

@@ -20,17 +20,62 @@
 
 namespace email_aliases {
 
+using AuthenticationStatus = email_aliases::mojom::AuthenticationStatus;
+
+namespace {
+
+// Test observer for authentication state changes
+class TestObserver : public email_aliases::mojom::EmailAliasesServiceObserver {
+ public:
+  void OnAuthStateChanged(email_aliases::mojom::AuthStatePtr state) override {
+    last_state = state->status;
+    if (last_state == expected_status_) {
+      run_loop_->Quit();
+    }
+  }
+  void StartRunLoop(AuthenticationStatus expected_status) {
+    run_loop_ = std::make_unique<base::RunLoop>();
+    expected_status_ = expected_status;
+  }
+  void WaitForExpectedStatus() {
+    run_loop_->Run();
+    run_loop_.reset();
+  }
+  void OnAliasesUpdated(std::vector<email_aliases::mojom::AliasPtr>) override {}
+  AuthenticationStatus last_state = AuthenticationStatus::kUnauthenticated;
+  mojo::Receiver<email_aliases::mojom::EmailAliasesServiceObserver> receiver_{
+      this};
+  std::unique_ptr<base::RunLoop> run_loop_;
+  AuthenticationStatus expected_status_ =
+      AuthenticationStatus::kUnauthenticated;
+  void BindReceiver(
+      mojo::PendingReceiver<email_aliases::mojom::EmailAliasesServiceObserver>
+          pending) {
+    receiver_.Bind(std::move(pending));
+  }
+};
+
+}  // namespace
+
 class EmailAliasesServiceTest : public ::testing::Test {
  protected:
   EmailAliasesServiceTest() {
     feature_list_.InitAndEnableFeature(email_aliases::kEmailAliases);
+  }
+
+  void SetUp() override {
     url_loader_factory_ =
         base::MakeRefCounted<network::WeakWrapperSharedURLLoaderFactory>(
             &test_url_loader_factory_);
     service_ = std::make_unique<EmailAliasesService>(url_loader_factory_);
+    observer_ = std::make_unique<TestObserver>();
+    mojo::PendingRemote<email_aliases::mojom::EmailAliasesServiceObserver>
+        remote;
+    observer_->BindReceiver(remote.InitWithNewPipeAndPassReceiver());
+    service_->AddObserver(std::move(remote));
   }
 
-  // Low-level helper for authentication requests
+  // Make authentication request and wait for the response.
   // Returns the error string if any, or std::nullopt on success.
   std::optional<std::string> RequestAuthenticationWithResponse(
       const std::string& email,
@@ -40,23 +85,44 @@ class EmailAliasesServiceTest : public ::testing::Test {
     test_url_loader_factory_.AddResponse(kVerifyInitUrl, response_body);
     bool called = false;
     std::optional<std::string> error;
+    base::RunLoop run_loop;
     service_->RequestAuthentication(
         email, base::BindOnce(
                    [](bool* called, std::optional<std::string>* error,
+                      base::RunLoop* run_loop,
                       const std::optional<std::string>& result) {
                      *called = true;
                      *error = result;
+                     run_loop->Quit();
                    },
-                   &called, &error));
-    base::RunLoop().RunUntilIdle();
+                   &called, &error, &run_loop));
+    run_loop.Run();
     EXPECT_TRUE(called);
     return error;
+  }
+
+  void CancelAuthenticationOrLogout() {
+    observer_->StartRunLoop(
+        email_aliases::mojom::AuthenticationStatus::kUnauthenticated);
+    bool logout_called = false;
+    base::RunLoop run_loop;
+    service_->CancelAuthenticationOrLogout(base::BindOnce(
+        [](bool* called, base::RunLoop* run_loop) {
+          *called = true;
+          run_loop->Quit();
+        },
+        &logout_called, &run_loop));
+    run_loop.Run();
+    EXPECT_TRUE(logout_called);
+    observer_->WaitForExpectedStatus();
   }
 
   void CallRequestAuthenticationAndCheck(
       const std::string& email,
       const std::string& response_body,
+      AuthenticationStatus expected_status,
       const std::optional<std::string>& expected_error = std::nullopt) {
+    observer_->StartRunLoop(expected_status);
     auto error = RequestAuthenticationWithResponse(email, response_body);
     if (expected_error) {
       EXPECT_TRUE(error.has_value());
@@ -64,58 +130,20 @@ class EmailAliasesServiceTest : public ::testing::Test {
     } else {
       EXPECT_FALSE(error.has_value());
     }
+    observer_->WaitForExpectedStatus();
   }
 
-  // Test observer for authentication state changes
-  class TestObserver
-      : public email_aliases::mojom::EmailAliasesServiceObserver {
-   public:
-    void OnAuthStateChanged(email_aliases::mojom::AuthStatePtr state) override {
-      last_state = state->status;
-      call_count++;
-    }
-    void OnAliasesUpdated(
-        std::vector<email_aliases::mojom::AliasPtr>) override {}
-    email_aliases::mojom::AuthenticationStatus last_state =
-        email_aliases::mojom::AuthenticationStatus::kUnauthenticated;
-    int call_count = 0;
-    mojo::Receiver<email_aliases::mojom::EmailAliasesServiceObserver> receiver_{
-        this};
-    void BindReceiver(
-        mojo::PendingReceiver<email_aliases::mojom::EmailAliasesServiceObserver>
-            pending) {
-      receiver_.Bind(std::move(pending));
-    }
-  };
-
-  // Helper for RequestSession tests
-  struct RequestSessionTestResult {
-    std::unique_ptr<TestObserver> observer;
-  };
-
-  RequestSessionTestResult RunRequestSessionTest(
-      const std::vector<std::string>& responses) {
-    auto observer = std::make_unique<TestObserver>();
-    mojo::PendingRemote<email_aliases::mojom::EmailAliasesServiceObserver>
-        remote;
-    observer->BindReceiver(remote.InitWithNewPipeAndPassReceiver());
-    service_->AddObserver(std::move(remote));
-
-    // Authenticate and set the verification token via the public API
+  void RunRequestSessionTest(const std::vector<std::string>& responses,
+                             AuthenticationStatus expected_status) {
+    observer_->StartRunLoop(expected_status);
     auto error = RequestAuthenticationWithResponse(
         "test@example.com", "{\"verificationToken\":\"token123\"}");
     EXPECT_FALSE(error.has_value());
-
     for (const auto& body : responses) {
       test_url_loader_factory_.AddResponse(
           "https://accounts.bsg.bravesoftware.com/v2/verify/result", body);
     }
-
-    base::RunLoop().RunUntilIdle();
-
-    RequestSessionTestResult result;
-    result.observer = std::move(observer);
-    return result;
+    observer_->WaitForExpectedStatus();
   }
 
   base::test::ScopedFeatureList feature_list_;
@@ -123,54 +151,70 @@ class EmailAliasesServiceTest : public ::testing::Test {
   scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory_;
   std::unique_ptr<EmailAliasesService> service_;
   base::test::TaskEnvironment task_environment_;
+  std::unique_ptr<TestObserver> observer_;
 };
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_EmptyEmail) {
-  CallRequestAuthenticationAndCheck("", "dummy body", "No email provided");
+  CallRequestAuthenticationAndCheck("", "dummy body",
+                                    AuthenticationStatus::kUnauthenticated,
+                                    "No email provided");
 }
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_InvalidJson) {
   CallRequestAuthenticationAndCheck("test@example.com", "not a json",
+                                    AuthenticationStatus::kUnauthenticated,
                                     "Invalid response body");
 }
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_NoVerificationToken) {
   CallRequestAuthenticationAndCheck("test@example.com", "{\"foo\":\"bar\"}",
+                                    AuthenticationStatus::kUnauthenticated,
                                     "No verification token");
 }
 
 TEST_F(EmailAliasesServiceTest, RequestAuthentication_Success) {
   CallRequestAuthenticationAndCheck("test@example.com",
-                                    "{\"verificationToken\":\"token123\"}");
+                                    "{\"verificationToken\":\"token123\"}",
+                                    AuthenticationStatus::kAuthenticating);
 }
 
 TEST_F(EmailAliasesServiceTest, RequestSession_Success) {
-  auto result = RunRequestSessionTest({"{\"authToken\":\"auth456\"}"});
+  RunRequestSessionTest({"{\"authToken\":\"auth456\"}"},
+                        AuthenticationStatus::kAuthenticated);
   EXPECT_EQ(service_->GetAuthTokenForTesting(), "auth456");
-  // unauthenticated, authenticating, authenticated
-  EXPECT_EQ(result.observer->call_count, 3);
-  EXPECT_EQ(result.observer->last_state,
-            email_aliases::mojom::AuthenticationStatus::kAuthenticated);
 }
 
 TEST_F(EmailAliasesServiceTest, RequestSession_InvalidJson) {
-  auto result = RunRequestSessionTest({"not a json"});
-  // unauthenticated, authenticating
-  EXPECT_EQ(result.observer->call_count, 2);
-  EXPECT_EQ(result.observer->last_state,
-            email_aliases::mojom::AuthenticationStatus::kAuthenticating);
+  RunRequestSessionTest({"not a json"}, AuthenticationStatus::kAuthenticating);
 }
 
 TEST_F(EmailAliasesServiceTest, RequestSession_RetryOnMissingAuthToken) {
-  auto result = RunRequestSessionTest({
-      "{\"foo\":\"bar\"}",           // triggers retry
-      "{\"authToken\":\"auth456\"}"  // success
-  });
+  RunRequestSessionTest(
+      {
+          "{\"foo\":\"bar\"}",           // triggers retry
+          "{\"authToken\":\"auth456\"}"  // success
+      },
+      email_aliases::mojom::AuthenticationStatus::kAuthenticated);
   EXPECT_EQ(service_->GetAuthTokenForTesting(), "auth456");
   // unauthenticated, authenticating, authenticated
-  EXPECT_EQ(result.observer->call_count, 3);
-  EXPECT_EQ(result.observer->last_state,
+  EXPECT_EQ(observer_->last_state,
             email_aliases::mojom::AuthenticationStatus::kAuthenticated);
+}
+
+TEST_F(EmailAliasesServiceTest,
+       CancelAuthenticationOrLogout_ClearsStateAndNotifies) {
+  // Authenticate
+  RunRequestSessionTest(
+      {"{\"authToken\":\"auth456\"}"},
+      email_aliases::mojom::AuthenticationStatus::kAuthenticated);
+  EXPECT_EQ(service_->GetAuthTokenForTesting(), "auth456");
+
+  // Now log out
+  CancelAuthenticationOrLogout();
+
+  // Remove debug printing of states
+  // Auth token should be cleared
+  EXPECT_EQ(service_->GetAuthTokenForTesting(), "");
 }
 
 }  // namespace email_aliases

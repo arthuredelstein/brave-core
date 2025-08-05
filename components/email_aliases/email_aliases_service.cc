@@ -196,6 +196,7 @@ void EmailAliasesService::OnRequestSessionResponse(
 void EmailAliasesService::CancelAuthenticationOrLogout(
     CancelAuthenticationOrLogoutCallback callback) {
   verification_token_.clear();
+  auth_token_.clear();
   NotifyObserversAuthStateChanged(
       mojom::AuthenticationStatus::kUnauthenticated);
   std::move(callback).Run();

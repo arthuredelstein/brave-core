@@ -219,7 +219,8 @@ TEST_F(EmailAliasesServiceTest,
   EXPECT_EQ(service_->GetAuthTokenForTesting(), "");
 }
 
-TEST_F(EmailAliasesServiceTest, CancelAuthenticationOrLogout_WhileAuthenticating) {
+TEST_F(EmailAliasesServiceTest,
+       CancelAuthenticationOrLogout_WhileAuthenticating) {
   RunRequestSessionTest(
       {"{\"authentication\":\"pending\"}"},
       email_aliases::mojom::AuthenticationStatus::kAuthenticating);

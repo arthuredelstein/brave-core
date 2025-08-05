@@ -50,16 +50,3 @@ static_library("service") {
     "BRAVE_ACCOUNT_API_KEY=\"${brave_account_api_key}\"",
   ]
 }
-
-executable("email_aliases_service_unittest") {
-  testonly = true
-  sources = [ "email_aliases_service_unittest.cc" ]
-  deps = [
-    ":features",
-    ":service",
-    "//base",
-    "//base/test:test_support",
-    "//services/network:test_support",
-    "//testing/gtest",
-  ]
-}

@@ -211,6 +211,8 @@ test("brave_unit_tests") {
     "//brave/components/brave_rewards/core/engine/test",
     "//brave/components/brave_search/browser",
     "//brave/components/brave_search/browser:unit_tests",
+    "//brave/components/email_aliases:features",
+    "//brave/components/email_aliases:service",
     "//brave/components/brave_search/common",
     "//brave/components/brave_search/common:unit_tests",
     "//brave/components/brave_search_conversion",

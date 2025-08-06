@@ -67,6 +67,8 @@ class EmailAliasesService : public KeyedService,
   std::string GetAuthTokenForTesting() const;
 
  private:
+  void RefreshAliases();
+  void OnRefreshAliasesResponse(std::optional<std::string> response_body);
   void ApiFetch(const GURL& url,
                 const char* method,
                 const std::optional<std::string>& bearer_token,
@@ -74,6 +76,10 @@ class EmailAliasesService : public KeyedService,
                 BodyAsStringCallback download_to_string_callback);
   void RequestSession();
   void NotifyObserversAuthStateChanged(mojom::AuthenticationStatus status);
+  void OnDeleteAliasResponse(DeleteAliasCallback user_callback,
+                             std::optional<std::string> response_body);
+  void OnUpdateAliasResponse(UpdateAliasCallback user_callback,
+                             std::optional<std::string> response_body);
 
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
   mojo::RemoteSet<mojom::EmailAliasesServiceObserver> observers_;

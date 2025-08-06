@@ -80,6 +80,8 @@ class EmailAliasesService : public KeyedService,
                              std::optional<std::string> response_body);
   void OnUpdateAliasResponse(UpdateAliasCallback user_callback,
                              std::optional<std::string> response_body);
+  void OnGenerateAliasResponse(GenerateAliasCallback user_callback,
+                               std::optional<std::string> response_body);
 
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
   mojo::RemoteSet<mojom::EmailAliasesServiceObserver> observers_;

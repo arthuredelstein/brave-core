@@ -242,9 +242,22 @@ void EmailAliasesService::CancelAuthenticationOrLogout(
 }
 
 void EmailAliasesService::GenerateAlias(GenerateAliasCallback callback) {
-  mojom::GenerateAliasResultPtr result =
-      mojom::GenerateAliasResult::NewErrorMessage("Not implemented");
-  std::move(callback).Run(std::move(result));
+  std::string url = std::string(GetEmailAliasesServiceBaseURL()) +
+                    kEmailAliasesServiceManagePath;
+  base::Value::Dict body_value;  // empty JSON object
+  ApiFetch(GURL(url), net::HttpRequestHeaders::kPostMethod, auth_token_,
+           body_value,
+           base::BindOnce(&EmailAliasesService::OnGenerateAliasResponse,
+                          weak_factory_.GetWeakPtr(), std::move(callback)));
+}
+
+void EmailAliasesService::OnGenerateAliasResponse(
+    GenerateAliasCallback user_callback,
+    std::optional<std::string> response_body) {
+  // Optionally, parse response_body for alias or error.
+  std::move(user_callback)
+      .Run(mojom::GenerateAliasResult::NewErrorMessage(std::nullopt));
+  RefreshAliases();
 }
 
 void EmailAliasesService::UpdateAlias(const std::string& alias_email,

@@ -254,9 +254,32 @@ void EmailAliasesService::GenerateAlias(GenerateAliasCallback callback) {
 void EmailAliasesService::OnGenerateAliasResponse(
     GenerateAliasCallback user_callback,
     std::optional<std::string> response_body) {
-  // Optionally, parse response_body for alias or error.
+  // Parse response_body for alias or error.
+  std::string error_message;
+  if (!response_body) {
+    error_message = "No response from server.";
+  } else {
+    auto parsed = base::JSONReader::Read(*response_body);
+    if (!parsed || !parsed->is_dict()) {
+      error_message = "Invalid response format.";
+    } else {
+      const auto& dict = parsed->GetDict();
+      const std::string* message = dict.FindString("message");
+      const std::string* alias = dict.FindString("alias");
+      if (message && *message == "created" && alias && !alias->empty()) {
+        std::move(user_callback)
+            .Run(mojom::GenerateAliasResult::NewAliasEmail(*alias));
+        RefreshAliases();
+        return;
+      } else if (message && *message != "created") {
+        error_message = *message;
+      } else {
+        error_message = "Alias not available.";
+      }
+    }
+  }
   std::move(user_callback)
-      .Run(mojom::GenerateAliasResult::NewErrorMessage(std::nullopt));
+      .Run(mojom::GenerateAliasResult::NewErrorMessage(error_message));
   RefreshAliases();
 }
 

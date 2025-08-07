@@ -5,6 +5,7 @@
 
 #include "brave/components/email_aliases/email_aliases_service.h"
 
+#include <iostream>
 #include <memory>
 #include <utility>
 
@@ -70,28 +71,6 @@ const net::NetworkTrafficAnnotationTag traffic_annotation =
     })");
 
 constexpr int kMaxResponseLength = 32768;
-
-// Helper to parse a base::Value (array) into std::vector<mojom::AliasPtr>
-std::vector<email_aliases::mojom::AliasPtr> ParseAliasesFromJson(
-    const base::Value* aliases_value) {
-  std::vector<email_aliases::mojom::AliasPtr> aliases;
-  if (!aliases_value || !aliases_value->is_list()) {
-    return aliases;
-  }
-  for (const auto& alias_val : aliases_value->GetList()) {
-    if (!alias_val.is_dict()) {
-      continue;
-    }
-    const std::string* email = alias_val.GetDict().FindString("email");
-    if (!email) {
-      continue;
-    }
-    auto alias = email_aliases::mojom::Alias::New();
-    alias->email = *email;
-    aliases.push_back(std::move(alias));
-  }
-  return aliases;
-}
 
 }  // namespace
 
@@ -280,7 +259,6 @@ void EmailAliasesService::OnGenerateAliasResponse(
   }
   std::move(user_callback)
       .Run(mojom::GenerateAliasResult::NewErrorMessage(error_message));
-  RefreshAliases();
 }
 
 void EmailAliasesService::UpdateAlias(const std::string& alias_email,
@@ -343,11 +321,25 @@ void EmailAliasesService::OnRefreshAliasesResponse(
     return;
   }
   auto parsed = base::JSONReader::Read(*response_body);
-  if (!parsed || !parsed->is_dict()) {
+  if (!parsed || !parsed->is_list()) {
     return;
   }
-  const base::Value* aliases_val = parsed->GetDict().Find("aliases");
-  auto aliases = ParseAliasesFromJson(aliases_val);
+  std::vector<email_aliases::mojom::AliasPtr> aliases;
+  for (const auto& alias_val : parsed->GetList()) {
+    if (!alias_val.is_dict()) {
+      continue;
+    }
+    const std::string* email = alias_val.GetDict().FindString("email");
+    const std::string* alias = alias_val.GetDict().FindString("alias");
+    if (!email || !alias) {
+      continue;
+    }
+    auto alias_obj = email_aliases::mojom::Alias::New();
+    // What the service calls an alias is the email address for this Alias
+    // object:
+    alias_obj->email = *alias;
+    aliases.push_back(std::move(alias_obj));
+  }
   for (auto& observer : observers_) {
     observer->OnAliasesUpdated(Clone(aliases));
   }

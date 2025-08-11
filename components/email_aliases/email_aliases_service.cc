@@ -124,11 +124,11 @@ void EmailAliasesService::ApiFetch(
   resource_request->headers.SetHeader("X-API-key", GetBraveApiKey());
   simple_url_loader_ = network::SimpleURLLoader::Create(
       std::move(resource_request), traffic_annotation);
-  if (!bodyValue.empty() && method != net::HttpRequestHeaders::kGetMethod &&
+  if (method != net::HttpRequestHeaders::kGetMethod &&
       method != net::HttpRequestHeaders::kHeadMethod) {
     auto body = base::WriteJson(bodyValue);
     CHECK(body);
-    simple_url_loader_->AttachStringForUpload(body.value(), "application/json");
+    simple_url_loader_->AttachStringForUpload(body.value(), "text/plain");
   }
   simple_url_loader_->DownloadToString(url_loader_factory_.get(),
                                        std::move(download_to_string_callback),

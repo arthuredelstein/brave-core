@@ -128,6 +128,7 @@ void EmailAliasesService::ApiFetch(
       method != net::HttpRequestHeaders::kHeadMethod) {
     auto body = base::WriteJson(bodyValue);
     CHECK(body);
+    // Backend expects text/plain for POST requests.
     simple_url_loader_->AttachStringForUpload(body.value(), "text/plain");
   }
   simple_url_loader_->DownloadToString(url_loader_factory_.get(),

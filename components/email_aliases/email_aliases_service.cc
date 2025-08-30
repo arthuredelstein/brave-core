@@ -350,7 +350,6 @@ void EmailAliasesService::ApiFetch(
     const char* method,
     const base::Value::Dict& body_value,
     BodyAsStringCallback download_to_string_callback) {
-  LOG(ERROR) << "ApiFetch: " << url.spec();
   auto resource_request = std::make_unique<network::ResourceRequest>();
   resource_request->url = url;
   resource_request->method = method;
@@ -386,7 +385,6 @@ void EmailAliasesService::OnApiFetchDownloadToStringComplete(
   if (response_body) {
     body_opt = std::move(*response_body);
   }
-  LOG(ERROR) << "OnApiFetchDownloadToStringComplete: " << body_opt.value_or("");
   std::move(callback).Run(std::move(body_opt));
 }
 

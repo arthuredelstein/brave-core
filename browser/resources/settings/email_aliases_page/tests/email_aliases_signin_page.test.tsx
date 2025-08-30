@@ -40,7 +40,7 @@ describe('MainEmailEntryForm', () => {
     const mockAuthEmail = 'test@example.com'
 
     mockEmailAliasesService.requestAuthentication = jest.fn()
-      .mockResolvedValue({ errorMessage: undefined })
+      .mockResolvedValue({ result: { } })
 
     render(<MainEmailEntryForm
       authState={
@@ -64,8 +64,7 @@ describe('MainEmailEntryForm', () => {
     const mockAuthEmail = 'test@example.com'
 
     mockEmailAliasesService.requestAuthentication = jest.fn()
-      .mockResolvedValue(
-        { errorMessage: 'mockErrorMessage' })
+      .mockResolvedValue({ result: { failure: 'mockErrorMessage' } })
 
     render(<MainEmailEntryForm
       authState={{

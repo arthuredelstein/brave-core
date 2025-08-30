@@ -7,16 +7,20 @@
 
 #include <memory>
 #include <utility>
+#include <variant>
 
 #include "absl/strings/str_format.h"
 #include "base/check.h"
+#include "base/feature_list.h"
 #include "base/json/json_reader.h"
 #include "base/json/json_writer.h"
 #include "base/logging.h"
+#include "base/types/expected.h"
 #include "brave/brave_domains/service_domains.h"
 #include "brave/components/email_aliases/email_aliases.mojom.h"
 #include "brave/components/email_aliases/email_aliases_api.h"
 #include "brave/components/email_aliases/features.h"
+#include "mojo/public/mojom/base/empty.mojom.h"
 #include "components/grit/brave_components_strings.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
@@ -38,7 +42,7 @@ constexpr base::TimeDelta kSessionPollInterval = base::Seconds(2);
 // Maximum total polling duration for a single verification flow.
 constexpr base::TimeDelta kMaxSessionPollDuration = base::Minutes(30);
 
-const net::NetworkTrafficAnnotationTag traffic_annotation =
+const net::NetworkTrafficAnnotationTag kTrafficAnnotation =
     net::DefineNetworkTrafficAnnotation("brave_accounts_service", R"(
       semantics {
         sender: "Email Aliases service"
@@ -112,7 +116,8 @@ void EmailAliasesService::RequestAuthentication(
   auth_email_ = auth_email;
   if (auth_email.empty()) {
     std::move(callback).Run(
-        l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_EMAIL_PROVIDED));
+        base::unexpected(
+            l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_EMAIL_PROVIDED)));
     return;
   }
   AuthenticationRequest auth_request;
@@ -125,7 +130,7 @@ void EmailAliasesService::RequestAuthentication(
   resource_request->url = verify_init_url_;
   resource_request->method = net::HttpRequestHeaders::kPostMethod;
   verification_simple_url_loader_ = network::SimpleURLLoader::Create(
-      std::move(resource_request), traffic_annotation);
+      std::move(resource_request), kTrafficAnnotation);
   verification_simple_url_loader_->SetRetryOptions(
       /* max_retries=*/3,
       network::SimpleURLLoader::RETRY_ON_5XX |
@@ -145,33 +150,34 @@ void EmailAliasesService::OnRequestAuthenticationResponse(
   verification_simple_url_loader_.reset();
   if (!response_body) {
     std::move(callback).Run(
-        l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_RESPONSE_BODY));
+        base::unexpected(
+            l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_RESPONSE_BODY)));
     return;
   }
   const auto response_body_dict = base::JSONReader::ReadDict(*response_body);
   if (!response_body_dict) {
-    std::move(callback).Run(l10n_util::GetStringUTF8(
-        IDS_EMAIL_ALIASES_ERROR_INVALID_RESPONSE_BODY));
+    std::move(callback).Run(base::unexpected(l10n_util::GetStringUTF8(
+        IDS_EMAIL_ALIASES_ERROR_INVALID_RESPONSE_BODY)));
     return;
   }
   auto error_message = ErrorResponse::FromValue(*response_body_dict);
   if (error_message) {
     LOG(ERROR) << "Email Aliases verification error: " << error_message->error;
-    std::move(callback).Run(l10n_util::GetStringUTF8(
-        IDS_EMAIL_ALIASES_ERROR_NO_VERIFICATION_TOKEN));
+    std::move(callback).Run(base::unexpected(l10n_util::GetStringUTF8(
+        IDS_EMAIL_ALIASES_ERROR_NO_VERIFICATION_TOKEN)));
     return;
   }
   auto parsed_auth = AuthenticationResponse::FromValue(*response_body_dict);
   if (!parsed_auth || parsed_auth->verification_token.empty()) {
     LOG(ERROR) << "Email Aliases verification error: No verification token";
-    std::move(callback).Run(l10n_util::GetStringUTF8(
-        IDS_EMAIL_ALIASES_ERROR_NO_VERIFICATION_TOKEN));
+    std::move(callback).Run(base::unexpected(l10n_util::GetStringUTF8(
+        IDS_EMAIL_ALIASES_ERROR_NO_VERIFICATION_TOKEN)));
     return;
   }
   // Success; set the verification token and notify observers.
   verification_token_ = parsed_auth->verification_token;
   NotifyObserversAuthStateChanged(mojom::AuthenticationStatus::kAuthenticating);
-  std::move(callback).Run(std::nullopt);
+  std::move(callback).Run(base::ok(std::monostate{}));
   // Begin the polling window.
   RequestSession();
 }
@@ -192,7 +198,7 @@ void EmailAliasesService::RequestSession() {
   resource_request->headers.SetHeader(
       "Authorization", std::string("Bearer ") + verification_token_);
   verification_simple_url_loader_ = network::SimpleURLLoader::Create(
-      std::move(resource_request), traffic_annotation);
+      std::move(resource_request), kTrafficAnnotation);
   verification_simple_url_loader_->AttachStringForUpload(*body,
                                                          "application/json");
   verification_simple_url_loader_->DownloadToString(
@@ -281,22 +287,20 @@ void EmailAliasesService::CancelAuthenticationOrLogout(
 }
 
 void EmailAliasesService::GenerateAlias(GenerateAliasCallback callback) {
-  mojom::GenerateAliasResultPtr result =
-      mojom::GenerateAliasResult::NewErrorMessage("Not implemented");
-  std::move(callback).Run(std::move(result));
+  std::move(callback).Run(base::unexpected(std::string("Not implemented")));
 }
 
 void EmailAliasesService::UpdateAlias(const std::string& alias_email,
                                       const std::optional<std::string>& note,
                                       UpdateAliasCallback callback) {
   // TODO: Implement alias update logic
-  std::move(callback).Run("Not implemented");
+  std::move(callback).Run(base::unexpected(std::string("Not implemented")));
 }
 
 void EmailAliasesService::DeleteAlias(const std::string& alias_email,
                                       DeleteAliasCallback callback) {
   // TODO: Implement alias deletion logic
-  std::move(callback).Run("Not implemented");
+  std::move(callback).Run(base::unexpected(std::string("Not implemented")));
 }
 
 void EmailAliasesService::AddObserver(

@@ -51,7 +51,8 @@ interface EmailAliasesServiceObserver {
 interface EmailAliasesService {
 
   // Initiate authentication using the user's auth email.
-  RequestAuthentication(string auth_email) => result<mojo_base.mojom.Empty, string>;
+  RequestAuthentication(string auth_email) =>
+    result<mojo_base.mojom.Empty, string>;
 
   // Cancel pending authentication or log out if already authenticated.
   CancelAuthenticationOrLogout() => ();
@@ -60,7 +61,8 @@ interface EmailAliasesService {
   GenerateAlias() => result<string, string>;
 
   // Create or Update an existing email alias.
-  UpdateAlias(string alias_email, string? note) => result<mojo_base.mojom.Empty, string>;
+  UpdateAlias(string alias_email, string? note) =>
+    result<mojo_base.mojom.Empty, string>;
 
   // Delete an email alias.
   DeleteAlias(string alias_email) => result<mojo_base.mojom.Empty, string>;

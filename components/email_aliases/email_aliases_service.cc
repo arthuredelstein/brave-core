@@ -19,9 +19,9 @@
 #include "brave/components/email_aliases/email_aliases.mojom.h"
 #include "brave/components/email_aliases/email_aliases_api.h"
 #include "brave/components/email_aliases/features.h"
-#include "mojo/public/mojom/base/empty.mojom.h"
 #include "components/grit/brave_components_strings.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"
+#include "mojo/public/mojom/base/empty.mojom.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "services/network/public/cpp/resource_request.h"
 #include "services/network/public/cpp/shared_url_loader_factory.h"
@@ -114,9 +114,8 @@ void EmailAliasesService::RequestAuthentication(
   ResetVerificationFlow();
   auth_email_ = auth_email;
   if (auth_email.empty()) {
-    std::move(callback).Run(
-        base::unexpected(
-            l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_EMAIL_PROVIDED)));
+    std::move(callback).Run(base::unexpected(
+        l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_EMAIL_PROVIDED)));
     return;
   }
   AuthenticationRequest auth_request;
@@ -148,9 +147,8 @@ void EmailAliasesService::OnRequestAuthenticationResponse(
     std::optional<std::string> response_body) {
   verification_simple_url_loader_.reset();
   if (!response_body) {
-    std::move(callback).Run(
-        base::unexpected(
-            l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_RESPONSE_BODY)));
+    std::move(callback).Run(base::unexpected(
+        l10n_util::GetStringUTF8(IDS_EMAIL_ALIASES_ERROR_NO_RESPONSE_BODY)));
     return;
   }
   const auto response_body_dict = base::JSONReader::ReadDict(*response_body);

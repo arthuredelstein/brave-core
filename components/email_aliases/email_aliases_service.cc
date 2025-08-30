@@ -40,7 +40,7 @@ constexpr base::TimeDelta kSessionPollInterval = base::Seconds(2);
 // Maximum total polling duration for a single verification flow.
 constexpr base::TimeDelta kMaxSessionPollDuration = base::Minutes(30);
 
-const net::NetworkTrafficAnnotationTag kTrafficAnnotation =
+const net::NetworkTrafficAnnotationTag traffic_annotation =
     net::DefineNetworkTrafficAnnotation("brave_accounts_service", R"(
       semantics {
         sender: "Email Aliases service"
@@ -127,7 +127,7 @@ void EmailAliasesService::RequestAuthentication(
   resource_request->url = verify_init_url_;
   resource_request->method = net::HttpRequestHeaders::kPostMethod;
   verification_simple_url_loader_ = network::SimpleURLLoader::Create(
-      std::move(resource_request), kTrafficAnnotation);
+      std::move(resource_request), traffic_annotation);
   verification_simple_url_loader_->SetRetryOptions(
       /* max_retries=*/3,
       network::SimpleURLLoader::RETRY_ON_5XX |
@@ -194,7 +194,7 @@ void EmailAliasesService::RequestSession() {
   resource_request->headers.SetHeader(
       "Authorization", std::string("Bearer ") + verification_token_);
   verification_simple_url_loader_ = network::SimpleURLLoader::Create(
-      std::move(resource_request), kTrafficAnnotation);
+      std::move(resource_request), traffic_annotation);
   verification_simple_url_loader_->AttachStringForUpload(*body,
                                                          "application/json");
   verification_simple_url_loader_->DownloadToString(

@@ -140,6 +140,10 @@
 
 #define IDC_SHOW_APPS_PAGE 56352
 
+// Email Aliases
+// Opens the Email Aliases settings page
+#define IDC_SHOW_EMAIL_ALIASES 56455
+
 // Brave Containers
 #define IDC_OPEN_IN_CONTAINER 56353
 #define IDC_OPEN_IN_CONTAINER_START 56354

@@ -1214,6 +1214,14 @@ constexpr flags_ui::FeatureEntry::Choice kVerticalTabCollapseDelayChoices[] = {
           kOsAll,                                                              \
           FEATURE_VALUE_TYPE(                                                  \
               brave_sync::features::kBraveSyncDefaultPasswords),               \
+      },                                                                       \
+      {                                                                        \
+          "brave-email-aliases",                                             \
+          "Enable Email Aliases",                                            \
+          "Enables the Email Aliases feature, which allows you to hide your " \
+          "real email address behind an alias email address.",               \
+          kOsWin | kOsLinux | kOsMac,                                          \
+          FEATURE_VALUE_TYPE(features::kBraveEmailAliases),                    \
       })                                                                       \
   BRAVE_NATIVE_WALLET_FEATURE_ENTRIES                                          \
   BRAVE_NEWS_FEATURE_ENTRIES                                                   \

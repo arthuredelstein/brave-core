@@ -102,6 +102,20 @@ void BraveAppMenuModel::Build() {
   BuildBraveProductsSection();
   BuildBrowserSection();
   BuildMoreToolsSubMenu();
+  // Insert Email Aliases item under Passwords and Autofill submenu when
+  // the feature is enabled.
+  if (base::FeatureList::IsEnabled(features::kBraveEmailAliases)) {
+    ui::SimpleMenuModel* autofill_menu_model =
+        static_cast<ui::SimpleMenuModel*>(GetSubmenuModelAt(
+            GetIndexOfCommandId(IDC_PASSWORDS_AND_AUTOFILL_MENU).value()));
+    DCHECK(autofill_menu_model);
+
+    if (const auto index =
+            autofill_menu_model->GetIndexOfCommandId(IDC_SHOW_PASSWORD_MANAGER)) {
+      autofill_menu_model->InsertItemWithStringIdAt(
+          *index + 1, IDC_SHOW_EMAIL_ALIASES, IDS_SHOW_EMAIL_ALIASES);
+    }
+  }
   BuildHelpSubMenu();
 
   ApplyLeoIcons(this);

@@ -25,6 +25,9 @@ BASE_DECLARE_FEATURE(kBraveAndroidDynamicColors);
 BASE_DECLARE_FEATURE(kNewAndroidOnboarding);
 #endif  // BUILDFLAG(IS_ANDROID)
 
+// Email Aliases feature flag (desktop only)
+BASE_DECLARE_FEATURE(kBraveEmailAliases);
+
 extern const base::FeatureParam<std::string> kBraveDayZeroExperimentVariant;
 
 }  // namespace features

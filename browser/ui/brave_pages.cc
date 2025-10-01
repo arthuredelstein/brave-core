@@ -47,6 +47,10 @@ void ShowBraveTalk(Browser* browser) {
   ShowSingletonTabOverwritingNTP(browser, GURL(sidebar::kBraveTalkURL));
 }
 
+void ShowEmailAliases(Browser* browser) {
+  ShowSingletonTabOverwritingNTP(browser, GURL(kEmailAliasesSettingsURL));
+}
+
 void ShowFullpageChat(Browser* browser) {
   if (!ai_chat::features::IsAIChatHistoryEnabled()) {
     return;

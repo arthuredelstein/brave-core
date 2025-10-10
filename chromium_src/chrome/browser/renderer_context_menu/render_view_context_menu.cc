@@ -26,12 +26,15 @@
 #include "brave/browser/ui/browser_dialogs.h"
 #include "brave/browser/ui/tabs/features.h"
 #include "brave/components/ai_rewriter/common/buildflags/buildflags.h"
+#include "brave/components/constants/webui_url_constants.h"
+#include "brave/components/email_aliases/features.h"
 #include "brave/components/tor/buildflags/buildflags.h"
 #include "brave/grit/brave_theme_resources.h"
 #include "chrome/browser/autocomplete/chrome_autocomplete_provider_client.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser_list.h"
 #include "chrome/browser/ui/browser_window/public/browser_window_features.h"
+#include "chrome/browser/ui/views/frame/browser_view.h"
 #include "chrome/common/channel_info.h"
 #include "components/omnibox/browser/autocomplete_classifier.h"
 #include "components/omnibox/browser/autocomplete_controller.h"
@@ -63,6 +66,7 @@
 #include "brave/components/ai_chat/core/common/mojom/common.mojom.h"
 #include "brave/components/ai_chat/core/common/pref_names.h"
 #include "brave/components/brave_shields/core/common/features.h"
+#include "brave/grit/brave_generated_resources.h"
 #include "components/grit/brave_components_strings.h"
 
 #if BUILDFLAG(ENABLE_AI_REWRITER)
@@ -433,6 +437,8 @@ bool BraveRenderViewContextMenu::IsCommandIdEnabled(int id) const {
       return CanOpenSplitViewForWebContents(source_web_contents_->GetWeakPtr());
     case IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS:
       return true;
+    case IDC_NEW_EMAIL_ALIAS:
+      return base::FeatureList::IsEnabled(email_aliases::kEmailAliases);
     case IDC_OPEN_IN_CONTAINER:
       return true;
     default:
@@ -517,6 +523,14 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
       cosmetic_filters::CosmeticFiltersTabHelper::LaunchContentPicker(
           source_web_contents_);
       break;
+    case IDC_NEW_EMAIL_ALIAS: {
+      // For now, open settings page where modal is available.
+      NavigateParams params(GetBrowser(), GURL(kEmailAliasesSettingsURL),
+                            ui::PAGE_TRANSITION_LINK);
+      params.disposition = WindowOpenDisposition::NEW_FOREGROUND_TAB;
+      Navigate(&params);
+      break;
+    }
     default:
       RenderViewContextMenu_Chromium::ExecuteCommand(id, event_flags);
   }
@@ -779,6 +793,17 @@ void BraveRenderViewContextMenu::AppendDeveloperItems() {
       menu_model_.AddItemWithStringId(IDC_ADBLOCK_CONTEXT_BLOCK_ELEMENTS,
                                       IDS_ADBLOCK_CONTEXT_BLOCK_ELEMENTS);
     }
+  }
+
+  if (base::FeatureList::IsEnabled(email_aliases::kEmailAliases) &&
+      params_.form_control_type &&
+      (params_.form_control_type.value() ==
+           blink::mojom::FormControlType::kInputEmail ||
+       params_.form_control_type.value() ==
+           blink::mojom::FormControlType::kInputText ||
+       params_.is_content_editable_for_autofill)) {
+    menu_model_.AddSeparator(ui::NORMAL_SEPARATOR);
+    menu_model_.AddItemWithStringId(IDC_NEW_EMAIL_ALIAS, IDS_NEW_EMAIL_ALIAS);
   }
 }
 

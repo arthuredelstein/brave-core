@@ -559,8 +559,7 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
       manager = WebUIBubbleManager::Create<EmailAliasesPanelUI>(
           anchor_view, GetBrowser(), GURL(kEmailAliasesPanelURL),
           IDS_SETTINGS_EMAIL_ALIASES_LABEL);
-      LOG(INFO) << "EmailAliases: ShowBubble() anchored to LocationBarView";
-      manager->ShowBubble();
+      manager->ShowBubble(std::nullopt, views::BubbleBorder::TOP_CENTER);
       if (manager->GetBubbleWidget()) {
         manager->GetBubbleWidget()->SetVisible(true);
       }

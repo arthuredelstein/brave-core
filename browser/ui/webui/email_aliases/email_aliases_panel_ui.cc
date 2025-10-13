@@ -17,7 +17,6 @@
 #include "content/public/browser/web_ui_data_source.h"
 #include "content/public/browser/web_ui.h"
 #include "ui/webui/webui_util.h"
-#include "ui/base/webui/web_ui_util.h"
 
 EmailAliasesPanelUI::EmailAliasesPanelUI(content::WebUI* web_ui)
     : TopChromeWebUIController(web_ui, true) {
@@ -40,11 +39,6 @@ EmailAliasesPanelUI::EmailAliasesPanelUI(content::WebUI* web_ui)
   if (auto embedder_ptr = embedder()) {
     embedder_ptr->ShowUI();
   }
-
-  web_ui->RegisterMessageCallback(
-      "email_aliases.closeBubble",
-      base::BindRepeating(&EmailAliasesPanelUI::HandleCloseBubble,
-                          base::Unretained(this)));
 }
 
 EmailAliasesPanelUI::~EmailAliasesPanelUI() = default;
@@ -66,12 +60,6 @@ bool EmailAliasesPanelUIConfig::IsWebUIEnabled(
 
 bool EmailAliasesPanelUIConfig::ShouldAutoResizeHost() {
   return true;
-}
-
-void EmailAliasesPanelUI::HandleCloseBubble(const base::Value::List& args) {
-  if (auto embedder_ptr = embedder()) {
-    embedder_ptr->CloseUI();
-  }
 }
 
 

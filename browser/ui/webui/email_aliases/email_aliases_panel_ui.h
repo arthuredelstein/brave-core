@@ -33,7 +33,6 @@ class EmailAliasesPanelUI : public TopChromeWebUIController {
       static constexpr std::string_view GetWebUIName() { return "EmailAliasesPanel"; }
 
  private:
-  void HandleCloseBubble(const base::Value::List& args);
   WEB_UI_CONTROLLER_TYPE_DECL();
 };
 

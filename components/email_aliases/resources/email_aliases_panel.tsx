@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import * as React from 'react'
 import { StyleSheetManager } from 'styled-components'
 import { EmailAliasModal } from '../../../browser/resources/settings/email_aliases_page/content/email_aliases_modal'
-import { sendWithPromise } from 'chrome://resources/js/cr.js'
 import {
   AuthenticationStatus,
   AuthState,
@@ -48,9 +47,7 @@ const EmailAliasesPanelConnected = ({ emailAliasesService, bindObserver }: {
   }, [])
   return (
     <EmailAliasModal
-      onReturnToMain={() => {
-        sendWithPromise('email_aliases.closeBubble')
-      }}
+      onReturnToMain={() => {}}
       editing={false}
       mainEmail={authState.email}
       aliasCount={aliasesState.length}

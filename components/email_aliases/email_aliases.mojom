@@ -70,6 +70,9 @@ interface EmailAliasesService {
   // Notify alias creation complete (the bubble can close). Fire and forget.
   NotifyAliasCreationComplete(string? email);
 
+  // Invoke manage aliases (show settings page)
+  InvokeManageAliases();
+
   // Add an email aliases observer.
   AddObserver(pending_remote<EmailAliasesServiceObserver> observer);
 

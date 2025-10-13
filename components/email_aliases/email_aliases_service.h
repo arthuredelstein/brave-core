@@ -32,9 +32,10 @@ class SimpleURLLoader;
 
 namespace email_aliases {
 
-class EmailAliasesBubblebserver {
+class EmailAliasesBubbleObserver {
  public:
   virtual void OnAliasCreationComplete(const std::optional<std::string>& email) = 0;
+  virtual void OnInvokeManageAliases() = 0;
 };
 
 // The EmailAliasesService is responsible for managing the email aliases for a
@@ -89,8 +90,8 @@ class EmailAliasesService : public KeyedService,
   bool IsReadyToCreate() const;
 
   // Registers/unregisters a bubble observer for alias creation completion.
-  void AddBubbleObserver(EmailAliasesBubblebserver* observer);
-  void RemoveBubbleObserver(EmailAliasesBubblebserver* observer);
+  void AddBubbleObserver(EmailAliasesBubbleObserver* observer);
+  void RemoveBubbleObserver(EmailAliasesBubbleObserver* observer);
 
   // Binds the mojom interface to this service
   // Adds a new receiver for the EmailAliasesService Mojo interface.
@@ -181,6 +182,9 @@ class EmailAliasesService : public KeyedService,
   void NotifyAliasCreationComplete(
       const std::optional<std::string>& email) override;
 
+  // Called by the UI to show the settings page.
+  void InvokeManageAliases() override;
+
   // Bound Mojo receivers for the EmailAliasesService interface.
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
 
@@ -228,7 +232,7 @@ class EmailAliasesService : public KeyedService,
   const int max_aliases_ = 5;
 
   // Observers that receive email alias creation updates.
-std::set<EmailAliasesBubblebserver*> email_aliases_bubble_observers_;
+std::set<EmailAliasesBubbleObserver*> email_aliases_bubble_observers_;
 
   // WeakPtrFactory to safely bind callbacks across async network operations.
   base::WeakPtrFactory<EmailAliasesService> weak_factory_{this};

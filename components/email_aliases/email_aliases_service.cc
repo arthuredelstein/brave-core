@@ -537,15 +537,21 @@ void EmailAliasesService::NotifyAliasCreationComplete(
   }
 }
 
+void EmailAliasesService::InvokeManageAliases() {
+  for (auto* observer : email_aliases_bubble_observers_) {
+    observer->OnInvokeManageAliases();
+  }
+}
+
 void EmailAliasesService::AddBubbleObserver(
-    EmailAliasesBubblebserver* observer) {
+    EmailAliasesBubbleObserver* observer) {
   if (observer) {
     email_aliases_bubble_observers_.insert(observer);
   }
 }
 
 void EmailAliasesService::RemoveBubbleObserver(
-    EmailAliasesBubblebserver* observer) {
+    EmailAliasesBubbleObserver* observer) {
   if (observer) {
     email_aliases_bubble_observers_.erase(observer);
   }

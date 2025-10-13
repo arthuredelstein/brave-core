@@ -298,7 +298,10 @@ export const EmailAliasModal = (
       <ButtonRow bubble={bubble}>
         <span>
           {bubble &&
-            <Button onClick={() => { window.open('brave://settings/email-aliases'); onReturnToMain(undefined) }} kind='plain'>
+            <Button onClick={() => {
+              emailAliasesService.invokeManageAliases();
+              onReturnToMain(undefined);
+              }} kind='plain'>
               {getLocale('emailAliasesManageButton')}
             </Button>}
           <Button onClick={() => onReturnToMain(undefined)} kind='plain-faint'>

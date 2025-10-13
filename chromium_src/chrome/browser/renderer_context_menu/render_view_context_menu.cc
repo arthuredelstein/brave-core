@@ -57,12 +57,16 @@ std::unique_ptr<EmailAliasesBubbleObserverImpl>& GetEmailAliasesBubbleObserver()
 class EmailAliasesBubbleObserverImpl final
     : public email_aliases::EmailAliasesBubblebserver {
  public:
-  explicit EmailAliasesBubbleObserverImpl(Profile* profile)
-      : profile_(profile) {}
+  EmailAliasesBubbleObserverImpl(Profile* profile,
+                                 base::WeakPtr<content::WebContents> contents)
+      : profile_(profile), web_contents_(std::move(contents)) {}
   ~EmailAliasesBubbleObserverImpl() = default;
 
   void OnAliasCreationComplete(
-      const std::optional<std::string>& /*email*/) override {
+      const std::optional<std::string>& email) override {
+    if (email.has_value() && !email->empty() && web_contents_) {
+      web_contents_->Replace(base::UTF8ToUTF16(email.value()));
+    }
     auto& mgr = GetEmailAliasesBubbleManager();
     if (mgr && mgr->GetBubbleWidget()) {
       mgr->CloseBubble();
@@ -77,6 +81,7 @@ class EmailAliasesBubbleObserverImpl final
 
  private:
   raw_ptr<Profile> profile_;
+  base::WeakPtr<content::WebContents> web_contents_;
 };
 
 std::unique_ptr<EmailAliasesBubbleObserverImpl>&
@@ -628,7 +633,8 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
         if (svc) {
           auto& ob = GetEmailAliasesBubbleObserver();
           if (!ob) {
-            ob = std::make_unique<EmailAliasesBubbleObserverImpl>(GetProfile());
+            ob = std::make_unique<EmailAliasesBubbleObserverImpl>(
+                GetProfile(), source_web_contents_->GetWeakPtr());
           }
           svc->AddBubbleObserver(ob.get());
         }

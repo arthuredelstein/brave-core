@@ -212,6 +212,8 @@ export const EmailAliasModal = (
     try {
       await emailAliasesService.updateAlias(
         generateAliasResult.aliasEmail, proposedNote)
+      // Inform native that creation completed; bubble will close and input will be filled.
+      try { await emailAliasesService.notifyAliasCreationComplete(generateAliasResult.aliasEmail) } catch {}
       onReturnToMain()
     } catch (errorMessage) {
       setUpdateErrorMessage(errorMessage as string)

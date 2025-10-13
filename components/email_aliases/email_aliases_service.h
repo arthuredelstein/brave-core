@@ -7,6 +7,7 @@
 #define BRAVE_COMPONENTS_EMAIL_ALIASES_EMAIL_ALIASES_SERVICE_H_
 
 #include <memory>
+#include <set>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -46,7 +47,7 @@ class EmailAliasesBubblebserver {
 class EmailAliasesService : public KeyedService,
                             public mojom::EmailAliasesService {
  public:
-  EmailAliasesService(
+  explicit EmailAliasesService(
       scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory);
   ~EmailAliasesService() override;
 
@@ -86,6 +87,10 @@ class EmailAliasesService : public KeyedService,
 
   // Returns true if the user is ready to create a new alias.
   bool IsReadyToCreate() const;
+
+  // Registers/unregisters a bubble observer for alias creation completion.
+  void AddBubbleObserver(EmailAliasesBubblebserver* observer);
+  void RemoveBubbleObserver(EmailAliasesBubblebserver* observer);
 
   // Binds the mojom interface to this service
   // Adds a new receiver for the EmailAliasesService Mojo interface.

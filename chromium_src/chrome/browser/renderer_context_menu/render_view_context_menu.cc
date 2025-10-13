@@ -6,6 +6,7 @@
 #include "chrome/browser/renderer_context_menu/render_view_context_menu.h"
 
 #include <optional>
+#include "base/memory/raw_ptr.h"
 
 #include "base/check.h"
 #include "base/containers/fixed_flat_map.h"
@@ -45,6 +46,46 @@ std::unique_ptr<WebUIBubbleManager>& GetEmailAliasesBubbleManager() {
   static base::NoDestructor<std::unique_ptr<WebUIBubbleManager>> instance;
   return *instance;
 }
+}  // namespace
+
+namespace {
+
+// Forward declaration so it can be referenced inside the observer method.
+class EmailAliasesBubbleObserverImpl;
+std::unique_ptr<EmailAliasesBubbleObserverImpl>& GetEmailAliasesBubbleObserver();
+
+class EmailAliasesBubbleObserverImpl final
+    : public email_aliases::EmailAliasesBubblebserver {
+ public:
+  explicit EmailAliasesBubbleObserverImpl(Profile* profile)
+      : profile_(profile) {}
+  ~EmailAliasesBubbleObserverImpl() = default;
+
+  void OnAliasCreationComplete(
+      const std::optional<std::string>& /*email*/) override {
+    auto& mgr = GetEmailAliasesBubbleManager();
+    if (mgr && mgr->GetBubbleWidget()) {
+      mgr->CloseBubble();
+    }
+    if (auto* service =
+            email_aliases::EmailAliasesServiceFactory::GetServiceForProfile(
+                profile_)) {
+      service->RemoveBubbleObserver(this);
+    }
+    GetEmailAliasesBubbleObserver().reset();
+  }
+
+ private:
+  raw_ptr<Profile> profile_;
+};
+
+std::unique_ptr<EmailAliasesBubbleObserverImpl>&
+GetEmailAliasesBubbleObserver() {
+  static base::NoDestructor<std::unique_ptr<EmailAliasesBubbleObserverImpl>>
+      instance;
+  return *instance;
+}
+
 }  // namespace
 #include "brave/components/tor/buildflags/buildflags.h"
 #include "brave/grit/brave_theme_resources.h"
@@ -581,6 +622,16 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
         mgr = WebUIBubbleManager::Create<EmailAliasesPanelUI>(anchor_view, GetBrowser(), GURL(url_with_field), IDS_SETTINGS_EMAIL_ALIASES_LABEL);
         mgr->ShowBubble(std::nullopt, views::BubbleBorder::TOP_CENTER);
         if (mgr->GetBubbleWidget()) { mgr->GetBubbleWidget()->SetVisible(true); }
+
+        // Register bubble observer to auto-close on alias creation completion.
+        auto* svc = email_aliases::EmailAliasesServiceFactory::GetServiceForProfile(GetProfile());
+        if (svc) {
+          auto& ob = GetEmailAliasesBubbleObserver();
+          if (!ob) {
+            ob = std::make_unique<EmailAliasesBubbleObserverImpl>(GetProfile());
+          }
+          svc->AddBubbleObserver(ob.get());
+        }
       }
       break;
     }

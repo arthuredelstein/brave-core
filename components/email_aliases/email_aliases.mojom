@@ -45,17 +45,6 @@ interface EmailAliasesServiceObserver {
 
 };
 
-// Observer for alias generation
-interface EmailAliasCreationObserver {
-
-  // Called when an email alias has been created
-  OnAliasCreated(string alias);
-
-  // Called when alias creation has been canceled
-  OnAliasCreationCanceled();
-
-};
-
 // Interface for managing email aliases
 // TODO(https://github.com/brave/brave-browser/issues/48515):
 // Look into using `request<>` for function calls in this interface.
@@ -78,14 +67,11 @@ interface EmailAliasesService {
   // Delete an email alias.
   DeleteAlias(string alias_email) => result<mojo_base.mojom.Empty, string>;
 
+  // Notify alias creation complete (the bubble can close). Fire and forget.
+  NotifyAliasCreationComplete(string? email);
+
   // Add an email aliases observer.
   AddObserver(pending_remote<EmailAliasesServiceObserver> observer);
-
-  // Returns true if the user is ready to create a new alias
-  IsReadyToCreate() => (bool ready);
-
-  // Add an email alias creation observer.
-  AddAliasCreationObserver(pending_remote<EmailAliasCreationObserver> observer);
 
 };
 

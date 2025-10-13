@@ -31,6 +31,10 @@
 #include "brave/browser/ui/webui/email_aliases/email_aliases_panel_ui.h"
 #include "chrome/browser/ui/views/bubble/webui_bubble_manager.h"
 #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
+#include "base/strings/strcat.h"
+#include "base/strings/string_number_conversions.h"
+#include "brave/browser/email_aliases/email_aliases_service_factory.h"
+#include "brave/components/email_aliases/email_aliases_service.h"
 #include "base/no_destructor.h"
 #include "base/logging.h"
 // (Using anchor view for bubble positioning; no explicit rect needed.)
@@ -49,6 +53,7 @@ std::unique_ptr<WebUIBubbleManager>& GetEmailAliasesBubbleManager() {
 #include "chrome/browser/ui/browser_list.h"
 #include "chrome/browser/ui/browser_window/public/browser_window_features.h"
 #include "chrome/browser/ui/views/frame/browser_view.h"
+#include "chrome/browser/ui/browser_navigator.h"
 #include "chrome/common/channel_info.h"
 #include "components/omnibox/browser/autocomplete_classifier.h"
 #include "components/omnibox/browser/autocomplete_controller.h"
@@ -387,6 +392,19 @@ void OpenLinkInSplitView(base::WeakPtr<content::WebContents> web_contents,
 
 }  // namespace
 
+namespace {
+
+void ShowEmailAliasesSettingsPage(Browser* browser) {
+  if (!browser)
+    return;
+  NavigateParams nav_params(browser, GURL(kEmailAliasesSettingsURL),
+                            ui::PAGE_TRANSITION_TYPED);
+  nav_params.disposition = WindowOpenDisposition::NEW_FOREGROUND_TAB;
+  Navigate(&nav_params);
+}
+
+}  // namespace
+
 BraveRenderViewContextMenu::BraveRenderViewContextMenu(
     content::RenderFrameHost& render_frame_host,
     const content::ContextMenuParams& params)
@@ -538,30 +556,31 @@ void BraveRenderViewContextMenu::ExecuteCommand(int id, int event_flags) {
           source_web_contents_);
       break;
     case IDC_NEW_EMAIL_ALIAS: {
-      auto* browser_view = BrowserView::GetBrowserViewForBrowser(GetBrowser());
-      views::View* anchor_view = browser_view->GetLocationBarView();
-      LOG(INFO) << "EmailAliases: context menu invoked; anchor_view="
-                 << static_cast<void*>(anchor_view);
-      if (!anchor_view) {
-        LOG(WARNING) << "EmailAliases: no anchor view; aborting bubble show";
+      auto* service =
+          email_aliases::EmailAliasesServiceFactory::GetServiceForProfile(GetProfile());
+      if (!service) {
+        ShowEmailAliasesSettingsPage(GetBrowser());
         break;
       }
-      auto& manager = GetEmailAliasesBubbleManager();
-      if (manager && manager->GetBubbleWidget()) {
-        if (manager->GetBubbleWidget()->IsVisible()) {
-          LOG(INFO) << "EmailAliases: bubble visible - closing";
-          manager->CloseBubble();
+      // Decide readiness synchronously; then open bubble or settings.
+      if (!service->IsReadyToCreate()) {
+        ShowEmailAliasesSettingsPage(GetBrowser());
+        break;
+      }
+      {
+        auto* browser_view = BrowserView::GetBrowserViewForBrowser(GetBrowser());
+        if (!browser_view) { ShowEmailAliasesSettingsPage(GetBrowser()); break; }
+        views::View* anchor_view = browser_view->GetLocationBarView();
+        if (!anchor_view) { ShowEmailAliasesSettingsPage(GetBrowser()); break; }
+        auto& mgr = GetEmailAliasesBubbleManager();
+        if (mgr && mgr->GetBubbleWidget() && mgr->GetBubbleWidget()->IsVisible()) {
+          mgr->CloseBubble();
           break;
         }
-      }
-      LOG(INFO) << "EmailAliases: creating bubble with URL="
-                << kEmailAliasesPanelURL;
-      manager = WebUIBubbleManager::Create<EmailAliasesPanelUI>(
-          anchor_view, GetBrowser(), GURL(kEmailAliasesPanelURL),
-          IDS_SETTINGS_EMAIL_ALIASES_LABEL);
-      manager->ShowBubble(std::nullopt, views::BubbleBorder::TOP_CENTER);
-      if (manager->GetBubbleWidget()) {
-        manager->GetBubbleWidget()->SetVisible(true);
+        std::string url_with_field = base::StrCat({kEmailAliasesPanelURL, "?field=", base::NumberToString(params_.field_renderer_id)});
+        mgr = WebUIBubbleManager::Create<EmailAliasesPanelUI>(anchor_view, GetBrowser(), GURL(url_with_field), IDS_SETTINGS_EMAIL_ALIASES_LABEL);
+        mgr->ShowBubble(std::nullopt, views::BubbleBorder::TOP_CENTER);
+        if (mgr->GetBubbleWidget()) { mgr->GetBubbleWidget()->SetVisible(true); }
       }
       break;
     }

@@ -523,24 +523,15 @@ void EmailAliasesService::OnRefreshAliasesResponse(
   }
 }
 
-void EmailAliasesService::AddAliasCreationObserver(
-    mojo::PendingRemote<email_aliases::mojom::EmailAliasCreationObserver> observer) {
-  alias_creation_observers_.Add(std::move(observer));
+bool EmailAliasesService::IsReadyToCreate() const {
+  return !auth_token_.empty() && number_of_aliases_ < max_aliases_;
 }
 
-void EmailAliasesService::IsReadyToCreate(base::OnceCallback<void(bool)> callback) {
-  std::move(callback).Run(!auth_token_.empty() && number_of_aliases_ < max_aliases_);
-}
-
-void EmailAliasesService::NotifyAliasCreationCanceled() {
-  for (auto& observer : alias_creation_observers_) {
-    observer->OnAliasCreationCanceled();
-  }
-}
-
-void EmailAliasesService::NotifyAliasCreated(const std::string& alias) {
-  for (auto& observer : alias_creation_observers_) {
-    observer->OnAliasCreated(alias);
+void EmailAliasesService::NotifyAliasCreationComplete(
+    const std::optional<std::string>& email) {
+  // For now, this method is a no-op; the backend notifies via OnAliasesUpdated.
+  for (auto& observer : email_aliases_bubble_observers_) {
+    observer->OnAliasCreationComplete(email);
   }
 }
 

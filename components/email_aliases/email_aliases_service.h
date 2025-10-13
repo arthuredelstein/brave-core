@@ -31,6 +31,11 @@ class SimpleURLLoader;
 
 namespace email_aliases {
 
+class EmailAliasesBubblebserver {
+ public:
+  virtual void OnAliasCreationComplete(const std::optional<std::string>& email) = 0;
+};
+
 // The EmailAliasesService is responsible for managing the email aliases for a
 // user. It is used to request authentication, generate aliases, update aliases,
 // and delete aliases. It also provides a way to observe the authentication
@@ -80,12 +85,7 @@ class EmailAliasesService : public KeyedService,
                        observer) override;
 
   // Returns true if the user is ready to create a new alias.
-  void IsReadyToCreate(base::OnceCallback<void(bool)> callback) override;
-
-  // Adds an observer to receive email alias creation updates.
-  void AddAliasCreationObserver(
-      mojo::PendingRemote<email_aliases::mojom::EmailAliasCreationObserver> observer) override;
-
+  bool IsReadyToCreate() const;
 
   // Binds the mojom interface to this service
   // Adds a new receiver for the EmailAliasesService Mojo interface.
@@ -172,11 +172,9 @@ class EmailAliasesService : public KeyedService,
       bool update_expected,
       std::optional<std::string> response_body);
 
-  // Notifies all registered observers of an email alias creation.
-  void NotifyAliasCreated(const std::string& alias);
-
-  // Notifies all registered observers of an email alias creation cancellation.
-  void NotifyAliasCreationCanceled();
+  // Called by the UI to indicate alias creation flow completed.
+  void NotifyAliasCreationComplete(
+      const std::optional<std::string>& email) override;
 
   // Bound Mojo receivers for the EmailAliasesService interface.
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
@@ -225,7 +223,7 @@ class EmailAliasesService : public KeyedService,
   const int max_aliases_ = 5;
 
   // Observers that receive email alias creation updates.
-  mojo::RemoteSet<email_aliases::mojom::EmailAliasCreationObserver> alias_creation_observers_;
+std::set<EmailAliasesBubblebserver*> email_aliases_bubble_observers_;
 
   // WeakPtrFactory to safely bind callbacks across async network operations.
   base::WeakPtrFactory<EmailAliasesService> weak_factory_{this};

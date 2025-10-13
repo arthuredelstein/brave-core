@@ -1,3 +1,4 @@
+/// <reference path="./mojom.d.ts" />
 import '../../../browser/resources/settings/email_aliases_page/email_aliases'
 import { createRoot } from 'react-dom/client'
 import * as React from 'react'
@@ -47,7 +48,7 @@ const EmailAliasesPanelConnected = ({ emailAliasesService, bindObserver }: {
   }, [])
   return (
     <EmailAliasModal
-      onReturnToMain={() => {}}
+      onReturnToMain={() => { emailAliasesService.notifyAliasCreationComplete() }}
       editing={false}
       mainEmail={authState.email}
       aliasCount={aliasesState.length}

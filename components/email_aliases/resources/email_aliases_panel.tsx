@@ -48,7 +48,7 @@ const EmailAliasesPanelConnected = ({ emailAliasesService, bindObserver }: {
   }, [])
   return (
     <EmailAliasModal
-      onReturnToMain={() => { /* no-op; modal will notify on create */ }}
+      onReturnToMain={(chosenEmail) => { emailAliasesService.notifyAliasCreationComplete(chosenEmail) }}
       editing={false}
       mainEmail={authState.email}
       aliasCount={aliasesState.length}

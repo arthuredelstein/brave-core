@@ -183,7 +183,7 @@ export const EmailAliasModal = (
   { onReturnToMain, editing, editAlias, mainEmail, aliasCount,
     emailAliasesService, bubble }:
     {
-      onReturnToMain: () => void,
+      onReturnToMain: (email?: string) => void,
       editing: boolean,
       editAlias?: Alias,
       bubble?: boolean,
@@ -212,9 +212,7 @@ export const EmailAliasModal = (
     try {
       await emailAliasesService.updateAlias(
         generateAliasResult.aliasEmail, proposedNote)
-      // Inform native that creation completed; bubble will close and input will be filled.
-      try { await emailAliasesService.notifyAliasCreationComplete(generateAliasResult.aliasEmail) } catch {}
-      onReturnToMain()
+      onReturnToMain(bubble ? generateAliasResult.aliasEmail : undefined)
     } catch (errorMessage) {
       setUpdateErrorMessage(errorMessage as string)
     }
@@ -299,7 +297,7 @@ export const EmailAliasModal = (
       }
       <ButtonRow bubble={bubble}>
         <span>
-          <Button onClick={onReturnToMain} kind='plain-faint'>
+          <Button onClick={() => onReturnToMain(undefined)} kind='plain-faint'>
             {getLocale('emailAliasesCancelButton')}
           </Button>
           <Button

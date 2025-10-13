@@ -79,6 +79,14 @@ class EmailAliasesService : public KeyedService,
   void AddObserver(mojo::PendingRemote<mojom::EmailAliasesServiceObserver>
                        observer) override;
 
+  // Returns true if the user is ready to create a new alias.
+  void IsReadyToCreate(base::OnceCallback<void(bool)> callback) override;
+
+  // Adds an observer to receive email alias creation updates.
+  void AddAliasCreationObserver(
+      mojo::PendingRemote<email_aliases::mojom::EmailAliasCreationObserver> observer) override;
+
+
   // Binds the mojom interface to this service
   // Adds a new receiver for the EmailAliasesService Mojo interface.
   void BindInterface(
@@ -164,6 +172,12 @@ class EmailAliasesService : public KeyedService,
       bool update_expected,
       std::optional<std::string> response_body);
 
+  // Notifies all registered observers of an email alias creation.
+  void NotifyAliasCreated(const std::string& alias);
+
+  // Notifies all registered observers of an email alias creation cancellation.
+  void NotifyAliasCreationCanceled();
+
   // Bound Mojo receivers for the EmailAliasesService interface.
   mojo::ReceiverSet<mojom::EmailAliasesService> receivers_;
 
@@ -203,6 +217,15 @@ class EmailAliasesService : public KeyedService,
   // Elapsed timer for the current verification polling window. Used to
   // enforce a maximum total polling duration.
   std::optional<base::ElapsedTimer> session_poll_elapsed_timer_;
+
+  // Number of aliases created by the user.
+  int number_of_aliases_ = 0;
+
+  // Maximum number of aliases allowed for the user.
+  const int max_aliases_ = 5;
+
+  // Observers that receive email alias creation updates.
+  mojo::RemoteSet<email_aliases::mojom::EmailAliasCreationObserver> alias_creation_observers_;
 
   // WeakPtrFactory to safely bind callbacks across async network operations.
   base::WeakPtrFactory<EmailAliasesService> weak_factory_{this};

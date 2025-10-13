@@ -517,8 +517,30 @@ void EmailAliasesService::OnRefreshAliasesResponse(
     alias_obj->email = entry.alias;
     aliases.push_back(std::move(alias_obj));
   }
+  number_of_aliases_ = aliases.size();
   for (auto& observer : observers_) {
     observer->OnAliasesUpdated(mojo::Clone(aliases));
+  }
+}
+
+void EmailAliasesService::AddAliasCreationObserver(
+    mojo::PendingRemote<email_aliases::mojom::EmailAliasCreationObserver> observer) {
+  alias_creation_observers_.Add(std::move(observer));
+}
+
+void EmailAliasesService::IsReadyToCreate(base::OnceCallback<void(bool)> callback) {
+  std::move(callback).Run(!auth_token_.empty() && number_of_aliases_ < max_aliases_);
+}
+
+void EmailAliasesService::NotifyAliasCreationCanceled() {
+  for (auto& observer : alias_creation_observers_) {
+    observer->OnAliasCreationCanceled();
+  }
+}
+
+void EmailAliasesService::NotifyAliasCreated(const std::string& alias) {
+  for (auto& observer : alias_creation_observers_) {
+    observer->OnAliasCreated(alias);
   }
 }
 
